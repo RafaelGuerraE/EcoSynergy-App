@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "893772887713",
+    "project_id": "ecosynergy-app2024",
+    "storage_bucket": "ecosynergy-app2024.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:893772887713:android:ca28510eddd0d555cd62e0",
+        "android_client_info": {
+          "package_name": "br.ecosynergy_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDHwK-HTKB4WLdjFQGicdW9klR--CwLbbw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
