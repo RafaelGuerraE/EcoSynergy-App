@@ -14,9 +14,15 @@ class LoginActivity : AppCompatActivity() {
         val btnlogin: Button = findViewById(R.id.btnlogin)
         val txtemail: EditText = findViewById(R.id.txtemail)
         val txtpassword: EditText = findViewById(R.id.txtpassword)
+        val btnregister: Button = findViewById(R.id.btnregister)
 
         btnlogin.setOnClickListener(){
             val intent: Intent = Intent(this, HomeActivity::class.java)
+            startActivity(intent)
+        }
+
+        btnregister.setOnClickListener(){
+            val intent: Intent = Intent(this, RegisterActivity::class.java)
             startActivity(intent)
         }
     }
