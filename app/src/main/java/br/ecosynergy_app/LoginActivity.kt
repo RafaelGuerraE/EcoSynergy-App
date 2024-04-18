@@ -17,13 +17,13 @@ class LoginActivity : AppCompatActivity() {
         val btnregister: Button = findViewById(R.id.btnregister)
 
         btnlogin.setOnClickListener(){
-            val intent: Intent = Intent(this, HomeActivity::class.java)
-            startActivity(intent)
+            val i = Intent(this, HomeActivity::class.java)
+            startActivity(i)
         }
 
         btnregister.setOnClickListener(){
-            val intent: Intent = Intent(this, RegisterActivity::class.java)
-            startActivity(intent)
+            val i = Intent(this, RegisterActivity::class.java)
+            startActivity(i)
         }
     }
 }
