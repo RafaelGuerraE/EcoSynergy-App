@@ -57,10 +57,10 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:background="@color/greenTest"
-        app:menu="@menu/bottom_nav"
-        app:labelVisibilityMode="unlabeled"
-        app:itemIconSize="35dp">
-    </com.google.android.material.bottomnavigation.BottomNavigationView>
+        app:itemIconSize="35dp"
+        app:itemBackground="@drawable/selector_bottom_navigation_item"
+        app:labelVisibilityMode="labeled"
+        app:menu="@menu/bottom_nav" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

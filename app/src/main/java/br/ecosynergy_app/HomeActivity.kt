@@ -3,6 +3,9 @@ package br.ecosynergy_app
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.fragment.app.Fragment
+import br.ecosynergy_app.homefragments.Analytics
+import br.ecosynergy_app.homefragments.Home
+import br.ecosynergy_app.homefragments.Teams
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class HomeActivity : AppCompatActivity() {

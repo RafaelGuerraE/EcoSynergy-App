@@ -31,14 +31,16 @@ class LoginActivity : AppCompatActivity() {
         val password = txtpassword.text.toString()
 
         btnlogin.setOnClickListener(){
-            if (authenticateUser(entry, password)) {
+
+            startHomeActivity()
+            /*if (authenticateUser(entry, password)) {
                 setLoggedIn(true)
                 startHomeActivity()
 
                 finish()
             } else {
                 Toast.makeText(this, "Wrong Username/Email or Password", LENGTH_SHORT).show()
-            }
+            }*/
 
         }
 
