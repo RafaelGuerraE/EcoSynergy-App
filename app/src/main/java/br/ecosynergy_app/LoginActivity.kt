@@ -5,10 +5,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
-import android.widget.Toast
-import android.widget.Toast.LENGTH_SHORT
-import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.startActivity
 
 class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

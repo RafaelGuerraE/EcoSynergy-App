@@ -11,7 +11,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Confirmação de E-mail"
+        android:text="Verificação de E-mail"
         android:textSize="30sp"
         android:textStyle="bold"
         android:layout_marginBottom="30dp"/>
@@ -109,7 +109,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="30dp"
-        android:backgroundTint="@color/blue"
+        android:background="@drawable/button_background"
         android:textStyle="bold"
-        android:text="@string/verificar"/>
+        android:text="@string/verificar" />
 </LinearLayout>
