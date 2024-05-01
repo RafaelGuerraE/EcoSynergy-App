@@ -1,59 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center">
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Email or Username"
-        android:layout_marginBottom="10dp"/>
-
-    <EditText
-        android:id="@+id/txtemail"
-        android:layout_width="250dp"
-        android:layout_height="wrap_content"
-        android:hint="name@mail.com"
+    <ImageView
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:src="@drawable/logo_transparent"
         android:layout_marginBottom="20dp"/>
 
-    <TextView
-        android:id="@+id/textView2"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Password"
-        android:layout_marginBottom="10dp"/>
+        android:orientation="vertical"
+        android:gravity="center">
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Email or Username"
+            android:layout_marginBottom="10dp"/>
 
-    <EditText
-        android:id="@+id/txtpassword"
-        android:layout_width="250dp"
-        android:layout_height="wrap_content"
-        android:inputType="textPassword"
-        android:hint="******"
-        android:layout_marginBottom="20dp"/>
+        <EditText
+            android:id="@+id/txtemail"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:hint="name@mail.com"
+            android:layout_marginBottom="20dp"/>
 
-    <Button
-        android:id="@+id/btnlogin"
-        android:layout_width="350dp"
-        android:layout_height="wrap_content"
-        android:text="LOGIN"
-        android:background="@drawable/button_background"
-        android:layout_marginBottom="15dp"/>
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Password"
+            android:layout_marginBottom="10dp"/>
 
-    <com.google.android.gms.common.SignInButton
-        android:id="@+id/btngoogle"
-        android:layout_width="350dp"
-        android:layout_height="wrap_content"
-        android:text="Sign in with Google"
-        android:layout_marginBottom="15dp"/>
+        <EditText
+            android:id="@+id/txtpassword"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword"
+            android:hint="******"
+            android:layout_marginBottom="20dp"/>
 
-    <Button
-        android:id="@+id/btnregister"
-        android:layout_width="350dp"
-        android:layout_height="wrap_content"
-        android:text="CADASTRAR"
-        android:background="@drawable/button_background"/>
+        <Button
+            android:id="@+id/btnlogin"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:text="LOGIN"
+            android:background="@drawable/button_background"
+            android:layout_marginBottom="15dp"/>
+
+        <com.google.android.gms.common.SignInButton
+            android:id="@+id/btngoogle"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:text="Sign in with Google"
+            android:layout_marginBottom="15dp"/>
+
+        <Button
+            android:id="@+id/btnregister"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:text="CADASTRAR"
+            android:background="@drawable/button_background"/>
+    </LinearLayout>
+
 
 </LinearLayout>

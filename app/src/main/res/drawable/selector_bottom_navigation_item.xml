@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Selected state -->
-    <item android:drawable="@drawable/bg_bottom_navigation_selected" android:state_checked="true" />
-    <!-- Default state -->
-    <item android:drawable="@drawable/bg_bottom_navigation_unselected" />
-</selector>
