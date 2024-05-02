@@ -1,4 +1,5 @@
 package br.ecosynergy_app
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageButton
@@ -17,16 +18,27 @@ class HomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
-        val bottomNavigationView: BottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavView)
+        val bottomNavView: BottomNavigationView = findViewById(R.id.bottomNavView)
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
         val navDrawerButton: ImageButton = findViewById(R.id.navDrawerButton)
         val navview: NavigationView = findViewById(R.id.nav_view)
 
+        val headerView = navview.getHeaderView(0)
+
+
+        val btnlogout = headerView.findViewById<ImageButton>(R.id.btnlogout)
+
         replaceFragment(Home())
 
-        bottomNavigationView.menu.findItem(R.id.home)?.isChecked = true
+        bottomNavView.menu.findItem(R.id.home)?.isChecked = true
 
-        bottomNavigationView.setOnItemSelectedListener {
+        btnlogout.setOnClickListener(){
+            val i = Intent(this, LoginActivity::class.java)
+            startActivity(i)
+            finish()
+        }
+
+        bottomNavView.setOnItemSelectedListener {
             when(it.itemId){
                 R.id.analytics -> replaceFragment(Analytics())
                 R.id.home -> replaceFragment(Home())

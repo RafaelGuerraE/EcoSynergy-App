@@ -41,8 +41,7 @@ class LoginActivity : AppCompatActivity() {
         }
 
         btnregister.setOnClickListener(){
-            val i = Intent(this, RegisterActivity::class.java)
-            startActivity(i)
+            startHomeActivity()
         }
     }
 
@@ -64,9 +63,9 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun startHomeActivity() {
-        // Start the Home activity
         val i = Intent(this, HomeActivity::class.java)
         startActivity(i)
+        finish()
     }
 }
 

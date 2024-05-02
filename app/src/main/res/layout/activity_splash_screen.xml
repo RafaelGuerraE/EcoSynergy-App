@@ -13,5 +13,4 @@
         android:id="@+id/iv_logo"
         android:src="@drawable/logo_transparent" />
 
-
 </RelativeLayout>

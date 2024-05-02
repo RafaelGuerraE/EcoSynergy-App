@@ -21,8 +21,9 @@
 
             <ImageButton
                 android:id="@+id/navDrawerButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:scaleType="fitXY"
                 android:src="@drawable/baseline_people_24"
                 android:background="@null"
                 android:contentDescription="@string/logouser"

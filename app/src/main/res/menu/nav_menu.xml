@@ -15,6 +15,9 @@
         <item android:id="@+id/terms"
             android:icon="@drawable/baseline_format_terms_24"
             android:title="Termos de Uso e Privacidade"/>
+        <item android:id="@+id/notifications"
+            android:icon="@drawable/baseline_notifications_24"
+            android:title="Notificações"/>
 
     </group>
 
