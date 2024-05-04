@@ -17,19 +17,18 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/black">
+            android:background="@color/greenTestB">
 
             <ImageButton
                 android:id="@+id/navDrawerButton"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:scaleType="fitXY"
-                android:src="@drawable/baseline_people_24"
-                android:background="@null"
+                android:src="@drawable/rafael"
+                android:background="@drawable/round_button"
                 android:contentDescription="@string/logouser"
                 android:layout_gravity="start"
-                android:layout_marginStart="0dp"
-                android:tint="@color/white"/>
+                android:layout_marginStart="0dp"/>
 
             <ImageView
                 android:id="@+id/logoImageView"
@@ -50,14 +49,15 @@
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottomNavView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/black"
-            app:itemIconSize="35dp"
-            app:labelVisibilityMode="labeled"
+            android:layout_height="70dp"
+            android:background="@color/greenTestB"
+            app:itemIconSize="40dp"
+            app:labelVisibilityMode="unlabeled"
             app:menu="@menu/bottom_nav"
             android:layout_gravity="start"
             app:itemIconTint="@color/white"
-            app:itemTextColor="@color/white"/>
+            app:itemTextColor="@color/white"
+            style="@style/AppBottomNavigation"/>
 
     </LinearLayout>
 

@@ -13,7 +13,7 @@ class RegisterActivity : AppCompatActivity() {
         val btnregister: Button = findViewById(R.id.btnregister)
 
         btnregister.setOnClickListener(){
-            val intent = Intent(this, ConfirmationActivity::class.java)
+            val intent = Intent(this, RegisterActivity2::class.java)
             startActivity(intent)
         }
     }

@@ -6,17 +6,17 @@
         android:layout_height="wrap_content"
         android:title="Analytics"
         android:id="@+id/analytics"
-        android:icon="@drawable/baseline_analytics_24"/>
+        android:icon="@drawable/outline_analytics_24"/>
     <item
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/home"
         android:title="Home"
-        android:icon="@drawable/baseline_home_24"/>
+        android:icon="@drawable/outline_home_24"/>
     <item
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/teams"
         android:title="Teams"
-        android:icon="@drawable/baseline_people_24"/>
+        android:icon="@drawable/outline_people_24"/>
 </menu>

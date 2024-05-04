@@ -31,6 +31,8 @@ class HomeActivity : AppCompatActivity() {
         replaceFragment(Home())
 
         bottomNavView.menu.findItem(R.id.home)?.isChecked = true
+        bottomNavView.selectedItemId = R.id.home
+        bottomNavView.menu.findItem(R.id.home)?.setIcon(R.drawable.baseline_home_24)
 
         btnlogout.setOnClickListener(){
             val i = Intent(this, LoginActivity::class.java)
@@ -38,12 +40,26 @@ class HomeActivity : AppCompatActivity() {
             finish()
         }
 
-        bottomNavView.setOnItemSelectedListener {
-            when(it.itemId){
-                R.id.analytics -> replaceFragment(Analytics())
-                R.id.home -> replaceFragment(Home())
-                R.id.teams -> replaceFragment(Teams())
-                else ->{}
+        bottomNavView.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.analytics -> {
+                    replaceFragment(Analytics())
+                    item.setIcon(R.drawable.baseline_analytics_24)
+                    bottomNavView.menu.findItem(R.id.home)?.setIcon(R.drawable.outline_home_24) // Set unselected icon for other items
+                    bottomNavView.menu.findItem(R.id.teams)?.setIcon(R.drawable.outline_people_24)
+                }
+                R.id.home -> {
+                    replaceFragment(Home())
+                    item.setIcon(R.drawable.baseline_home_24)
+                    bottomNavView.menu.findItem(R.id.analytics)?.setIcon(R.drawable.outline_analytics_24)
+                    bottomNavView.menu.findItem(R.id.teams)?.setIcon(R.drawable.outline_people_24)
+                }
+                R.id.teams -> {
+                    replaceFragment(Teams())
+                    item.setIcon(R.drawable.baseline_people_24)
+                    bottomNavView.menu.findItem(R.id.analytics)?.setIcon(R.drawable.outline_analytics_24)
+                    bottomNavView.menu.findItem(R.id.home)?.setIcon(R.drawable.outline_home_24)
+                }
             }
             true
         }
