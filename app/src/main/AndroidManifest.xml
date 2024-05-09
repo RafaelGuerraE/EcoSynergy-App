@@ -54,5 +54,9 @@
             android:name=".LoginActivity"
             android:exported="true" />
 
+        <activity
+            android:name=".TeamSettingsActivity"
+            android:exported="true" />
+
     </application>
 </manifest>

@@ -22,9 +22,8 @@
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:src="@drawable/rafael"
-            app:civ_border_width="5dp"
-            app:civ_border_color="@color/black"
-            android:layout_gravity="start"/>
+            android:layout_gravity="start"
+            />
 
         <LinearLayout
             android:layout_width="match_parent"

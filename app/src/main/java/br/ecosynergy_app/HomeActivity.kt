@@ -11,6 +11,7 @@ import br.ecosynergy_app.homefragments.Home
 import br.ecosynergy_app.homefragments.Teams
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
+import de.hdodenhof.circleimageview.CircleImageView
 
 class HomeActivity : AppCompatActivity() {
 
@@ -20,7 +21,7 @@ class HomeActivity : AppCompatActivity() {
 
         val bottomNavView: BottomNavigationView = findViewById(R.id.bottomNavView)
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
-        val navDrawerButton: ImageButton = findViewById(R.id.navDrawerButton)
+        val navDrawerButton: CircleImageView = findViewById(R.id.navDrawerButton)
         val navview: NavigationView = findViewById(R.id.nav_view)
 
         val headerView = navview.getHeaderView(0)
