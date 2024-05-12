@@ -1,9 +1,11 @@
-package br.ecosynergy_app
+package br.ecosynergy_app.register
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
+import br.ecosynergy_app.HomeActivity
+import br.ecosynergy_app.R
 
 class ConfirmationActivity : AppCompatActivity() {
 

@@ -5,7 +5,7 @@ import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
 
-interface SensorService {
+interface SensorsService {
     @GET("api/mq7Reading/v1")
     suspend fun fetchMq7Readings()
 

@@ -24,17 +24,17 @@
                 android:id="@+id/navDrawerButton"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:src="@drawable/rafael"
+                android:layout_gravity="start"
                 android:contentDescription="@string/logouser"
-                android:layout_gravity="start"/>
+                android:src="@drawable/letterrafael" />
 
             <ImageView
                 android:id="@+id/logoImageView"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
-                android:src="@drawable/logo_transparent"
+                android:layout_gravity="center_horizontal"
                 android:background="@null"
-                android:layout_gravity="center_horizontal"/>
+                android:src="@drawable/logo_transparent" />
 
         </androidx.appcompat.widget.Toolbar>
 

@@ -7,9 +7,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
-import br.ecosynergy_app.HomeActivity
 import br.ecosynergy_app.R
-import br.ecosynergy_app.TeamSettingsActivity
+import br.ecosynergy_app.teams.TeamSettingsActivity
 
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"

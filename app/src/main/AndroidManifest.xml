@@ -31,19 +31,19 @@
             android:exported="true" />
 
         <activity
-            android:name=".ConfirmationActivity"
+            android:name=".register.ConfirmationActivity"
             android:exported="true" />
 
         <activity
-            android:name=".RegisterActivity2"
+            android:name=".register.RegisterActivity2"
             android:exported="true" />
 
         <activity
-            android:name=".RegisterActivity"
+            android:name=".register.RegisterActivity"
             android:exported="true" />
 
         <activity
-            android:name=".TeamActivity"
+            android:name=".teams.TeamActivity"
             android:exported="true" />
 
         <activity
@@ -51,11 +51,11 @@
             android:exported="true" />
 
         <activity
-            android:name=".LoginActivity"
+            android:name=".login.LoginActivity"
             android:exported="true" />
 
         <activity
-            android:name=".TeamSettingsActivity"
+            android:name=".teams.TeamSettingsActivity"
             android:exported="true" />
 
     </application>

@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import br.ecosynergy_app.homefragments.Analytics
 import br.ecosynergy_app.homefragments.Home
 import br.ecosynergy_app.homefragments.Teams
+import br.ecosynergy_app.login.LoginActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import de.hdodenhof.circleimageview.CircleImageView

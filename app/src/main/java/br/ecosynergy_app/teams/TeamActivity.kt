@@ -1,11 +1,14 @@
-package br.ecosynergy_app
+package br.ecosynergy_app.teams
 
-import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import br.ecosynergy_app.R
 
-class TeamSettingsActivity : AppCompatActivity() {
+class TeamActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_teamsettings)
+
+
     }
 }

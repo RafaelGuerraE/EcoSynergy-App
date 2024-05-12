@@ -1,5 +1,7 @@
+package br.ecosynergy_app.login
+
 class UserResponse(
-    val	user:User
+    val	user: User
 )
 class User(
     val id: Long,
