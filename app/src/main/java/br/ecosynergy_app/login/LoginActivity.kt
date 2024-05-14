@@ -31,7 +31,7 @@ class LoginActivity : AppCompatActivity() {
         val btnLogin: Button = findViewById(R.id.btnlogin)
         val btnRegister: Button = findViewById(R.id.btnregister)
 
-        btnLogin.setOnClickListener {
+        /*btnLogin.setOnClickListener {
             val username = txtEntry.text.toString()
             val password = txtPassword.text.toString()
 
@@ -39,7 +39,7 @@ class LoginActivity : AppCompatActivity() {
                 val loginRequest = LoginRequest(username, password)
                 loginUser(loginRequest)
             }
-        }
+        }*/
 
         btnRegister.setOnClickListener {
             val intent = Intent(this, RegisterActivity::class.java)
@@ -47,10 +47,10 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private suspend fun loginUser(username: String, password: String) {
+    /*private suspend fun loginUser(username: String, password: String) {
         val loginUserRequest = LoginRequest(username, password)
 
-        RetrofitClient.authService.loginUser(loginUserRequest)
+         RetrofitClient.authService.loginUser(loginUserRequest)
             .enqueue(object : Callback<UserResponse> {
             override fun onResponse(call: Call<UserResponse>, response: Response<UserResponse>) {
                 if (response.isSuccessful) {
@@ -75,16 +75,18 @@ class LoginActivity : AppCompatActivity() {
             }
         })
     }
-    private fun startHomeActivity() {
-        val i = Intent(this, HomeActivity::class.java)
-        startActivity(i)
-        finish()
-    }
 
-    private fun showToast(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+        */
+        private fun startHomeActivity() {
+            val i = Intent(this, HomeActivity::class.java)
+            startActivity(i)
+            finish()
+        }
+
+        private fun showToast(message: String) {
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+        }
     }
-}
 
 
 
