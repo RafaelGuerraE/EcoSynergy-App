@@ -1,4 +1,4 @@
-package br.ecosynergy_app
+package br.ecosynergy_app.home
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -6,9 +6,10 @@ import android.widget.ImageButton
 import androidx.activity.OnBackPressedCallback
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
-import br.ecosynergy_app.homefragments.Analytics
-import br.ecosynergy_app.homefragments.Home
-import br.ecosynergy_app.homefragments.Teams
+import br.ecosynergy_app.R
+import br.ecosynergy_app.home.homefragments.Analytics
+import br.ecosynergy_app.home.homefragments.Home
+import br.ecosynergy_app.home.homefragments.Teams
 import br.ecosynergy_app.login.LoginActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView

@@ -6,16 +6,15 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
-import br.ecosynergy_app.HomeActivity
+import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.startActivity
+import br.ecosynergy_app.home.HomeActivity
 import br.ecosynergy_app.R
 import br.ecosynergy_app.register.RegisterActivity
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import br.ecosynergy_app.RetrofitClient
-import br.ecosynergy_app.login.LoginRequest
-import br.ecosynergy_app.login.UserResponse
-
 
 
 class LoginActivity : AppCompatActivity() {
@@ -51,7 +50,8 @@ class LoginActivity : AppCompatActivity() {
     private suspend fun loginUser(username: String, password: String) {
         val loginUserRequest = LoginRequest(username, password)
 
-        RetrofitClient.authService.loginUser(loginUserRequest).enqueue(object : Callback<UserResponse> {
+        RetrofitClient.authService.loginUser(loginUserRequest)
+            .enqueue(object : Callback<UserResponse> {
             override fun onResponse(call: Call<UserResponse>, response: Response<UserResponse>) {
                 if (response.isSuccessful) {
                     val userResponse = response.body()
@@ -75,20 +75,9 @@ class LoginActivity : AppCompatActivity() {
             }
         })
     }
-
-
-    override fun onFailure(call: Call<UserResponse>, t: Throwable) {
-                // Handle network failures
-                // Show error message to the user
-                // For demo purposes, display a toast
-                showToast("Login failed. Please try again.")
-            }
-        })
-    }
-
     private fun startHomeActivity() {
-        val intent = Intent(this, HomeActivity::class.java)
-        startActivity(intent)
+        val i = Intent(this, HomeActivity::class.java)
+        startActivity(i)
         finish()
     }
 
@@ -96,6 +85,9 @@ class LoginActivity : AppCompatActivity() {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 }
+
+
+
 
 
 

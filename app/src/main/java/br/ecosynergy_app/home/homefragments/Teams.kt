@@ -1,4 +1,4 @@
-package br.ecosynergy_app.homefragments
+package br.ecosynergy_app.home.homefragments
 
 import android.content.Intent
 import android.os.Bundle

@@ -4,7 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
-import br.ecosynergy_app.HomeActivity
+import br.ecosynergy_app.home.HomeActivity
 import br.ecosynergy_app.R
 
 class ConfirmationActivity : AppCompatActivity() {
