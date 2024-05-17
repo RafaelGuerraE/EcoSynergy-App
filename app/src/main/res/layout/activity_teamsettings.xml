@@ -56,15 +56,14 @@
             android:layout_height="wrap_content"
             android:text="Visão Geral"
             android:drawableStart="@drawable/baseline_info_24"
-            android:drawableTint="@color/white"
+            android:drawableTint="@color/black"
             android:drawablePadding="4dp"/>
-
         <Button
             android:id="@+id/btnInvites"
             android:layout_width="330dp"
             android:layout_height="wrap_content"
             android:text="Convites"
-            android:drawableStart="@drawable/"
+            android:drawableStart="@drawable/baseline_invite"
             android:drawableTint="@color/white"
             android:drawablePadding="4dp"/>
 
