@@ -12,7 +12,7 @@ interface AuthService {
     suspend fun createUser(@Body createUserRequest: CreateUserRequest)
 
     @POST("auth/signin")
-    suspend fun loginUser(@Body loginUserRequest: LoginRequest)
+    suspend fun loginUser(@Body loginUserRequest: LoginRequest): LoginRequest
 
     @PUT("auth/refresh/{username}")
     suspend fun refreshToken(@Path("username") username: String)
