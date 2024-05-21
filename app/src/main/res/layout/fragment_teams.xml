@@ -4,45 +4,85 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".home.homefragments.Teams">
-
+    tools:context=".home.homefragments.Teams"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:src="@drawable/letterequipe"
-            android:layout_marginStart="20dp"
-            android:padding="5dp"
-            android:layout_gravity="start"/>
-
-        <TextView
-            android:layout_width="0dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Nome da Equipe"
-            tools:text = "EcoSynergy"
-            android:textStyle="bold"
-            android:textSize="20sp"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:gravity="center_vertical"/>
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:layout_marginBottom="20dp">
 
-        <ImageButton
-            android:id="@+id/btnTeamSettings"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:scaleType="fitXY"
-            android:src="@drawable/baseline_settings_24"
-            android:background="@null"
-            android:layout_marginEnd="20dp"
-            android:layout_gravity="end|center"/>
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:src="@drawable/letterequipe"
+                android:layout_marginStart="20dp"
+                android:padding="5dp"
+                android:layout_gravity="start"/>
 
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Nome da Equipe"
+                tools:text = "EcoSynergy"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:gravity="center_vertical"/>
+
+            <ImageButton
+                android:id="@+id/btnTeamSettings"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:scaleType="fitXY"
+                android:src="@drawable/baseline_settings_24"
+                android:background="@null"
+                android:layout_marginEnd="20dp"
+                android:layout_gravity="end|center"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_vertical">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                app:shapeAppearanceOverlay="@style/RoundedSquare"
+                android:layout_width="380dp"
+                android:layout_height="300dp"
+                android:background="@color/greenTest"
+                android:layout_gravity="center"
+                android:layout_marginBottom="30dp"/>
+
+            <com.google.android.material.imageview.ShapeableImageView
+                app:shapeAppearanceOverlay="@style/RoundedSquare"
+                android:layout_width="380dp"
+                android:layout_height="300dp"
+                android:background="@color/greenTest"
+                android:layout_gravity="center"
+                android:layout_marginBottom="30dp"/>
+
+            <com.google.android.material.imageview.ShapeableImageView
+                app:shapeAppearanceOverlay="@style/RoundedSquare"
+                android:layout_width="380dp"
+                android:layout_height="300dp"
+                android:background="@color/greenTest"
+                android:layout_gravity="center"
+                android:layout_marginBottom="30dp"/>
+
+        </LinearLayout>
     </LinearLayout>
 
 </ScrollView>

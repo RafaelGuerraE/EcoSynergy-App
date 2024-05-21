@@ -1,5 +1,8 @@
 package br.ecosynergy_app.home
+
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageButton
@@ -27,9 +30,7 @@ class HomeActivity : AppCompatActivity() {
         val navview: NavigationView = findViewById(R.id.nav_view)
 
         val headerView = navview.getHeaderView(0)
-
-
-        val btnlogout = headerView.findViewById<ImageButton>(R.id.btnlogout)
+        val btnLogout = headerView.findViewById<ImageButton>(R.id.btnlogout)
 
         replaceFragment(Home())
 
@@ -37,10 +38,8 @@ class HomeActivity : AppCompatActivity() {
         bottomNavView.selectedItemId = R.id.home
         bottomNavView.menu.findItem(R.id.home)?.setIcon(R.drawable.baseline_home_24)
 
-        btnlogout.setOnClickListener(){
-            val i = Intent(this, LoginActivity::class.java)
-            startActivity(i)
-            finish()
+        btnLogout.setOnClickListener {
+            logout()
         }
 
         bottomNavView.setOnItemSelectedListener { item ->
@@ -84,9 +83,23 @@ class HomeActivity : AppCompatActivity() {
         onBackPressedDispatcher.addCallback(this, callback)
     }
 
-    private fun replaceFragment(fragment : Fragment){
+    private fun replaceFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction()
             .replace(R.id.frame_layout, fragment)
             .commit()
+    }
+
+    private fun logout() {
+        // Clear the login state in shared preferences
+        val sharedPreferences: SharedPreferences = getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.clear()
+        editor.apply()
+
+        // Navigate to the LoginActivity
+        val intent = Intent(this, LoginActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+        finish()
     }
 }

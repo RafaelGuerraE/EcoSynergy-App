@@ -3,12 +3,12 @@ package br.ecosynergy_app.login
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
-import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.appcompat.app.AppCompatActivity
 import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.home.HomeActivity
@@ -24,21 +24,24 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        authViewModel = ViewModelProvider(this, AuthViewModelFactory(RetrofitClient.authService)).get(AuthViewModel::class.java)
-
-        txtEntry = findViewById(R.id.txtemail)
-        txtPassword = findViewById(R.id.txtpassword)
-        val btnLogin: Button = findViewById(R.id.btnlogin)
-        val btnRegister: Button = findViewById(R.id.btnregister)
-
         if (isLoggedIn()) {
             startHomeActivity()
             return
         }
 
+        authViewModel =
+            ViewModelProvider(this, AuthViewModelFactory(RetrofitClient.authService)).get(
+                AuthViewModel::class.java
+            )
+
+        txtEntry = findViewById(R.id.txtEntry)
+        txtPassword = findViewById(R.id.txtPassword)
+        val btnLogin: Button = findViewById(R.id.btnlogin)
+        val btnRegister: Button = findViewById(R.id.btnregister)
+
         btnLogin.setOnClickListener {
-            val username = txtEntry.text.toString()
-            val password = txtPassword.text.toString()
+            val username: String = txtEntry.text.toString()
+            val password: String = txtPassword.text.toString()
 
             if (username.isEmpty() || password.isEmpty()) {
                 if (username.isEmpty()) {
@@ -61,9 +64,12 @@ class LoginActivity : AppCompatActivity() {
 
         authViewModel.loginResult.observe(this) { result ->
             result.onSuccess {
+                Log.d("LoginActivity", "Login success")
                 setLoggedIn(true)
                 startHomeActivity()
-            }.onFailure {
+            }.onFailure { error ->
+                error.printStackTrace()
+                Log.d("LoginActivity", "Login failed: ${error.message}")
                 showToast("Dados Incorretos")
             }
         }
@@ -79,11 +85,6 @@ class LoginActivity : AppCompatActivity() {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
-    private fun isLoggedIn(): Boolean {
-        val sharedPreferences = getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
-        return sharedPreferences.getBoolean("isLoggedIn", false)
-    }
-
     private fun setLoggedIn(isLoggedIn: Boolean) {
         val sharedPreferences = getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
@@ -91,13 +92,8 @@ class LoginActivity : AppCompatActivity() {
         editor.apply()
     }
 
+    private fun isLoggedIn(): Boolean {
+        val sharedPreferences = getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
+        return sharedPreferences.getBoolean("isLoggedIn", false)
+    }
 }
-
-
-
-
-
-
-
-
-
