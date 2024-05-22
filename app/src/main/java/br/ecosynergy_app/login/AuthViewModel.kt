@@ -10,8 +10,8 @@ import retrofit2.HttpException
 
 class AuthViewModel(private val service: AuthService) : ViewModel() {
 
-    private val _loginResult = MutableLiveData<Result<LoginRequest>>()
-    val loginResult: LiveData<Result<LoginRequest>> = _loginResult
+    private val _loginResult = MutableLiveData<Result<LoginResponse>>()
+    val loginResult: LiveData<Result<LoginResponse>> = _loginResult
 
     fun loginUser(loginRequest: LoginRequest) {
         viewModelScope.launch {

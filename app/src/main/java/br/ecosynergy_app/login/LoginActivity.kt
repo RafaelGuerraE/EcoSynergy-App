@@ -29,19 +29,16 @@ class LoginActivity : AppCompatActivity() {
             return
         }
 
-        authViewModel =
-            ViewModelProvider(this, AuthViewModelFactory(RetrofitClient.authService)).get(
-                AuthViewModel::class.java
-            )
+        authViewModel = ViewModelProvider(this, AuthViewModelFactory(RetrofitClient.authService)).get(AuthViewModel::class.java)
 
         txtEntry = findViewById(R.id.txtEntry)
         txtPassword = findViewById(R.id.txtPassword)
-        val btnLogin: Button = findViewById(R.id.btnlogin)
-        val btnRegister: Button = findViewById(R.id.btnregister)
+        val btnLogin: Button = findViewById(R.id.btnLogin)
+        val btnRegister: Button = findViewById(R.id.btnRegister)
 
         btnLogin.setOnClickListener {
-            val username: String = txtEntry.text.toString()
-            val password: String = txtPassword.text.toString()
+            val username = txtEntry.text.toString()
+            val password = txtPassword.text.toString()
 
             if (username.isEmpty() || password.isEmpty()) {
                 if (username.isEmpty()) {
@@ -63,9 +60,9 @@ class LoginActivity : AppCompatActivity() {
         }
 
         authViewModel.loginResult.observe(this) { result ->
-            result.onSuccess {
+            result.onSuccess { loginResponse ->
                 Log.d("LoginActivity", "Login success")
-                setLoggedIn(true)
+                setLoggedIn(true, loginResponse.username, loginResponse.accessToken)
                 startHomeActivity()
             }.onFailure { error ->
                 error.printStackTrace()
@@ -85,10 +82,16 @@ class LoginActivity : AppCompatActivity() {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
-    private fun setLoggedIn(isLoggedIn: Boolean) {
+    private fun setLoggedIn(isLoggedIn: Boolean, username: String? = null, accessToken: String? = null) {
         val sharedPreferences = getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
         editor.putBoolean("isLoggedIn", isLoggedIn)
+        if (username != null) {
+            editor.putString("username", username)
+        }
+        if (accessToken != null) {
+            editor.putString("accessToken", accessToken)
+        }
         editor.apply()
     }
 

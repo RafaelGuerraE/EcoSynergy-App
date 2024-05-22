@@ -1,34 +1,78 @@
 package br.ecosynergy_app.home.homefragments
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
+import android.widget.TextView
+import androidx.fragment.app.Fragment
 import br.ecosynergy_app.R
-
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
+import br.ecosynergy_app.RetrofitClient
+import br.ecosynergy_app.home.UserResponse
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class Home : Fragment() {
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private lateinit var lblFirstname: TextView
+    private lateinit var progressBar: ProgressBar
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home, container, false)
+        val view = inflater.inflate(R.layout.fragment_home, container, false)
+        lblFirstname = view.findViewById(R.id.lblFirstname)
+        progressBar = view.findViewById(R.id.progressBar)
+
+        fetchUserData()
+
+        return view
+    }
+
+    private fun fetchUserData() {
+        progressBar.visibility = View.VISIBLE
+        lblFirstname.visibility = View.GONE
+
+        val sharedPreferences: SharedPreferences = requireActivity().getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
+        val username = sharedPreferences.getString("username", null)
+        val token = sharedPreferences.getString("accessToken", null)
+
+        if (username != null && token != null) {
+            RetrofitClient.userService.getUser(username, "Bearer $token").enqueue(object : Callback<UserResponse> {
+                override fun onResponse(call: Call<UserResponse>, response: Response<UserResponse>) {
+                    progressBar.visibility = View.GONE
+                    lblFirstname.visibility = View.VISIBLE
+
+                    if (response.isSuccessful) {
+                        val user = response.body()
+                        if (user != null) {
+                            val firstName = user.fullName.split(" ").firstOrNull()
+                            lblFirstname.text = firstName
+                        }
+                    } else {
+                        Log.e("HomeFragment", "Error fetching user data: ${response.message()}")
+                    }
+                }
+
+                override fun onFailure(call: Call<UserResponse>, t: Throwable) {
+                    progressBar.visibility = View.GONE
+                    lblFirstname.visibility = View.VISIBLE
+
+                    Log.e("HomeFragment", "Network error fetching user data", t)
+                }
+            })
+        } else {
+            progressBar.visibility = View.GONE
+            lblFirstname.visibility = View.VISIBLE
+
+            lblFirstname.text = "Invalid username or token"
+        }
     }
 
     companion object {
@@ -36,8 +80,8 @@ class Home : Fragment() {
         fun newInstance(param1: String, param2: String) =
             Home().apply {
                 arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+                    putString("param1", param1)
+                    putString("param2", param2)
                 }
             }
     }

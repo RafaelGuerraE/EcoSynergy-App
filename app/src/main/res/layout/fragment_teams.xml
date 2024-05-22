@@ -62,7 +62,7 @@
                 app:shapeAppearanceOverlay="@style/RoundedSquare"
                 android:layout_width="380dp"
                 android:layout_height="300dp"
-                android:background="@color/greenTest"
+                android:background="@color/pastel"
                 android:layout_gravity="center"
                 android:layout_marginBottom="30dp"/>
 
@@ -70,7 +70,7 @@
                 app:shapeAppearanceOverlay="@style/RoundedSquare"
                 android:layout_width="380dp"
                 android:layout_height="300dp"
-                android:background="@color/greenTest"
+                android:background="@color/pastel"
                 android:layout_gravity="center"
                 android:layout_marginBottom="30dp"/>
 
@@ -78,7 +78,7 @@
                 app:shapeAppearanceOverlay="@style/RoundedSquare"
                 android:layout_width="380dp"
                 android:layout_height="300dp"
-                android:background="@color/greenTest"
+                android:background="@color/pastel"
                 android:layout_gravity="center"
                 android:layout_marginBottom="30dp"/>
 

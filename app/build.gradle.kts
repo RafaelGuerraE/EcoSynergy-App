@@ -54,6 +54,7 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
 
     implementation(platform("com.google.firebase:firebase-bom:33.0.0"))
+    implementation("com.google.mlkit:vision-internal-vkp:18.2.2")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

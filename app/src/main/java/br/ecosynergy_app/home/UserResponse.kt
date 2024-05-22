@@ -1,7 +1,6 @@
-package br.ecosynergy_app.login
+package br.ecosynergy_app.home
 
-class UserResponse(val user: User)
-data class User(
+data class UserResponse(
     val id: Long,
     val userName: String,
     val fullName: String,

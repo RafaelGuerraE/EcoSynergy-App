@@ -27,10 +27,15 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/lblUsername"
+                android:id="@+id/lblFirstname"
                 tools:text="Rafael"
                 android:textSize="25sp"
                 android:textStyle="bold"/>
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:visibility="gone"/>
 
         </LinearLayout>
 
@@ -53,21 +58,21 @@
                 app:shapeAppearanceOverlay="@style/RoundedSquare"
                 android:layout_width="380dp"
                 android:layout_height="300dp"
-                android:background="@color/greenTest"
+                android:background="@color/pastel"
                 android:layout_gravity="center"
                 android:layout_marginBottom="30dp"/>
             <com.google.android.material.imageview.ShapeableImageView
                 app:shapeAppearanceOverlay="@style/RoundedSquare"
                 android:layout_width="380dp"
                 android:layout_height="300dp"
-                android:background="@color/greenTest"
+                android:background="@color/pastel"
                 android:layout_gravity="center"
                 android:layout_marginBottom="30dp"/>
             <com.google.android.material.imageview.ShapeableImageView
                 app:shapeAppearanceOverlay="@style/RoundedSquare"
                 android:layout_width="380dp"
                 android:layout_height="300dp"
-                android:background="@color/greenTest"
+                android:background="@color/pastel"
                 android:layout_gravity="center"
                 android:layout_marginBottom="30dp"/>
 

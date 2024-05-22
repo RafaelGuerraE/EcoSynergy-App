@@ -1,5 +1,6 @@
 package br.ecosynergy_app.login
 
+import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.POST
@@ -12,7 +13,7 @@ interface AuthService {
     suspend fun createUser(@Body createUserRequest: CreateUserRequest)
 
     @POST("auth/signin")
-    suspend fun loginUser(@Body loginUserRequest: LoginRequest): LoginRequest
+    suspend fun loginUser(@Body loginUserRequest: LoginRequest):LoginResponse
 
     @PUT("auth/refresh/{username}")
     suspend fun refreshToken(@Path("username") username: String)
