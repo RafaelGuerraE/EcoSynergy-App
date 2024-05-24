@@ -26,7 +26,14 @@
                 android:layout_height="50dp"
                 android:layout_gravity="start"
                 android:contentDescription="@string/logouser"
-                android:src="@drawable/letterrafael" />
+                android:src="@drawable/default_image" />
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="start"
+                android:visibility="gone"/>
 
             <ImageView
                 android:id="@+id/logoImageView"

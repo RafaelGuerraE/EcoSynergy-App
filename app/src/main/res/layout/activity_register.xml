@@ -15,63 +15,60 @@
         android:src="@drawable/logo_transparent"
         android:layout_marginBottom="20dp"/>
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginBottom="15dp">
 
-        <TextView
-            android:id="@+id/textView3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Username"/>
-
-        <EditText
-            android:id="@+id/txtusername"
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="300dp"
             android:layout_height="wrap_content"
-            tools:text="RafaelGuerra" />
+            android:hint="Nome de Usuário"
+            android:layout_marginBottom="15dp">
 
-    </LinearLayout>
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/txtUsername"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textEmailAddress"/>
+        </com.google.android.material.textfield.TextInputLayout>
 
-    <LinearLayout
-        android:layout_width="wrap_content"
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:hint="Email"
         android:layout_marginBottom="15dp">
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="wrap_content"
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/txtEmail"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Email" />
+            android:inputType="textEmailAddress"/>
+    </com.google.android.material.textfield.TextInputLayout>
 
-        <EditText
-            android:id="@+id/txtemail"
-            android:layout_width="300dp"
-            android:layout_height="50dp"
-            tools:text="ecosynergy@gmail.com"
-            />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:hint="Senha"
         android:layout_marginBottom="15dp">
-        <TextView
-            android:id="@+id/textView2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Password"/>
 
-        <EditText
-            android:id="@+id/txtpassword"
-            android:layout_width="300dp"
-            android:layout_height="50dp"
-            android:inputType="textPassword"
-            tools:text="1234Ben#" />
-    </LinearLayout>
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/txtPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textEmailAddress"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:hint="Confirme a Senha"
+        android:layout_marginBottom="15dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/txtConfirmPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textEmailAddress"/>
+    </com.google.android.material.textfield.TextInputLayout>
 
     <Button
         android:id="@+id/btnregister"

@@ -5,15 +5,18 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.ImageButton
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import br.ecosynergy_app.R
-import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.home.homefragments.Analytics
 import br.ecosynergy_app.home.homefragments.Home
 import br.ecosynergy_app.home.homefragments.Teams
@@ -21,11 +24,10 @@ import br.ecosynergy_app.login.LoginActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import de.hdodenhof.circleimageview.CircleImageView
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class HomeActivity : AppCompatActivity() {
+
+    private val userViewModel: UserViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,20 +36,24 @@ class HomeActivity : AppCompatActivity() {
         val bottomNavView: BottomNavigationView = findViewById(R.id.bottomNavView)
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
         val navDrawerButton: CircleImageView = findViewById(R.id.navDrawerButton)
-        val navview: NavigationView = findViewById(R.id.nav_view)
+        val navView: NavigationView = findViewById(R.id.nav_view)
 
-        val headerView = navview.getHeaderView(0)
-        val btnLogout = headerView.findViewById<ImageButton>(R.id.btnLogout)
+
+        val headerView = navView.getHeaderView(0)
+        if (headerView == null) {
+            Log.e("HomeActivity", "Header view is null")
+        } else {
+            val btnLogout = headerView.findViewById<ImageButton>(R.id.btnLogout)
+            btnLogout?.setOnClickListener {
+                logout()
+            }
+        }
 
         replaceFragment(Home())
 
         bottomNavView.menu.findItem(R.id.home)?.isChecked = true
         bottomNavView.selectedItemId = R.id.home
         bottomNavView.menu.findItem(R.id.home)?.setIcon(R.drawable.baseline_home_24)
-
-        btnLogout.setOnClickListener {
-            logout()
-        }
 
         bottomNavView.setOnItemSelectedListener { item ->
             when (item.itemId) {
@@ -74,13 +80,13 @@ class HomeActivity : AppCompatActivity() {
         }
 
         navDrawerButton.setOnClickListener {
-            drawerLayout.openDrawer(navview)
+            drawerLayout.openDrawer(navView)
         }
 
         val callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                if (drawerLayout.isDrawerOpen(navview)) {
-                    drawerLayout.closeDrawer(navview)
+                if (drawerLayout.isDrawerOpen(navView)) {
+                    drawerLayout.closeDrawer(navView)
                 } else {
                     isEnabled = false
                     onBackPressed()
@@ -89,7 +95,13 @@ class HomeActivity : AppCompatActivity() {
         }
         onBackPressedDispatcher.addCallback(this, callback)
 
-        fetchUserData(navview)
+        userViewModel.user.observe(this, Observer { user ->
+            if (user != null) {
+                updateNavigationHeader(navView, user)
+            }
+        })
+
+        fetchUserData()
     }
 
     private fun replaceFragment(fragment: Fragment) {
@@ -110,46 +122,88 @@ class HomeActivity : AppCompatActivity() {
         finish()
     }
 
-    private fun fetchUserData(navview: NavigationView) {
+    private fun fetchUserData() {
         val sharedPreferences: SharedPreferences = getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
         val username = sharedPreferences.getString("username", null)
         val token = sharedPreferences.getString("accessToken", null)
 
         if (username != null && token != null) {
-            RetrofitClient.userService.getUser(username, "Bearer $token").enqueue(object : Callback<UserResponse> {
-                override fun onResponse(call: Call<UserResponse>, response: Response<UserResponse>) {
-                    if (response.isSuccessful) {
-                        val user = response.body()
-                        if (user != null) {
-                            updateNavigationHeader(navview, user)
-                            showToast("Successful")
-                        }
-                    } else {
-                        Log.e("HomeActivity", "Error fetching user data: ${response.message()}")
-                        showToast("Error fetching user data")
-                    }
-                }
-                override fun onFailure(call: Call<UserResponse>, t: Throwable) {
-                    Log.e("HomeActivity", "Network error fetching user data", t)
-                    showToast("Network error fetching user data")
-                }
-            })
-        }
-        else
-        {
+            userViewModel.fetchUserData(username, token)
+        } else {
             showToast("Invalid username or Token")
-            Log.e("HomeActivity", "Invalid user ID or token")
+            Log.e("HomeActivity", "Invalid username or token")
         }
     }
 
-    private fun updateNavigationHeader(navview: NavigationView, user: UserResponse) {
-        val headerView = navview.getHeaderView(0)
-        headerView.findViewById<TextView>(R.id.lblUserFullname)?.text = user.fullName
-        headerView.findViewById<TextView>(R.id.lblUsername)?.text = "@${user.userName}"
-        headerView.findViewById<TextView>(R.id.lblUserEmail)?.text = user.email
+    private fun getDrawableForLetter(letter: Char): Int {
+        return when (letter.lowercaseChar()) {
+            'a' -> R.drawable.a
+            'b' -> R.drawable.b
+            'c' -> R.drawable.c
+            'd' -> R.drawable.d
+            'e' -> R.drawable.e
+            'f' -> R.drawable.f
+            'g' -> R.drawable.g
+            'h' -> R.drawable.h
+            'i' -> R.drawable.i
+            'j' -> R.drawable.j
+            'k' -> R.drawable.k
+            'l' -> R.drawable.l
+            'm' -> R.drawable.m
+            'n' -> R.drawable.n
+            'o' -> R.drawable.o
+            'p' -> R.drawable.p
+            'q' -> R.drawable.q
+            'r' -> R.drawable.r
+            's' -> R.drawable.s
+            't' -> R.drawable.t
+            'u' -> R.drawable.u
+            'v' -> R.drawable.v
+            'w' -> R.drawable.w
+            'x' -> R.drawable.x
+            'y' -> R.drawable.y
+            'z' -> R.drawable.z
+            else -> R.drawable.default_image
+        }
     }
 
-    fun showToast(message: String){
+    private fun updateNavigationHeader(navView: NavigationView, user: Result<UserResponse>) {
+
+        val navDrawerButton: CircleImageView = findViewById(R.id.navDrawerButton)
+        val progressBar: ProgressBar = findViewById(R.id.progressBar)
+
+        progressBar.visibility = View.VISIBLE
+        navDrawerButton.visibility = View.GONE
+
+        val headerView = navView.getHeaderView(0)
+
+        user.onSuccess { userData ->
+            headerView.findViewById<TextView>(R.id.lblUserFullname)?.text = userData.fullName
+            headerView.findViewById<TextView>(R.id.lblUsername)?.text = "@${userData.userName}"
+            headerView.findViewById<TextView>(R.id.lblUserEmail)?.text = userData.email
+            val userPicture: CircleImageView = headerView.findViewById(R.id.userPicture)
+
+            val firstName = userData.fullName.split(" ").firstOrNull()
+            if (!firstName.isNullOrEmpty()) {
+                progressBar.visibility = View.GONE
+                navDrawerButton.visibility = View.VISIBLE
+                val firstLetter = firstName[0]
+                val drawableId = getDrawableForLetter(firstLetter)
+                userPicture.setImageResource(drawableId)
+                navDrawerButton.setImageResource(drawableId)
+            } else {
+                progressBar.visibility = View.GONE
+                navDrawerButton.visibility = View.VISIBLE
+                showToast("Profile Image Error")
+            }
+        }.onFailure { throwable ->
+            Log.e("HomeActivity", "Error updating navigation header", throwable)
+            showToast("Error updating navigation header")
+        }
+    }
+
+
+    fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 }

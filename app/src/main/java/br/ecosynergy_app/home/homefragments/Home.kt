@@ -16,6 +16,7 @@ import br.ecosynergy_app.home.UserResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.IOException
 
 class Home : Fragment() {
 
@@ -53,7 +54,7 @@ class Home : Fragment() {
                         val user = response.body()
                         if (user != null) {
                             val firstName = user.fullName.split(" ").firstOrNull()
-                            lblFirstname.text = firstName
+                            lblFirstname.text = firstName + "!"
                         }
                     } else {
                         Log.e("HomeFragment", "Error fetching user data: ${response.message()}")
@@ -74,6 +75,8 @@ class Home : Fragment() {
             lblFirstname.text = "Invalid username or token"
         }
     }
+
+
 
     companion object {
         @JvmStatic

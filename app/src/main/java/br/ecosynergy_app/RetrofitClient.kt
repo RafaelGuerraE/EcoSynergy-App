@@ -1,5 +1,6 @@
 package br.ecosynergy_app
 
+import br.ecosynergy_app.home.UserService
 import br.ecosynergy_app.login.AuthService
 import br.ecosynergy_app.teams.TeamsService
 import retrofit2.Retrofit

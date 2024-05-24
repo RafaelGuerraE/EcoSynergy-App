@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.appcompat.app.AppCompatActivity
@@ -19,6 +20,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var txtEntry: EditText
     private lateinit var txtPassword: EditText
     private lateinit var authViewModel: AuthViewModel
+    private lateinit var lblReset: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,6 +71,13 @@ class LoginActivity : AppCompatActivity() {
                 Log.d("LoginActivity", "Login failed: ${error.message}")
                 showToast("Dados Incorretos")
             }
+        }
+
+        lblReset = findViewById(R.id.lblReset)
+
+        lblReset.setOnClickListener(){
+            val i = Intent(this, ResetActivity::class.java)
+            startActivity(i)
         }
     }
 

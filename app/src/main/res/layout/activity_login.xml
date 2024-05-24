@@ -35,7 +35,7 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="300dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
+            android:layout_marginBottom="5dp"
             app:passwordToggleEnabled="true"
             android:hint="Senha">
 
@@ -46,13 +46,41 @@
                 android:inputType="textPassword"/>
         </com.google.android.material.textfield.TextInputLayout>
 
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="start"
+            android:layout_marginStart="5dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Esqueceu sua senha? "
+            android:textSize="15sp"
+            android:layout_marginBottom="20dp"/>
+
+            <TextView
+                android:id="@+id/lblReset"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Redefinir senha"
+                android:textStyle="bold"
+                android:textSize="15sp"
+                android:textColor="@color/greenTestDark"
+                android:layout_marginBottom="20dp"
+                android:clickable="true"
+                android:focusable="true"/>
+
+        </LinearLayout>
+
         <Button
             android:id="@+id/btnLogin"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:text="LOGIN"
             android:background="@drawable/button_background"
-            android:layout_marginBottom="15dp"/>
+            android:layout_marginBottom="15dp"
+            />
 
         <com.google.android.gms.common.SignInButton
         android:id="@+id/btnGoogle"

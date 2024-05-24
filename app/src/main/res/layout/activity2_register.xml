@@ -15,63 +15,44 @@
         android:src="@drawable/logo_transparent"
         android:layout_marginBottom="20dp"/>
 
-    <LinearLayout
-        android:layout_width="wrap_content"
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:hint="Nacionalidade"
         android:layout_marginBottom="15dp">
 
-        <TextView
-            android:id="@+id/textView3"
-            android:layout_width="wrap_content"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/txtNationality"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Nacionality"/>
+            android:inputType="textEmailAddress"/>
+    </com.google.android.material.textfield.TextInputLayout>
 
-        <EditText
-            android:id="@+id/txtusername"
-            android:layout_width="300dp"
-            android:layout_height="wrap_content"
-            tools:text="Brazilian" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:hint="Gênero"
         android:layout_marginBottom="15dp">
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="wrap_content"
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/txtGender"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Gender" />
+            android:inputType="textEmailAddress"/>
+    </com.google.android.material.textfield.TextInputLayout>
 
-        <EditText
-            android:id="@+id/txtgender"
-            android:layout_width="300dp"
-            android:layout_height="50dp"
-            tools:text="Male"
-            />
-    </LinearLayout>
+    <com.google.android.material.textfield.TextInputLayout
+    android:layout_width="300dp"
+    android:layout_height="wrap_content"
+    android:hint="Data de Nascimento"
+    android:layout_marginBottom="15dp">
 
-    <LinearLayout
-        android:layout_width="wrap_content"
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/txtDateBirth"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginBottom="15dp">
-        <TextView
-            android:id="@+id/textView2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Date of Birth"/>
-
-        <EditText
-            android:id="@+id/txtdatebirth"
-            android:layout_width="300dp"
-            android:layout_height="50dp"
-            android:inputType="date"
-            tools:text="19/12/2006" />
-    </LinearLayout>
+        android:inputType="date"/>
+</com.google.android.material.textfield.TextInputLayout>
 
     <Button
         android:id="@+id/btnregister"

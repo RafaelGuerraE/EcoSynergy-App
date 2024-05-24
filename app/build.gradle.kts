@@ -55,6 +55,7 @@ dependencies {
 
     implementation(platform("com.google.firebase:firebase-bom:33.0.0"))
     implementation("com.google.mlkit:vision-internal-vkp:18.2.2")
+    implementation("androidx.activity:activity:1.9.0")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
