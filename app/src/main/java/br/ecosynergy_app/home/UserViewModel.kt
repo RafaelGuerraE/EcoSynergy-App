@@ -9,6 +9,7 @@ import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.home.UserResponse
+import okio.IOException
 
 class UserViewModel : ViewModel() {
 
@@ -24,7 +25,7 @@ class UserViewModel : ViewModel() {
             } catch (e: HttpException) {
                 Log.e("UserViewModel", "HTTP error during login", e)
                 _user.value = Result.failure(e)
-            } catch (e: Exception) {
+            } catch (e: IOException) {
                 Log.e("UserViewModel", "HTTP error during login", e)
                 _user.value = Result.failure(e)
             }

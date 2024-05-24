@@ -173,7 +173,7 @@ class HomeActivity : AppCompatActivity() {
         val progressBar: ProgressBar = findViewById(R.id.progressBar)
 
         progressBar.visibility = View.VISIBLE
-        navDrawerButton.visibility = View.GONE
+        navDrawerButton.visibility = View.VISIBLE
 
         val headerView = navView.getHeaderView(0)
 
