@@ -29,7 +29,27 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="OLA"/>
+            android:text="Digite o email de sua conta:"/>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:hint="Email">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/txtEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textEmailAddress"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Button
+            android:id="@+id/btnSend"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:text="ENVIAR"/>
 
     </LinearLayout>
 

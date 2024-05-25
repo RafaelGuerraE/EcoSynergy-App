@@ -6,4 +6,10 @@
     <string name="nav_close">Close Navigation Drawer</string>
     <string name="verificar">VERIFICAR</string>
     <string name="logouser">LogoUser</string>
+
+    <string-array name="time_array">
+        <item>Semanal</item>
+        <item>Mensal</item>
+        <item>Trimestral</item>
+    </string-array>
 </resources>
