@@ -14,6 +14,7 @@ import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.home.HomeActivity
 import br.ecosynergy_app.register.RegisterActivity
+import com.google.android.gms.common.SignInButton
 
 class LoginActivity : AppCompatActivity() {
 
@@ -37,6 +38,11 @@ class LoginActivity : AppCompatActivity() {
         txtPassword = findViewById(R.id.txtPassword)
         val btnLogin: Button = findViewById(R.id.btnLogin)
         val btnRegister: Button = findViewById(R.id.btnRegister)
+        val btnGoogle: SignInButton = findViewById(R.id.btnGoogle)
+
+        btnGoogle.setOnClickListener(){
+            showToast("Ainda não disponível")
+        }
 
         btnLogin.setOnClickListener {
             val username = txtEntry.text.toString()

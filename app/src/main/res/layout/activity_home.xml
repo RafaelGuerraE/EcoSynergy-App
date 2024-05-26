@@ -17,7 +17,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/greenTestB"
+            android:background="@color/green"
             android:padding="10dp">
 
             <de.hdodenhof.circleimageview.CircleImageView
@@ -56,7 +56,7 @@
             android:id="@+id/bottomNavView"
             android:layout_width="match_parent"
             android:layout_height="70dp"
-            android:background="@color/greenTestB"
+            android:background="@color/green"
             app:itemIconSize="40dp"
             app:labelVisibilityMode="unlabeled"
             app:menu="@menu/bottom_nav"
@@ -76,6 +76,6 @@
         app:menu="@menu/nav_menu"
         app:itemIconTint="@color/black"
         app:itemTextColor="@color/black"
-        android:background="@color/greenTestB"/>
+        android:background="@color/green"/>
 
 </androidx.drawerlayout.widget.DrawerLayout>

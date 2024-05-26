@@ -66,7 +66,7 @@
                 android:text="Redefinir senha"
                 android:textStyle="bold"
                 android:textSize="15sp"
-                android:textColor="@color/greenTestDark"
+                android:textColor="@color/greenDark"
                 android:layout_marginBottom="20dp"
                 android:clickable="true"
                 android:focusable="true"/>
@@ -79,16 +79,7 @@
             android:layout_height="wrap_content"
             android:text="LOGIN"
             android:background="@drawable/button_background"
-            android:layout_marginBottom="15dp"
-            />
-
-        <com.google.android.gms.common.SignInButton
-        android:id="@+id/btnGoogle"
-        android:layout_width="300dp"
-        android:layout_height="48dp"
-        android:text="Sign In"
-        android:layout_marginBottom="15dp"
-        android:textSize="18sp" />
+            android:layout_marginBottom="15dp" />
 
         <Button
             android:id="@+id/btnRegister"
@@ -96,6 +87,13 @@
             android:layout_height="wrap_content"
             android:text="CADASTRAR"
             android:background="@drawable/button_background"/>
+
+        <com.google.android.gms.common.SignInButton
+            android:id="@+id/btnGoogle"
+            android:layout_width="300dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="15dp"
+            android:textSize="18sp"/>
 
     </LinearLayout>
 </LinearLayout>

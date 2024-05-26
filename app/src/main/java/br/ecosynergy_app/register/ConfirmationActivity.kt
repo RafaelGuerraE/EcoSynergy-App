@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
+import android.widget.ImageButton
 import br.ecosynergy_app.home.HomeActivity
 import br.ecosynergy_app.R
 
@@ -15,6 +16,11 @@ class ConfirmationActivity : AppCompatActivity() {
         setContentView(R.layout.activity_confirmation)
 
         val btncheck: Button = findViewById(R.id.btncheck)
+        val btnBack = findViewById<ImageButton>(R.id.btnBack)
+
+        btnBack.setOnClickListener(){
+            finish()
+        }
 
         btncheck.setOnClickListener(){
             val i = Intent(this, HomeActivity::class.java)

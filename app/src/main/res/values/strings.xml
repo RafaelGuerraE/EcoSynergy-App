@@ -12,4 +12,10 @@
         <item>Mensal</item>
         <item>Trimestral</item>
     </string-array>
+
+    <string-array name="gender_array">
+        <item>Masculino</item>
+        <item>Feminino</item>
+        <item>Prefiro não dizer</item>
+    </string-array>
 </resources>

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="black">#FF000000</color>
-    <color name="gray">#616161</color>
-    <color name="white">#FFFFFFFF</color>
-    <color name="greenTest">#ADE5AB</color>
-    <color name="greenTestB">#ADE5AB</color>
-    <color name="greenTestDark">#059C00</color>
+    <color name="gray">#B9B2BB</color>
+    <color name="white">#FFFFFF</color>
+    <color name="white2">#FFF7FF</color>
+    <color name="green">#81DC7E</color>
+    <color name="greenDark">#06B600</color>
     <color name="blue">#0091FF</color>
     <color name="pastel">#DADADA</color>
 </resources>
