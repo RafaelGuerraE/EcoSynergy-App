@@ -27,7 +27,8 @@
         <de.hdodenhof.circleimageview.CircleImageView
             android:layout_width="75dp"
             android:layout_height="75dp"
-            android:src="@drawable/default_image"/>
+            android:src="@drawable/default_image"
+            android:id="@+id/teamPicture"/>
 
         <TextView
             android:id="@+id/lblTeamName"

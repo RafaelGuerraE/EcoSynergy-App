@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="16dp"
-    android:background="@null"
+    tools:background="@color/green"
     android:gravity="center_vertical"
     android:theme="@style/Base.Theme.EcoSynergyApp">
 
@@ -43,7 +43,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:text="\@rafaelguerra"
-                android:textColor="@color/gray"
+                android:textColor="@color/grayDark"
                 android:textSize="13sp"/>
 
         </LinearLayout>
@@ -53,7 +53,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             tools:text="rafael@ecosynergy.com"
-            android:textColor="@color/gray"
+            android:textColor="@color/grayDark"
             android:textSize="14sp"/>
     </LinearLayout>
 

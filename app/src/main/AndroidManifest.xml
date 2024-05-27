@@ -15,27 +15,9 @@
         android:supportsRtl="true"
         android:theme="@style/Base.Theme.EcoSynergyApp"
         tools:targetApi="31">
-        <activity
-            android:name=".login.ResetActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ProfileActivity"
-            android:exported="true" />
-        <activity
-            android:name=".register.ConfirmationActivity"
-            android:exported="true" />
-        <activity
-            android:name=".register.RegisterActivity2"
-            android:exported="true" />
-        <activity
-            android:name=".register.RegisterActivity"
-            android:exported="true" />
-        <activity
-            android:name=".teams.TeamActivity"
-            android:exported="true" />
-        <activity
-            android:name=".home.HomeActivity"
-            android:exported="true" />
+
+        <!--Login-->
+
         <activity
             android:name=".login.LoginActivity"
             android:exported="true">
@@ -45,9 +27,61 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".login.ResetActivity"
+            android:exported="false" />
+
+        <!--Home-->
+
+        <activity
+            android:name=".home.HomeActivity"
+            android:exported="true" />
+        <activity
+            android:name=".home.UserSettingsActivity"
+            android:exported="true" />
+        <activity
+            android:name=".home.AppSettingsActivity"
+            android:exported="true" />
+        <activity
+            android:name=".home.NotificationsActivity"
+            android:exported="true" />
+        <activity
+            android:name=".home.TermsActivity"
+            android:exported="true" />
+
+        <!--Register-->
+        <activity
+            android:name=".register.ConfirmationActivity"
+            android:exported="true" />
+        <activity
+            android:name=".register.RegisterActivity2"
+            android:exported="true" />
+        <activity
+            android:name=".register.RegisterActivity"
+            android:exported="true" />
+
+        <!--Teams-->
+        <activity
+            android:name=".teams.TeamActivity"
+            android:exported="true" />
         <activity
             android:name=".teams.TeamSettingsActivity"
             android:exported="true" />
+        <activity
+            android:name=".teams.TeamBansActivity"
+            android:exported="true" />
+        <activity
+            android:name=".teams.TeamInviteActivity"
+            android:exported="true" />
+        <activity
+            android:name=".teams.TeamMembersActivity"
+            android:exported="true" />
+        <activity
+            android:name=".teams.TeamOverviewActivity"
+            android:exported="true" />
+
+
     </application>
 
 </manifest>

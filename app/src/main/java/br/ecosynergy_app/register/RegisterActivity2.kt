@@ -7,7 +7,6 @@ import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.ImageButton
-import android.widget.Spinner
 import br.ecosynergy_app.R
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -16,7 +15,7 @@ import java.io.IOException
 class RegisterActivity2 : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity2_register)
+        setContentView(R.layout.activity_register2)
 
         val txtNationality: AutoCompleteTextView = findViewById(R.id.txtNationality)
         val btnRegister: Button = findViewById(R.id.btnregister)

@@ -102,6 +102,35 @@ class HomeActivity : AppCompatActivity() {
         })
 
         fetchUserData()
+
+        navView.setNavigationItemSelectedListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.account_config -> {
+                    val i = Intent(this, UserSettingsActivity::class.java)
+                    startActivity(i)
+                    true
+                }
+                R.id.app_config -> {
+                    val i = Intent(this, AppSettingsActivity::class.java)
+                    startActivity(i)
+                    true
+                }
+                R.id.terms -> {
+                    val i = Intent(this, TermsActivity::class.java)
+                    startActivity(i)
+                    true
+                }
+                R.id.notifications -> {
+                    val i = Intent(this, NotificationsActivity::class.java)
+                    startActivity(i)
+                    true
+                }
+                else -> false
+            }.also {
+                drawerLayout.closeDrawer(navView)
+            }
+        }
+
     }
 
     private fun replaceFragment(fragment: Fragment) {
@@ -201,7 +230,6 @@ class HomeActivity : AppCompatActivity() {
             showToast("Error updating navigation header")
         }
     }
-
 
     fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
