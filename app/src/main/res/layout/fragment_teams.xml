@@ -26,7 +26,7 @@
                 android:id="@+id/imgTeam"
                 android:layout_width="70dp"
                 android:layout_height="70dp"
-                android:src="@drawable/e"
+                android:src="@drawable/default_image"
                 android:layout_marginStart="15dp"
                 android:padding="5dp"
                 android:layout_gravity="start"/>
@@ -65,8 +65,20 @@
             <com.google.android.material.imageview.ShapeableImageView
                 app:shapeAppearanceOverlay="@style/RoundedSquare"
                 android:layout_width="380dp"
-                android:layout_height="300dp"
+                android:layout_height="200dp"
                 android:background="@color/pastel"
+                android:scaleType="center"
+                android:src="@drawable/graph4"
+                android:layout_gravity="center"
+                android:layout_marginBottom="30dp"/>
+
+            <com.google.android.material.imageview.ShapeableImageView
+                app:shapeAppearanceOverlay="@style/RoundedSquare"
+                android:layout_width="380dp"
+                android:layout_height="250dp"
+                android:background="@color/pastel"
+                android:scaleType="center"
+                android:src="@drawable/graph5"
                 android:layout_gravity="center"
                 android:layout_marginBottom="30dp"/>
 
@@ -75,14 +87,8 @@
                 android:layout_width="380dp"
                 android:layout_height="300dp"
                 android:background="@color/pastel"
-                android:layout_gravity="center"
-                android:layout_marginBottom="30dp"/>
-
-            <com.google.android.material.imageview.ShapeableImageView
-                app:shapeAppearanceOverlay="@style/RoundedSquare"
-                android:layout_width="380dp"
-                android:layout_height="300dp"
-                android:background="@color/pastel"
+                android:scaleType="center"
+                android:src="@drawable/graph1"
                 android:layout_gravity="center"
                 android:layout_marginBottom="30dp"/>
 

@@ -63,6 +63,8 @@
             android:layout_width="380dp"
             android:layout_height="300dp"
             android:background="@color/pastel"
+            android:scaleType="center"
+            android:src="@drawable/graph1"
             android:layout_gravity="center"
             android:layout_marginBottom="30dp"/>
 
@@ -71,6 +73,8 @@
             android:layout_width="380dp"
             android:layout_height="300dp"
             android:background="@color/pastel"
+            android:scaleType="center"
+            android:src="@drawable/graph2"
             android:layout_gravity="center"
             android:layout_marginBottom="30dp"/>
 

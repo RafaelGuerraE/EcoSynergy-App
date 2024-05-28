@@ -130,7 +130,19 @@ class HomeActivity : AppCompatActivity() {
                 drawerLayout.closeDrawer(navView)
             }
         }
+    }
 
+    override fun onResume() {
+        super.onResume()
+        val navView: NavigationView = findViewById(R.id.nav_view)
+        clearNavigationViewSelection(navView)
+    }
+
+    private fun clearNavigationViewSelection(navView: NavigationView) {
+        navView.menu.findItem(R.id.account_config)?.isChecked = false
+        navView.menu.findItem(R.id.app_config)?.isChecked = false
+        navView.menu.findItem(R.id.terms)?.isChecked = false
+        navView.menu.findItem(R.id.notifications)?.isChecked = false
     }
 
     private fun replaceFragment(fragment: Fragment) {

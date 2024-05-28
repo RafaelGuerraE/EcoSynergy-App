@@ -1,4 +1,4 @@
-package br.ecosynergy_app
+package br.ecosynergy_app.teams
 
 import retrofit2.http.GET
 import retrofit2.http.POST

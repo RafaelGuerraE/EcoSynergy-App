@@ -57,22 +57,31 @@
             <com.google.android.material.imageview.ShapeableImageView
                 app:shapeAppearanceOverlay="@style/RoundedSquare"
                 android:layout_width="380dp"
-                android:layout_height="300dp"
+                android:layout_height="70dp"
                 android:background="@color/pastel"
+                android:scaleType="fitStart"
+                android:src="@drawable/graph3"
                 android:layout_gravity="center"
-                android:layout_marginBottom="30dp"/>
+                android:layout_marginBottom="30dp"
+                />
+
             <com.google.android.material.imageview.ShapeableImageView
                 app:shapeAppearanceOverlay="@style/RoundedSquare"
                 android:layout_width="380dp"
                 android:layout_height="300dp"
                 android:background="@color/pastel"
+                android:scaleType="center"
+                android:src="@drawable/graph1"
                 android:layout_gravity="center"
                 android:layout_marginBottom="30dp"/>
+
             <com.google.android.material.imageview.ShapeableImageView
                 app:shapeAppearanceOverlay="@style/RoundedSquare"
                 android:layout_width="380dp"
                 android:layout_height="300dp"
                 android:background="@color/pastel"
+                android:scaleType="center"
+                android:src="@drawable/graph2"
                 android:layout_gravity="center"
                 android:layout_marginBottom="30dp"/>
 
