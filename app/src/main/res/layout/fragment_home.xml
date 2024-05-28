@@ -9,7 +9,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <LinearLayout
@@ -17,19 +17,23 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_gravity="start"
-            android:layout_margin="15dp">
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="20dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Seja bem vindo, "
-                android:textSize="20sp"/>
+                android:textSize="20sp"
+                android:textStyle="bold"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/lblFirstname"
-                tools:text="Rafael"
+                tools:text="Rafael!"
                 android:textSize="25sp"
+                android:textColor="@color/greenDark"
                 android:textStyle="bold"/>
             <ProgressBar
                 android:id="@+id/progressBar"
@@ -40,7 +44,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="370dp"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:gravity="start"
@@ -52,11 +56,11 @@
                 android:text="Dados Recentes:"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                android:layout_marginBottom="10dp"/>
+                android:layout_marginBottom="20dp"/>
 
             <com.google.android.material.imageview.ShapeableImageView
                 app:shapeAppearanceOverlay="@style/RoundedSquare"
-                android:layout_width="380dp"
+                android:layout_width="350dp"
                 android:layout_height="70dp"
                 android:background="@color/pastel"
                 android:scaleType="fitStart"
@@ -67,7 +71,7 @@
 
             <com.google.android.material.imageview.ShapeableImageView
                 app:shapeAppearanceOverlay="@style/RoundedSquare"
-                android:layout_width="380dp"
+                android:layout_width="350dp"
                 android:layout_height="300dp"
                 android:background="@color/pastel"
                 android:scaleType="center"
@@ -77,7 +81,7 @@
 
             <com.google.android.material.imageview.ShapeableImageView
                 app:shapeAppearanceOverlay="@style/RoundedSquare"
-                android:layout_width="380dp"
+                android:layout_width="350dp"
                 android:layout_height="300dp"
                 android:background="@color/pastel"
                 android:scaleType="center"

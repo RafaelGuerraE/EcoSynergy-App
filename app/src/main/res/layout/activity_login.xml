@@ -33,10 +33,11 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/passwordLayout"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
-            app:passwordToggleEnabled="true"
+            app:endIconMode="password_toggle"
             android:hint="Senha">
 
             <com.google.android.material.textfield.TextInputEditText

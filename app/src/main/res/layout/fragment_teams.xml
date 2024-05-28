@@ -64,7 +64,7 @@
 
             <com.google.android.material.imageview.ShapeableImageView
                 app:shapeAppearanceOverlay="@style/RoundedSquare"
-                android:layout_width="380dp"
+                android:layout_width="350dp"
                 android:layout_height="200dp"
                 android:background="@color/pastel"
                 android:scaleType="center"
@@ -74,7 +74,7 @@
 
             <com.google.android.material.imageview.ShapeableImageView
                 app:shapeAppearanceOverlay="@style/RoundedSquare"
-                android:layout_width="380dp"
+                android:layout_width="350dp"
                 android:layout_height="250dp"
                 android:background="@color/pastel"
                 android:scaleType="center"
@@ -84,7 +84,7 @@
 
             <com.google.android.material.imageview.ShapeableImageView
                 app:shapeAppearanceOverlay="@style/RoundedSquare"
-                android:layout_width="380dp"
+                android:layout_width="350dp"
                 android:layout_height="300dp"
                 android:background="@color/pastel"
                 android:scaleType="center"
