@@ -7,6 +7,8 @@ import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.ImageButton
+import android.widget.Spinner
+import android.widget.TextView
 import br.ecosynergy_app.R
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -19,8 +21,10 @@ class RegisterActivity2 : AppCompatActivity() {
 
         val txtNationality: AutoCompleteTextView = findViewById(R.id.txtNationality)
         val btnRegister: Button = findViewById(R.id.btnregister)
+        val spinnerGender: Spinner = findViewById(R.id.spinnerGender)
+        val spinnerError: TextView = findViewById(R.id.spinnerError)
 
-        val nationalities = loadNationalitiesFromJson()
+        val nationalities = loadNationalities()
         val nationalityNames = nationalities.map { it.nationality }
 
         val adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, nationalityNames)
@@ -33,18 +37,39 @@ class RegisterActivity2 : AppCompatActivity() {
         }
 
         btnRegister.setOnClickListener {
+
+            val nationalitySelected = txtNationality.text.toString()
+            val gender = spinnerGender.selectedItem.toString()
+            if(nationalitySelected == null || gender == "Selecione uma opção")
+            {
+                if(nationalitySelected == null){
+                    txtNationality.error = "Selecione uma nacionalidade"
+                    txtNationality.requestFocus()
+                    return@setOnClickListener
+                }
+                else{
+                    spinnerError.visibility = TextView.VISIBLE
+                    spinnerError.text = "Selecione uma opção de gênero"
+                    return@setOnClickListener
+                }
+            }
+            if(gender != "Selecione uma opção"){
+                spinnerError.visibility = TextView.INVISIBLE
+            }
+
             val i = Intent(this, ConfirmationActivity::class.java)
             startActivity(i)
+
         }
     }
-    private fun loadNationalitiesFromJson(): List<Nationality> {
-        val jsonFileString = getJsonDataFromAsset("nationalities.json")
+    private fun loadNationalities(): List<Nationality> {
+        val jsonFileString = getData("nationalities.json")
         val gson = Gson()
         val listNationalityType = object : TypeToken<List<Nationality>>() {}.type
         return gson.fromJson(jsonFileString, listNationalityType)
     }
 
-    private fun getJsonDataFromAsset(fileName: String): String? {
+    private fun getData(fileName: String): String? {
         return try {
             val inputStream = assets.open(fileName)
             val size = inputStream.available()

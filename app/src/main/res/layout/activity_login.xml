@@ -1,100 +1,108 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center">
-
-    <ImageView
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:src="@drawable/logo_transparent"
-        android:layout_marginBottom="20dp"/>
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".login.LoginActivity">
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:gravity="center">
+        android:gravity="center"
+        android:layout_marginTop="120dp">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="300dp"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:hint="Email ou Username">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/txtEntry"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textEmailAddress"/>
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/passwordLayout"
-            android:layout_width="300dp"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            app:endIconMode="password_toggle"
-            android:hint="Senha">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/txtPassword"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textPassword"/>
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_gravity="start"
-            android:layout_marginStart="5dp">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Esqueceu sua senha? "
-            android:textSize="15sp"
+        <ImageView
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:src="@drawable/logo_transparent"
             android:layout_marginBottom="20dp"/>
 
-            <TextView
-                android:id="@+id/lblReset"
+        <LinearLayout
+            android:layout_width="310dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:hint="Email ou Username">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/txtEntry"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textEmailAddress"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/passwordLayout"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                app:endIconMode="password_toggle"
+                android:hint="Senha">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/txtPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Redefinir senha"
-                android:textStyle="bold"
+                android:orientation="horizontal"
+                android:layout_gravity="start"
+                android:layout_marginStart="10dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Esqueceu sua senha? "
                 android:textSize="15sp"
-                android:textColor="@color/greenDark"
-                android:layout_marginBottom="20dp"
-                android:clickable="true"
-                android:focusable="true"/>
+                android:layout_marginBottom="20dp"/>
+
+                <TextView
+                    android:id="@+id/lblReset"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Redefinir senha"
+                    android:textStyle="bold"
+                    android:textSize="15sp"
+                    android:textColor="@color/greenDark"
+                    android:layout_marginBottom="20dp"
+                    android:clickable="true"
+                    android:focusable="true"/>
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btnLogin"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:text="LOGIN"
+                android:background="@drawable/button_background"
+                android:layout_marginBottom="15dp" />
+
+            <Button
+                android:id="@+id/btnRegister"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:text="CADASTRAR"
+                android:background="@drawable/button_background"/>
+
+            <com.google.android.gms.common.SignInButton
+                android:id="@+id/btnGoogle"
+                android:layout_width="300dp"
+                android:layout_height="48dp"
+                android:layout_marginTop="15dp"
+                android:textSize="18sp"/>
 
         </LinearLayout>
-
-        <Button
-            android:id="@+id/btnLogin"
-            android:layout_width="300dp"
-            android:layout_height="wrap_content"
-            android:text="LOGIN"
-            android:background="@drawable/button_background"
-            android:layout_marginBottom="15dp" />
-
-        <Button
-            android:id="@+id/btnRegister"
-            android:layout_width="300dp"
-            android:layout_height="wrap_content"
-            android:text="CADASTRAR"
-            android:background="@drawable/button_background"/>
-
-        <com.google.android.gms.common.SignInButton
-            android:id="@+id/btnGoogle"
-            android:layout_width="300dp"
-            android:layout_height="48dp"
-            android:layout_marginTop="15dp"
-            android:textSize="18sp"/>
-
     </LinearLayout>
-</LinearLayout>
+</ScrollView>
