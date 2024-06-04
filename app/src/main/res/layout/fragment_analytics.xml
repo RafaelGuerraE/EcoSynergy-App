@@ -24,14 +24,16 @@
             <Button
                 android:id="@+id/btnNewSensor"
                 android:text="Novo sensor"
-                android:layout_width="175dp"
+                android:layout_width="160dp"
                 android:layout_height="50dp"
-                android:layout_marginEnd="10dp"/>
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/button_background"/>
             <Button
                 android:id="@+id/btnSensor"
                 android:text="Gerenciar sensores"
                 android:layout_width="175dp"
-                android:layout_height="50dp"/>
+                android:layout_height="50dp"
+                android:background="@drawable/button_background"/>
         </LinearLayout>
 
         <LinearLayout
@@ -41,11 +43,11 @@
             android:gravity="start">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="340dp"
                 android:layout_height="wrap_content"
                 android:text="Monitoramento mensal dos gases emitidos"
                 android:textStyle="bold"
-                android:textSize="18sp"
+                android:textSize="17sp"
                 android:layout_marginBottom="10dp"/>
 
             <Spinner
@@ -60,7 +62,7 @@
 
         <com.google.android.material.imageview.ShapeableImageView
             app:shapeAppearanceOverlay="@style/RoundedSquare"
-            android:layout_width="350dp"
+            android:layout_width="340dp"
             android:layout_height="300dp"
             android:background="@color/pastel"
             android:scaleType="center"
@@ -70,7 +72,7 @@
 
         <com.google.android.material.imageview.ShapeableImageView
             app:shapeAppearanceOverlay="@style/RoundedSquare"
-            android:layout_width="350dp"
+            android:layout_width="340dp"
             android:layout_height="300dp"
             android:background="@color/pastel"
             android:scaleType="center"

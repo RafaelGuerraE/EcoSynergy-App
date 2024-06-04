@@ -44,7 +44,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="370dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:gravity="start"
@@ -60,7 +60,7 @@
 
             <com.google.android.material.imageview.ShapeableImageView
                 app:shapeAppearanceOverlay="@style/RoundedSquare"
-                android:layout_width="350dp"
+                android:layout_width="340dp"
                 android:layout_height="70dp"
                 android:background="@color/pastel"
                 android:scaleType="fitStart"
@@ -71,7 +71,7 @@
 
             <com.google.android.material.imageview.ShapeableImageView
                 app:shapeAppearanceOverlay="@style/RoundedSquare"
-                android:layout_width="350dp"
+                android:layout_width="340dp"
                 android:layout_height="300dp"
                 android:background="@color/pastel"
                 android:scaleType="center"
@@ -81,7 +81,7 @@
 
             <com.google.android.material.imageview.ShapeableImageView
                 app:shapeAppearanceOverlay="@style/RoundedSquare"
-                android:layout_width="350dp"
+                android:layout_width="340dp"
                 android:layout_height="300dp"
                 android:background="@color/pastel"
                 android:scaleType="center"
