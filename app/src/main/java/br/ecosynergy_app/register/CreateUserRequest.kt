@@ -1,4 +1,4 @@
-package br.ecosynergy_app.login
+package br.ecosynergy_app.register
 
 data class CreateUserRequest(
     val userName: String,

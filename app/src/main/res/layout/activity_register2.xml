@@ -36,17 +36,55 @@
                 android:src="@drawable/logo_transparent"
                 android:layout_marginBottom="20dp"/>
 
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:hint="Nome Completo"
+                android:layout_marginBottom="15dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/txtFullname"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textEmailAddress"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:hint="Nome de Usuário"
+                android:layout_marginBottom="15dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/txtUsername"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textEmailAddress"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
                 <AutoCompleteTextView
                     android:layout_width="300dp"
                     android:layout_height="60dp"
                     android:id="@+id/txtNationality"
                     android:inputType="text"
                     android:hint="Nacionalidade"
-                    android:layout_marginBottom="30dp"
+                    android:layout_marginBottom="5dp"
                     android:completionThreshold="1"
                     android:background="@drawable/spinner_background"
                     android:textColor="@color/black"
                     android:textColorHint="@color/gray"/>
+
+            <TextView
+                android:id="@+id/autoError"
+                tools:text="Error"
+                android:layout_gravity="start"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/holo_red_dark"
+                android:textStyle="bold"
+                android:visibility="invisible"
+                android:layout_marginStart="10dp"
+                android:layout_marginBottom="5dp"/>
 
                 <Spinner
                     android:entries="@array/gender_array"
@@ -55,7 +93,7 @@
                     android:layout_height="60dp"
                     android:spinnerMode="dropdown"
                     android:background="@drawable/spinner_background"
-                    android:layout_marginBottom="10dp"
+                    android:layout_marginBottom="5dp"
                     />
 
             <TextView
@@ -68,7 +106,7 @@
                 android:textStyle="bold"
                 android:visibility="invisible"
                 android:layout_marginStart="10dp"
-                android:layout_marginBottom="10dp"/>
+                android:layout_marginBottom="5dp"/>
 
             <Button
                 android:id="@+id/btnregister"

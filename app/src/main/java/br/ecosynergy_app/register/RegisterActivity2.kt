@@ -9,18 +9,37 @@ import android.widget.Button
 import android.widget.ImageButton
 import android.widget.Spinner
 import android.widget.TextView
+import androidx.lifecycle.ViewModelProvider
 import br.ecosynergy_app.R
+import br.ecosynergy_app.RetrofitClient
+import br.ecosynergy_app.login.AuthViewModel
+import br.ecosynergy_app.login.AuthViewModelFactory
+import com.google.android.material.textfield.TextInputEditText
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.io.IOException
 
 class RegisterActivity2 : AppCompatActivity() {
+
+    private lateinit var registerViewModel: RegisterViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register2)
 
-        val txtNationality: AutoCompleteTextView = findViewById(R.id.txtNationality)
+        val email = intent.getStringExtra("EMAIL")
+        val password = intent.getStringExtra("PASSWORD")
+
+        val btnBack = findViewById<ImageButton>(R.id.btnBack)
+
         val btnRegister: Button = findViewById(R.id.btnregister)
+
+        val txtFullname: TextInputEditText = findViewById(R.id.txtFullname)
+        val txtUsername: TextInputEditText = findViewById(R.id.txtUsername)
+
+        val txtNationality: AutoCompleteTextView = findViewById(R.id.txtNationality)
+        val autoError: TextView = findViewById(R.id.autoError)
+
         val spinnerGender: Spinner = findViewById(R.id.spinnerGender)
         val spinnerError: TextView = findViewById(R.id.spinnerError)
 
@@ -30,36 +49,55 @@ class RegisterActivity2 : AppCompatActivity() {
         val adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, nationalityNames)
         txtNationality.setAdapter(adapter)
 
-        val btnBack = findViewById<ImageButton>(R.id.btnBack)
+        registerViewModel = ViewModelProvider(
+            this,
+            RegisterViewModelFactory(RetrofitClient.registerService)
+        )[RegisterViewModel::class.java]
 
-        btnBack.setOnClickListener(){
-            finish()
-        }
+
+        btnBack.setOnClickListener{ finish() }
 
         btnRegister.setOnClickListener {
 
-            val nationalitySelected = txtNationality.text.toString()
             val gender = spinnerGender.selectedItem.toString()
-            if(nationalitySelected == null || gender == "Selecione uma opção")
+            val nationalitySelected = txtNationality.text
+            val fullName = txtFullname.text.toString()
+            val username = txtUsername.text.toString()
+
+            if(nationalitySelected.isNullOrEmpty() && gender == "Selecione uma opção")
             {
-                if(nationalitySelected == null){
-                    txtNationality.error = "Selecione uma nacionalidade"
-                    txtNationality.requestFocus()
-                    return@setOnClickListener
-                }
-                else{
-                    spinnerError.visibility = TextView.VISIBLE
-                    spinnerError.text = "Selecione uma opção de gênero"
-                    return@setOnClickListener
-                }
+                autoError.visibility = TextView.VISIBLE
+                autoError.text = "Selecione uma nacionalidade"
+                txtNationality.requestFocus()
+                spinnerError.visibility = TextView.VISIBLE
+                spinnerError.text = "Selecione uma opção de gênero"
+                return@setOnClickListener
             }
-            if(gender != "Selecione uma opção"){
+            else if(nationalitySelected.isNullOrEmpty()){
+                autoError.visibility = TextView.VISIBLE
+                autoError.text = "Selecione uma nacionalidade"
+                txtNationality.requestFocus()
                 spinnerError.visibility = TextView.INVISIBLE
+                spinnerError.text = ""
+                return@setOnClickListener
+            }
+            else if(gender == "Selecione uma opção"){
+                spinnerError.visibility = TextView.VISIBLE
+                spinnerError.text = "Selecione uma opção de gênero"
+                autoError.visibility = TextView.INVISIBLE
+                autoError.text = ""
+                return@setOnClickListener
             }
 
-            val i = Intent(this, ConfirmationActivity::class.java)
+            val i = Intent(this, ConfirmationActivity::class.java).apply {
+                putExtra("EMAIL", email)
+                putExtra("PASSWORD", password)
+                putExtra("FULLNAME", fullName)
+                putExtra("USERNAME", username)
+                putExtra("NATIONALITY", nationalitySelected)
+                putExtra("GENDER", gender)
+            }
             startActivity(i)
-
         }
     }
     private fun loadNationalities(): List<Nationality> {

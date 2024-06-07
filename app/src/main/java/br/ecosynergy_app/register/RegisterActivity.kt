@@ -21,19 +21,23 @@ class RegisterActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
 
-        val btnRegister: Button = findViewById(R.id.btnregister)
         val btnBack : ImageButton = findViewById(R.id.btnBack)
-        val txtPassword: TextInputEditText = findViewById(R.id.txtPassword)
-        val txtConfirmPassword: TextInputEditText = findViewById(R.id.txtConfirmPassword)
-        val passwordLayout: TextInputLayout = findViewById(R.id.passwordLayout)
-        val confirmPasswordLayout: TextInputLayout = findViewById(R.id.confirmPasswordLayout)
 
-        btnBack.setOnClickListener(){
-            finish()
-        }
+        val btnRegister: Button = findViewById(R.id.btnregister)
+
+        val txtEmail: TextInputEditText = findViewById(R.id.txtEmail)
+
+        val passwordLayout: TextInputLayout = findViewById(R.id.passwordLayout)
+        val txtPassword: TextInputEditText = findViewById(R.id.txtPassword)
+
+        val confirmPasswordLayout: TextInputLayout = findViewById(R.id.confirmPasswordLayout)
+        val txtConfirmPassword: TextInputEditText = findViewById(R.id.txtConfirmPassword)
+
+        btnBack.setOnClickListener{ finish() }
 
         btnRegister.setOnClickListener {
 
+            val email = txtEmail.text.toString()
             val password = txtPassword.text.toString()
             val confirmPassword = txtConfirmPassword.text.toString()
 
@@ -61,7 +65,10 @@ class RegisterActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            val i = Intent(this, RegisterActivity2::class.java)
+            val i = Intent(this, RegisterActivity2::class.java).apply {
+                putExtra("EMAIL", email)
+                putExtra("PASSWORD", password)
+            }
             startActivity(i)
         }
 

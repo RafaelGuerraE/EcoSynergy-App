@@ -37,8 +37,7 @@ class LoginActivity : AppCompatActivity() {
             return
         }
 
-        authViewModel = ViewModelProvider(this, AuthViewModelFactory(RetrofitClient.authService))
-            .get(AuthViewModel::class.java)
+        authViewModel = ViewModelProvider(this, AuthViewModelFactory(RetrofitClient.authService)).get(AuthViewModel::class.java)
 
         txtEntry = findViewById(R.id.txtEntry)
         txtPassword = findViewById(R.id.txtPassword)
