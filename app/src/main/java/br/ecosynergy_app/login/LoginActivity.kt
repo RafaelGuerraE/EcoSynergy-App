@@ -3,6 +3,7 @@ package br.ecosynergy_app.login
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.service.autofill.UserData
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -16,9 +17,19 @@ import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.home.HomeActivity
 import br.ecosynergy_app.register.RegisterActivity
+import com.google.android.gms.auth.api.identity.BeginSignInRequest
+import com.google.android.gms.auth.api.identity.Identity
+import com.google.android.gms.auth.api.identity.SignInClient
+import com.google.android.gms.auth.api.identity.SignInCredential
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.SignInButton
+import com.google.android.gms.common.api.ApiException
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.GoogleAuthProvider
 
 class LoginActivity : AppCompatActivity() {
 
@@ -27,6 +38,10 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var authViewModel: AuthViewModel
     private lateinit var lblReset: TextView
     private var hasErrorShown = false
+    private lateinit var oneTapClient: SignInClient
+    private lateinit var auth: FirebaseAuth
+    private val REQ_ONE_TAP = 2 // Can be any integer unique to the Activity
+    private var showOneTapUI = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,9 +61,34 @@ class LoginActivity : AppCompatActivity() {
         val btnRegister: Button = findViewById(R.id.btnRegister)
         val btnGoogle: SignInButton = findViewById(R.id.btnGoogle)
 
-        btnGoogle.setOnClickListener(){
-            showToast("Ainda não disponível")
+        auth = FirebaseAuth.getInstance()
+        oneTapClient = Identity.getSignInClient(this)
+
+        val signInRequest = BeginSignInRequest.builder()
+            .setGoogleIdTokenRequestOptions(
+                BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
+                    .setSupported(true)
+                    .setServerClientId(getString(R.string.your_web_client_id))
+                    .setFilterByAuthorizedAccounts(true)
+                    .build())
+            .build()
+
+        btnGoogle.setOnClickListener {
+            oneTapClient.beginSignIn(signInRequest)
+                .addOnSuccessListener(this) { result ->
+                    try {
+                        startIntentSenderForResult(
+                            result.pendingIntent.intentSender, REQ_ONE_TAP,
+                            null, 0, 0, 0, null)
+                    } catch (e: Exception) {
+                        showToast("Failed to start sign-in: ${e.localizedMessage}")
+                    }
+                }
+                .addOnFailureListener(this) { e ->
+                    showToast("Failed to start sign-in: ${e.localizedMessage}")
+                }
         }
+
 
         btnLogin.setOnClickListener {
             val username = txtEntry.text.toString()
@@ -113,6 +153,79 @@ class LoginActivity : AppCompatActivity() {
             startActivity(i)
         }
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == REQ_ONE_TAP) {
+            try {
+                val credential = oneTapClient.getSignInCredentialFromIntent(data)
+                val idToken = credential.googleIdToken
+                when {
+                    idToken != null -> {
+                        val firebaseCredential = GoogleAuthProvider.getCredential(idToken, null)
+                        auth.signInWithCredential(firebaseCredential)
+                            .addOnCompleteListener(this) { task ->
+                                if (task.isSuccessful) {
+                                    val user = auth.currentUser
+                                    user?.let {
+                                        val userData = GoogleUserData(
+                                            uid = it.uid,
+                                            email = it.email ?: "",
+                                            displayName = it.displayName ?: ""
+                                        )
+                                        handleUserSignIn(userData)
+                                    }
+                                } else {
+                                    showToast("Firebase sign-in failed: ${task.exception?.localizedMessage}")
+                                    updateUI(null)
+                                }
+                            }
+                    }
+                    else -> {
+                        showToast("No ID token!")
+                    }
+                }
+            } catch (e: ApiException) {
+                showToast("Sign-in failed: ${e.localizedMessage}")
+            }
+        }
+    }
+
+    private fun handleUserSignIn(userData: GoogleUserData) {
+        authViewModel.checkUserExistence(userData.email).observe(this) { response ->
+            if (response.isSuccessful) {
+                val existingUser = response.body()
+                if (existingUser == null) {
+                    // User doesn't exist, register new user
+                    authViewModel.registerUser(userData).observe(this) { registrationResponse ->
+                        if (registrationResponse.isSuccessful) {
+                            setLoggedIn(true, userData.email, registrationResponse.body()?.accessToken)
+                            startHomeActivity()
+                        } else {
+                            showToast("Registration failed: ${registrationResponse.message()}")
+                        }
+                    }
+                } else {
+                    // User exists, log them in
+                    setLoggedIn(true, existingUser.email, existingUser.accessToken)
+                    startHomeActivity()
+                }
+            } else {
+                showToast("User check failed: ${response.message()}")
+            }
+        }
+    }
+
+
+    private fun updateUI(user: FirebaseUser?) {
+        if (user != null) {
+            startHomeActivity()
+        } else {
+            showToast("Authentication failed.")
+        }
+    }
+
 
     private fun startHomeActivity() {
         val i = Intent(this, HomeActivity::class.java)

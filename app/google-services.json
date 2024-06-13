@@ -12,7 +12,20 @@
           "package_name": "br.ecosynergy_app"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "893772887713-ignv9apofob62lje1bjq1ithtd5ib6sa.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "br.ecosynergy_app",
+            "certificate_hash": "c2c800fe193aeff6631e2c650b1695a1b732012f"
+          }
+        },
+        {
+          "client_id": "893772887713-q67ofla3b7qo9h05ghh4dnkoefaa7hil.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDHwK-HTKB4WLdjFQGicdW9klR--CwLbbw"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "893772887713-q67ofla3b7qo9h05ghh4dnkoefaa7hil.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
