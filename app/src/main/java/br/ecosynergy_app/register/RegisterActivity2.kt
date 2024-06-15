@@ -21,7 +21,6 @@ import java.io.IOException
 
 class RegisterActivity2 : AppCompatActivity() {
 
-    private lateinit var registerViewModel: RegisterViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,10 +48,7 @@ class RegisterActivity2 : AppCompatActivity() {
         val adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, nationalityNames)
         txtNationality.setAdapter(adapter)
 
-        registerViewModel = ViewModelProvider(
-            this,
-            RegisterViewModelFactory(RetrofitClient.registerService)
-        )[RegisterViewModel::class.java]
+
 
 
         btnBack.setOnClickListener{ finish() }
@@ -60,11 +56,12 @@ class RegisterActivity2 : AppCompatActivity() {
         btnRegister.setOnClickListener {
 
             val gender = spinnerGender.selectedItem.toString()
-            val nationalitySelected = txtNationality.text
+            var genderEnglish: String = null.toString()
+            val nationalitySelected: String = txtNationality.text.toString()
             val fullName = txtFullname.text.toString()
             val username = txtUsername.text.toString()
 
-            if(nationalitySelected.isNullOrEmpty() && gender == "Selecione uma opção")
+            if(nationalitySelected.isEmpty() && gender == "Selecione uma opção")
             {
                 autoError.visibility = TextView.VISIBLE
                 autoError.text = "Selecione uma nacionalidade"
@@ -73,20 +70,33 @@ class RegisterActivity2 : AppCompatActivity() {
                 spinnerError.text = "Selecione uma opção de gênero"
                 return@setOnClickListener
             }
-            else if(nationalitySelected.isNullOrEmpty()){
+            else if(nationalitySelected.isEmpty()){
                 autoError.visibility = TextView.VISIBLE
                 autoError.text = "Selecione uma nacionalidade"
                 txtNationality.requestFocus()
                 spinnerError.visibility = TextView.INVISIBLE
-                spinnerError.text = ""
+                spinnerError.text = null
                 return@setOnClickListener
             }
             else if(gender == "Selecione uma opção"){
                 spinnerError.visibility = TextView.VISIBLE
                 spinnerError.text = "Selecione uma opção de gênero"
                 autoError.visibility = TextView.INVISIBLE
-                autoError.text = ""
+                autoError.text = null
                 return@setOnClickListener
+            }
+
+            if(gender == "Masculino"){
+                genderEnglish = "Male"
+            }
+            else if(gender == "Feminino"){
+                genderEnglish = "Female"
+            }
+            else if(gender == "Outro"){
+                genderEnglish = "Other"
+            }
+            else{
+                genderEnglish = "PNS"
             }
 
             val i = Intent(this, ConfirmationActivity::class.java).apply {
@@ -95,7 +105,7 @@ class RegisterActivity2 : AppCompatActivity() {
                 putExtra("FULLNAME", fullName)
                 putExtra("USERNAME", username)
                 putExtra("NATIONALITY", nationalitySelected)
-                putExtra("GENDER", gender)
+                putExtra("GENDER", genderEnglish)
             }
             startActivity(i)
         }

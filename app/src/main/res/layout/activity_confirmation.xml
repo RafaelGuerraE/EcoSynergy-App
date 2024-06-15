@@ -139,4 +139,5 @@
             android:textStyle="bold"
             android:text="@string/verificar" />
     </LinearLayout>
+
 </LinearLayout>

@@ -20,9 +20,6 @@ import br.ecosynergy_app.register.RegisterActivity
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.identity.SignInClient
-import com.google.android.gms.auth.api.identity.SignInCredential
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
 import com.google.android.material.textfield.TextInputEditText
@@ -64,29 +61,8 @@ class LoginActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
         oneTapClient = Identity.getSignInClient(this)
 
-        val signInRequest = BeginSignInRequest.builder()
-            .setGoogleIdTokenRequestOptions(
-                BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
-                    .setSupported(true)
-                    .setServerClientId(getString(R.string.your_web_client_id))
-                    .setFilterByAuthorizedAccounts(true)
-                    .build())
-            .build()
-
         btnGoogle.setOnClickListener {
-            oneTapClient.beginSignIn(signInRequest)
-                .addOnSuccessListener(this) { result ->
-                    try {
-                        startIntentSenderForResult(
-                            result.pendingIntent.intentSender, REQ_ONE_TAP,
-                            null, 0, 0, 0, null)
-                    } catch (e: Exception) {
-                        showToast("Failed to start sign-in: ${e.localizedMessage}")
-                    }
-                }
-                .addOnFailureListener(this) { e ->
-                    showToast("Failed to start sign-in: ${e.localizedMessage}")
-                }
+
         }
 
 
@@ -151,78 +127,6 @@ class LoginActivity : AppCompatActivity() {
         lblReset.setOnClickListener(){
             val i = Intent(this, ResetActivity::class.java)
             startActivity(i)
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == REQ_ONE_TAP) {
-            try {
-                val credential = oneTapClient.getSignInCredentialFromIntent(data)
-                val idToken = credential.googleIdToken
-                when {
-                    idToken != null -> {
-                        val firebaseCredential = GoogleAuthProvider.getCredential(idToken, null)
-                        auth.signInWithCredential(firebaseCredential)
-                            .addOnCompleteListener(this) { task ->
-                                if (task.isSuccessful) {
-                                    val user = auth.currentUser
-                                    user?.let {
-                                        val userData = GoogleUserData(
-                                            uid = it.uid,
-                                            email = it.email ?: "",
-                                            displayName = it.displayName ?: ""
-                                        )
-                                        handleUserSignIn(userData)
-                                    }
-                                } else {
-                                    showToast("Firebase sign-in failed: ${task.exception?.localizedMessage}")
-                                    updateUI(null)
-                                }
-                            }
-                    }
-                    else -> {
-                        showToast("No ID token!")
-                    }
-                }
-            } catch (e: ApiException) {
-                showToast("Sign-in failed: ${e.localizedMessage}")
-            }
-        }
-    }
-
-    private fun handleUserSignIn(userData: GoogleUserData) {
-        authViewModel.checkUserExistence(userData.email).observe(this) { response ->
-            if (response.isSuccessful) {
-                val existingUser = response.body()
-                if (existingUser == null) {
-                    // User doesn't exist, register new user
-                    authViewModel.registerUser(userData).observe(this) { registrationResponse ->
-                        if (registrationResponse.isSuccessful) {
-                            setLoggedIn(true, userData.email, registrationResponse.body()?.accessToken)
-                            startHomeActivity()
-                        } else {
-                            showToast("Registration failed: ${registrationResponse.message()}")
-                        }
-                    }
-                } else {
-                    // User exists, log them in
-                    setLoggedIn(true, existingUser.email, existingUser.accessToken)
-                    startHomeActivity()
-                }
-            } else {
-                showToast("User check failed: ${response.message()}")
-            }
-        }
-    }
-
-
-    private fun updateUI(user: FirebaseUser?) {
-        if (user != null) {
-            startHomeActivity()
-        } else {
-            showToast("Authentication failed.")
         }
     }
 

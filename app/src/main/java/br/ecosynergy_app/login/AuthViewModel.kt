@@ -12,11 +12,11 @@ class AuthViewModel(private val service: AuthService) : ViewModel() {
     private val _loginResult = MutableLiveData<Result<LoginResponse>>()
     val loginResult: LiveData<Result<LoginResponse>> get() = _loginResult
 
-    private val _checkUserExistenceResult = MutableLiveData<Result<UserResponse>>()
-    val checkUserExistenceResult: LiveData<Result<UserResponse>> get() = _checkUserExistenceResult
+    private val _checkUserExistenceResult = MutableLiveData<Result<LoginResponse>>()
+    val checkUserExistenceResult: LiveData<Result<LoginResponse>> get() = _checkUserExistenceResult
 
-    private val _registerUserResult = MutableLiveData<Result<UserResponse>>()
-    val registerUserResult: LiveData<Result<UserResponse>> get() = _registerUserResult
+    private val _registerUserResult = MutableLiveData<Result<LoginResponse>>()
+    val registerUserResult: LiveData<Result<LoginResponse>> get() = _registerUserResult
 
     fun loginUser(loginRequest: LoginRequest) {
         viewModelScope.launch {
