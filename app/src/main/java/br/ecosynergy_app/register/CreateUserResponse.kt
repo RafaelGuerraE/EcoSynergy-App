@@ -2,7 +2,7 @@ package br.ecosynergy_app.register
 
 data class CreateUserResponse(
     val id: Int,
-    val userName: String,
+    val username: String,
     val fullName: String,
     val email: String,
     val password: String,
@@ -12,7 +12,6 @@ data class CreateUserResponse(
     val accountNonLocked: Boolean,
     val credentialsNonExpired: Boolean,
     val enabled: Boolean,
-    val username: String,
     val roles: String,
     val authorities: String,
     val _links: Links

@@ -2,7 +2,7 @@ package br.ecosynergy_app.home
 
 data class UserResponse(
     val id: Long,
-    val userName: String,
+    val username: String,
     val fullName: String,
     val email: String,
     val password: String,
