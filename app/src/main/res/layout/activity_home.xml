@@ -17,7 +17,6 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/green"
             android:padding="10dp">
 
             <de.hdodenhof.circleimageview.CircleImageView
@@ -35,15 +34,21 @@
                 android:layout_gravity="start"
                 android:visibility="gone"/>
 
-            <ImageView
-                android:id="@+id/logoImageView"
+            <ImageButton
+                android:id="@+id/btnLogo"
+                android:scaleType="fitXY"
                 android:layout_width="60dp"
-                android:layout_height="60dp"
+                android:layout_height="50dp"
                 android:layout_gravity="center_horizontal"
                 android:background="@null"
-                android:src="@drawable/logo_transparent" />
+                android:src="@drawable/logo_transparent"/>
 
         </androidx.appcompat.widget.Toolbar>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@drawable/divider"
+            android:backgroundTint="?android:attr/colorForeground"/>
 
         <FrameLayout
             android:id="@+id/frame_layout"
@@ -51,18 +56,23 @@
             android:layout_height="0dp"
             android:layout_weight="1" />
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@drawable/divider"
+            android:backgroundTint="?android:attr/colorForeground"/>
+
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottomNavView"
             android:layout_width="match_parent"
             android:layout_height="70dp"
-            android:background="@color/green"
             app:itemIconSize="40dp"
             app:labelVisibilityMode="unlabeled"
             app:menu="@menu/bottom_nav"
             android:layout_gravity="start"
-            app:itemIconTint="@color/white"
-            app:itemTextColor="@color/white"
+            app:itemIconTint="?android:attr/iconTint"
+            app:itemTextColor="?android:attr/textColorPrimary"
             style="@style/AppBottomNavigation"/>
 
     </LinearLayout>
@@ -74,8 +84,8 @@
         android:layout_gravity="start"
         app:headerLayout="@layout/nav_header"
         app:menu="@menu/nav_menu"
-        app:itemIconTint="@color/black"
-        app:itemTextColor="@color/black"
-        android:background="@color/green"/>
+        app:itemIconTint="?android:attr/iconTint"
+        app:itemTextColor="?android:attr/textColorPrimary"
+        android:background="?android:attr/colorBackground"/>
 
 </androidx.drawerlayout.widget.DrawerLayout>

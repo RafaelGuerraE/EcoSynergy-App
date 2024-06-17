@@ -86,7 +86,7 @@
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
                 android:text="LOGIN"
-                android:background="@drawable/button_background"
+                style="@style/CustomButtonStyle"
                 android:layout_marginBottom="15dp" />
 
             <Button
@@ -94,7 +94,7 @@
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
                 android:text="CADASTRAR"
-                android:background="@drawable/button_background"/>
+                style="@style/CustomButtonStyle"/>
 
             <com.google.android.gms.common.SignInButton
                 android:id="@+id/btnGoogle"

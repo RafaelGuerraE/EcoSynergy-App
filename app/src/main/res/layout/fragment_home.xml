@@ -1,97 +1,102 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".home.homefragments.Home">
+    tools:context=".home.homefragments.Home"
+    android:id="@+id/swipeRefresh">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_gravity="start"
-            android:layout_marginStart="15dp"
-            android:layout_marginTop="30dp"
-            android:layout_marginBottom="20dp">
-
-            <TextView
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Seja bem vindo, "
-                android:textSize="20sp"
-                android:textStyle="bold"/>
-            <TextView
+                android:orientation="horizontal"
+                android:layout_gravity="start"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Seja bem vindo, "
+                    android:textSize="20sp"
+                    android:textStyle="bold"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/lblFirstname"
+                    tools:text="Usuário!"
+                    android:textSize="25sp"
+                    android:textColor="@color/greenDark"
+                    android:textStyle="bold"/>
+                <ProgressBar
+                    android:id="@+id/progressBar"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:visibility="gone"/>
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/lblFirstname"
-                tools:text="Rafael!"
-                android:textSize="25sp"
-                android:textColor="@color/greenDark"
-                android:textStyle="bold"/>
-            <ProgressBar
-                android:id="@+id/progressBar"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:visibility="gone"/>
+                android:orientation="vertical"
+                android:gravity="start"
+                android:layout_gravity="center">
 
-        </LinearLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Dados Recentes:"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="20dp"/>
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="start"
-            android:layout_gravity="center">
+                <com.google.android.material.imageview.ShapeableImageView
+                    app:shapeAppearanceOverlay="@style/RoundedSquare"
+                    android:layout_width="340dp"
+                    android:layout_height="70dp"
+                    android:background="@color/pastel"
+                    android:scaleType="fitStart"
+                    android:src="@drawable/graph3"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="30dp"
+                    />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Dados Recentes:"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="20dp"/>
+                <com.google.android.material.imageview.ShapeableImageView
+                    app:shapeAppearanceOverlay="@style/RoundedSquare"
+                    android:layout_width="340dp"
+                    android:layout_height="300dp"
+                    android:background="@color/pastel"
+                    android:scaleType="center"
+                    android:src="@drawable/graph1"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="30dp"/>
 
-            <com.google.android.material.imageview.ShapeableImageView
-                app:shapeAppearanceOverlay="@style/RoundedSquare"
-                android:layout_width="340dp"
-                android:layout_height="70dp"
-                android:background="@color/pastel"
-                android:scaleType="fitStart"
-                android:src="@drawable/graph3"
-                android:layout_gravity="center"
-                android:layout_marginBottom="30dp"
-                />
-
-            <com.google.android.material.imageview.ShapeableImageView
-                app:shapeAppearanceOverlay="@style/RoundedSquare"
-                android:layout_width="340dp"
-                android:layout_height="300dp"
-                android:background="@color/pastel"
-                android:scaleType="center"
-                android:src="@drawable/graph1"
-                android:layout_gravity="center"
-                android:layout_marginBottom="30dp"/>
-
-            <com.google.android.material.imageview.ShapeableImageView
-                app:shapeAppearanceOverlay="@style/RoundedSquare"
-                android:layout_width="340dp"
-                android:layout_height="300dp"
-                android:background="@color/pastel"
-                android:scaleType="center"
-                android:src="@drawable/graph2"
-                android:layout_gravity="center"
-                android:layout_marginBottom="30dp"/>
+                <com.google.android.material.imageview.ShapeableImageView
+                    app:shapeAppearanceOverlay="@style/RoundedSquare"
+                    android:layout_width="340dp"
+                    android:layout_height="300dp"
+                    android:background="@color/pastel"
+                    android:scaleType="center"
+                    android:src="@drawable/graph2"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="30dp"/>
 
 
-        </LinearLayout>
-
+            </LinearLayout>
     </LinearLayout>
 
-</ScrollView>
+    </ScrollView>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

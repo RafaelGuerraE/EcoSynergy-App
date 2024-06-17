@@ -14,24 +14,29 @@ import androidx.lifecycle.Observer
 import br.ecosynergy_app.R
 import br.ecosynergy_app.home.UserViewModel
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.findViewTreeViewModelStoreOwner
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 
 
 class Home : Fragment() {
 
     private lateinit var lblFirstname: TextView
     private lateinit var progressBar: ProgressBar
+    private lateinit var swipeRefresh: SwipeRefreshLayout
     private val userViewModel: UserViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         val view = inflater.inflate(R.layout.fragment_home, container, false)
+
+        swipeRefresh = view.findViewById(R.id.swipeRefresh)
         lblFirstname = view.findViewById(R.id.lblFirstname)
         progressBar = view.findViewById(R.id.progressBar)
 
-        // Observe the LiveData from the ViewModel
-        userViewModel.user.observe(viewLifecycleOwner, Observer { result ->
+        userViewModel.user.observe(viewLifecycleOwner) { result ->
             progressBar.visibility = View.GONE
             lblFirstname.visibility = View.VISIBLE
             result.onSuccess { user ->
@@ -41,9 +46,16 @@ class Home : Fragment() {
                 Log.e("HomeFragment", "Error fetching user data", throwable)
                 lblFirstname.text = "Error fetching user data"
             }
-        })
+        }
+
+        swipeRefresh.isRefreshing = true
+
+        swipeRefresh.postDelayed({
+            swipeRefresh.isRefreshing = false
+        }, 1000)
 
         fetchUserData()
+        refreshApp()
 
         return view
     }
@@ -62,6 +74,13 @@ class Home : Fragment() {
             progressBar.visibility = View.GONE
             lblFirstname.visibility = View.VISIBLE
             lblFirstname.text = "Invalid username or token"
+        }
+    }
+
+    private fun refreshApp(){
+        swipeRefresh.setOnRefreshListener {
+
+            swipeRefresh.isRefreshing = false
         }
     }
 

@@ -59,8 +59,8 @@ dependencies {
 
     implementation("com.google.mlkit:vision-internal-vkp:18.2.2")
     implementation("androidx.activity:activity-ktx:1.9.0")
-    implementation("androidx.fragment:fragment-ktx:1.7.1")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.1")
+    implementation("androidx.fragment:fragment-ktx:1.8.0")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.2")
     implementation("com.google.firebase:firebase-auth-ktx:23.0.0")
 
     testImplementation("junit:junit:4.13.2")
@@ -74,5 +74,7 @@ dependencies {
     implementation("de.hdodenhof:circleimageview:3.1.0")
 
     implementation ("androidx.activity:activity-ktx:1.9.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.1")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.2")
+
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
 }

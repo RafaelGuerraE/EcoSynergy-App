@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".teams.TeamBansActivity"
     android:orientation="vertical"
     android:gravity="top">
@@ -15,6 +16,7 @@
         android:background="@null"
         android:contentDescription="BackButton"
         android:src="@drawable/baseline_arrow_back_24"
+        app:tint="?android:attr/iconTint"
         android:scaleType="fitXY"
         android:gravity="top"
         android:layout_margin="15dp"/>

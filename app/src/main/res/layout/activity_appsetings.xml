@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".home.AppSettingsActivity"
     android:orientation="vertical"
     android:gravity="top">
@@ -14,6 +15,7 @@
         android:layout_height="50dp"
         android:background="@null"
         android:contentDescription="BackButton"
+        app:tint="?android:attr/iconTint"
         android:src="@drawable/baseline_arrow_back_24"
         android:scaleType="fitXY"
         android:gravity="top"

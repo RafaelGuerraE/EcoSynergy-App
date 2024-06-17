@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="16dp"
-    tools:background="@color/green"
     android:gravity="center_vertical"
-    android:theme="@style/Base.Theme.EcoSynergyApp">
+    android:theme="@style/Base.Theme.EcoSynergyApp"
+    android:background="?android:attr/colorBackground">
 
     <LinearLayout
         android:layout_width="0dp"
@@ -20,8 +22,7 @@
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:src="@drawable/default_image"
-            android:layout_gravity="start"
-            />
+            android:layout_gravity="start" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -34,17 +35,17 @@
                 android:layout_height="wrap_content"
                 tools:text="Rafael Guerra"
                 android:textSize="15sp"
-                android:textColor="@color/black"
+                android:textColor="?android:attr/textColorPrimary"
                 android:textStyle="bold"
-                android:layout_marginEnd="5dp"/>
+                android:layout_marginEnd="5dp" />
 
             <TextView
                 android:id="@+id/lblUsername"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:text="\@rafaelguerra"
-                android:textColor="@color/grayDark"
-                android:textSize="13sp"/>
+                android:textColor="?android:attr/textColorSecondary"
+                android:textSize="13sp" />
 
         </LinearLayout>
 
@@ -53,8 +54,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             tools:text="rafael@ecosynergy.com"
-            android:textColor="@color/grayDark"
-            android:textSize="14sp"/>
+            android:textColor="?android:attr/textColorSecondary"
+            android:textSize="14sp" />
     </LinearLayout>
 
     <ImageButton
@@ -64,6 +65,7 @@
         android:layout_gravity="end"
         android:src="@drawable/baseline_logout_24"
         android:background="@null"
-        android:scaleType="fitXY"/>
+        android:scaleType="fitXY"
+        app:tint="?android:attr/iconTint" />
 
 </LinearLayout>
