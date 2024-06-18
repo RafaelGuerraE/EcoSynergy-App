@@ -14,7 +14,7 @@
         android:orientation="vertical">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center"
@@ -22,25 +22,32 @@
             android:layout_marginTop="10dp">
 
             <Button
+                android:layout_width="0dp"
+                android:layout_height="50dp"
                 android:id="@+id/btnNewSensor"
                 android:text="Novo sensor"
-                android:layout_width="160dp"
-                android:layout_height="50dp"
-                android:layout_marginEnd="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="5dp"
+                android:layout_weight="1"
                 style="@style/CustomButtonStyle"/>
             <Button
+                android:layout_width="0dp"
+                android:layout_height="50dp"
                 android:id="@+id/btnSensor"
                 android:text="Gerenciar sensores"
-                android:layout_width="175dp"
-                android:layout_height="50dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="10dp"
+                android:layout_weight="1"
                 style="@style/CustomButtonStyle"/>
         </LinearLayout>
 
+
         <LinearLayout
-            android:layout_width="350dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:gravity="start">
+            android:gravity="start"
+            android:layout_marginStart="10dp">
 
             <TextView
                 android:layout_width="340dp"
@@ -56,31 +63,38 @@
                 android:layout_height="40dp"
                 android:entries="@array/time_array"
                 android:layout_marginBottom="20dp"
-                android:background="@color/pastel"/>
+                android:background="?android:attr/colorForeground"
+                />
 
         </LinearLayout>
 
-        <com.google.android.material.imageview.ShapeableImageView
-            app:shapeAppearanceOverlay="@style/RoundedSquare"
-            android:layout_width="340dp"
-            android:layout_height="300dp"
-            android:background="@color/pastel"
-            android:scaleType="center"
-            android:src="@drawable/graph1"
-            android:layout_gravity="center"
-            android:layout_marginBottom="30dp"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp">
 
-        <com.google.android.material.imageview.ShapeableImageView
-            app:shapeAppearanceOverlay="@style/RoundedSquare"
-            android:layout_width="340dp"
-            android:layout_height="300dp"
-            android:background="@color/pastel"
-            android:scaleType="center"
-            android:src="@drawable/graph2"
-            android:layout_gravity="center"
-            android:layout_marginBottom="30dp"/>
+            <com.google.android.material.imageview.ShapeableImageView
+                app:shapeAppearanceOverlay="@style/RoundedSquare"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:background="?attr/fragmentsBackground"
+                android:scaleType="center"
+                android:layout_gravity="center"
+                android:layout_marginBottom="30dp"/>
 
+            <com.google.android.material.imageview.ShapeableImageView
+                app:shapeAppearanceOverlay="@style/RoundedSquare"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:background="?attr/fragmentsBackground"
+                android:scaleType="center"
+                android:layout_gravity="center"
+                android:layout_marginBottom="30dp"/>
 
+        </LinearLayout>
     </LinearLayout>
 
 </ScrollView>

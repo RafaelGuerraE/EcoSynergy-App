@@ -37,73 +37,87 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Nome da Equipe"
-            android:textSize="20sp"/>
+            android:textSize="20sp"
+            android:textStyle="bold"/>
 
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_gravity="center">
+        android:layout_gravity="center"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Configurações"
             android:textSize="15sp"
+            android:textStyle="bold"
             android:layout_marginBottom="5dp"/>
 
         <Button
             android:id="@+id/btnOverview"
-            android:layout_width="330dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Visão Geral"
             android:drawableStart="@drawable/baseline_info_24"
             android:drawableTint="@color/black"
-            android:drawablePadding="4dp"/>
+            android:drawablePadding="4dp"
+            style="@style/CustomButtonStyle"
+            android:layout_marginBottom="10dp"/>
         <Button
             android:id="@+id/btnInvites"
-            android:layout_width="330dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Convites"
             android:drawableStart="@drawable/baseline_invite"
             android:drawableTint="@color/white"
-            android:drawablePadding="4dp"/>
+            android:drawablePadding="4dp"
+            style="@style/CustomButtonStyle"
+            />
 
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_gravity="center"
-        android:layout_marginTop="20dp">
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Gestão de Usuários"
             android:textSize="15sp"
+            android:textStyle="bold"
             android:layout_marginBottom="5dp"/>
 
         <Button
             android:id="@+id/btnMembers"
-            android:layout_width="330dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Membros"
             android:drawableStart="@drawable/baseline_people_24"
             android:drawableTint="@color/white"
-            android:drawablePadding="4dp"/>
+            android:drawablePadding="4dp"
+            style="@style/CustomButtonStyle"
+            android:layout_marginBottom="10dp"/>
 
         <Button
             android:id="@+id/btnBans"
-            android:layout_width="330dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Banimentos"
             android:drawableStart="@drawable/baseline_block_24"
             android:drawableTint="@color/white"
-            android:drawablePadding="4dp"/>
+            android:drawablePadding="4dp"
+            style="@style/CustomButtonStyle"/>
 
     </LinearLayout>
 

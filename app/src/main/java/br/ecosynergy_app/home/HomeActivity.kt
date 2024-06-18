@@ -220,7 +220,7 @@ class HomeActivity : AppCompatActivity() {
 
         user.onSuccess { userData ->
             headerView.findViewById<TextView>(R.id.lblUserFullname)?.text = userData.fullName
-            headerView.findViewById<TextView>(R.id.lblUsername)?.text = "@${userData.userName}"
+            headerView.findViewById<TextView>(R.id.lblUsername)?.text = "@${userData.username}"
             headerView.findViewById<TextView>(R.id.lblUserEmail)?.text = userData.email
             val userPicture: CircleImageView = headerView.findViewById(R.id.userPicture)
 

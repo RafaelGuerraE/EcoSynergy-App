@@ -21,20 +21,26 @@
         android:layout_margin="15dp"/>
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_gravity="center"
         android:gravity="center"
-        android:layout_marginBottom="20dp">
+        android:layout_marginBottom="20dp"
+        android:layout_marginTop="60dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Digite o email de sua conta:"/>
+            android:text="Digite o email de sua conta:"
+            android:layout_gravity="start"
+            android:textSize="15sp"
+            android:textStyle="bold"/>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="300dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
             android:hint="Email">
@@ -49,9 +55,23 @@
 
         <Button
             android:id="@+id/btnSend"
-            android:layout_width="300dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="ENVIAR"/>
+            android:text="ENVIAR"
+            style="@style/CustomButtonStyle"/>
+
+        <TextView
+            android:id="@+id/txtTime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textSize="15sp"
+            android:textColor="@color/white"
+            android:visibility="invisible"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:textAlignment="center"/>
 
     </LinearLayout>
 
