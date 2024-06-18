@@ -5,7 +5,9 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import android.view.View
+import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -13,6 +15,7 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -25,6 +28,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import de.hdodenhof.circleimageview.CircleImageView
 
+import com.google.android.material.snackbar.Snackbar
+
 class HomeActivity : AppCompatActivity() {
 
     private val userViewModel: UserViewModel by viewModels()
@@ -33,11 +38,26 @@ class HomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
+        // Show a Snackbar when the activity starts
+        val rootView = findViewById<View>(android.R.id.content)
+        val snackbar = Snackbar.make(rootView, "Conectado com Sucesso", Snackbar.LENGTH_LONG)
+            .setAction("FECHAR") {
+                // Handle the dismiss action if needed
+            }
+        snackbar.setBackgroundTint(ContextCompat.getColor(this, R.color.greenDark)) // Set the background color to green
+
+        val snackbarView = snackbar.view
+        val params = snackbarView.layoutParams as FrameLayout.LayoutParams
+        params.gravity = Gravity.BOTTOM
+        snackbarView.layoutParams = params
+
+        snackbar.show()
+
+        // Rest of your onCreate code...
         val bottomNavView: BottomNavigationView = findViewById(R.id.bottomNavView)
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
         val navDrawerButton: CircleImageView = findViewById(R.id.navDrawerButton)
         val navView: NavigationView = findViewById(R.id.nav_view)
-
 
         val headerView = navView.getHeaderView(0)
         if (headerView == null) {
