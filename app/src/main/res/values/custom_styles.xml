@@ -6,7 +6,7 @@
     </style>
 
     <style name="RoundedSquare">
-        <item name="cornerSize">10%</item>
+        <item name="cornerSize">20dp</item>
     </style>
 
     <style name="CornerCut">

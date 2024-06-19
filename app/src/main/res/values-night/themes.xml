@@ -2,15 +2,18 @@
     <style name="Base.Theme.EcoSynergyApp" parent="Theme.Material3.Dark.NoActionBar">
         <item name="colorPrimary">@color/greenDark</item>
         <item name="colorSecondary">@color/greenDark</item>
-        <item name="android:statusBarColor">@null</item>
+        <item name="android:statusBarColor">@color/blackBg</item>
+        <item name="android:windowLightStatusBar">false</item>
         <item name="android:colorBackground">@color/blackBg</item>
         <item name="android:colorForeground">@color/grayDark</item>
         <item name="android:textColorPrimary">@color/white</item>
         <item name="android:textColorSecondary">@color/white</item>
         <item name="android:iconTint">@color/white</item>
 
+        <item name="buttonText">@color/white</item>
         <item name="fragmentsBackground">@color/grayDark</item>
+        <item name="buttonIconTint">@color/white</item>
 
-        <item name="fontFamily">@font/redhatdisplay</item>
+        <item name="fontFamily">@font/red_hat_display</item>
     </style>
 </resources>

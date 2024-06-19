@@ -73,7 +73,7 @@
                     android:layout_marginBottom="5dp"
                     android:completionThreshold="1"
                     android:background="@drawable/spinner_background"
-                    android:textColor="@color/black"
+                    android:textColor="?android:attr/textColorPrimary"
                     android:textColorHint="@color/gray"/>
 
             <TextView

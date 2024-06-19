@@ -38,26 +38,30 @@ class HomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
-        // Show a Snackbar when the activity starts
         val rootView = findViewById<View>(android.R.id.content)
-        val snackbar = Snackbar.make(rootView, "Conectado com Sucesso", Snackbar.LENGTH_LONG)
-            .setAction("FECHAR") {
-                // Handle the dismiss action if needed
-            }
-        snackbar.setBackgroundTint(ContextCompat.getColor(this, R.color.greenDark)) // Set the background color to green
-
-        val snackbarView = snackbar.view
-        val params = snackbarView.layoutParams as FrameLayout.LayoutParams
-        params.gravity = Gravity.BOTTOM
-        snackbarView.layoutParams = params
-
-        snackbar.show()
-
-        // Rest of your onCreate code...
         val bottomNavView: BottomNavigationView = findViewById(R.id.bottomNavView)
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
         val navDrawerButton: CircleImageView = findViewById(R.id.navDrawerButton)
         val navView: NavigationView = findViewById(R.id.nav_view)
+        val snackbar = Snackbar.make(rootView, "Conectado com Sucesso", Snackbar.LENGTH_LONG)
+            .setAction("FECHAR") {
+                // Handle the dismiss action if needed
+            }
+        snackbar.setBackgroundTint(ContextCompat.getColor(this, R.color.greenDark))
+        snackbar.setTextColor(ContextCompat.getColor(this, R.color.white))
+        snackbar.setActionTextColor(ContextCompat.getColor(this, R.color.white))
+
+        snackbar.addCallback(object : Snackbar.Callback() {
+            override fun onShown(sb: Snackbar?) {
+                super.onShown(sb)
+                val snackbarView = snackbar.view
+                val params = snackbarView.layoutParams as FrameLayout.LayoutParams
+                params.setMargins(params.leftMargin, params.topMargin, params.rightMargin, bottomNavView.height)
+                snackbarView.layoutParams = params
+            }
+        })
+
+        snackbar.show()
 
         val headerView = navView.getHeaderView(0)
         if (headerView == null) {

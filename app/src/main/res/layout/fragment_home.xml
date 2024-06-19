@@ -31,20 +31,20 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Seja bem vindo, "
-                    android:textSize="20sp"
+                    android:textSize="22sp"
                     android:textStyle="bold"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/lblFirstname"
                     tools:text="Usuário!"
-                    android:textSize="25sp"
+                    android:textSize="22sp"
                     android:textColor="@color/greenDark"
                     android:textStyle="bold"/>
                 <ProgressBar
                     android:id="@+id/progressBar"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
                     android:visibility="gone"/>
 
             </LinearLayout>

@@ -7,10 +7,12 @@
 
     <style name="CustomButtonStyle" parent="Widget.Material3.Button">
         <item name="android:background">@drawable/round_button</item>
-        <item name="android:textColor">?android:attr/textColorPrimary</item>
+        <item name="android:textColor">?attr/buttonText</item>
         <item name="android:padding">12dp</item>
-        <item name="android:textSize">15sp</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
         <item name="android:textAllCaps">false</item>
+        <item name="android:textAlignment">center</item>
     </style>
 
 </resources>
