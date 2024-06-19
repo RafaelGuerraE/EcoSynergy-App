@@ -11,5 +11,7 @@
         <item name="android:buttonStyle">@style/CustomButtonStyle</item>
 
         <item name="fragmentsBackground">@color/pastel</item>
+
+        <item name="fontFamily">@font/redhatdisplay</item>
     </style>
 </resources>
