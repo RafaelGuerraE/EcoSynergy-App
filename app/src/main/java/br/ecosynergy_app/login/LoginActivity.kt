@@ -3,30 +3,27 @@ package br.ecosynergy_app.login
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.service.autofill.UserData
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
-import androidx.lifecycle.ViewModelProvider
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.home.HomeActivity
 import br.ecosynergy_app.register.RegisterActivity
-import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.android.gms.common.SignInButton
-import com.google.android.gms.common.api.ApiException
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.GoogleAuthProvider
 
 class LoginActivity : AppCompatActivity() {
 
@@ -37,8 +34,8 @@ class LoginActivity : AppCompatActivity() {
     private var hasErrorShown = false
     private lateinit var oneTapClient: SignInClient
     private lateinit var auth: FirebaseAuth
-    private val REQ_ONE_TAP = 2 // Can be any integer unique to the Activity
-    private var showOneTapUI = true
+    private lateinit var loadingProgressBar: ProgressBar
+    private lateinit var overlayView: View
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,14 +54,13 @@ class LoginActivity : AppCompatActivity() {
         val btnLogin: Button = findViewById(R.id.btnLogin)
         val btnRegister: Button = findViewById(R.id.btnRegister)
         val btnGoogle: SignInButton = findViewById(R.id.btnGoogle)
+        loadingProgressBar = findViewById(R.id.loadingProgressBar)
+        overlayView = findViewById(R.id.overlayView)
 
         auth = FirebaseAuth.getInstance()
         oneTapClient = Identity.getSignInClient(this)
 
-        btnGoogle.setOnClickListener {
-
-        }
-
+        btnGoogle.setOnClickListener {}
 
         btnLogin.setOnClickListener {
             val username = txtEntry.text.toString()
@@ -81,6 +77,11 @@ class LoginActivity : AppCompatActivity() {
                 }
                 return@setOnClickListener
             }
+
+            // Show loading indicator and overlay
+            loadingProgressBar.visibility = View.VISIBLE
+            overlayView.visibility = View.VISIBLE
+
             val loginRequest = LoginRequest(username, password)
             authViewModel.loginUser(loginRequest)
         }
@@ -109,6 +110,10 @@ class LoginActivity : AppCompatActivity() {
         }
 
         authViewModel.loginResult.observe(this) { result ->
+            // Hide loading indicator and overlay
+            loadingProgressBar.visibility = View.GONE
+            overlayView.visibility = View.GONE
+
             result.onSuccess { loginResponse ->
                 Log.d("LoginActivity", "Login success")
                 setLoggedIn(true, loginResponse.username, loginResponse.accessToken)
@@ -129,7 +134,6 @@ class LoginActivity : AppCompatActivity() {
             startActivity(i)
         }
     }
-
 
     private fun startHomeActivity() {
         val i = Intent(this, HomeActivity::class.java)

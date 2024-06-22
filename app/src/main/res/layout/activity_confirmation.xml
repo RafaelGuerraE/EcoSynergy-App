@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".register.ConfirmationActivity"
-    android:orientation="vertical"
-    android:gravity="top">
+    tools:context=".register.ConfirmationActivity">
 
     <ImageButton
         android:id="@+id/btnBack"
@@ -15,129 +14,160 @@
         android:background="@null"
         android:src="@drawable/baseline_arrow_back_24"
         android:scaleType="fitXY"
-        android:gravity="top"
-        android:layout_margin="15dp"/>
+        android:layout_margin="15dp"
+        app:tint="?android:attr/iconTint" />
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:layout_marginTop="130dp"
-        android:layout_marginBottom="20dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Verificação de E-mail"
-            android:textSize="30sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="30dp"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Digite o código que enviamos ao e-mail informado"
-            android:textSize="15sp"
-            android:layout_marginBottom="20dp"/>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/btnBack">
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:layout_marginBottom="10dp">
-
-            <EditText
-                android:id="@+id/digit1"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:gravity="center"
-                android:imeOptions="actionNext"
-                android:importantForAutofill="no"
-                android:inputType="number"
-                android:maxLength="1"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                tools:ignore="LabelFor"
-                android:background="@drawable/spinner_background"/>
-
-            <EditText
-                android:id="@+id/digit2"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginStart="10dp"
-                android:gravity="center"
-                android:imeOptions="actionNext"
-                android:importantForAutofill="no"
-                android:inputType="number"
-                android:maxLength="1"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                tools:ignore="LabelFor"
-                android:background="@drawable/spinner_background"/>
-
-            <EditText
-                android:id="@+id/digit3"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginStart="10dp"
-                android:gravity="center"
-                android:imeOptions="actionNext"
-                android:importantForAutofill="no"
-                android:inputType="number"
-                android:maxLength="1"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                tools:ignore="LabelFor"
-                android:background="@drawable/spinner_background"/>
-
-            <EditText
-                android:id="@+id/digit4"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginStart="10dp"
-                android:gravity="center"
-                android:imeOptions="actionNext"
-                android:importantForAutofill="no"
-                android:inputType="number"
-                android:maxLength="1"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                tools:ignore="LabelFor"
-                android:background="@drawable/spinner_background"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Não recebeu o código?"
-                android:textSize="14sp"/>
-            <TextView
-                android:id="@+id/txtResend"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:text="Reenviar código"
-                android:textSize="15sp"
-                android:textColor="@color/greenDark"
-                android:textStyle="bold"
-                android:clickable="true"/>
-
-        </LinearLayout>
-
-        <Button
-            android:id="@+id/btncheck"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="30dp"
-            style="@style/CustomButtonStyle"
-            android:textStyle="bold"
-            android:text="@string/verificar" />
-    </LinearLayout>
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="16dp">
 
-</LinearLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Verificação de E-mail"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="30dp"
+                android:layout_marginTop="130dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="?android:attr/textColorPrimary"
+                android:text="Digite o código que enviamos ao e-mail informado"
+                android:textSize="15sp"
+                android:layout_marginBottom="20dp"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:layout_marginBottom="10dp">
+
+                <EditText
+                    android:id="@+id/digit1"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:gravity="center"
+                    android:imeOptions="actionNext"
+                    android:importantForAutofill="no"
+                    android:inputType="number"
+                    android:maxLength="1"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:textColor="?android:attr/textColorPrimary"
+                    tools:ignore="LabelFor"
+                    android:background="@drawable/spinner_background"/>
+
+                <EditText
+                    android:id="@+id/digit2"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginStart="10dp"
+                    android:gravity="center"
+                    android:imeOptions="actionNext"
+                    android:importantForAutofill="no"
+                    android:inputType="number"
+                    android:maxLength="1"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:textColor="?android:attr/textColorPrimary"
+                    tools:ignore="LabelFor"
+                    android:background="@drawable/spinner_background"/>
+
+                <EditText
+                    android:id="@+id/digit3"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginStart="10dp"
+                    android:gravity="center"
+                    android:imeOptions="actionNext"
+                    android:importantForAutofill="no"
+                    android:inputType="number"
+                    android:maxLength="1"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:textColor="?android:attr/textColorPrimary"
+                    tools:ignore="LabelFor"
+                    android:background="@drawable/spinner_background"/>
+
+                <EditText
+                    android:id="@+id/digit4"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginStart="10dp"
+                    android:gravity="center"
+                    android:imeOptions="actionNext"
+                    android:importantForAutofill="no"
+                    android:inputType="number"
+                    android:maxLength="1"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:textColor="?android:attr/textColorPrimary"
+                    tools:ignore="LabelFor"
+                    android:background="@drawable/spinner_background"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Não recebeu o código?"
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:textSize="14sp"/>
+                <TextView
+                    android:id="@+id/txtResend"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:text="Reenviar código"
+                    android:textSize="15sp"
+                    android:textColor="@color/greenDark"
+                    android:textStyle="bold"
+                    android:clickable="true"/>
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btnCheck"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="30dp"
+                style="@style/CustomButtonStyle"
+                android:textStyle="bold"
+                android:text="@string/verificar" />
+        </LinearLayout>
+    </ScrollView>
+
+    <ProgressBar
+        android:id="@+id/loadingProgressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_centerInParent="true" />
+
+    <View
+        android:id="@+id/overlayView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/background_dark"
+        android:alpha="0.5"
+        android:visibility="gone"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true" />
+
+</RelativeLayout>

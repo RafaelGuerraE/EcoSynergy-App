@@ -3,17 +3,19 @@ package br.ecosynergy_app.register
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
@@ -26,6 +28,8 @@ class ConfirmationActivity : AppCompatActivity() {
 
     private lateinit var registerViewModel: RegisterViewModel
     private lateinit var authViewModel: AuthViewModel
+    private lateinit var loadingProgressBar: ProgressBar
+    private lateinit var overlayView: View
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,7 +41,7 @@ class ConfirmationActivity : AppCompatActivity() {
         val digit3 = findViewById<EditText>(R.id.digit3)
         val digit4 = findViewById<EditText>(R.id.digit4)
 
-        val btnCheck: Button = findViewById(R.id.btncheck)
+        val btnCheck: Button = findViewById(R.id.btnCheck)
         val btnBack = findViewById<ImageButton>(R.id.btnBack)
         val email: String = intent.getStringExtra("EMAIL").toString()
         val password: String = intent.getStringExtra("PASSWORD").toString()
@@ -49,9 +53,13 @@ class ConfirmationActivity : AppCompatActivity() {
         registerViewModel = ViewModelProvider(this, RegisterViewModelFactory(RetrofitClient.registerService))[RegisterViewModel::class.java]
         authViewModel = ViewModelProvider(this, AuthViewModelFactory(RetrofitClient.authService))[AuthViewModel::class.java]
 
+        loadingProgressBar = findViewById(R.id.loadingProgressBar)
+        overlayView = findViewById(R.id.overlayView)
+
         btnBack.setOnClickListener { finish() }
 
         registerViewModel.registerResult.observe(this) { result ->
+            showProgressBar(false) // Hide progress bar on result observation
             result.onSuccess { createUserResponse ->
                 Log.d("ConfirmationActivity", "Register success")
                 // Only attempt login after successful registration
@@ -65,6 +73,7 @@ class ConfirmationActivity : AppCompatActivity() {
         }
 
         authViewModel.loginResult.observe(this) { result ->
+            showProgressBar(false) // Hide progress bar on result observation
             result.onSuccess { loginResponse ->
                 Log.d("LoginActivity", "Login success")
                 setLoggedIn(true, loginResponse.username, loginResponse.accessToken)
@@ -77,11 +86,12 @@ class ConfirmationActivity : AppCompatActivity() {
         }
 
         btnCheck.setOnClickListener {
+            showProgressBar(true) // Show progress bar on button click
             val createUserRequest = CreateUserRequest(userName, fullName, email, password, gender, nationality)
             registerViewModel.registerUser(createUserRequest)
         }
 
-        txtResend.setOnClickListener{
+        txtResend.setOnClickListener {
             txtResend.setTextColor(Color.GRAY)
             startCountDown(txtResend)
         }
@@ -91,10 +101,14 @@ class ConfirmationActivity : AppCompatActivity() {
         setEditTextFocusChange(digit3, digit4)
     }
 
+    private fun showProgressBar(show: Boolean) {
+        loadingProgressBar.visibility = if (show) View.VISIBLE else View.GONE
+        overlayView.visibility = if (show) View.VISIBLE else View.GONE
+    }
+
     private fun startCountDown(textView: TextView) {
         // Create a CountDownTimer for 60 seconds, updating every second
         object : CountDownTimer(60000, 1000) {
-
             override fun onTick(millisUntilFinished: Long) {
                 textView.text = "Reenvie em ${millisUntilFinished / 1000}s"
             }
@@ -122,6 +136,7 @@ class ConfirmationActivity : AppCompatActivity() {
 
     private fun startHomeActivity() {
         val i = Intent(this, HomeActivity::class.java)
+        i.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(i)
         finish()
     }

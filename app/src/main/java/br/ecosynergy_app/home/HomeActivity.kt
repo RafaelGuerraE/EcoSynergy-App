@@ -44,9 +44,7 @@ class HomeActivity : AppCompatActivity() {
         val navDrawerButton: CircleImageView = findViewById(R.id.navDrawerButton)
         val navView: NavigationView = findViewById(R.id.nav_view)
         val snackbar = Snackbar.make(rootView, "Conectado com Sucesso", Snackbar.LENGTH_LONG)
-            .setAction("FECHAR") {
-                // Handle the dismiss action if needed
-            }
+            .setAction("FECHAR") {}
         snackbar.setBackgroundTint(ContextCompat.getColor(this, R.color.greenDark))
         snackbar.setTextColor(ContextCompat.getColor(this, R.color.white))
         snackbar.setActionTextColor(ContextCompat.getColor(this, R.color.white))
@@ -237,7 +235,7 @@ class HomeActivity : AppCompatActivity() {
         val navDrawerButton: CircleImageView = findViewById(R.id.navDrawerButton)
         val progressBar: ProgressBar = findViewById(R.id.progressBar)
 
-        progressBar.visibility = View.VISIBLE
+        progressBar.visibility = View.INVISIBLE
         navDrawerButton.visibility = View.VISIBLE
 
         val headerView = navView.getHeaderView(0)

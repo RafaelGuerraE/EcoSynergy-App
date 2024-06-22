@@ -1,9 +1,6 @@
 package br.ecosynergy_app.login
 
-import android.util.Log
 import androidx.lifecycle.*
-import br.ecosynergy_app.RetrofitClient.authService
-import br.ecosynergy_app.home.UserResponse
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 
