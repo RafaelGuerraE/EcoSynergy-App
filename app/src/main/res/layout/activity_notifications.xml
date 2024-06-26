@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".home.UserSettingsActivity"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".home.NotificationsActivity"
     android:orientation="vertical"
     android:gravity="top">
 
@@ -17,17 +18,45 @@
         android:src="@drawable/baseline_arrow_back_24"
         android:scaleType="fitXY"
         android:gravity="top"
-        android:layout_margin="15dp"/>
+        android:layout_margin="15dp"
+        app:tint="?android:attr/iconTint"/>
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_gravity="center"
         android:gravity="center"
         android:layout_marginTop="10dp"
-        android:layout_marginBottom="20dp">
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp">
 
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/swReport"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Receber notificações de relatórios novos"
+            android:checked="false"
+            android:textSize="16sp"
+            android:layout_marginBottom="15dp"/>
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/swLogin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Receber notificações de Login"
+            android:checked="false"
+            android:textSize="16sp"
+            android:layout_marginBottom="15dp"/>
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/swTeam"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Receber notificações de atualizações de Equipe"
+            android:checked="false"
+            android:textSize="16sp"
+            android:layout_marginBottom="15dp"/>
 
     </LinearLayout>
 
