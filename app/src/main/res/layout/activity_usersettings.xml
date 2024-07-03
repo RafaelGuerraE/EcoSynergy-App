@@ -40,7 +40,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginBottom="20dp">
+                android:layout_marginBottom="20dp"
+                android:layout_gravity="center_vertical">
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="0dp"
@@ -64,16 +65,18 @@
                     android:layout_height="match_parent"
                     android:layout_weight="0.2"
                     android:background="@drawable/round_button"
+                    android:backgroundTint="@color/gray"
                     android:src="@drawable/baseline_edit_24"
-                    app:tint="?android:attr/iconTint"
-                    android:layout_margin="4dp"/>
+                    app:tint="@color/grayDark"
+                    android:layout_margin="5dp"/>
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginBottom="20dp">
+                android:layout_marginBottom="20dp"
+                android:layout_gravity="center_vertical">
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="0dp"
@@ -99,14 +102,15 @@
                     android:background="@drawable/round_button"
                     android:src="@drawable/baseline_edit_24"
                     app:tint="?android:attr/iconTint"
-                    android:layout_margin="4dp"/>
+                    android:layout_margin="5dp"/>
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginBottom="20dp">
+                android:layout_marginBottom="20dp"
+                android:layout_gravity="center_vertical">
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="0dp"
@@ -132,14 +136,15 @@
                     android:background="@drawable/round_button"
                     android:src="@drawable/baseline_edit_24"
                     app:tint="?android:attr/iconTint"
-                    android:layout_margin="4dp"/>
+                    android:layout_margin="5dp"/>
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginBottom="20dp">
+                android:layout_marginBottom="20dp"
+                android:layout_gravity="center_vertical">
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="0dp"
@@ -165,14 +170,15 @@
                     android:background="@drawable/round_button"
                     android:src="@drawable/baseline_edit_24"
                     app:tint="?android:attr/iconTint"
-                    android:layout_margin="4dp"/>
+                    android:layout_margin="5dp"/>
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginBottom="20dp">
+                android:layout_marginBottom="20dp"
+                android:layout_gravity="center_vertical">
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="0dp"
@@ -199,8 +205,18 @@
                     android:background="@drawable/round_button"
                     android:src="@drawable/baseline_edit_24"
                     app:tint="?android:attr/iconTint"
-                    android:layout_margin="4dp"/>
+                    android:layout_margin="5dp"/>
             </LinearLayout>
+
+            <Button
+                android:id="@+id/btnDelete"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Excluir minha conta"
+                android:backgroundTint="?android:attr/colorBackground"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textStyle="bold"
+                android:textSize="16sp"/>
 
         </LinearLayout>
 

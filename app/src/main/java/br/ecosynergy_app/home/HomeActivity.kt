@@ -1,8 +1,10 @@
 package br.ecosynergy_app.home
 
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
@@ -15,6 +17,7 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
@@ -43,6 +46,7 @@ class HomeActivity : AppCompatActivity() {
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
         val navDrawerButton: CircleImageView = findViewById(R.id.navDrawerButton)
         val navView: NavigationView = findViewById(R.id.nav_view)
+        val btnTheme: ImageButton = findViewById(R.id.btnTheme)
         val snackbar = Snackbar.make(rootView, "Conectado com Sucesso", Snackbar.LENGTH_LONG)
             .setAction("FECHAR") {}
         snackbar.setBackgroundTint(ContextCompat.getColor(this, R.color.greenDark))
@@ -60,6 +64,15 @@ class HomeActivity : AppCompatActivity() {
         })
 
         snackbar.show()
+
+        when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
+            Configuration.UI_MODE_NIGHT_YES -> {
+                btnTheme.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.baseline_dark_mode_24))
+            }
+            Configuration.UI_MODE_NIGHT_NO -> {
+                btnTheme.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.baseline_sunny_24))
+            }
+        }
 
         val headerView = navView.getHeaderView(0)
         if (headerView == null) {
@@ -152,6 +165,35 @@ class HomeActivity : AppCompatActivity() {
                 drawerLayout.closeDrawer(navView)
             }
         }
+
+        btnTheme.setOnClickListener{
+            val items = arrayOf("Claro", "Escuro", "Padrão do Sistema")
+
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle("Selecione o tema desejado")
+
+            builder.setItems(items) { dialog, which ->
+                when (which) {
+                    0 -> {
+                        Toast.makeText(this, "Tema atualizado para: ${items[which]}", Toast.LENGTH_SHORT).show()
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                    }
+                    1 -> {
+                        Toast.makeText(this, "Tema atualizado para: ${items[which]}", Toast.LENGTH_SHORT).show()
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                    }
+                    2 -> {
+                        Toast.makeText(this, "Tema atualizado para: ${items[which]}", Toast.LENGTH_SHORT).show()
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+                    }
+                }
+                dialog.dismiss()
+            }
+
+            val dialog: AlertDialog = builder.create()
+            dialog.show()
+        }
+
     }
 
     override fun onResume() {

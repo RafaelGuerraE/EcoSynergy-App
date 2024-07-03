@@ -10,13 +10,10 @@ import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
+import androidx.fragment.app.viewModels
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import br.ecosynergy_app.R
 import br.ecosynergy_app.home.UserViewModel
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.findViewTreeViewModelStoreOwner
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-
 
 class Home : Fragment() {
 
@@ -25,11 +22,7 @@ class Home : Fragment() {
     private lateinit var swipeRefresh: SwipeRefreshLayout
     private val userViewModel: UserViewModel by viewModels()
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
 
         swipeRefresh = view.findViewById(R.id.swipeRefresh)
@@ -41,18 +34,12 @@ class Home : Fragment() {
             lblFirstname.visibility = View.VISIBLE
             result.onSuccess { user ->
                 val firstName = user.fullName.split(" ").firstOrNull()
-                lblFirstname.text = firstName + "!"
+                lblFirstname.text = "$firstName!"
             }.onFailure { throwable ->
                 Log.e("HomeFragment", "Error fetching user data", throwable)
                 lblFirstname.text = "Error fetching user data"
             }
         }
-
-        swipeRefresh.isRefreshing = true
-
-        swipeRefresh.postDelayed({
-            swipeRefresh.isRefreshing = false
-        }, 1000)
 
         fetchUserData()
         refreshApp()
@@ -77,9 +64,9 @@ class Home : Fragment() {
         }
     }
 
-    private fun refreshApp(){
+    private fun refreshApp() {
         swipeRefresh.setOnRefreshListener {
-
+            fetchUserData()
             swipeRefresh.isRefreshing = false
         }
     }
