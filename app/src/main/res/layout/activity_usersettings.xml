@@ -208,13 +208,18 @@
                     android:layout_margin="5dp"/>
             </LinearLayout>
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnDelete"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Excluir minha conta"
+                app:icon="@drawable/baseline_delete_24"
+                app:iconSize="20dp"
+                app:iconTint="@color/red"
+                app:iconPadding="5dp"
+                app:iconGravity="textStart"
                 android:backgroundTint="?android:attr/colorBackground"
-                android:textColor="?android:attr/textColorPrimary"
+                android:textColor="@color/red"
                 android:textStyle="bold"
                 android:textSize="16sp"/>
 

@@ -37,7 +37,7 @@ class Home : Fragment() {
                 lblFirstname.text = "$firstName!"
             }.onFailure { throwable ->
                 Log.e("HomeFragment", "Error fetching user data", throwable)
-                lblFirstname.text = "Error fetching user data"
+                lblFirstname.text = ""
             }
         }
 
@@ -60,7 +60,7 @@ class Home : Fragment() {
         } else {
             progressBar.visibility = View.GONE
             lblFirstname.visibility = View.VISIBLE
-            lblFirstname.text = "Invalid username or token"
+            lblFirstname.text = ""
         }
     }
 
@@ -69,16 +69,5 @@ class Home : Fragment() {
             fetchUserData()
             swipeRefresh.isRefreshing = false
         }
-    }
-
-    companion object {
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            Home().apply {
-                arguments = Bundle().apply {
-                    putString("param1", param1)
-                    putString("param2", param2)
-                }
-            }
     }
 }

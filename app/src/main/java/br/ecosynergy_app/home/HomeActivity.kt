@@ -130,7 +130,7 @@ class HomeActivity : AppCompatActivity() {
         }
         onBackPressedDispatcher.addCallback(this, callback)
 
-        userViewModel.user.observe(this, Observer { user ->
+        userViewModel.user.observe(this, { user ->
             if (user != null) {
                 updateNavigationHeader(navView, user)
             }
@@ -235,7 +235,6 @@ class HomeActivity : AppCompatActivity() {
         if (username != null && token != null) {
             userViewModel.fetchUserData(username, token)
         } else {
-            showToast("Invalid username or Token")
             Log.e("HomeActivity", "Invalid username or token")
         }
     }
@@ -303,7 +302,7 @@ class HomeActivity : AppCompatActivity() {
             }
         }.onFailure { throwable ->
             Log.e("HomeActivity", "Error updating navigation header", throwable)
-            showToast("Error updating navigation header")
+            logout()
         }
     }
 

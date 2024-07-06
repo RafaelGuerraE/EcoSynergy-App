@@ -12,11 +12,13 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
+import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.transition.Visibility
 import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.home.HomeActivity
@@ -31,6 +33,11 @@ class ConfirmationActivity : AppCompatActivity() {
     private lateinit var loadingProgressBar: ProgressBar
     private lateinit var overlayView: View
 
+    var digit1Text : String = ""
+    var digit2Text : String = ""
+    var digit3Text : String = ""
+    var digit4Text : String = ""
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_confirmation)
@@ -40,6 +47,8 @@ class ConfirmationActivity : AppCompatActivity() {
         val digit2 = findViewById<EditText>(R.id.digit2)
         val digit3 = findViewById<EditText>(R.id.digit3)
         val digit4 = findViewById<EditText>(R.id.digit4)
+
+        val txtError = findViewById<LinearLayout>(R.id.txtError)
 
         val btnCheck: Button = findViewById(R.id.btnCheck)
         val btnBack = findViewById<ImageButton>(R.id.btnBack)
@@ -86,9 +95,21 @@ class ConfirmationActivity : AppCompatActivity() {
         }
 
         btnCheck.setOnClickListener {
-            showProgressBar(true) // Show progress bar on button click
-            val createUserRequest = CreateUserRequest(userName, fullName, email, password, gender, nationality)
-            registerViewModel.registerUser(createUserRequest)
+            digit1Text = digit1.text.toString()
+            digit2Text = digit2.text.toString()
+            digit3Text = digit3.text.toString()
+            digit4Text = digit4.text.toString()
+
+            if(digit1Text != "1" || digit2Text != "2" || digit3Text != "3" || digit4Text != "4")
+            {
+                txtError.visibility = View.VISIBLE
+            }
+            else{
+                txtError.visibility = View.INVISIBLE
+                showProgressBar(true)
+                val createUserRequest = CreateUserRequest(userName, fullName, email, password, gender, nationality)
+                registerViewModel.registerUser(createUserRequest)
+            }
         }
 
         txtResend.setOnClickListener {

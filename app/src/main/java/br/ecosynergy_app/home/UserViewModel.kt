@@ -20,13 +20,29 @@ class UserViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 val response = RetrofitClient.userService.getUser(username, "Bearer $token")
-                Log.d("UserViewModel", "Login successful: $response")
+                Log.d("UserViewModel LOGIN", "Login successful: $response")
                 _user.value = Result.success(response)
             } catch (e: HttpException) {
-                Log.e("UserViewModel", "HTTP error during login", e)
+                Log.e("UserViewModel LOGIN", "HTTP error during login", e)
                 _user.value = Result.failure(e)
             } catch (e: IOException) {
-                Log.e("UserViewModel", "HTTP error during login", e)
+                Log.e("UserViewModel LOGIN", "HTTP error during login", e)
+                _user.value = Result.failure(e)
+            }
+        }
+    }
+
+    fun deleteUserData(id: Long){
+        viewModelScope.launch {
+            try {
+                val response = RetrofitClient.userService.deleteUser(id)
+                Log.d("UserViewModel DELETE", "User successfully deleted: $response")
+                _user.value = Result.success(response)
+            } catch (e: HttpException) {
+                Log.e("UserViewModel DELETE", "HTTP error during DeleteUser", e)
+                _user.value = Result.failure(e)
+            } catch (e: IOException) {
+                Log.e("UserViewModel DELETE", "HTTP error during DeleteUser", e)
                 _user.value = Result.failure(e)
             }
         }

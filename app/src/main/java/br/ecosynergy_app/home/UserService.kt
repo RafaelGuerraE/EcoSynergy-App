@@ -16,6 +16,6 @@ interface UserService {
     @PUT("auth/refresh/{username}")
     suspend fun refreshToken(@Path("username") username: String)
 
-    @DELETE("auth/delete/{username}")
-    suspend fun deleteUser(@Path("username") username: String)
+    @DELETE("api/user/v1/{id}")
+    suspend fun deleteUser(@Path("id") id: Long) : UserResponse
 }

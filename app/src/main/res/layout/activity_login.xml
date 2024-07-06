@@ -101,18 +101,10 @@
                     android:text="CADASTRAR"
                     style="@style/CustomButtonStyle"/>
 
-                <com.google.android.gms.common.SignInButton
-                    android:id="@+id/btnGoogle"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:layout_marginTop="15dp"
-                    android:textSize="18sp"/>
-
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
 
-    <!-- Overlay layout for dimming effect -->
     <View
         android:id="@+id/overlayView"
         android:layout_width="match_parent"
@@ -120,7 +112,6 @@
         android:background="#80000000"
         android:visibility="gone" />
 
-    <!-- Loading ProgressBar centered in RelativeLayout -->
     <ProgressBar
         android:id="@+id/loadingProgressBar"
         android:layout_width="wrap_content"

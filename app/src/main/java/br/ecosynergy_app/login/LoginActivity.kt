@@ -54,14 +54,11 @@ class LoginActivity : AppCompatActivity() {
         val passwordLayout: TextInputLayout = findViewById(R.id.passwordLayout)
         val btnLogin: Button = findViewById(R.id.btnLogin)
         val btnRegister: Button = findViewById(R.id.btnRegister)
-        val btnGoogle: SignInButton = findViewById(R.id.btnGoogle)
         loadingProgressBar = findViewById(R.id.loadingProgressBar)
         overlayView = findViewById(R.id.overlayView)
 
         auth = FirebaseAuth.getInstance()
         oneTapClient = Identity.getSignInClient(this)
-
-        btnGoogle.setOnClickListener {}
 
         btnLogin.setOnClickListener {
             val username = txtEntry.text.toString()
