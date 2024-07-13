@@ -31,8 +31,6 @@
             android:name=".login.ResetActivity"
             android:exported="false" />
 
-        <!--Home-->
-
         <activity
             android:name=".home.HomeActivity"
             android:exported="true" />
@@ -49,7 +47,6 @@
             android:name=".home.TermsActivity"
             android:exported="true" />
 
-        <!--Register-->
         <activity
             android:name=".register.ConfirmationActivity"
             android:exported="true" />
@@ -60,10 +57,6 @@
             android:name=".register.RegisterActivity"
             android:exported="true" />
 
-        <!--Teams-->
-        <activity
-            android:name=".teams.TeamActivity"
-            android:exported="true" />
         <activity
             android:name=".teams.TeamSettingsActivity"
             android:exported="true" />
@@ -84,7 +77,5 @@
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
 
-
     </application>
-
 </manifest>

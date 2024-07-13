@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.facebook.shimmer.ShimmerFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/shimmer_view_container"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="start"
+    app:shimmer_auto_start="true">
+
+    <View
+        android:id="@+id/shimmer_lblFirstname"
+        android:layout_width="150dp"
+        android:layout_height="30dp"
+        android:background="@drawable/rect_shape"/>
+</com.facebook.shimmer.ShimmerFrameLayout>

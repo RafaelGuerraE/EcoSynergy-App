@@ -15,10 +15,10 @@
         android:focusable="false"
         android:id="@+id/root_view">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -36,6 +36,7 @@
                     android:text="Seja bem vindo, "
                     android:textSize="22sp"
                     android:textStyle="bold"/>
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -43,12 +44,24 @@
                     tools:text="Usuário!"
                     android:textSize="22sp"
                     android:textColor="@color/greenDark"
-                    android:textStyle="bold"/>
-                <ProgressBar
-                    android:id="@+id/progressBar"
-                    android:layout_width="22dp"
-                    android:layout_height="22dp"
+                    android:textStyle="bold"
                     android:visibility="gone"/>
+
+                <com.facebook.shimmer.ShimmerFrameLayout
+                    android:id="@+id/shimmerViewContainer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    app:shimmer_auto_start="true"
+                    android:visibility="visible">
+
+                    <View
+                        android:id="@+id/shimmerLblFirstname"
+                        android:layout_width="150dp"
+                        android:layout_height="30dp"
+                        android:background="@drawable/rect_shape"
+                        android:visibility="visible"/>
+                </com.facebook.shimmer.ShimmerFrameLayout>
 
             </LinearLayout>
 
@@ -96,9 +109,7 @@
                     android:layout_gravity="center"
                     android:layout_marginBottom="30dp"/>
 
-
             </LinearLayout>
-    </LinearLayout>
-
+        </LinearLayout>
     </ScrollView>
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
