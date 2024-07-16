@@ -38,6 +38,13 @@ class HomeActivity : AppCompatActivity() {
     private val userViewModel: UserViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val sharedPreferences: SharedPreferences = getSharedPreferences("theme_prefs", Context.MODE_PRIVATE)
+        when (sharedPreferences.getString("theme", "system")) {
+            "light" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            "dark" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            "system" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+        }
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
@@ -47,23 +54,29 @@ class HomeActivity : AppCompatActivity() {
         val navDrawerButton: CircleImageView = findViewById(R.id.navDrawerButton)
         val navView: NavigationView = findViewById(R.id.nav_view)
         val btnTheme: ImageButton = findViewById(R.id.btnTheme)
-        val snackbar = Snackbar.make(rootView, "Conectado com Sucesso", Snackbar.LENGTH_LONG)
-            .setAction("FECHAR") {}
-        snackbar.setBackgroundTint(ContextCompat.getColor(this, R.color.greenDark))
-        snackbar.setTextColor(ContextCompat.getColor(this, R.color.white))
-        snackbar.setActionTextColor(ContextCompat.getColor(this, R.color.white))
+        val loginSharedPreferences = getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
+        if (loginSharedPreferences.getBoolean("just_logged_in", false)) {
+            val snackBar = Snackbar.make(rootView, "Conectado com Sucesso", Snackbar.LENGTH_LONG)
+                .setAction("FECHAR") {}
+            snackBar.setBackgroundTint(ContextCompat.getColor(this, R.color.greenDark))
+            snackBar.setTextColor(ContextCompat.getColor(this, R.color.white))
+            snackBar.setActionTextColor(ContextCompat.getColor(this, R.color.white))
 
-        snackbar.addCallback(object : Snackbar.Callback() {
-            override fun onShown(sb: Snackbar?) {
-                super.onShown(sb)
-                val snackbarView = snackbar.view
-                val params = snackbarView.layoutParams as FrameLayout.LayoutParams
-                params.setMargins(params.leftMargin, params.topMargin, params.rightMargin, bottomNavView.height)
-                snackbarView.layoutParams = params
-            }
-        })
+            snackBar.addCallback(object : Snackbar.Callback() {
+                override fun onShown(sb: Snackbar?) {
+                    super.onShown(sb)
+                    val snackbarView = snackBar.view
+                    val params = snackbarView.layoutParams as FrameLayout.LayoutParams
+                    params.setMargins(params.leftMargin, params.topMargin, params.rightMargin, bottomNavView.height)
+                    snackbarView.layoutParams = params
+                }
+            })
 
-        snackbar.show()
+            snackBar.show()
+            val editor = loginSharedPreferences.edit()
+            editor.putBoolean("just_logged_in", false)
+            editor.apply()
+        }
 
         when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
             Configuration.UI_MODE_NIGHT_YES -> {
@@ -130,11 +143,11 @@ class HomeActivity : AppCompatActivity() {
         }
         onBackPressedDispatcher.addCallback(this, callback)
 
-        userViewModel.user.observe(this, { user ->
+        userViewModel.user.observe(this) { user ->
             if (user != null) {
                 updateNavigationHeader(navView, user)
             }
-        })
+        }
 
         fetchUserData()
 
@@ -173,20 +186,24 @@ class HomeActivity : AppCompatActivity() {
             builder.setTitle("Selecione o tema desejado")
 
             builder.setItems(items) { dialog, which ->
+                val sharedPreferences: SharedPreferences = getSharedPreferences("theme_prefs", Context.MODE_PRIVATE)
+                val editor = sharedPreferences.edit()
+
                 when (which) {
                     0 -> {
-                        Toast.makeText(this, "Tema atualizado para: ${items[which]}", Toast.LENGTH_SHORT).show()
                         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                        editor.putString("theme", "light")
                     }
                     1 -> {
-                        Toast.makeText(this, "Tema atualizado para: ${items[which]}", Toast.LENGTH_SHORT).show()
                         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                        editor.putString("theme", "dark")
                     }
                     2 -> {
-                        Toast.makeText(this, "Tema atualizado para: ${items[which]}", Toast.LENGTH_SHORT).show()
                         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+                        editor.putString("theme", "system")
                     }
                 }
+                editor.apply()
                 dialog.dismiss()
             }
 
@@ -306,7 +323,7 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
-    fun showToast(message: String) {
+    private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 }

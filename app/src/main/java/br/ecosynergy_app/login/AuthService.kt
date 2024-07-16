@@ -15,10 +15,4 @@ import retrofit2.http.Query
 interface AuthService {
     @POST("auth/signin")
     suspend fun loginUser(@Body loginUserRequest: LoginRequest):LoginResponse
-
-    @GET("users/check")
-    suspend fun checkUser(@Query("email") email: String): LoginResponse
-
-    @POST("users/register")
-    suspend fun registerUser(@Body userData: GoogleUserData): LoginResponse
 }

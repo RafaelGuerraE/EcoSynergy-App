@@ -9,7 +9,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitClient {
 
-    private const val BASE_URL = "http://ec2-44-214-120-49.compute-1.amazonaws.com/"
+    private const val BASE_URL = "http://ec2-44-220-83-117.compute-1.amazonaws.com/"
 
         private val retrofit: Retrofit by lazy {
             Retrofit.Builder()

@@ -10,18 +10,18 @@ interface SensorsService {
     suspend fun fetchMq7Readings()
 
     @GET("api/mq7Reading/v1/{id}")
-    suspend fun fetchMq7Reading(@Path("id") id:String ="")
+    suspend fun fetchMq7ReadingById(@Path("id") id:String)
 
     @GET("api/mq135Reading/v1")
-    suspend fun fetchMq135Readings()
+    suspend fun fetchMq135Reading()
 
     @GET("api/mq135Reading/v1/{id}")
-    suspend fun fetchMq135Reading(@Path("id") id:String ="")
+    suspend fun fetchMq135ReadingById(@Path("id") id:String)
 
     @GET("api/fireReading/v1")
-    suspend fun fetchFireReadings()
+    suspend fun fetchFireReading()
 
     @GET("api/fireReading/v1/{id}")
-    suspend fun fetchFireReading(@Path("id") id:String ="")
+    suspend fun fetchFireReadingById(@Path("id") id:String)
 
 }

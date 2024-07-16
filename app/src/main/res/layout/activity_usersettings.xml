@@ -36,18 +36,12 @@
             android:layout_marginStart="30dp"
             android:layout_marginEnd="30dp">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="20dp"
-                android:layout_gravity="center_vertical">
-
                 <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:hint="Nome de Usuário">
+                    android:hint="Nome de Usuário"
+                    android:layout_marginBottom="4dp">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/txtUsername"
@@ -55,20 +49,31 @@
                         android:layout_height="match_parent"
                         android:text="rafaelguerra"
                         android:inputType="textEmailAddress"
-                        android:enabled="false"/>
+                        android:enabled="false"
+                        android:clickable="true"/>
+
 
                 </com.google.android.material.textfield.TextInputLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="10dp">
+            <ImageView
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:src="@drawable/baseline_alert_24"
+                app:tint="?android:attr/iconTint"
+                android:layout_marginStart="5dp"/>
 
-                <ImageButton
-                    android:id="@+id/btnEditUsername"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.2"
-                    android:background="@drawable/round_button"
-                    android:backgroundTint="@color/gray"
-                    android:src="@drawable/baseline_edit_24"
-                    app:tint="@color/grayDark"
-                    android:layout_margin="5dp"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Você não pode alterar o seu nome de usuário"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:textColor="?android:attr/textColorPrimary"
+                />
             </LinearLayout>
 
             <LinearLayout
@@ -173,40 +178,20 @@
                     android:layout_margin="5dp"/>
             </LinearLayout>
 
-            <LinearLayout
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="20dp"
-                android:layout_gravity="center_vertical">
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:hint="Senha"
-                    app:endIconMode="password_toggle">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/txtPassword"
-                        android:text="admin123"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:inputType="textPassword"
-                        android:enabled="false"/>
-
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <ImageButton
-                    android:id="@+id/btnEditPassword"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.2"
-                    android:background="@drawable/round_button"
-                    android:src="@drawable/baseline_edit_24"
-                    app:tint="?android:attr/iconTint"
-                    android:layout_margin="5dp"/>
-            </LinearLayout>
+                android:text="Alterar minha senha"
+                app:icon="@drawable/baseline_edit_24"
+                app:iconSize="20dp"
+                app:iconTint="@color/greenDark"
+                app:iconPadding="5dp"
+                app:iconGravity="textStart"
+                android:backgroundTint="?android:attr/colorBackground"
+                android:textColor="@color/greenDark"
+                android:textStyle="bold"
+                android:textSize="16sp"/>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnDelete"

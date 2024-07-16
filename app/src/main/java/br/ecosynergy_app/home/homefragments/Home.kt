@@ -45,10 +45,8 @@ class Home : Fragment() {
                 lblFirstname.text = ""
             }
         }
-
         fetchUserData()
         refreshApp()
-
         return view
     }
 

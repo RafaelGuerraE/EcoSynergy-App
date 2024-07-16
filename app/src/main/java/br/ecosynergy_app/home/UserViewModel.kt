@@ -47,4 +47,18 @@ class UserViewModel : ViewModel() {
             }
         }
     }
+
+    fun recoverPassword(username: String, password: String, token: String) {
+        viewModelScope.launch {
+            try {
+                val request = PasswordRequest(username, password)
+                RetrofitClient.userService.recoverPassword("Bearer $token", request)
+                Log.d("UserViewModel RECOVER", "Password recovery successful for user: $username")
+            } catch (e: HttpException) {
+                Log.e("UserViewModel RECOVER", "HTTP error during password recovery", e)
+            } catch (e: IOException) {
+                Log.e("UserViewModel RECOVER", "Network error during password recovery", e)
+            }
+        }
+    }
 }

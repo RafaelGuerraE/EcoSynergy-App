@@ -134,10 +134,16 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun startHomeActivity() {
+        val sharedPreferences = getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putBoolean("just_logged_in", true)
+        editor.apply()
+
         val i = Intent(this, HomeActivity::class.java)
         startActivity(i)
         finish()
     }
+
 
     private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
