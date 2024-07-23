@@ -27,8 +27,10 @@ interface UserService {
     @DELETE("api/user/v1/{id}")
     suspend fun deleteUser(@Path("id") id: Long) : UserResponse
 
-    @PUT("api/user/v1")
+    @PUT("api/user/v1/{id}")
     suspend fun updateUser(
+        @Path("id") id: String,
         @Header("Authorization") token: String,
-        @Body request: UpdateRequest) : UserResponse
+        @Body request: UpdateRequest
+    ) : UserResponse
 }

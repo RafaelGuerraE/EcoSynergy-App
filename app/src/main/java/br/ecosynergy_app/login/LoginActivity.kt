@@ -76,7 +76,6 @@ class LoginActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            // Show loading indicator and overlay
             loadingProgressBar.visibility = View.VISIBLE
             overlayView.visibility = View.VISIBLE
 
@@ -108,7 +107,6 @@ class LoginActivity : AppCompatActivity() {
         }
 
         authViewModel.loginResult.observe(this) { result ->
-            // Hide loading indicator and overlay
             loadingProgressBar.visibility = View.GONE
             overlayView.visibility = View.GONE
 

@@ -56,7 +56,7 @@ class HomeActivity : AppCompatActivity() {
         val btnTheme: ImageButton = findViewById(R.id.btnTheme)
         val loginSharedPreferences = getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
         if (loginSharedPreferences.getBoolean("just_logged_in", false)) {
-            val snackBar = Snackbar.make(rootView, "Conectado com Sucesso", Snackbar.LENGTH_LONG)
+            val snackBar = Snackbar.make(rootView, "Conectado com Sucesso", Snackbar.LENGTH_SHORT)
                 .setAction("FECHAR") {}
             snackBar.setBackgroundTint(ContextCompat.getColor(this, R.color.greenDark))
             snackBar.setTextColor(ContextCompat.getColor(this, R.color.white))
