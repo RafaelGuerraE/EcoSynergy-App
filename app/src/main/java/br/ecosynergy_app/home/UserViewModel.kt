@@ -48,6 +48,23 @@ class UserViewModel : ViewModel() {
         }
     }
 
+    fun updateUserData(token: String?, id: Long, username: String, fullName: String, email: String, gender: String, nationality: String){
+        viewModelScope.launch {
+            try {
+                val request = UpdateRequest(id, username, fullName, email, gender, nationality)
+                val response = RetrofitClient.userService.updateUser("Bearer $token", request)
+                Log.d("UserViewModel UPDATE", "User successfully updated: $response")
+                _user.value = Result.success(response)
+            } catch (e: HttpException) {
+                Log.e("UserViewModel UPDATE", "HTTP error during UPDATE", e)
+                _user.value = Result.failure(e)
+            } catch (e: IOException) {
+                Log.e("UserViewModel UPDATE", "HTTP error during UPDATE", e)
+                _user.value = Result.failure(e)
+            }
+        }
+    }
+
     fun recoverPassword(username: String, password: String, token: String) {
         viewModelScope.launch {
             try {

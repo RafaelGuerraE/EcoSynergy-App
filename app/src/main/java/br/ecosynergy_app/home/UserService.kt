@@ -29,5 +29,6 @@ interface UserService {
 
     @PUT("api/user/v1")
     suspend fun updateUser(
-        @Header("Authorization") token: String): UserResponse
+        @Header("Authorization") token: String,
+        @Body request: UpdateRequest) : UserResponse
 }

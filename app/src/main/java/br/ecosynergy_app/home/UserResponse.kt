@@ -5,7 +5,6 @@ data class UserResponse(
     val username: String,
     val fullName: String,
     val email: String,
-    val password: String,
     val gender: String,
     val nationality: String,
     val accountNonExpired: Boolean,

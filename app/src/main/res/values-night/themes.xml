@@ -9,6 +9,7 @@
         <item name="android:textColorPrimary">@color/white</item>
         <item name="android:textColorSecondary">@color/white</item>
         <item name="android:iconTint">@color/white</item>
+        <item name="android:textColorHighlight">@color/greenDark_50</item>
 
         <item name="buttonText">@color/white</item>
         <item name="fragmentsBackground">@color/grayDark</item>

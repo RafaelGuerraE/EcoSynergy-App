@@ -36,8 +36,16 @@
             android:layout_marginStart="30dp"
             android:layout_marginEnd="30dp">
 
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="20dp"
+                android:layout_gravity="center_vertical">
+
                 <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:hint="Nome de Usuário"
@@ -54,28 +62,18 @@
 
 
                 </com.google.android.material.textfield.TextInputLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="10dp">
-            <ImageView
-                android:layout_width="15dp"
-                android:layout_height="15dp"
-                android:src="@drawable/baseline_alert_24"
-                app:tint="?android:attr/iconTint"
-                android:layout_marginStart="5dp"/>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Você não pode alterar o seu nome de usuário"
-                android:textSize="11sp"
-                android:textStyle="bold"
-                android:textColor="?android:attr/textColorPrimary"
-                />
+                <ImageButton
+                    android:id="@+id/btnEditUsername"
+                    android:layout_width="0dp"
+                    android:layout_height="55dp"
+                    android:layout_weight="0.2"
+                    android:layout_gravity="center"
+                    android:background="@drawable/round_button"
+                    android:src="@drawable/baseline_edit_24"
+                    app:tint="?android:attr/iconTint"
+                    android:layout_marginStart="5dp"/>
             </LinearLayout>
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -102,12 +100,13 @@
                 <ImageButton
                     android:id="@+id/btnEditFullname"
                     android:layout_width="0dp"
-                    android:layout_height="match_parent"
+                    android:layout_height="55dp"
                     android:layout_weight="0.2"
+                    android:layout_gravity="center"
                     android:background="@drawable/round_button"
                     android:src="@drawable/baseline_edit_24"
                     app:tint="?android:attr/iconTint"
-                    android:layout_margin="5dp"/>
+                    android:layout_marginStart="5dp"/>
             </LinearLayout>
 
             <LinearLayout
@@ -121,61 +120,96 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:hint="Gênero">
+                    android:hint="Email">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/txtGender"
-                        android:text="Masculino"
+                        android:id="@+id/txtEmail"
+                        android:text="guerrafaell@gmail.com"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:inputType="textEmailAddress"
                         android:enabled="false"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
+
+                <ImageButton
+                    android:id="@+id/btnEditEmail"
+                    android:layout_width="0dp"
+                    android:layout_height="55dp"
+                    android:layout_weight="0.2"
+                    android:layout_gravity="center"
+                    android:background="@drawable/round_button"
+                    android:src="@drawable/baseline_edit_24"
+                    app:tint="?android:attr/iconTint"
+                    android:layout_marginStart="5dp"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:orientation="horizontal"
+                android:layout_marginBottom="20dp"
+                android:layout_gravity="center_vertical">
+
+                <Spinner
+                    android:id="@+id/txtGender"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:spinnerMode="dropdown"
+                    android:entries="@array/gender_arrayB"
+                    android:background="@drawable/spinner_background"
+                    />
+
 
                 <ImageButton
                     android:id="@+id/btnEditGender"
                     android:layout_width="0dp"
-                    android:layout_height="match_parent"
+                    android:layout_height="55dp"
                     android:layout_weight="0.2"
+                    android:layout_gravity="center"
                     android:background="@drawable/round_button"
                     android:src="@drawable/baseline_edit_24"
                     app:tint="?android:attr/iconTint"
-                    android:layout_margin="5dp"/>
+                    android:layout_marginStart="5dp"/>
             </LinearLayout>
+
+
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginBottom="20dp"
+                android:layout_marginBottom="10dp"
                 android:layout_gravity="center_vertical">
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="60dp"
                     android:layout_weight="1"
                     android:hint="Nacionalidade">
 
-                    <com.google.android.material.textfield.TextInputEditText
+                    <com.google.android.material.textfield.MaterialAutoCompleteTextView
                         android:id="@+id/txtNationality"
-                        android:text="Brazilian"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:inputType="textEmailAddress"
-                        android:enabled="false"/>
+                        android:enabled="false"
+                        android:textSize="16sp"
+                        android:paddingStart="15dp"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <ImageButton
-                    android:id="@+id/btnEditNationality"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.2"
-                    android:background="@drawable/round_button"
-                    android:src="@drawable/baseline_edit_24"
-                    app:tint="?android:attr/iconTint"
-                    android:layout_margin="5dp"/>
+                android:id="@+id/btnEditNationality"
+                android:layout_width="0dp"
+                android:layout_height="55dp"
+                android:layout_weight="0.2"
+                android:layout_gravity="center"
+                android:background="@drawable/round_button"
+                android:src="@drawable/baseline_edit_24"
+                app:tint="?android:attr/iconTint"
+                android:layout_marginStart="5dp"/>
             </LinearLayout>
 
             <com.google.android.material.button.MaterialButton

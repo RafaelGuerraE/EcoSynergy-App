@@ -12,4 +12,8 @@
     <color name="pastel">#DADADA</color>
     <color name="red">#FF0000</color>
     <color name="yellow">#FFFB00</color>
+
+    <color name="green_50">#804FDB4A</color>
+    <color name="greenDark_50">#8006B600</color>
+    <color name="disabled">#BDBDBD</color>
 </resources>

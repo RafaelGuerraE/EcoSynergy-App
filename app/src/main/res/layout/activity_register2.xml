@@ -26,12 +26,13 @@
             android:layout_margin="15dp"/>
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout_gravity="center"
             android:gravity="center"
-            android:layout_marginTop="20dp">
+            android:layout_marginStart="25dp"
+            android:layout_marginEnd="25dp">
 
             <ImageView
                 android:layout_width="120dp"
@@ -40,7 +41,7 @@
                 android:layout_marginBottom="20dp"/>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="300dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Nome Completo"
                 android:layout_marginBottom="20dp">
@@ -53,7 +54,7 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="300dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Nome de Usuário"
                 android:layout_marginBottom="20dp">
@@ -66,7 +67,7 @@
             </com.google.android.material.textfield.TextInputLayout>
 
                 <AutoCompleteTextView
-                    android:layout_width="300dp"
+                    android:layout_width="match_parent"
                     android:layout_height="60dp"
                     android:id="@+id/txtNationality"
                     android:inputType="text"
@@ -92,7 +93,7 @@
                 <Spinner
                     android:entries="@array/gender_array"
                     android:id="@+id/spinnerGender"
-                    android:layout_width="300dp"
+                    android:layout_width="match_parent"
                     android:layout_height="60dp"
                     android:spinnerMode="dropdown"
                     android:background="@drawable/spinner_background"
@@ -112,8 +113,8 @@
                 android:layout_marginBottom="5dp"/>
 
             <Button
-                android:id="@+id/btnregister"
-                android:layout_width="300dp"
+                android:id="@+id/btnRegister"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="CADASTRAR"
                 style="@style/CustomButtonStyle"

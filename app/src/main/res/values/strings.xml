@@ -20,4 +20,11 @@
         <item>Outro</item>
         <item>Prefiro não dizer</item>
     </string-array>
+
+    <string-array name="gender_arrayB">
+        <item>Masculino</item>
+        <item>Feminino</item>
+        <item>Outro</item>
+        <item>Prefiro não dizer</item>
+    </string-array>
 </resources>

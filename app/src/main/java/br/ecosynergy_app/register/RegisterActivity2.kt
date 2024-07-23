@@ -31,7 +31,7 @@ class RegisterActivity2 : AppCompatActivity() {
 
         val btnBack = findViewById<ImageButton>(R.id.btnBack)
 
-        val btnRegister: Button = findViewById(R.id.btnregister)
+        val btnRegister: Button = findViewById(R.id.btnRegister)
 
         val txtFullname: TextInputEditText = findViewById(R.id.txtFullname)
         val txtUsername: TextInputEditText = findViewById(R.id.txtUsername)
@@ -47,9 +47,6 @@ class RegisterActivity2 : AppCompatActivity() {
 
         val adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, nationalityNames)
         txtNationality.setAdapter(adapter)
-
-
-
 
         btnBack.setOnClickListener{ finish() }
 
@@ -111,13 +108,13 @@ class RegisterActivity2 : AppCompatActivity() {
         }
     }
     private fun loadNationalities(): List<Nationality> {
-        val jsonFileString = getData("nationalities.json")
+        val jsonFileString = getNationality("nationalities.json")
         val gson = Gson()
         val listNationalityType = object : TypeToken<List<Nationality>>() {}.type
         return gson.fromJson(jsonFileString, listNationalityType)
     }
 
-    private fun getData(fileName: String): String? {
+    private fun getNationality(fileName: String): String? {
         return try {
             val inputStream = assets.open(fileName)
             val size = inputStream.available()
