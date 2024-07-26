@@ -143,11 +143,7 @@ class HomeActivity : AppCompatActivity() {
         }
         onBackPressedDispatcher.addCallback(this, callback)
 
-        userViewModel.user.observe(this) { user ->
-            if (user != null) {
-                updateNavigationHeader(navView, user)
-            }
-        }
+        updateNavigationHeader(navView)
 
         fetchUserData()
 
@@ -217,6 +213,8 @@ class HomeActivity : AppCompatActivity() {
         super.onResume()
         val navView: NavigationView = findViewById(R.id.nav_view)
         clearNavigationViewSelection(navView)
+        fetchUserData()
+        updateNavigationHeader(navView)
     }
 
     private fun clearNavigationViewSelection(navView: NavigationView) {
@@ -288,38 +286,38 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateNavigationHeader(navView: NavigationView, user: Result<UserResponse>) {
-
+    private fun updateNavigationHeader(navView: NavigationView) {
         val navDrawerButton: CircleImageView = findViewById(R.id.navDrawerButton)
         val progressBar: ProgressBar = findViewById(R.id.progressBar)
-
-        progressBar.visibility = View.INVISIBLE
-        navDrawerButton.visibility = View.VISIBLE
-
         val headerView = navView.getHeaderView(0)
 
-        user.onSuccess { userData ->
-            headerView.findViewById<TextView>(R.id.lblUserFullname)?.text = userData.fullName
-            headerView.findViewById<TextView>(R.id.lblUsername)?.text = "@${userData.username}"
-            headerView.findViewById<TextView>(R.id.lblUserEmail)?.text = userData.email
-            val userPicture: CircleImageView = headerView.findViewById(R.id.userPicture)
+        userViewModel.user.observe(this) { user ->
+            progressBar.visibility = View.VISIBLE
+            navDrawerButton.visibility = View.GONE
 
-            val firstName = userData.fullName.split(" ").firstOrNull()
-            if (!firstName.isNullOrEmpty()) {
-                progressBar.visibility = View.GONE
-                navDrawerButton.visibility = View.VISIBLE
-                val firstLetter = firstName[0]
-                val drawableId = getDrawableForLetter(firstLetter)
-                userPicture.setImageResource(drawableId)
-                navDrawerButton.setImageResource(drawableId)
-            } else {
-                progressBar.visibility = View.GONE
-                navDrawerButton.visibility = View.VISIBLE
-                showToast("Profile Image Error")
+            user.onSuccess { userData ->
+                headerView.findViewById<TextView>(R.id.lblUserFullname)?.text = userData.fullName
+                headerView.findViewById<TextView>(R.id.lblUsername)?.text = "@${userData.username}"
+                headerView.findViewById<TextView>(R.id.lblUserEmail)?.text = userData.email
+                val userPicture: CircleImageView = headerView.findViewById(R.id.userPicture)
+
+                val firstName = userData.fullName.split(" ").firstOrNull()
+                if (!firstName.isNullOrEmpty()) {
+                    progressBar.visibility = View.GONE
+                    navDrawerButton.visibility = View.VISIBLE
+                    val firstLetter = firstName[0]
+                    val drawableId = getDrawableForLetter(firstLetter)
+                    userPicture.setImageResource(drawableId)
+                    navDrawerButton.setImageResource(drawableId)
+                } else {
+                    progressBar.visibility = View.GONE
+                    navDrawerButton.visibility = View.VISIBLE
+                    showToast("ERRO: Imagem de Perfil")
+                }
+            }.onFailure { throwable ->
+                Log.e("HomeActivity", "Error updating navigation header", throwable)
+                logout()
             }
-        }.onFailure { throwable ->
-            Log.e("HomeActivity", "Error updating navigation header", throwable)
-            logout()
         }
     }
 

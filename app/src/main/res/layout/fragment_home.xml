@@ -49,18 +49,19 @@
 
                 <com.facebook.shimmer.ShimmerFrameLayout
                     android:id="@+id/shimmerViewContainer"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="150dp"
+                    android:layout_height="30dp"
                     android:layout_gravity="start"
                     app:shimmer_auto_start="true"
                     android:visibility="visible">
 
                     <View
                         android:id="@+id/shimmerLblFirstname"
-                        android:layout_width="150dp"
-                        android:layout_height="30dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
                         android:background="@drawable/rect_shape"
-                        android:visibility="visible"/>
+                        android:visibility="visible"
+                        android:backgroundTint="?attr/shimmerColor"/>
                 </com.facebook.shimmer.ShimmerFrameLayout>
 
             </LinearLayout>
@@ -121,7 +122,8 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:background="@drawable/chart_shape"
-                                android:visibility="visible"/>
+                                android:visibility="visible"
+                                android:backgroundTint="?attr/shimmerColor"/>
                         </com.facebook.shimmer.ShimmerFrameLayout>
                     </FrameLayout>
 

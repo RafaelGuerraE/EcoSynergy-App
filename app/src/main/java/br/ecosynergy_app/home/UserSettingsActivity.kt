@@ -4,6 +4,8 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
@@ -13,18 +15,23 @@ import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.ImageButton
+import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.Spinner
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import br.ecosynergy_app.R
 import br.ecosynergy_app.register.Nationality
+import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import de.hdodenhof.circleimageview.CircleImageView
+import kotlinx.coroutines.delay
 import java.io.IOException
 
 class UserSettingsActivity : AppCompatActivity() {
@@ -54,8 +61,9 @@ class UserSettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_usersettings)
 
-        val sharedPreferences: SharedPreferences = getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
-        token =  sharedPreferences.getString("accessToken", null)
+        val sharedPreferences: SharedPreferences =
+            getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
+        token = sharedPreferences.getString("accessToken", null)
 
         val btnBack = findViewById<ImageButton>(R.id.btnBack)
         val btnEditUsername = findViewById<ImageButton>(R.id.btnEditUsername)
@@ -71,12 +79,15 @@ class UserSettingsActivity : AppCompatActivity() {
         val btnPassword = findViewById<Button>(R.id.btnPassword)
         val btnDelete = findViewById<Button>(R.id.btnDelete)
 
+        val imgProfile: CircleImageView = findViewById(R.id.imgProfile)
+
         loadingProgressBar = findViewById(R.id.loadingProgressBar)
         overlayView = findViewById(R.id.overlayView)
 
         val nationalities = loadNationalities()
         val nationalityNames = nationalities.map { it.nationality }
-        val adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, nationalityNames)
+        val adapter =
+            ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, nationalityNames)
         txtNationality.setAdapter(adapter)
 
         txtGender.isEnabled = false
@@ -87,8 +98,9 @@ class UserSettingsActivity : AppCompatActivity() {
         overlayView.visibility = View.VISIBLE
 
         fetchUserData()
+        updateProfileImage()
 
-        fun setEditButtons(button:ImageButton) {
+        fun setEditButtons(button: ImageButton) {
             when (button) {
                 btnEditUsername -> {
                     btnEditUsername.isEnabled = true
@@ -97,6 +109,7 @@ class UserSettingsActivity : AppCompatActivity() {
                     btnEditGender.isEnabled = false
                     btnEditNationality.isEnabled = false
                 }
+
                 btnEditFullname -> {
                     btnEditUsername.isEnabled = false
                     btnEditFullname.isEnabled = true
@@ -104,6 +117,7 @@ class UserSettingsActivity : AppCompatActivity() {
                     btnEditGender.isEnabled = false
                     btnEditNationality.isEnabled = false
                 }
+
                 btnEditEmail -> {
                     btnEditUsername.isEnabled = false
                     btnEditFullname.isEnabled = false
@@ -111,6 +125,7 @@ class UserSettingsActivity : AppCompatActivity() {
                     btnEditGender.isEnabled = false
                     btnEditNationality.isEnabled = false
                 }
+
                 btnEditGender -> {
                     btnEditUsername.isEnabled = false
                     btnEditFullname.isEnabled = false
@@ -118,6 +133,7 @@ class UserSettingsActivity : AppCompatActivity() {
                     btnEditGender.isEnabled = true
                     btnEditNationality.isEnabled = false
                 }
+
                 btnEditNationality -> {
                     btnEditUsername.isEnabled = false
                     btnEditFullname.isEnabled = false
@@ -136,51 +152,51 @@ class UserSettingsActivity : AppCompatActivity() {
             btnEditNationality.isEnabled = true
         }
 
-        btnEditUsername.setOnClickListener{
+        btnEditUsername.setOnClickListener {
             toggleEditMode(txtUsername, btnEditUsername, isEditingUsername)
             setEditButtons(btnEditUsername)
             isEditingUsername = !isEditingUsername
-            if(!isEditingUsername){
+            if (!isEditingUsername) {
                 userUsername = txtUsername.text.toString()
                 updateUserData()
                 enableAllButtons()
-                showSnackBar("Nome de usuário alterado com sucesso","FECHAR",R.color.greenDark)
+                showSnackBar("Nome de usuário alterado com sucesso", "FECHAR", R.color.greenDark)
             }
         }
 
-        btnEditFullname.setOnClickListener{
+        btnEditFullname.setOnClickListener {
             toggleEditMode(txtFullname, btnEditFullname, isEditingFullname)
             setEditButtons(btnEditFullname)
             isEditingFullname = !isEditingFullname
-            if(!isEditingFullname){
+            if (!isEditingFullname) {
                 userFullname = txtFullname.text.toString()
                 updateUserData()
                 enableAllButtons()
-                showSnackBar("Nome completo alterado com sucesso","FECHAR",R.color.greenDark)
+                showSnackBar("Nome completo alterado com sucesso", "FECHAR", R.color.greenDark)
             }
         }
 
-        btnEditEmail.setOnClickListener{
+        btnEditEmail.setOnClickListener {
             toggleEditMode(txtEmail, btnEditEmail, isEditingEmail)
             setEditButtons(btnEditEmail)
             isEditingEmail = !isEditingEmail
-            if(!isEditingEmail){
+            if (!isEditingEmail) {
                 userEmail = txtEmail.text.toString()
                 updateUserData()
                 enableAllButtons()
-                showSnackBar("Email alterado com sucesso","FECHAR",R.color.greenDark)
+                showSnackBar("Email alterado com sucesso", "FECHAR", R.color.greenDark)
             }
         }
 
-        btnEditGender.setOnClickListener{
+        btnEditGender.setOnClickListener {
             toggleEditMode(txtGender, btnEditGender, isEditingGender)
             setEditButtons(btnEditGender)
             isEditingGender = !isEditingGender
-            if(!isEditingGender){
+            if (!isEditingGender) {
                 userGender = txtGender.selectedItem.toString()
                 updateUserData()
                 enableAllButtons()
-                showSnackBar("Genêro alterado com sucesso","FECHAR",R.color.greenDark)
+                showSnackBar("Genêro alterado com sucesso", "FECHAR", R.color.greenDark)
             }
         }
 
@@ -196,21 +212,21 @@ class UserSettingsActivity : AppCompatActivity() {
             autoCompleteTextView.setTextColor(colorPrimary)
         }
 
-        btnEditNationality.setOnClickListener{
+        btnEditNationality.setOnClickListener {
             toggleEditMode(txtNationality, btnEditNationality, isEditingNationality)
             setEditButtons(btnEditNationality)
             setTextColorPrimary(txtNationality)
             isEditingNationality = !isEditingNationality
-            if(!isEditingNationality){
+            if (!isEditingNationality) {
                 userNationality = txtNationality.text.toString()
                 updateUserData()
                 enableAllButtons()
-                showSnackBar("Nacionalidade alterada com sucesso","FECHAR",R.color.greenDark)
+                showSnackBar("Nacionalidade alterada com sucesso", "FECHAR", R.color.greenDark)
                 txtNationality.setTextColor(ContextCompat.getColor(this, R.color.disabled))
             }
         }
 
-        btnDelete.setOnClickListener{
+        btnDelete.setOnClickListener {
             val builder = AlertDialog.Builder(this)
             builder.setTitle("Confirme sua Ação")
             builder.setMessage("Você deseja excluir sua conta?")
@@ -228,11 +244,11 @@ class UserSettingsActivity : AppCompatActivity() {
             dialog.show()
         }
 
-        btnPassword.setOnClickListener{
-            recoverPassword()
+        btnPassword.setOnClickListener {
+            resetPassword()
         }
 
-        btnBack.setOnClickListener{
+        btnBack.setOnClickListener {
             finish()
         }
     }
@@ -242,7 +258,8 @@ class UserSettingsActivity : AppCompatActivity() {
     }
 
     private fun fetchUserData() {
-        val sharedPreferences: SharedPreferences = getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
+        val sharedPreferences: SharedPreferences =
+            getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
         val username = sharedPreferences.getString("username", null)
         val token = sharedPreferences.getString("accessToken", null)
 
@@ -257,10 +274,15 @@ class UserSettingsActivity : AppCompatActivity() {
                     userGender = userResponse.gender
                     userNationality = userResponse.nationality
 
-                    if(userGender == "Male"){gender = 0}
-                    else if(userGender == "Female"){gender = 1}
-                    else if(userGender == "Other"){gender = 2}
-                    else if(userGender == "PNS"){gender = 3}
+                    if (userGender == "Male") {
+                        gender = 0
+                    } else if (userGender == "Female") {
+                        gender = 1
+                    } else if (userGender == "Other") {
+                        gender = 2
+                    } else if (userGender == "PNS") {
+                        gender = 3
+                    }
 
                     findViewById<TextInputEditText>(R.id.txtUsername).setText(userUsername)
                     findViewById<TextInputEditText>(R.id.txtFullname).setText(userFullname)
@@ -268,10 +290,12 @@ class UserSettingsActivity : AppCompatActivity() {
                     findViewById<Spinner>(R.id.txtGender).setSelection(gender)
                     findViewById<AutoCompleteTextView>(R.id.txtNationality).setText(userNationality)
 
+                    Log.d("UserSettingsActivity", "Fetched Full Name: $userFullname")
+
                     loadingProgressBar.visibility = View.GONE
                     overlayView.visibility = View.GONE
                 }.onFailure {
-                    showSnackBar("Algo de errado ocorreu!","FECHAR", R.color.red)
+                    showSnackBar("Algo de errado ocorreu!", "FECHAR", R.color.red)
                     Log.e("HomeActivity", "Failed to fetch user data", it)
                 }
             }
@@ -285,7 +309,7 @@ class UserSettingsActivity : AppCompatActivity() {
         userViewModel.deleteUserData(userId)
     }
 
-    private fun updateUserData(){
+    private fun updateUserData() {
         userGender = when (userGender) {
             "Masculino" -> "Male"
             "Feminino" -> "Female"
@@ -293,15 +317,47 @@ class UserSettingsActivity : AppCompatActivity() {
             "Prefiro não dizer" -> "PNS"
             else -> userGender
         }
-        userViewModel.updateUserData(userId.toString(), token, userUsername, userFullname, userEmail, userGender, userNationality)
+        userViewModel.updateUserData(
+            userId.toString(),
+            token,
+            userUsername,
+            userFullname,
+            userEmail,
+            userGender,
+            userNationality
+        )
     }
 
-    private fun recoverPassword() {
+
+    private fun resetPassword() {
         val inflater = LayoutInflater.from(this)
         val view = inflater.inflate(R.layout.dialog_reset_password, null)
+
         val etNewPassword = view.findViewById<TextInputEditText>(R.id.etNewPassword)
         val etConfirmNewPassword = view.findViewById<TextInputEditText>(R.id.etConfirmNewPassword)
+        val errorMessage = view.findViewById<LinearLayout>(R.id.errorMessage)
+        val txtError = view.findViewById<TextView>(R.id.txtError)
 
+
+        etNewPassword.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                validatePasswords(etNewPassword, etConfirmNewPassword, txtError, errorMessage)
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
+
+        etConfirmNewPassword.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                validatePasswords(etNewPassword, etConfirmNewPassword, txtError, errorMessage)
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
         val builder = AlertDialog.Builder(this)
         builder.setView(view)
             .setTitle("Alterar minha senha")
@@ -309,20 +365,23 @@ class UserSettingsActivity : AppCompatActivity() {
                 val newPassword = etNewPassword.text.toString()
                 val confirmNewPassword = etConfirmNewPassword.text.toString()
 
-                if (newPassword == confirmNewPassword) {
-                    val sharedPreferences: SharedPreferences = getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
+                if (newPassword.isBlank() || confirmNewPassword.isBlank()) {
+                    showSnackBar("Erro: os campos não podem estar vazios", "FECHAR", R.color.red)
+                } else if (newPassword != confirmNewPassword) {
+                    showSnackBar("Erro: as senhas devem se corresponder", "FECHAR", R.color.red)
+                } else {
+                    val sharedPreferences: SharedPreferences =
+                        getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
                     val username = sharedPreferences.getString("username", null)
 
                     if (username != null && token != null) {
+                        dialog.dismiss()
                         userViewModel.recoverPassword(username, newPassword, token!!)
-                        showToast("Password reset successfully")
+                        showSnackBar("Senha alterada com sucesso", "FECHAR", R.color.greenDark)
                     } else {
                         showToast("Invalid Username or Token")
                     }
-                } else {
-                    showToast("Passwords do not match")
                 }
-                dialog.dismiss()
             }
             .setNegativeButton("Cancelar") { dialog, _ ->
                 dialog.dismiss()
@@ -331,6 +390,7 @@ class UserSettingsActivity : AppCompatActivity() {
         val dialog = builder.create()
         dialog.show()
     }
+
 
     private fun toggleEditMode(editText: View, button: ImageButton, isEditing: Boolean) {
         if (isEditing) {
@@ -345,7 +405,7 @@ class UserSettingsActivity : AppCompatActivity() {
         }
     }
 
-    private fun showSnackBar(message: String, action: String, bgTint: Int){
+    private fun showSnackBar(message: String, action: String, bgTint: Int) {
         val rootView = findViewById<View>(android.R.id.content)
         val snackBar = Snackbar.make(rootView, message, Snackbar.LENGTH_SHORT)
             .setAction(action) {}
@@ -361,6 +421,7 @@ class UserSettingsActivity : AppCompatActivity() {
         val listNationalityType = object : TypeToken<List<Nationality>>() {}.type
         return gson.fromJson(jsonFileString, listNationalityType)
     }
+
     private fun getNationality(fileName: String): String? {
         return try {
             val inputStream = assets.open(fileName)
@@ -372,6 +433,114 @@ class UserSettingsActivity : AppCompatActivity() {
         } catch (ex: IOException) {
             ex.printStackTrace()
             null
+        }
+    }
+
+    private fun getDrawableForLetter(letter: Char): Int {
+        return when (letter.lowercaseChar()) {
+            'a' -> R.drawable.a
+            'b' -> R.drawable.b
+            'c' -> R.drawable.c
+            'd' -> R.drawable.d
+            'e' -> R.drawable.e
+            'f' -> R.drawable.f
+            'g' -> R.drawable.g
+            'h' -> R.drawable.h
+            'i' -> R.drawable.i
+            'j' -> R.drawable.j
+            'k' -> R.drawable.k
+            'l' -> R.drawable.l
+            'm' -> R.drawable.m
+            'n' -> R.drawable.n
+            'o' -> R.drawable.o
+            'p' -> R.drawable.p
+            'q' -> R.drawable.q
+            'r' -> R.drawable.r
+            's' -> R.drawable.s
+            't' -> R.drawable.t
+            'u' -> R.drawable.u
+            'v' -> R.drawable.v
+            'w' -> R.drawable.w
+            'x' -> R.drawable.x
+            'y' -> R.drawable.y
+            'z' -> R.drawable.z
+            else -> R.drawable.default_image
+        }
+    }
+
+    private fun updateProfileImage() {
+        val shimmerEffect = findViewById<ShimmerFrameLayout>(R.id.shimmerImage)
+        val imgProfile: CircleImageView = findViewById(R.id.imgProfile)
+
+        userViewModel.user.observe(this) { user ->
+            user.onSuccess { userData ->
+                shimmerEffect.visibility = View.VISIBLE
+                imgProfile.visibility = View.GONE
+                val fullName = userData.fullName
+                Log.d("UserSettingsActivity", "Full Name: $fullName")
+
+                if (!fullName.isNullOrEmpty()) {
+                    val firstName = fullName.split(" ").firstOrNull() ?: ""
+                    Log.d("UserSettingsActivity", "First Name: $firstName")
+
+                    if (firstName.isNotEmpty()) {
+                        val firstLetter = firstName.first()
+                        Log.d("UserSettingsActivity", "First Letter: $firstLetter")
+
+                        val drawableId = getDrawableForLetter(firstLetter)
+                        imgProfile.setImageResource(drawableId)
+                    } else {
+                        Log.e("UserSettingsActivity", "First name is empty")
+                        showSnackBar("ERRO: Imagem de Perfil", "FECHAR", R.color.red)
+                    }
+                } else {
+                    Log.e("UserSettingsActivity", "Full name is empty")
+                    showSnackBar("ERRO: Imagem de Perfil", "FECHAR", R.color.red)
+                }
+
+                shimmerEffect.animate().alpha(0f).setDuration(300).withEndAction {
+                    shimmerEffect.stopShimmer()
+                    shimmerEffect.animate().alpha(1f).setDuration(300)
+                    shimmerEffect.visibility = View.GONE
+                    imgProfile.visibility = View.VISIBLE
+                }
+            }.onFailure { throwable ->
+                Log.e("HomeActivity", "Error updating navigation header", throwable)
+                shimmerEffect.visibility = View.GONE
+                imgProfile.visibility = View.VISIBLE
+            }
+        }
+
+
+
+
+
+    }
+
+
+    private fun validatePasswords(
+        etNewPassword: TextInputEditText,
+        etConfirmNewPassword: TextInputEditText,
+        txtError: TextView,
+        errorMessage:LinearLayout
+    ) {
+        val newPassword = etNewPassword.text.toString()
+        val confirmNewPassword = etConfirmNewPassword.text.toString()
+
+        when {
+            newPassword.isBlank() -> {
+                errorMessage.visibility = View.VISIBLE
+                txtError.text = "As senhas não podem estar em branco"
+            }
+
+            newPassword != confirmNewPassword -> {
+                errorMessage.visibility = View.VISIBLE
+                txtError.text = "As senhas não correspondem"
+            }
+
+            else -> {
+                errorMessage.visibility = View.INVISIBLE
+            }
         }
     }
 }

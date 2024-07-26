@@ -12,6 +12,7 @@
         <item name="android:textColorHighlight">@color/greenDark_50</item>
 
         <item name="buttonText">@color/white</item>
+        <item name="shimmerColor">@color/shimmer</item>
         <item name="fragmentsBackground">@color/grayDark</item>
         <item name="buttonIconTint">@color/white</item>
 
