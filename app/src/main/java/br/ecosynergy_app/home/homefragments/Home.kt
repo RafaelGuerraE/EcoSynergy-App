@@ -12,10 +12,13 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.findViewTreeViewModelStoreOwner
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import br.ecosynergy_app.R
+import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.home.UserViewModel
+import br.ecosynergy_app.home.UserViewModelFactory
 import com.anychart.AnyChart
 import com.anychart.AnyChartView
 import com.anychart.chart.common.dataentry.DataEntry
@@ -29,12 +32,13 @@ class Home : Fragment() {
     private lateinit var lblFirstname: TextView
     private lateinit var swipeRefresh: SwipeRefreshLayout
     private lateinit var shimmerViewContainer: ShimmerFrameLayout
-    private val userViewModel: UserViewModel by viewModels()
+    private lateinit var userViewModel: UserViewModel
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
         val chart = view.findViewById<AnyChartView>(R.id.chart)
         val shimmerLayout: ShimmerFrameLayout = view.findViewById(R.id.shimmerLayout)
+        userViewModel = ViewModelProvider(this, UserViewModelFactory(RetrofitClient.userService))[UserViewModel::class.java]
         swipeRefresh = view.findViewById(R.id.swipeRefresh)
         lblFirstname = view.findViewById(R.id.lblFirstname)
         shimmerViewContainer = view.findViewById(R.id.shimmerViewContainer)
@@ -123,11 +127,11 @@ class Home : Fragment() {
         shimmerViewContainer.alpha = 1f
 
         val sharedPreferences: SharedPreferences = requireActivity().getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
-        val username = sharedPreferences.getString("username", null)
+        val identifier = sharedPreferences.getString("identifier", null)
         val token = sharedPreferences.getString("accessToken", null)
 
-        if (username != null && token != null) {
-            userViewModel.fetchUserData(username, token)
+        if (identifier != null && token != null) {
+            userViewModel.fetchUserData(identifier, token)
         } else {
             shimmerViewContainer.animate().alpha(0f).setDuration(300).withEndAction {
                 shimmerViewContainer.stopShimmer()

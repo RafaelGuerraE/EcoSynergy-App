@@ -1,13 +1,13 @@
-package br.ecosynergy_app.login
+package br.ecosynergy_app.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 
-class AuthViewModelFactory(private val service: AuthService) : ViewModelProvider.Factory {
+class UserViewModelFactory(private val service: UserService) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(AuthViewModel::class.java)) {
+        if (modelClass.isAssignableFrom(UserViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return AuthViewModel(service) as T
+            return UserViewModel(service) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

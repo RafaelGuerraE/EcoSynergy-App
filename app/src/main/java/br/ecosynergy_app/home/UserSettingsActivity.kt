@@ -23,7 +23,9 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModelProvider
 import br.ecosynergy_app.R
+import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.register.Nationality
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.android.material.snackbar.Snackbar
@@ -36,7 +38,7 @@ import java.io.IOException
 
 class UserSettingsActivity : AppCompatActivity() {
 
-    private val userViewModel: UserViewModel by viewModels()
+    private lateinit var userViewModel: UserViewModel
     private var gender: Int = 0
 
     private var userId: Long = 0
@@ -60,6 +62,8 @@ class UserSettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_usersettings)
+
+        userViewModel = ViewModelProvider(this, UserViewModelFactory(RetrofitClient.userService))[UserViewModel::class.java]
 
         val sharedPreferences: SharedPreferences =
             getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
@@ -260,11 +264,11 @@ class UserSettingsActivity : AppCompatActivity() {
     private fun fetchUserData() {
         val sharedPreferences: SharedPreferences =
             getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
-        val username = sharedPreferences.getString("username", null)
+        val identifier = sharedPreferences.getString("identifier", null)
         val token = sharedPreferences.getString("accessToken", null)
 
-        if (username != null && token != null) {
-            userViewModel.fetchUserData(username, token)
+        if (identifier != null && token != null) {
+            userViewModel.fetchUserData(identifier, token)
             userViewModel.user.observe(this) { result ->
                 result.onSuccess { userResponse ->
                     userId = userResponse.id
@@ -510,11 +514,6 @@ class UserSettingsActivity : AppCompatActivity() {
                 imgProfile.visibility = View.VISIBLE
             }
         }
-
-
-
-
-
     }
 
 

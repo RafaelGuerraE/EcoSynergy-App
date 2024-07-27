@@ -2,6 +2,7 @@ package br.ecosynergy_app.login
 
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -9,22 +10,18 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
-import android.widget.ImageButton
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.ViewModelProvider
 import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.home.HomeActivity
 import br.ecosynergy_app.register.RegisterActivity
-import com.google.android.gms.auth.api.identity.Identity
-import com.google.android.gms.auth.api.identity.SignInClient
-import com.google.android.gms.common.SignInButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
-import com.google.firebase.auth.FirebaseAuth
 
 class LoginActivity : AppCompatActivity() {
 
@@ -33,12 +30,11 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var authViewModel: AuthViewModel
     private lateinit var lblReset: TextView
     private var hasErrorShown = false
-    private lateinit var oneTapClient: SignInClient
-    private lateinit var auth: FirebaseAuth
     private lateinit var loadingProgressBar: ProgressBar
     private lateinit var overlayView: View
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
@@ -47,7 +43,7 @@ class LoginActivity : AppCompatActivity() {
             return
         }
 
-        authViewModel = ViewModelProvider(this, AuthViewModelFactory(RetrofitClient.authService)).get(AuthViewModel::class.java)
+        authViewModel = ViewModelProvider(this, AuthViewModelFactory(RetrofitClient.authService))[AuthViewModel::class.java]
 
         txtEntry = findViewById(R.id.txtEntry)
         txtPassword = findViewById(R.id.txtPassword)
@@ -56,9 +52,6 @@ class LoginActivity : AppCompatActivity() {
         val btnRegister: Button = findViewById(R.id.btnRegister)
         loadingProgressBar = findViewById(R.id.loadingProgressBar)
         overlayView = findViewById(R.id.overlayView)
-
-        auth = FirebaseAuth.getInstance()
-        oneTapClient = Identity.getSignInClient(this)
 
         btnLogin.setOnClickListener {
             val username = txtEntry.text.toString()
@@ -142,17 +135,16 @@ class LoginActivity : AppCompatActivity() {
         finish()
     }
 
-
     private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
-    private fun setLoggedIn(isLoggedIn: Boolean, username: String? = null, accessToken: String? = null) {
+    private fun setLoggedIn(isLoggedIn: Boolean, identifier: String? = null, accessToken: String? = null) {
         val sharedPreferences = getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
         editor.putBoolean("isLoggedIn", isLoggedIn)
-        if (username != null) {
-            editor.putString("username", username)
+        if (identifier != null) {
+            editor.putString("identifier", identifier)
         }
         if (accessToken != null) {
             editor.putString("accessToken", accessToken)

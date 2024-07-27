@@ -7,7 +7,6 @@ import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
-import android.view.Gravity
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageButton
@@ -21,11 +20,14 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import br.ecosynergy_app.R
+import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.home.homefragments.Analytics
 import br.ecosynergy_app.home.homefragments.Home
 import br.ecosynergy_app.home.homefragments.Teams
+import br.ecosynergy_app.login.AuthViewModel
+import br.ecosynergy_app.login.AuthViewModelFactory
 import br.ecosynergy_app.login.LoginActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
@@ -35,7 +37,7 @@ import com.google.android.material.snackbar.Snackbar
 
 class HomeActivity : AppCompatActivity() {
 
-    private val userViewModel: UserViewModel by viewModels()
+    private lateinit var userViewModel: UserViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val sharedPreferences: SharedPreferences = getSharedPreferences("theme_prefs", Context.MODE_PRIVATE)
@@ -47,7 +49,7 @@ class HomeActivity : AppCompatActivity() {
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
-
+        userViewModel = ViewModelProvider(this, UserViewModelFactory(RetrofitClient.userService))[UserViewModel::class.java]
         val rootView = findViewById<View>(android.R.id.content)
         val bottomNavView: BottomNavigationView = findViewById(R.id.bottomNavView)
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
@@ -231,10 +233,15 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun logout() {
-        val sharedPreferences: SharedPreferences = getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        editor.clear()
-        editor.apply()
+        val spLogin: SharedPreferences = getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
+        val spTheme: SharedPreferences = getSharedPreferences("theme_prefs", Context.MODE_PRIVATE)
+        val editLogin = spLogin.edit()
+        val editTheme = spTheme.edit()
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+        editTheme.putString("theme", "system")
+        editLogin.clear()
+        editLogin.apply()
+        editTheme.apply()
 
         val intent = Intent(this, LoginActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -244,13 +251,13 @@ class HomeActivity : AppCompatActivity() {
 
     private fun fetchUserData() {
         val sharedPreferences: SharedPreferences = getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
-        val username = sharedPreferences.getString("username", null)
+        val identifier = sharedPreferences.getString("identifier", null)
         val token = sharedPreferences.getString("accessToken", null)
 
-        if (username != null && token != null) {
-            userViewModel.fetchUserData(username, token)
+        if (identifier != null && token != null) {
+            userViewModel.fetchUserData(identifier, token)
         } else {
-            Log.e("HomeActivity", "Invalid username or token")
+            Log.e("HomeActivity", "Invalid identifier or token")
         }
     }
 
