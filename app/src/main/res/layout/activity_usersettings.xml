@@ -228,7 +228,7 @@
                         android:id="@+id/txtNationality"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:inputType="textEmailAddress"
+                        android:inputType="text"
                         android:text="."
                         android:enabled="false"
                         android:textSize="16sp"

@@ -20,7 +20,6 @@ import android.widget.ProgressBar
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
@@ -33,7 +32,6 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import de.hdodenhof.circleimageview.CircleImageView
-import kotlinx.coroutines.delay
 import java.io.IOException
 
 class UserSettingsActivity : AppCompatActivity() {
@@ -41,7 +39,7 @@ class UserSettingsActivity : AppCompatActivity() {
     private lateinit var userViewModel: UserViewModel
     private var gender: Int = 0
 
-    private var userId: Long = 0
+    private var userId: String = ""
     private var userUsername: String = ""
     private var userFullname: String = ""
     private var userEmail: String = ""
@@ -82,8 +80,6 @@ class UserSettingsActivity : AppCompatActivity() {
         val txtNationality = findViewById<AutoCompleteTextView>(R.id.txtNationality)
         val btnPassword = findViewById<Button>(R.id.btnPassword)
         val btnDelete = findViewById<Button>(R.id.btnDelete)
-
-        val imgProfile: CircleImageView = findViewById(R.id.imgProfile)
 
         loadingProgressBar = findViewById(R.id.loadingProgressBar)
         overlayView = findViewById(R.id.overlayView)
@@ -161,10 +157,26 @@ class UserSettingsActivity : AppCompatActivity() {
             setEditButtons(btnEditUsername)
             isEditingUsername = !isEditingUsername
             if (!isEditingUsername) {
-                userUsername = txtUsername.text.toString()
-                updateUserData()
-                enableAllButtons()
-                showSnackBar("Nome de usuário alterado com sucesso", "FECHAR", R.color.greenDark)
+                val builder = AlertDialog.Builder(this)
+                builder.setTitle("Você deseja alterar seu Username?")
+                builder.setMessage("Para alterar seu Username, você deve fazer o login novamente")
+
+                builder.setPositiveButton("Sim") { dialog, _ ->
+                    userUsername = txtUsername.text.toString()
+                    updateUserData()
+                    enableAllButtons()
+                    showSnackBar("Nome de usuário alterado com sucesso", "FECHAR", R.color.greenDark)
+                    dialog.dismiss()
+                    finish()
+                }
+
+                builder.setNegativeButton("Cancelar") { dialog, _ ->
+                    dialog.dismiss()
+                }
+
+                val dialog: AlertDialog = builder.create()
+                dialog.show()
+
             }
         }
 
@@ -238,6 +250,7 @@ class UserSettingsActivity : AppCompatActivity() {
             builder.setPositiveButton("Sim") { dialog, _ ->
                 deleteUserData()
                 dialog.dismiss()
+                finish()
             }
 
             builder.setNegativeButton("Cancelar") { dialog, _ ->
@@ -271,7 +284,7 @@ class UserSettingsActivity : AppCompatActivity() {
             userViewModel.fetchUserData(identifier, token)
             userViewModel.user.observe(this) { result ->
                 result.onSuccess { userResponse ->
-                    userId = userResponse.id
+                    userId = userResponse.id.toString()
                     userUsername = userResponse.username
                     userFullname = userResponse.fullName
                     userEmail = userResponse.email
@@ -294,8 +307,6 @@ class UserSettingsActivity : AppCompatActivity() {
                     findViewById<Spinner>(R.id.txtGender).setSelection(gender)
                     findViewById<AutoCompleteTextView>(R.id.txtNationality).setText(userNationality)
 
-                    Log.d("UserSettingsActivity", "Fetched Full Name: $userFullname")
-
                     loadingProgressBar.visibility = View.GONE
                     overlayView.visibility = View.GONE
                 }.onFailure {
@@ -310,7 +321,8 @@ class UserSettingsActivity : AppCompatActivity() {
     }
 
     private fun deleteUserData() {
-        userViewModel.deleteUserData(userId)
+        token = getSharedPreferences("login_prefs", Context.MODE_PRIVATE).getString("accessToken", null)
+        userViewModel.deleteUserData(userId, token)
     }
 
     private fun updateUserData() {
@@ -322,7 +334,7 @@ class UserSettingsActivity : AppCompatActivity() {
             else -> userGender
         }
         userViewModel.updateUserData(
-            userId.toString(),
+            userId,
             token,
             userUsername,
             userFullname,
@@ -380,7 +392,7 @@ class UserSettingsActivity : AppCompatActivity() {
 
                     if (username != null && token != null) {
                         dialog.dismiss()
-                        userViewModel.recoverPassword(username, newPassword, token!!)
+                        userViewModel.resetPassword(username, newPassword, token!!)
                         showSnackBar("Senha alterada com sucesso", "FECHAR", R.color.greenDark)
                     } else {
                         showToast("Invalid Username or Token")
@@ -481,16 +493,12 @@ class UserSettingsActivity : AppCompatActivity() {
                 shimmerEffect.visibility = View.VISIBLE
                 imgProfile.visibility = View.GONE
                 val fullName = userData.fullName
-                Log.d("UserSettingsActivity", "Full Name: $fullName")
 
-                if (!fullName.isNullOrEmpty()) {
+                if (fullName.isNotEmpty()) {
                     val firstName = fullName.split(" ").firstOrNull() ?: ""
-                    Log.d("UserSettingsActivity", "First Name: $firstName")
 
                     if (firstName.isNotEmpty()) {
                         val firstLetter = firstName.first()
-                        Log.d("UserSettingsActivity", "First Letter: $firstLetter")
-
                         val drawableId = getDrawableForLetter(firstLetter)
                         imgProfile.setImageResource(drawableId)
                     } else {
@@ -515,7 +523,6 @@ class UserSettingsActivity : AppCompatActivity() {
             }
         }
     }
-
 
     private fun validatePasswords(
         etNewPassword: TextInputEditText,

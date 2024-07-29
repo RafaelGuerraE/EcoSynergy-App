@@ -9,11 +9,7 @@ import android.widget.Button
 import android.widget.ImageButton
 import android.widget.Spinner
 import android.widget.TextView
-import androidx.lifecycle.ViewModelProvider
 import br.ecosynergy_app.R
-import br.ecosynergy_app.RetrofitClient
-import br.ecosynergy_app.login.AuthViewModel
-import br.ecosynergy_app.login.AuthViewModelFactory
 import com.google.android.material.textfield.TextInputEditText
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken

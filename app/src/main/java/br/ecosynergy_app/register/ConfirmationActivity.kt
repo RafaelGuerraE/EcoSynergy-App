@@ -68,10 +68,9 @@ class ConfirmationActivity : AppCompatActivity() {
         btnBack.setOnClickListener { finish() }
 
         registerViewModel.registerResult.observe(this) { result ->
-            showProgressBar(false) // Hide progress bar on result observation
+            showProgressBar(false)
             result.onSuccess { createUserResponse ->
                 Log.d("ConfirmationActivity", "Register success")
-                // Only attempt login after successful registration
                 val loginRequest = LoginRequest(userName, password)
                 authViewModel.loginUser(loginRequest)
             }.onFailure { error ->
@@ -82,7 +81,7 @@ class ConfirmationActivity : AppCompatActivity() {
         }
 
         authViewModel.loginResult.observe(this) { result ->
-            showProgressBar(false) // Hide progress bar on result observation
+            showProgressBar(false)
             result.onSuccess { loginResponse ->
                 Log.d("LoginActivity", "Login success")
                 setLoggedIn(true, loginResponse.username, loginResponse.accessToken)
@@ -128,7 +127,6 @@ class ConfirmationActivity : AppCompatActivity() {
     }
 
     private fun startCountDown(textView: TextView) {
-        // Create a CountDownTimer for 60 seconds, updating every second
         object : CountDownTimer(60000, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 textView.text = "Reenvie em ${millisUntilFinished / 1000}s"
@@ -166,12 +164,12 @@ class ConfirmationActivity : AppCompatActivity() {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
-    private fun setLoggedIn(isLoggedIn: Boolean, username: String? = null, accessToken: String? = null) {
+    private fun setLoggedIn(isLoggedIn: Boolean, identifier: String? = null, accessToken: String? = null) {
         val sharedPreferences = getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
         editor.putBoolean("isLoggedIn", isLoggedIn)
-        if (username != null) {
-            editor.putString("username", username)
+        if (identifier != null) {
+            editor.putString("identifier", identifier)
         }
         if (accessToken != null) {
             editor.putString("accessToken", accessToken)

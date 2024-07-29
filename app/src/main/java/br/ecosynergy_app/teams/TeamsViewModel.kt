@@ -7,8 +7,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
+import retrofit2.Response
 
 class TeamsViewModel(private val service: TeamsService): ViewModel() {
+    private val _teamsResult = MutableLiveData<Result<List<TeamsResponse>>>()
+    val teamsResult: LiveData<Result<List<TeamsResponse>>> get() = _teamsResult
+
     private val _teamResult = MutableLiveData<Result<TeamsResponse>>()
     val teamResult: LiveData<Result<TeamsResponse>> get() = _teamResult
 
@@ -28,30 +32,30 @@ class TeamsViewModel(private val service: TeamsService): ViewModel() {
                 Log.d("TeamsViewModel", "Response: $response")
                 onResult(Result.success(response))
             } catch (e: HttpException) {
-                Log.e("TeamsViewModel", "HTTP error", e)
+                Log.e("TeamsViewModel", "HTTP error while TeamRequesting", e)
                 onResult(Result.failure(e))
             } catch (e: Exception) {
-                Log.e("TeamsViewModel", "Error", e)
+                Log.e("TeamsViewModel", "Error while TeamRequesting", e)
                 onResult(Result.failure(e))
             }
         }
     }
 
-    fun findTeamByHandle(token: String, handle: String) {
+    fun findTeamByHandle(token: String?, handle: String) {
         makeRequest(
             request = { service.findTeamByHandle("Bearer $token", handle) },
             onResult = { _teamResult.value = it }
         )
     }
 
-    fun searchTeamByPartialHandle(token: String, handle: String) {
+    fun searchTeamByPartialHandle(token: String?, handle: String) {
         makeRequest(
             request = { service.searchTeamByPartialHandle("Bearer $token", handle) },
             onResult = { _teamResult.value = it }
         )
     }
 
-    fun findAllTeams(token: String) {
+    fun findAllTeams(token: String?) {
         viewModelScope.launch {
             try {
                 val response = service.findAllTeams("Bearer $token")
@@ -67,7 +71,7 @@ class TeamsViewModel(private val service: TeamsService): ViewModel() {
         }
     }
 
-    fun findTeamById(token: String, id: String) {
+    fun findTeamById(token: String?, id: String) {
         makeRequest(
             request = { service.findTeamById("Bearer $token", id) },
             onResult = { _teamResult.value = it }
@@ -81,29 +85,43 @@ class TeamsViewModel(private val service: TeamsService): ViewModel() {
         )
     }
 
-    fun updateTeam(token: String, id: String, request: TeamsRequest) {
+    fun updateTeam(token: String?, id: String, request: TeamsRequest) {
         makeRequest(
             request = { service.updateTeam("Bearer $token", id, request) },
             onResult = { _teamResult.value = it }
         )
     }
 
-    fun addMember(token: String, teamId: String, userId: String) {
+    fun addMember(token: String?, teamId: String, userId: String) {
         makeRequest(
             request = { service.addMember("Bearer $token", teamId, userId) },
             onResult = { _teamResult.value = it }
         )
     }
 
-    fun findTeamsByUser(token: String, id: String) {
-        makeRequest(
-            request = { service.findTeamsByUser("Bearer $token", id) },
-            onResult = { _teamResult.value = it }
-        )
+    fun findTeamsByUserId(id: String,token: String?) {
+        viewModelScope.launch {
+            try {
+                val response = service.findTeamsByUserId(id, "Bearer $token")
+                if (response.isSuccessful) {
+                    Log.d("TeamsViewModel", "Response: ${response.body()}")
+                    _teamsResult.value = Result.success(response.body() ?: emptyList())
+                } else {
+                    Log.e("TeamsViewModel", "HTTP error while TeamRequesting: ${response.errorBody()?.string()}")
+                    _teamsResult.value = Result.failure(HttpException(response))
+                }
+            } catch (e: HttpException) {
+                Log.e("TeamsViewModel", "HTTP error while TeamRequesting", e)
+                _teamsResult.value = Result.failure(e)
+            } catch (e: Exception) {
+                Log.e("TeamsViewModel", "Error while TeamRequesting", e)
+                _teamsResult.value = Result.failure(e)
+            }
+        }
     }
 
 
-    fun deleteTeam(token: String, id: String) {
+    fun deleteTeam(token: String?, id: String) {
         viewModelScope.launch {
             try {
                 service.deleteTeam("Bearer $token", id)
@@ -118,7 +136,7 @@ class TeamsViewModel(private val service: TeamsService): ViewModel() {
         }
     }
 
-    fun removeMember(token: String, teamId: String, userId: String) {
+    fun removeMember(token: String?, teamId: String, userId: String) {
         viewModelScope.launch {
             try {
                 service.removeMember("Bearer $token", teamId, userId)

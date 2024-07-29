@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.findViewTreeViewModelStoreOwner
@@ -32,13 +33,13 @@ class Home : Fragment() {
     private lateinit var lblFirstname: TextView
     private lateinit var swipeRefresh: SwipeRefreshLayout
     private lateinit var shimmerViewContainer: ShimmerFrameLayout
-    private lateinit var userViewModel: UserViewModel
+    private val userViewModel: UserViewModel by activityViewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
         val chart = view.findViewById<AnyChartView>(R.id.chart)
         val shimmerLayout: ShimmerFrameLayout = view.findViewById(R.id.shimmerLayout)
-        userViewModel = ViewModelProvider(this, UserViewModelFactory(RetrofitClient.userService))[UserViewModel::class.java]
+
         swipeRefresh = view.findViewById(R.id.swipeRefresh)
         lblFirstname = view.findViewById(R.id.lblFirstname)
         shimmerViewContainer = view.findViewById(R.id.shimmerViewContainer)
@@ -48,7 +49,6 @@ class Home : Fragment() {
         setupChart(chart)
         observeUserData()
 
-        fetchUserData()
         refreshApp()
 
         return view
@@ -119,33 +119,11 @@ class Home : Fragment() {
         return String.format("#%06X", (0xFFFFFF and colorInt))
     }
 
-    private fun fetchUserData() {
-        lblFirstname.visibility = View.GONE
-        lblFirstname.alpha = 0f
-        shimmerViewContainer.visibility = View.VISIBLE
-        shimmerViewContainer.startShimmer()
-        shimmerViewContainer.alpha = 1f
-
-        val sharedPreferences: SharedPreferences = requireActivity().getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
-        val identifier = sharedPreferences.getString("identifier", null)
-        val token = sharedPreferences.getString("accessToken", null)
-
-        if (identifier != null && token != null) {
-            userViewModel.fetchUserData(identifier, token)
-        } else {
-            shimmerViewContainer.animate().alpha(0f).setDuration(300).withEndAction {
-                shimmerViewContainer.stopShimmer()
-                shimmerViewContainer.visibility = View.GONE
-                lblFirstname.visibility = View.VISIBLE
-                lblFirstname.animate().alpha(1f).setDuration(300)
-            }
-            lblFirstname.text = ""
-        }
-    }
-
     private fun refreshApp() {
         swipeRefresh.setOnRefreshListener {
-            fetchUserData()
+            userViewModel.user.value?.getOrNull()?.let { user ->
+                // Optional: Update UI based on user data
+            }
             swipeRefresh.isRefreshing = false
         }
     }

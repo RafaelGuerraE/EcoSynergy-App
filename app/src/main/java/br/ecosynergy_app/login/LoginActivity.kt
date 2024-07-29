@@ -2,12 +2,12 @@ package br.ecosynergy_app.login
 
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ProgressBar
@@ -60,15 +60,18 @@ class LoginActivity : AppCompatActivity() {
             if (username.isEmpty() || password.isEmpty()) {
                 if (username.isEmpty()) {
                     txtEntry.error = "Insira seu Nome de Usuário"
+                    txtEntry.requestFocus()
                 }
                 if (password.isEmpty()) {
                     passwordLayout.endIconMode = TextInputLayout.END_ICON_NONE
                     txtPassword.error = "Insira sua senha"
+                    txtPassword.requestFocus()
                     hasErrorShown = true
                 }
                 return@setOnClickListener
             }
-
+            val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(it.windowToken, 0)
             loadingProgressBar.visibility = View.VISIBLE
             overlayView.visibility = View.VISIBLE
 

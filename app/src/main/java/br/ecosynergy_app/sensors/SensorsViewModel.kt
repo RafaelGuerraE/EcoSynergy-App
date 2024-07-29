@@ -26,6 +26,32 @@ class SensorsViewModel(private val service: SensorsService): ViewModel() {
         }
     }
 
+    fun fetchMQ7ReadingsByTeamHandle(teamHandle: String,token: String?) {
+        viewModelScope.launch {
+            try {
+                val response = service.fetchMq7ReadingsByTeamHandle(teamHandle, "Bearer $token")
+                _mq7ReadingResult.value = Result.success(response)
+            } catch (e: HttpException) {
+                _mq7ReadingResult.value = Result.failure(e)
+            } catch (e: Exception) {
+                _mq7ReadingResult.value = Result.failure(e)
+            }
+        }
+    }
+
+    fun fetchMQ7ReadingsById(token: String, id: String) {
+        viewModelScope.launch {
+            try {
+                val response = service.fetchMq7ReadingById("Bearer $token", id)
+                _mq7ReadingResult.value = Result.success(response)
+            } catch (e: HttpException) {
+                _mq7ReadingResult.value = Result.failure(e)
+            } catch (e: Exception) {
+                _mq7ReadingResult.value = Result.failure(e)
+            }
+        }
+    }
+
     // MQ135 Readings
     private val _mq135ReadingResult = MutableLiveData<Result<MQ135ReadingsResponse>>()
     val mq135ReadingResult: LiveData<Result<MQ135ReadingsResponse>> get() = _mq135ReadingResult
@@ -43,6 +69,32 @@ class SensorsViewModel(private val service: SensorsService): ViewModel() {
         }
     }
 
+    fun fetchMQ135ReadingsByTeamHandle(token: String, teamHandle: String) {
+        viewModelScope.launch {
+            try {
+                val response = service.fetchMq135ReadingsByTeamHandle("Bearer $token", teamHandle)
+                _mq135ReadingResult.value = Result.success(response)
+            } catch (e: HttpException) {
+                _mq135ReadingResult.value = Result.failure(e)
+            } catch (e: Exception) {
+                _mq135ReadingResult.value = Result.failure(e)
+            }
+        }
+    }
+
+    fun fetchMQ135ReadingsById(token: String, id: String) {
+        viewModelScope.launch {
+            try {
+                val response = service.fetchMq135ReadingById("Bearer $token", id)
+                _mq135ReadingResult.value = Result.success(response)
+            } catch (e: HttpException) {
+                _mq135ReadingResult.value = Result.failure(e)
+            } catch (e: Exception) {
+                _mq135ReadingResult.value = Result.failure(e)
+            }
+        }
+    }
+
     // Fire Readings
     private val _fireReadingResult = MutableLiveData<Result<FireReadingsResponse>>()
     val fireReadingResult: LiveData<Result<FireReadingsResponse>> get() = _fireReadingResult
@@ -51,6 +103,32 @@ class SensorsViewModel(private val service: SensorsService): ViewModel() {
         viewModelScope.launch {
             try {
                 val response = service.fetchFireReading("Bearer $token")
+                _fireReadingResult.value = Result.success(response)
+            } catch (e: HttpException) {
+                _fireReadingResult.value = Result.failure(e)
+            } catch (e: Exception) {
+                _fireReadingResult.value = Result.failure(e)
+            }
+        }
+    }
+
+    fun fetchFireReadingsByTeamHandle(token: String, teamHandle: String) {
+        viewModelScope.launch {
+            try {
+                val response = service.fetchFireReadingsByTeamHandle("Bearer $token", teamHandle)
+                _fireReadingResult.value = Result.success(response)
+            } catch (e: HttpException) {
+                _fireReadingResult.value = Result.failure(e)
+            } catch (e: Exception) {
+                _fireReadingResult.value = Result.failure(e)
+            }
+        }
+    }
+
+    fun fetchFireReadingsById(token: String, id: String) {
+        viewModelScope.launch {
+            try {
+                val response = service.fetchFireReadingById("Bearer $token", id)
                 _fireReadingResult.value = Result.success(response)
             } catch (e: HttpException) {
                 _fireReadingResult.value = Result.failure(e)

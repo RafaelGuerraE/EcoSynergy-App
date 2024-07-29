@@ -17,8 +17,8 @@ data class TeamsResponse(
     val handle: String,
     val name: String,
     val description: String,
-    val createdAt: Date,
-    val updatedAt: Date,
+    val createdAt: String,
+    val updatedAt: String,
     val members: List<Int>,
     val _links: TeamLinks
 )

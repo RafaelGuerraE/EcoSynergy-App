@@ -29,6 +29,11 @@ import br.ecosynergy_app.home.homefragments.Teams
 import br.ecosynergy_app.login.AuthViewModel
 import br.ecosynergy_app.login.AuthViewModelFactory
 import br.ecosynergy_app.login.LoginActivity
+import br.ecosynergy_app.sensors.MQ7ReadingsResponse
+import br.ecosynergy_app.sensors.SensorsViewModel
+import br.ecosynergy_app.sensors.SensorsViewModelFactory
+import br.ecosynergy_app.teams.TeamsViewModel
+import br.ecosynergy_app.teams.TeamsViewModelFactory
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import de.hdodenhof.circleimageview.CircleImageView
@@ -38,8 +43,16 @@ import com.google.android.material.snackbar.Snackbar
 class HomeActivity : AppCompatActivity() {
 
     private lateinit var userViewModel: UserViewModel
+    private lateinit var sensorsViewModel: SensorsViewModel
+    private lateinit var teamsViewModel: TeamsViewModel
+
+    private var token: String? = ""
+    private var identifier: String? = ""
+    private var userId: String = ""
+    private var teamHandles: List<String> =  emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         val sharedPreferences: SharedPreferences = getSharedPreferences("theme_prefs", Context.MODE_PRIVATE)
         when (sharedPreferences.getString("theme", "system")) {
             "light" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
@@ -49,33 +62,28 @@ class HomeActivity : AppCompatActivity() {
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
+
         userViewModel = ViewModelProvider(this, UserViewModelFactory(RetrofitClient.userService))[UserViewModel::class.java]
-        val rootView = findViewById<View>(android.R.id.content)
+        sensorsViewModel = ViewModelProvider(this, SensorsViewModelFactory(RetrofitClient.sensorsService))[SensorsViewModel::class.java]
+        teamsViewModel = ViewModelProvider(this, TeamsViewModelFactory(RetrofitClient.teamsService))[TeamsViewModel::class.java]
+
+        val sp: SharedPreferences =
+            getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
+        token = sp.getString("accessToken", null)
+        identifier = sp.getString("identifier", null)
+
         val bottomNavView: BottomNavigationView = findViewById(R.id.bottomNavView)
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
         val navDrawerButton: CircleImageView = findViewById(R.id.navDrawerButton)
         val navView: NavigationView = findViewById(R.id.nav_view)
         val btnTheme: ImageButton = findViewById(R.id.btnTheme)
-        val loginSharedPreferences = getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
-        if (loginSharedPreferences.getBoolean("just_logged_in", false)) {
-            val snackBar = Snackbar.make(rootView, "Conectado com Sucesso", Snackbar.LENGTH_SHORT)
-                .setAction("FECHAR") {}
-            snackBar.setBackgroundTint(ContextCompat.getColor(this, R.color.greenDark))
-            snackBar.setTextColor(ContextCompat.getColor(this, R.color.white))
-            snackBar.setActionTextColor(ContextCompat.getColor(this, R.color.white))
 
-            snackBar.addCallback(object : Snackbar.Callback() {
-                override fun onShown(sb: Snackbar?) {
-                    super.onShown(sb)
-                    val snackbarView = snackBar.view
-                    val params = snackbarView.layoutParams as FrameLayout.LayoutParams
-                    params.setMargins(params.leftMargin, params.topMargin, params.rightMargin, bottomNavView.height)
-                    snackbarView.layoutParams = params
-                }
-            })
+        fetchUserData()
 
-            snackBar.show()
-            val editor = loginSharedPreferences.edit()
+
+        if (sp.getBoolean("just_logged_in", false)) {
+            showSnackBar("Conectado com sucesso", "FECHAR", R.color.greenDark)
+            val editor = sp.edit()
             editor.putBoolean("just_logged_in", false)
             editor.apply()
         }
@@ -145,9 +153,9 @@ class HomeActivity : AppCompatActivity() {
         }
         onBackPressedDispatcher.addCallback(this, callback)
 
-        updateNavigationHeader(navView)
 
-        fetchUserData()
+
+
 
         navView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
@@ -184,8 +192,8 @@ class HomeActivity : AppCompatActivity() {
             builder.setTitle("Selecione o tema desejado")
 
             builder.setItems(items) { dialog, which ->
-                val sharedPreferences: SharedPreferences = getSharedPreferences("theme_prefs", Context.MODE_PRIVATE)
-                val editor = sharedPreferences.edit()
+                val sp: SharedPreferences = getSharedPreferences("theme_prefs", Context.MODE_PRIVATE)
+                val editor = sp.edit()
 
                 when (which) {
                     0 -> {
@@ -208,7 +216,6 @@ class HomeActivity : AppCompatActivity() {
             val dialog: AlertDialog = builder.create()
             dialog.show()
         }
-
     }
 
     override fun onResume() {
@@ -216,7 +223,6 @@ class HomeActivity : AppCompatActivity() {
         val navView: NavigationView = findViewById(R.id.nav_view)
         clearNavigationViewSelection(navView)
         fetchUserData()
-        updateNavigationHeader(navView)
     }
 
     private fun clearNavigationViewSelection(navView: NavigationView) {
@@ -250,14 +256,56 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun fetchUserData() {
-        val sharedPreferences: SharedPreferences = getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
-        val identifier = sharedPreferences.getString("identifier", null)
-        val token = sharedPreferences.getString("accessToken", null)
-
         if (identifier != null && token != null) {
             userViewModel.fetchUserData(identifier, token)
+            userViewModel.user.removeObservers(this)
+            userViewModel.user.observe(this) { user ->
+                user.onSuccess { userData ->
+                    userId = userData.id.toString()
+                    updateNavigationHeader(findViewById(R.id.nav_view))
+                    getUserTeamHandlesById()
+                }.onFailure { e ->
+                    Log.e("HomeActivity", "Error observing user data", e)
+                }
+            }
         } else {
             Log.e("HomeActivity", "Invalid identifier or token")
+        }
+    }
+
+    private fun getUserTeamHandlesById(){
+        Log.d("HomeActivity", "UserId: $userId")
+        Log.d("HomeActivity", "Token: $token")
+        teamsViewModel.findTeamsByUserId(userId, token)
+        teamsViewModel.teamsResult.removeObservers(this)
+        teamsViewModel.teamsResult.observe(this) { result ->
+            result.onSuccess { teamData ->
+                teamHandles =  teamData.map { it.handle }
+                Log.d("HomeActivity", "Team Handle: $teamHandles")
+                fetchMQ7ReadingsByTeamHandle()
+            }.onFailure { e ->
+                Log.e("HomeActivity", "Error getting user Team Handles by Id", e)
+            }
+        }
+    }
+
+    private fun fetchMQ7ReadingsByTeamHandle() {
+        val teamHandle: String = teamHandles[0]
+        sensorsViewModel.fetchMQ7ReadingsByTeamHandle(teamHandle, token)
+        sensorsViewModel.mq7ReadingResult.observe(this) { mq7ReadingResult ->
+            mq7ReadingResult.onSuccess { response ->
+                handleReadingsData(response)
+            }.onFailure { e ->
+                Log.e("HomeActivity", "Error fetching MQ7 readings by Team Handle", e)
+            }
+        }
+    }
+
+    private fun handleReadingsData(response: MQ7ReadingsResponse) {
+        val readingsData = response.embedded.mQ7ReadingVOList
+        readingsData.forEach { reading ->
+            //Log.d("HomeActivity", "Value: ${reading.value}, Timestamp: ${reading.timestamp}")
+            // Display or process the readings as required
         }
     }
 
@@ -298,7 +346,7 @@ class HomeActivity : AppCompatActivity() {
         val progressBar: ProgressBar = findViewById(R.id.progressBar)
         val headerView = navView.getHeaderView(0)
 
-        userViewModel.user.observe(this) { user ->
+        userViewModel.user.value?.let { user ->
             progressBar.visibility = View.VISIBLE
             navDrawerButton.visibility = View.GONE
 
@@ -325,10 +373,30 @@ class HomeActivity : AppCompatActivity() {
                 Log.e("HomeActivity", "Error updating navigation header", throwable)
                 logout()
             }
-        }
+        } ?: Log.e("HomeActivity", "User data is not available")
     }
 
     private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun showSnackBar(message: String, action: String, bgTint: Int) {
+        val rootView = findViewById<View>(android.R.id.content)
+        val snackBar = Snackbar.make(rootView, message, Snackbar.LENGTH_SHORT)
+            .setAction(action) {}
+        snackBar.setBackgroundTint(ContextCompat.getColor(this, bgTint))
+        snackBar.setTextColor(ContextCompat.getColor(this, R.color.white))
+        snackBar.setActionTextColor(ContextCompat.getColor(this, R.color.white))
+
+        snackBar.addCallback(object : Snackbar.Callback() {
+            override fun onShown(sb: Snackbar?) {
+                super.onShown(sb)
+                val snackbarView = snackBar.view
+                val params = snackbarView.layoutParams as FrameLayout.LayoutParams
+                params.setMargins(params.leftMargin, params.topMargin, params.rightMargin, findViewById<View>(R.id.bottomNavView).height)
+                snackbarView.layoutParams = params
+            }
+        })
+        snackBar.show()
     }
 }
