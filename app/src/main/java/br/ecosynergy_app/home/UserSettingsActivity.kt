@@ -100,6 +100,19 @@ class UserSettingsActivity : AppCompatActivity() {
         fetchUserData()
         updateProfileImage()
 
+        txtUsername.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                val lowercaseText = s.toString().lowercase()
+
+                if (s.toString() != lowercaseText) {
+                    txtUsername.setText(lowercaseText)
+                    txtUsername.setSelection(lowercaseText.length)
+                }
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+
         fun setEditButtons(button: ImageButton) {
             when (button) {
                 btnEditUsername -> {

@@ -3,6 +3,8 @@ package br.ecosynergy_app.register
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Button
@@ -29,8 +31,8 @@ class RegisterActivity2 : AppCompatActivity() {
 
         val btnRegister: Button = findViewById(R.id.btnRegister)
 
-        val txtFullname: TextInputEditText = findViewById(R.id.txtFullname)
         val txtUsername: TextInputEditText = findViewById(R.id.txtUsername)
+        val txtFullname: TextInputEditText = findViewById(R.id.txtFullname)
 
         val txtNationality: AutoCompleteTextView = findViewById(R.id.txtNationality)
         val autoError: TextView = findViewById(R.id.autoError)
@@ -43,6 +45,19 @@ class RegisterActivity2 : AppCompatActivity() {
 
         val adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, nationalityNames)
         txtNationality.setAdapter(adapter)
+
+        txtUsername.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                val lowercaseText = s.toString().lowercase()
+
+                if (s.toString() != lowercaseText) {
+                    txtUsername.setText(lowercaseText)
+                    txtUsername.setSelection(lowercaseText.length)
+                }
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
 
         btnBack.setOnClickListener{ finish() }
 

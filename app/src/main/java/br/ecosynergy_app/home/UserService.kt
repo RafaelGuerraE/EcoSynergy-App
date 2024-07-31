@@ -22,10 +22,6 @@ interface UserService {
         @Header("Authorization") token: String
     ): UserResponse
 
-    @PUT("auth/refresh/{username}")
-    suspend fun refreshToken(
-        @Path("username") username: String)
-
     @POST("api/user/v1/recoverPassword")
     suspend fun recoverPassword(
         @Header("Authorization")token: String,

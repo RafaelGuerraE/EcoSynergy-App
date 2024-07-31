@@ -1,7 +1,5 @@
 package br.ecosynergy_app.teams
 
-import java.util.Date
-
 data class AllTeamsResponse(
     val _embedded: Embedded,
     val _links: PaginationLinks,

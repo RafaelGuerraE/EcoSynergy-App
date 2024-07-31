@@ -23,8 +23,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
-import br.ecosynergy_app.home.homefragments.Analytics
 import br.ecosynergy_app.home.homefragments.Home
+import br.ecosynergy_app.home.homefragments.Notifications
 import br.ecosynergy_app.home.homefragments.Teams
 import br.ecosynergy_app.login.AuthViewModel
 import br.ecosynergy_app.login.AuthViewModelFactory
@@ -49,7 +49,10 @@ class HomeActivity : AppCompatActivity() {
     private var token: String? = ""
     private var identifier: String? = ""
     private var userId: String = ""
+
     private var teamHandles: List<String> =  emptyList()
+    private var teamDescriptions: List<String> =  emptyList()
+    private var teamNames: List<String> =  emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -115,23 +118,23 @@ class HomeActivity : AppCompatActivity() {
 
         bottomNavView.setOnItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.analytics -> {
-                    replaceFragment(Analytics())
-                    item.setIcon(R.drawable.baseline_analytics_24)
-                    bottomNavView.menu.findItem(R.id.home)?.setIcon(R.drawable.outline_home_24)
-                    bottomNavView.menu.findItem(R.id.teams)?.setIcon(R.drawable.outline_people_24)
-                }
                 R.id.home -> {
                     replaceFragment(Home())
                     item.setIcon(R.drawable.baseline_home_24)
-                    bottomNavView.menu.findItem(R.id.analytics)?.setIcon(R.drawable.outline_analytics_24)
                     bottomNavView.menu.findItem(R.id.teams)?.setIcon(R.drawable.outline_people_24)
+                    bottomNavView.menu.findItem(R.id.notifications)?.setIcon(R.drawable.outline_notifications_24)
                 }
                 R.id.teams -> {
                     replaceFragment(Teams())
                     item.setIcon(R.drawable.baseline_people_24)
-                    bottomNavView.menu.findItem(R.id.analytics)?.setIcon(R.drawable.outline_analytics_24)
                     bottomNavView.menu.findItem(R.id.home)?.setIcon(R.drawable.outline_home_24)
+                    bottomNavView.menu.findItem(R.id.notifications)?.setIcon(R.drawable.outline_notifications_24)
+                }
+                R.id.notifications-> {
+                    replaceFragment(Notifications())
+                    item.setIcon(R.drawable.baseline_notifications_24)
+                    bottomNavView.menu.findItem(R.id.home)?.setIcon(R.drawable.outline_home_24)
+                    bottomNavView.menu.findItem(R.id.teams)?.setIcon(R.drawable.outline_people_24)
                 }
             }
             true
@@ -186,7 +189,7 @@ class HomeActivity : AppCompatActivity() {
         }
 
         btnTheme.setOnClickListener{
-            val items = arrayOf("Claro", "Escuro", "Padrão do Sistema")
+            val items = arrayOf("Padrão do Sistema", "Claro", "Escuro")
 
             val builder = AlertDialog.Builder(this)
             builder.setTitle("Selecione o tema desejado")
@@ -197,16 +200,16 @@ class HomeActivity : AppCompatActivity() {
 
                 when (which) {
                     0 -> {
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+                        editor.putString("theme", "system")
+                    }
+                    1 -> {
                         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
                         editor.putString("theme", "light")
                     }
-                    1 -> {
+                    2 -> {
                         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
                         editor.putString("theme", "dark")
-                    }
-                    2 -> {
-                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
-                        editor.putString("theme", "system")
                     }
                 }
                 editor.apply()
@@ -251,6 +254,7 @@ class HomeActivity : AppCompatActivity() {
 
         val intent = Intent(this, LoginActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        intent.putExtra("LOGOUT_MESSAGE", "You have been logged out successfully.")
         startActivity(intent)
         finish()
     }
@@ -263,9 +267,10 @@ class HomeActivity : AppCompatActivity() {
                 user.onSuccess { userData ->
                     userId = userData.id.toString()
                     updateNavigationHeader(findViewById(R.id.nav_view))
-                    getUserTeamHandlesById()
+                    getTeamsByUserId()
                 }.onFailure { e ->
                     Log.e("HomeActivity", "Error observing user data", e)
+                    logout()
                 }
             }
         } else {
@@ -273,7 +278,7 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
-    private fun getUserTeamHandlesById(){
+    private fun getTeamsByUserId(){
         Log.d("HomeActivity", "UserId: $userId")
         Log.d("HomeActivity", "Token: $token")
         teamsViewModel.findTeamsByUserId(userId, token)
@@ -281,8 +286,8 @@ class HomeActivity : AppCompatActivity() {
         teamsViewModel.teamsResult.observe(this) { result ->
             result.onSuccess { teamData ->
                 teamHandles =  teamData.map { it.handle }
-                Log.d("HomeActivity", "Team Handle: $teamHandles")
-                fetchMQ7ReadingsByTeamHandle()
+                teamNames = teamData.map {it.name}
+                teamDescriptions = teamData.map {it.description}
             }.onFailure { e ->
                 Log.e("HomeActivity", "Error getting user Team Handles by Id", e)
             }

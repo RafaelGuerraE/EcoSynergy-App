@@ -15,11 +15,13 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.home.HomeActivity
 import br.ecosynergy_app.register.RegisterActivity
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 
@@ -37,6 +39,11 @@ class LoginActivity : AppCompatActivity() {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+
+        val logoutMessage = intent.getStringExtra("LOGOUT_MESSAGE")
+        if (logoutMessage != null) {
+            showSnackBar("Você foi desconectado com sucesso", "FECHAR", R.color.grayDark) // Adjust the color as needed
+        }
 
         if (isLoggedIn()) {
             startHomeActivity()
@@ -78,6 +85,19 @@ class LoginActivity : AppCompatActivity() {
             val loginRequest = LoginRequest(username, password)
             authViewModel.loginUser(loginRequest)
         }
+
+        txtEntry.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                val lowercaseText = s.toString().lowercase()
+
+                if (s.toString() != lowercaseText) {
+                    txtEntry.setText(lowercaseText)
+                    txtEntry.setSelection(lowercaseText.length)
+                }
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
 
         txtPassword.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
@@ -158,5 +178,15 @@ class LoginActivity : AppCompatActivity() {
     private fun isLoggedIn(): Boolean {
         val sharedPreferences = getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
         return sharedPreferences.getBoolean("isLoggedIn", false)
+    }
+
+    private fun showSnackBar(message: String, action: String, bgTint: Int) {
+        val rootView = findViewById<View>(android.R.id.content)
+        val snackBar = Snackbar.make(rootView, message, Snackbar.LENGTH_SHORT)
+            .setAction(action) {}
+        snackBar.setBackgroundTint(ContextCompat.getColor(this, bgTint))
+        snackBar.setTextColor(ContextCompat.getColor(this, R.color.white))
+        snackBar.setActionTextColor(ContextCompat.getColor(this, R.color.white))
+        snackBar.show()
     }
 }

@@ -21,4 +21,17 @@ class AuthViewModel(private val service: AuthService) : ViewModel() {
             }
         }
     }
+
+    fun refreshToken(username: String){
+        viewModelScope.launch {
+            try {
+                val response = service.refreshToken(username)
+                _loginResult.value = Result.success(response)
+            }catch (e: HttpException) {
+                _loginResult.value = Result.failure(e)
+            } catch (e: Exception) {
+                _loginResult.value = Result.failure(e)
+            }
+        }
+    }
 }

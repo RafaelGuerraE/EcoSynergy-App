@@ -17,8 +17,7 @@
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="65dp"
-            android:padding="10dp">
+            android:layout_height="65dp">
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/navDrawerButton"
@@ -38,11 +37,11 @@
             <ImageButton
                 android:id="@+id/btnLogo"
                 android:scaleType="fitXY"
-                android:layout_width="55dp"
+                android:layout_width="45dp"
                 android:layout_height="45dp"
                 android:layout_gravity="center_horizontal"
                 android:background="@null"
-                android:src="@drawable/logo_transparent"/>
+                android:src="@drawable/logo_transparent_globe"/>
 
         </androidx.appcompat.widget.Toolbar>
         <View
@@ -66,7 +65,7 @@
             android:layout_width="match_parent"
             android:layout_height="60dp"
             app:itemIconSize="30dp"
-            app:labelVisibilityMode="unlabeled"
+            app:labelVisibilityMode="labeled"
             app:menu="@menu/bottom_nav"
             android:layout_gravity="start"
             app:itemIconTint="?android:attr/iconTint"

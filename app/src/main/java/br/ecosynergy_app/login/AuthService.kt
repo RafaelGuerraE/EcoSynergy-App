@@ -15,4 +15,8 @@ import retrofit2.http.Query
 interface AuthService {
     @POST("auth/signin")
     suspend fun loginUser(@Body loginUserRequest: LoginRequest):LoginResponse
+
+    @PUT("auth/refresh/{username}")
+    suspend fun refreshToken(
+        @Path("username") username: String) : LoginResponse
 }

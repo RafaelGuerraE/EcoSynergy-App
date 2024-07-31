@@ -95,7 +95,6 @@ class Home : Fragment() {
                 lblFirstname.visibility = View.VISIBLE
                 lblFirstname.animate().alpha(1f).setDuration(300)
             }
-
             result.onSuccess { user ->
                 val firstName = user.fullName.split(" ").firstOrNull()
                 lblFirstname.text = "$firstName!"
@@ -121,9 +120,6 @@ class Home : Fragment() {
 
     private fun refreshApp() {
         swipeRefresh.setOnRefreshListener {
-            userViewModel.user.value?.getOrNull()?.let { user ->
-                // Optional: Update UI based on user data
-            }
             swipeRefresh.isRefreshing = false
         }
     }
