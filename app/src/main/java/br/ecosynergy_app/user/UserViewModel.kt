@@ -1,10 +1,12 @@
-package br.ecosynergy_app.home
+package br.ecosynergy_app.user
 
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import br.ecosynergy_app.home.PasswordRequest
+import br.ecosynergy_app.home.UpdateRequest
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
@@ -13,6 +15,8 @@ class UserViewModel(private val service: UserService) : ViewModel() {
 
     private val _user = MutableLiveData<Result<UserResponse>>()
     val user: LiveData<Result<UserResponse>> = _user
+    private val _users = MutableLiveData<Result<MutableList<UserResponse>>>()
+    val users: LiveData<Result<MutableList<UserResponse>>> = _users
     private val _delete = MutableLiveData<Result<Unit>>()
     val delete: LiveData<Result<Unit>> = _delete
 
@@ -33,6 +37,48 @@ class UserViewModel(private val service: UserService) : ViewModel() {
                 Log.e("UserViewModel", "Unexpected error during fetchUserData", e)
                 _user.value = Result.failure(e)
             }
+        }
+    }
+
+    fun getUserById(id: String?, token: String?) {
+        viewModelScope.launch {
+            try {
+                val response = service.getUserById(id, "Bearer $token")
+                Log.d("UserViewModel", "User data fetched successfully: $response")
+                _user.value = Result.success(response)
+            } catch (e: HttpException) {
+                Log.e("UserViewModel", "HTTP error during fetchUserData", e)
+                _user.value = Result.failure(e)
+            } catch (e: IOException) {
+                Log.e("UserViewModel", "Network error during fetchUserData", e)
+                _user.value = Result.failure(e)
+            } catch (e: Exception) {
+                Log.e("UserViewModel", "Unexpected error during fetchUserData", e)
+                _user.value = Result.failure(e)
+            }
+        }
+    }
+
+    fun getUsersByIds(ids: List<String>, token: String?) {
+        viewModelScope.launch {
+            val usersList = mutableListOf<UserResponse>()
+            for (id in ids) {
+                try {
+                    val response = service.getUserById(id, "Bearer $token")
+                    usersList.add(response)
+                    _users.value = Result.success(usersList)
+                } catch (e: HttpException) {
+                    Log.e("UserViewModel", "HTTP error during fetchUserData", e)
+                    _user.value = Result.failure(e)
+                } catch (e: IOException) {
+                    Log.e("UserViewModel", "Network error during fetchUserData", e)
+                    _user.value = Result.failure(e)
+                } catch (e: Exception) {
+                    Log.e("UserViewModel", "Unexpected error during fetchUserData", e)
+                    _user.value = Result.failure(e)
+                }
+            }
+
         }
     }
 

@@ -92,42 +92,11 @@
                     android:layout_gravity="center"
                     android:layout_marginBottom="30dp"/>
 
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <com.github.mikephil.charting.charts.LineChart
+                    android:id="@+id/mq7LineChart"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="30dp">
-
-                    <FrameLayout
-                        android:id="@+id/chart_container"
-                        android:layout_width="0dp"
-                        android:layout_height="400dp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent">
-
-                        <com.anychart.AnyChartView
-                            android:id="@+id/chart"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:padding="20dp"/>
-                        <com.facebook.shimmer.ShimmerFrameLayout
-                            android:id="@+id/shimmerLayout"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            app:shimmer_auto_start="true"
-                            android:visibility="visible">
-                            <View
-                                android:id="@+id/shimmerChart"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:background="@drawable/chart_shape"
-                                android:visibility="visible"
-                                android:backgroundTint="?attr/shimmerColor"/>
-                        </com.facebook.shimmer.ShimmerFrameLayout>
-                    </FrameLayout>
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                    android:layout_height="400dp"
+                    android:layout_marginBottom="30dp"/>
 
                 <com.google.android.material.imageview.ShapeableImageView
                     app:shapeAppearanceOverlay="@style/RoundedSquare"

@@ -11,7 +11,7 @@ data class Embedded(
 )
 
 data class TeamsResponse(
-    val id: Long,
+    val id: String,
     val handle: String,
     val name: String,
     val description: String,
@@ -25,7 +25,7 @@ data class TeamsRequest(
     val handle: String,
     val name: String,
     val description: String,
-    val members: List<Int>
+    val members: List<Int?>
 )
 
 data class UpdateRequest(

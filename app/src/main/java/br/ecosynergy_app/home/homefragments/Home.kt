@@ -1,7 +1,5 @@
 package br.ecosynergy_app.home.homefragments
 
-import android.content.Context
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
@@ -12,80 +10,63 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.findViewTreeViewModelStoreOwner
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import br.ecosynergy_app.R
-import br.ecosynergy_app.RetrofitClient
-import br.ecosynergy_app.home.UserViewModel
-import br.ecosynergy_app.home.UserViewModelFactory
-import com.anychart.AnyChart
-import com.anychart.AnyChartView
-import com.anychart.chart.common.dataentry.DataEntry
-import com.anychart.chart.common.dataentry.ValueDataEntry
-import com.anychart.core.ui.ChartCredits
-import com.facebook.shimmer.Shimmer
+import br.ecosynergy_app.user.UserViewModel
+import br.ecosynergy_app.sensors.MQ7ReadingsResponse
+import br.ecosynergy_app.sensors.ReadingVO
+import br.ecosynergy_app.sensors.SensorsViewModel
 import com.facebook.shimmer.ShimmerFrameLayout
+import com.github.mikephil.charting.charts.LineChart
+import com.github.mikephil.charting.components.XAxis
+import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.data.LineData
+import com.github.mikephil.charting.data.LineDataSet
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class Home : Fragment() {
 
     private lateinit var lblFirstname: TextView
     private lateinit var swipeRefresh: SwipeRefreshLayout
     private lateinit var shimmerViewContainer: ShimmerFrameLayout
+    private lateinit var mq7LineChart: LineChart
+
     private val userViewModel: UserViewModel by activityViewModels()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    private val sensorsViewModel: SensorsViewModel by activityViewModels()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
-        val chart = view.findViewById<AnyChartView>(R.id.chart)
-        val shimmerLayout: ShimmerFrameLayout = view.findViewById(R.id.shimmerLayout)
 
-        swipeRefresh = view.findViewById(R.id.swipeRefresh)
         lblFirstname = view.findViewById(R.id.lblFirstname)
+        swipeRefresh = view.findViewById(R.id.swipeRefresh)
         shimmerViewContainer = view.findViewById(R.id.shimmerViewContainer)
+        mq7LineChart = view.findViewById(R.id.mq7LineChart)
 
-        chart.setProgressBar(shimmerLayout)
-        chart.setBackgroundColor(getThemeColor(requireContext(),android.R.attr.colorBackground))
-        setupChart(chart)
-        observeUserData()
-
-        refreshApp()
-
+        sensorsViewModel.mq7ReadingResult.observe(viewLifecycleOwner){ result->
+            result.onSuccess { response->
+                handleReadingsData(response)
+                Log.d("TeamsFragment", "Sensors MQ7Response OK")
+            }.onFailure { e->
+                Log.e("TeamsFragment", "Error", e)
+            }
+        }
         return view
     }
 
-    private fun setupChart(anyChartView: AnyChartView) {
-        val pie = AnyChart.pie()
-        val data: MutableList<DataEntry> = ArrayList()
-
-        val context = requireContext()
-        data.add(ValueDataEntry("USA", 6371664))
-        data.add(ValueDataEntry("China", 7215872))
-        data.add(ValueDataEntry("Japan", 1487196))
-        data.add(ValueDataEntry("Germany", 1200000))
-        data.add(ValueDataEntry("UK", 720000))
-
-        val colors = arrayOf(
-            getColorHexString(context, R.color.green),
-            getColorHexString(context, R.color.greenDark),
-            getColorHexString(context, R.color.blue),
-            getColorHexString(context, R.color.yellow),
-            getColorHexString(context, R.color.blackBg)
-        )
-
-        pie.palette(colors)
-        pie.data(data)
-
-        pie.background().fill(getThemeColor(context, android.R.attr.colorBackground))
-        pie.labels().fontColor(getColorHexString(context, R.color.white))
-        pie.legend().fontColor(getThemeColor(context, android.R.attr.textColorPrimary))
-
-
-        val credits: ChartCredits = pie.credits()
-        credits.enabled(false)
-        anyChartView.setChart(pie)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        observeUserData()
+        setupSwipeRefresh()
     }
-
 
     private fun observeUserData() {
         userViewModel.user.observe(viewLifecycleOwner) { result ->
@@ -105,20 +86,71 @@ class Home : Fragment() {
         }
     }
 
-    private fun getColorHexString(context: Context, colorResId: Int): String {
-        val colorInt = ContextCompat.getColor(context, colorResId)
-        return String.format("#%06X", (0xFFFFFF and colorInt))
-    }
-
-    private fun getThemeColor(context: Context, attrResId: Int): String {
+    private fun getThemeColor(attrResId: Int): Int {
         val typedValue = TypedValue()
-        val theme = context.theme
+        val theme = requireContext().theme
         theme.resolveAttribute(attrResId, typedValue, true)
-        val colorInt = typedValue.data
-        return String.format("#%06X", (0xFFFFFF and colorInt))
+        return typedValue.data
     }
 
-    private fun refreshApp() {
+    private fun setupMq7Chart(mq7Readings: List<ReadingVO>) {
+        val entries = ArrayList<Entry>()
+
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault())
+
+        mq7Readings.forEachIndexed { index, reading ->
+            val timestamp = dateFormat.parse(reading.timestamp)?.time?.toFloat()
+            if (timestamp != null) {
+                entries.add(Entry(timestamp, reading.value.toFloat()))
+            } else {
+                Log.d("HomeFragment", "Parsing failed for: ${reading.timestamp}")
+            }
+        }
+
+        val dataSet = LineDataSet(entries, "Readings Values").apply {
+            color = ContextCompat.getColor(requireContext(), R.color.greenDark)
+            valueTextColor = getThemeColor(android.R.attr.textColorPrimary)
+            valueTextSize = 10f
+            setDrawValues(true)
+            lineWidth = 3f
+            setDrawCircles(true)
+            setCircleColor(ContextCompat.getColor(requireContext(), R.color.greenDark))
+            circleRadius = 5f
+            setDrawFilled(true)
+            fillColor = ContextCompat.getColor(requireContext(), R.color.greenDark_50)
+        }
+
+        mq7LineChart.xAxis.apply {
+            position = XAxis.XAxisPosition.BOTTOM
+            valueFormatter = DateValueFormatter()
+            setDrawGridLines(true)
+            textColor = getThemeColor(android.R.attr.textColorPrimary)
+            setLabelCount(10, true)
+        }
+
+        mq7LineChart.axisLeft.apply {
+            setDrawGridLines(false)
+            textColor = getThemeColor(android.R.attr.textColorPrimary)
+        }
+
+        mq7LineChart.axisRight.isEnabled = false
+        mq7LineChart.description.isEnabled = false
+        mq7LineChart.legend.textColor = getThemeColor(android.R.attr.textColorPrimary)
+
+        Log.d("HomeFragment", "Entries: $entries")
+
+        val lineData = LineData(dataSet)
+        mq7LineChart.data = lineData
+        mq7LineChart.invalidate()
+    }
+
+
+    private fun handleReadingsData(response: MQ7ReadingsResponse) {
+        val readingsData = response.embedded.mQ7ReadingVOList
+        setupMq7Chart(readingsData)
+    }
+
+    private fun setupSwipeRefresh() {
         swipeRefresh.setOnRefreshListener {
             swipeRefresh.isRefreshing = false
         }

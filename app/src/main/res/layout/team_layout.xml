@@ -23,12 +23,14 @@
         android:layout_marginStart="10dp"/>
 
     <LinearLayout
+        android:id="@+id/linearClick"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:orientation="vertical"
         android:layout_marginEnd="10dp"
-        android:layout_marginStart="10dp">
+        android:layout_marginStart="10dp"
+        android:clickable="true">
 
             <TextView
                 android:id="@+id/txtName"
@@ -36,7 +38,7 @@
                 android:layout_height="wrap_content"
                 tools:text="EcoSynergy - Sistema de Gerenciamento de Emissão de Gases em Industrias"
                 android:textSize="14sp"
-                android:textColor="@android:color/black"
+                android:textColor="?android:attr/textColorPrimary"
                 android:textStyle="bold"
                 android:layout_gravity="bottom"
                 android:ellipsize="end"
@@ -50,14 +52,14 @@
             android:text=""
             tools:text="\@ecosynergyofc"
             android:textSize="12sp"
-            android:textColor="@color/grayDark"
+            android:textColor="?android:attr/textColorSecondary"
             android:layout_gravity="bottom"/>
         <TextView
             android:id="@+id/txtDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="13sp"
-            android:textColor="@android:color/black"
+            android:textColor="?android:attr/textColorPrimary"
             android:text="Descrição: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
             android:ellipsize="end"
             android:maxLines="1"/>
@@ -70,7 +72,7 @@
         android:layout_gravity="end|center"
         android:src="@drawable/baseline_info_24"
         android:background="@color/transparent"
-        app:tint="@color/grayDark"
+        app:tint="?android:attr/iconTint"
         android:scaleType="fitXY"
         android:layout_marginEnd="10dp"/>
     </LinearLayout>

@@ -1,5 +1,7 @@
-package br.ecosynergy_app.home
+package br.ecosynergy_app.user
 
+import br.ecosynergy_app.home.PasswordRequest
+import br.ecosynergy_app.home.UpdateRequest
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -18,14 +20,15 @@ interface UserService {
 
     @GET("api/user/v1/findId/{id}")
     suspend fun getUserById(
-        @Path("id") id: String,
+        @Path("id") id: String?,
         @Header("Authorization") token: String
     ): UserResponse
 
     @POST("api/user/v1/recoverPassword")
     suspend fun recoverPassword(
         @Header("Authorization")token: String,
-        @Body request: PasswordRequest)
+        @Body request: PasswordRequest
+    )
 
     @DELETE("api/user/v1/{id}")
     suspend fun deleteUser(@Path("id") id: String,

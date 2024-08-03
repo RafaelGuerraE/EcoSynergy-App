@@ -17,7 +17,7 @@ interface TeamsService {
 
     @DELETE("api/team/v1/{id}")
     suspend fun deleteTeam(@Header("Authorization") token: String?,
-                           @Path("id") id:String)
+                           @Path("id") id:String?)
 
     @PUT("api/team/v1/{id}")
     suspend fun updateTeam(@Header("Authorization") token: String?,
@@ -35,7 +35,7 @@ interface TeamsService {
 
     @GET("api/team/v1/findHandle/{handle}")
     suspend fun findTeamByHandle(@Header("Authorization") token: String?,
-                                 @Path("handle") handle:String) : TeamsResponse
+                                 @Path("handle") handle:String?) : TeamsResponse
 
     @GET("api/team/v1/search/{handle}")
     suspend fun searchTeamByPartialHandle(@Header("Authorization") token: String?,

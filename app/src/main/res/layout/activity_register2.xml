@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".register.RegisterActivity2"
-    android:focusable="false">
+    android:focusable="false"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -16,8 +21,8 @@
 
         <ImageButton
             android:id="@+id/btnBack"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:background="@null"
             app:tint="?android:attr/iconTint"
             android:src="@drawable/baseline_arrow_back_24"
@@ -31,8 +36,8 @@
             android:orientation="vertical"
             android:layout_gravity="center"
             android:gravity="center"
-            android:layout_marginStart="25dp"
-            android:layout_marginEnd="25dp">
+            android:layout_marginStart="35dp"
+            android:layout_marginEnd="35dp">
 
             <ImageView
                 android:layout_width="120dp"
@@ -50,7 +55,7 @@
                     android:id="@+id/txtFullname"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:inputType="textEmailAddress"/>
+                    android:inputType="text"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -130,3 +135,4 @@
         </LinearLayout>
     </LinearLayout>
 </ScrollView>
+</RelativeLayout>

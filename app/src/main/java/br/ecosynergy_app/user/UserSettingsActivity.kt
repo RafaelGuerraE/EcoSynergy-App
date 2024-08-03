@@ -1,4 +1,4 @@
-package br.ecosynergy_app.home
+package br.ecosynergy_app.user
 
 import android.app.AlertDialog
 import android.content.Context

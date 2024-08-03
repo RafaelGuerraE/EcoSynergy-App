@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import br.ecosynergy_app.R
 import br.ecosynergy_app.login.ResetActivity
+import br.ecosynergy_app.teams.CreateTeamActivity
 import br.ecosynergy_app.teams.TeamAdapter
 import br.ecosynergy_app.teams.TeamOverviewActivity
 import br.ecosynergy_app.teams.TeamsViewModel
@@ -49,7 +50,7 @@ class Teams : Fragment() {
         observeTeamsData(linearAlert)
 
         btnAddTeam.setOnClickListener{
-            val i = Intent(requireContext(), TeamOverviewActivity::class.java)
+            val i = Intent(requireContext(), CreateTeamActivity::class.java)
             startActivity(i)
         }
     }

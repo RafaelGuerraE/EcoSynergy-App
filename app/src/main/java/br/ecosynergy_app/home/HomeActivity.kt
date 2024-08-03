@@ -14,7 +14,6 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
@@ -26,14 +25,15 @@ import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.home.homefragments.Home
 import br.ecosynergy_app.home.homefragments.Notifications
 import br.ecosynergy_app.home.homefragments.Teams
-import br.ecosynergy_app.login.AuthViewModel
-import br.ecosynergy_app.login.AuthViewModelFactory
 import br.ecosynergy_app.login.LoginActivity
 import br.ecosynergy_app.sensors.MQ7ReadingsResponse
 import br.ecosynergy_app.sensors.SensorsViewModel
 import br.ecosynergy_app.sensors.SensorsViewModelFactory
 import br.ecosynergy_app.teams.TeamsViewModel
 import br.ecosynergy_app.teams.TeamsViewModelFactory
+import br.ecosynergy_app.user.UserSettingsActivity
+import br.ecosynergy_app.user.UserViewModel
+import br.ecosynergy_app.user.UserViewModelFactory
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import de.hdodenhof.circleimageview.CircleImageView
@@ -51,8 +51,6 @@ class HomeActivity : AppCompatActivity() {
     private var userId: String = ""
 
     private var teamHandles: List<String> =  emptyList()
-    private var teamDescriptions: List<String> =  emptyList()
-    private var teamNames: List<String> =  emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -70,8 +68,7 @@ class HomeActivity : AppCompatActivity() {
         sensorsViewModel = ViewModelProvider(this, SensorsViewModelFactory(RetrofitClient.sensorsService))[SensorsViewModel::class.java]
         teamsViewModel = ViewModelProvider(this, TeamsViewModelFactory(RetrofitClient.teamsService))[TeamsViewModel::class.java]
 
-        val sp: SharedPreferences =
-            getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
+        val sp: SharedPreferences = getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
         token = sp.getString("accessToken", null)
         identifier = sp.getString("identifier", null)
 
@@ -155,10 +152,6 @@ class HomeActivity : AppCompatActivity() {
             }
         }
         onBackPressedDispatcher.addCallback(this, callback)
-
-
-
-
 
         navView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
@@ -252,10 +245,10 @@ class HomeActivity : AppCompatActivity() {
         editLogin.apply()
         editTheme.apply()
 
-        val intent = Intent(this, LoginActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        intent.putExtra("LOGOUT_MESSAGE", "You have been logged out successfully.")
-        startActivity(intent)
+        val i = Intent(this, LoginActivity::class.java)
+        i.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        i.putExtra("LOGOUT_MESSAGE", "You have been logged out successfully.")
+        startActivity(i)
         finish()
     }
 
@@ -266,6 +259,10 @@ class HomeActivity : AppCompatActivity() {
             userViewModel.user.observe(this) { user ->
                 user.onSuccess { userData ->
                     userId = userData.id.toString()
+                    val sp: SharedPreferences = getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
+                    val editor = sp.edit()
+                    editor.putString("id", userId)
+                    editor.apply()
                     updateNavigationHeader(findViewById(R.id.nav_view))
                     getTeamsByUserId()
                 }.onFailure { e ->
@@ -286,8 +283,7 @@ class HomeActivity : AppCompatActivity() {
         teamsViewModel.teamsResult.observe(this) { result ->
             result.onSuccess { teamData ->
                 teamHandles =  teamData.map { it.handle }
-                teamNames = teamData.map {it.name}
-                teamDescriptions = teamData.map {it.description}
+                fetchMQ7ReadingsByTeamHandle()
             }.onFailure { e ->
                 Log.e("HomeActivity", "Error getting user Team Handles by Id", e)
             }
@@ -347,20 +343,22 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun updateNavigationHeader(navView: NavigationView) {
-        val navDrawerButton: CircleImageView = findViewById(R.id.navDrawerButton)
-        val progressBar: ProgressBar = findViewById(R.id.progressBar)
         val headerView = navView.getHeaderView(0)
+        val progressBar: ProgressBar = findViewById(R.id.progressBar)
+        val navDrawerButton: CircleImageView = findViewById(R.id.navDrawerButton)
+        val userPicture: CircleImageView = headerView.findViewById(R.id.userPicture)
+        val lblUserFullname: TextView = headerView.findViewById(R.id.lblUserFullname)
+        val lblUsername: TextView = headerView.findViewById(R.id.lblUsername)
+        val lblUserEmail: TextView = headerView.findViewById(R.id.lblUserEmail)
 
         userViewModel.user.value?.let { user ->
             progressBar.visibility = View.VISIBLE
             navDrawerButton.visibility = View.GONE
 
             user.onSuccess { userData ->
-                headerView.findViewById<TextView>(R.id.lblUserFullname)?.text = userData.fullName
-                headerView.findViewById<TextView>(R.id.lblUsername)?.text = "@${userData.username}"
-                headerView.findViewById<TextView>(R.id.lblUserEmail)?.text = userData.email
-                val userPicture: CircleImageView = headerView.findViewById(R.id.userPicture)
-
+                lblUserFullname.text = userData.fullName
+                lblUsername.text = "@${userData.username}"
+                lblUserEmail.text = userData.email
                 val firstName = userData.fullName.split(" ").firstOrNull()
                 if (!firstName.isNullOrEmpty()) {
                     progressBar.visibility = View.GONE
@@ -380,6 +378,7 @@ class HomeActivity : AppCompatActivity() {
             }
         } ?: Log.e("HomeActivity", "User data is not available")
     }
+
 
     private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()

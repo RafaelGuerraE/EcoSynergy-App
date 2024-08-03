@@ -17,6 +17,9 @@
         android:theme="@style/Base.Theme.EcoSynergyApp"
         tools:targetApi="31">
         <activity
+            android:name=".teams.CreateTeamActivity"
+            android:exported="false" />
+        <activity
             android:name=".teams.TeamActivity"
             android:exported="false" />
         <activity
@@ -35,7 +38,7 @@
             android:name=".home.HomeActivity"
             android:exported="true" />
         <activity
-            android:name=".home.UserSettingsActivity"
+            android:name=".user.UserSettingsActivity"
             android:exported="true" />
         <activity
             android:name=".home.AppSettingsActivity"

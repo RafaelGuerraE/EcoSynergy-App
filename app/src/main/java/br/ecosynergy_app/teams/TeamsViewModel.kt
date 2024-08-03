@@ -41,7 +41,7 @@ class TeamsViewModel(private val service: TeamsService): ViewModel() {
         }
     }
 
-    fun findTeamByHandle(token: String?, handle: String) {
+    fun findTeamByHandle(token: String?, handle: String?) {
         makeRequest(
             request = { service.findTeamByHandle("Bearer $token", handle) },
             onResult = { _teamResult.value = it }
@@ -78,7 +78,7 @@ class TeamsViewModel(private val service: TeamsService): ViewModel() {
         )
     }
 
-    fun createTeam(token: String, request: TeamsRequest) {
+    fun createTeam(token: String?, request: TeamsRequest) {
         makeRequest(
             request = { service.createTeam("Bearer $token", request) },
             onResult = { _teamResult.value = it }
@@ -121,7 +121,7 @@ class TeamsViewModel(private val service: TeamsService): ViewModel() {
     }
 
 
-    fun deleteTeam(token: String?, id: String) {
+    fun deleteTeam(token: String?, id: String?) {
         viewModelScope.launch {
             try {
                 service.deleteTeam("Bearer $token", id)

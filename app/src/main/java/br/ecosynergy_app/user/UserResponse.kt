@@ -1,4 +1,4 @@
-package br.ecosynergy_app.home
+package br.ecosynergy_app.user
 
 data class UserResponse(
     val id: Long,

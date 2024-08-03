@@ -1,56 +1,46 @@
-package br.ecosynergy_app.teams
+package br.ecosynergy_app.user
 
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import br.ecosynergy_app.R
+import com.google.android.material.snackbar.Snackbar
 
-class TeamAdapter(private val teamsList: List<TeamsResponse>) :
-    RecyclerView.Adapter<TeamAdapter.ViewHolder>() {
+class MembersAdapter(private val membersList: List<UserResponse>) :
+    RecyclerView.Adapter<MembersAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.team_layout, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.members_layout, parent, false)
         return ViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(teamsList[position])
+       holder.bind(membersList[position])
     }
 
-    override fun getItemCount(): Int = teamsList.size
+    override fun getItemCount(): Int = membersList.size
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val teamName: TextView = itemView.findViewById(R.id.txtName)
-        private val teamHandle: TextView = itemView.findViewById(R.id.txtHandle)
-        private val teamDescription: TextView = itemView.findViewById(R.id.txtDescription)
-        private val teamImage: ImageView = itemView.findViewById(R.id.imgTeam)
-        private val btnInfo: ImageButton = itemView.findViewById(R.id.btnInfo)
-        private val linearClick: LinearLayout = itemView.findViewById(R.id.linearClick)
+        private val txtUsername: TextView = itemView.findViewById(R.id.txtUsername)
+        private val txtFullname: TextView = itemView.findViewById(R.id.txtFullname)
+        private val txtRole: TextView = itemView.findViewById(R.id.txtRole)
+        private val imgUser: ImageView = itemView.findViewById(R.id.imgUser)
+        private val btnRemove: ImageButton = itemView.findViewById(R.id.btnRemove)
 
-        fun bind(team: TeamsResponse) {
-            teamName.text = team.name
-            teamHandle.text = "@${team.handle}"
-            teamDescription.text = team.description
-            teamImage.setImageResource(getDrawableForLetter(team.name.first()))
+        fun bind(user: UserResponse) {
+            txtUsername.text = "@${user.username}"
+            txtFullname.text = user.fullName
+            txtRole.text = "Administrador"
+            imgUser.setImageResource(getDrawableForLetter(user.fullName.first()))
 
-            btnInfo.setOnClickListener {
-                val context = itemView.context
-                val i = Intent(context, TeamOverviewActivity::class.java)
-                i.putExtra("TEAM_ID", team.id)
-                i.putExtra("TEAM_HANDLE", team.handle)
-                context.startActivity(i)
-            }
+            btnRemove.setOnClickListener {
 
-            linearClick.setOnClickListener{
-                val context = itemView.context
-                val i = Intent(context, TeamActivity::class.java)
-                context.startActivity(i)
             }
         }
 
