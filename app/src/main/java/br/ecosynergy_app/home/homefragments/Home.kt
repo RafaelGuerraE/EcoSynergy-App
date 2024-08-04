@@ -24,6 +24,8 @@ import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.formatter.DefaultValueFormatter
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -109,20 +111,31 @@ class Home : Fragment() {
         mq7Chart.visibility = View.GONE
         shimmerMQ7.visibility = View.VISIBLE
 
-        val entries = ArrayList<Entry>()
+        Log.d("HomeFragment", "Readings: $mq7Readings")
 
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault())
+        val dateFormatIn = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault())
+        val dateFormatOut = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        val aggregatedData = mutableMapOf<String, Int>()
 
-        mq7Readings.forEachIndexed { index, reading ->
-            val timestamp = dateFormat.parse(reading.timestamp)?.time?.toFloat()
-            if (timestamp != null) {
-                entries.add(Entry(timestamp, reading.value.toFloat()))
-            } else {
-                Log.d("HomeFragment", "Parsing failed for: ${reading.timestamp}")
-            }
+        // Aggregate the data by date
+        mq7Readings.filter { it.value != 0.0 }.forEach { reading ->
+            val parsedDate = dateFormatIn.parse(reading.timestamp)
+            val date = if (parsedDate != null) dateFormatOut.format(parsedDate) else "Invalid Date"
+            aggregatedData[date] = aggregatedData.getOrDefault(date, 0) + 1
         }
 
-        val dataSet = LineDataSet(entries, "Readings Values").apply {
+        Log.d("HomeFragment", "Aggregated Data: $aggregatedData")
+
+        val entries = ArrayList<Entry>()
+        // Sort the data by date and add it to the chart entries
+        aggregatedData.entries.sortedBy { it.key }.forEachIndexed { index, entry ->
+            entries.add(Entry(index.toFloat(), entry.value.toFloat()))
+        }
+
+        Log.d("HomeFragment", "Entries: $entries")
+
+        // Create a LineDataSet with the chart data
+        val dataSet = LineDataSet(entries, "Nº de alertas por dia").apply {
             color = ContextCompat.getColor(requireContext(), R.color.greenDark)
             valueTextColor = getThemeColor(android.R.attr.textColorPrimary)
             valueTextSize = 10f
@@ -133,16 +146,19 @@ class Home : Fragment() {
             circleRadius = 5f
             setDrawFilled(true)
             fillColor = ContextCompat.getColor(requireContext(), R.color.greenDark_50)
+            valueFormatter = DefaultValueFormatter(0) // Display integers instead of floats
         }
 
+        // Configure XAxis
         mq7Chart.xAxis.apply {
             position = XAxis.XAxisPosition.BOTTOM
-            valueFormatter = DateValueFormatter()
-            setDrawGridLines(true)
+            valueFormatter = IndexAxisValueFormatter(aggregatedData.keys.toList())
+            setDrawGridLines(false)
             textColor = getThemeColor(android.R.attr.textColorPrimary)
-            setLabelCount(10, true)
+            setLabelCount(aggregatedData.size, true)
         }
 
+        // Configure YAxis
         mq7Chart.axisLeft.apply {
             setDrawGridLines(false)
             textColor = getThemeColor(android.R.attr.textColorPrimary)
@@ -152,15 +168,27 @@ class Home : Fragment() {
         mq7Chart.description.isEnabled = false
         mq7Chart.legend.textColor = getThemeColor(android.R.attr.textColorPrimary)
 
-        Log.d("HomeFragment", "Entries: $entries")
+        // Set chart properties
+        mq7Chart.apply {
+            isDragEnabled = true // Enable dragging
+            isScaleXEnabled = true // Enable horizontal zooming
+            setExtraOffsets(10f, 10f, 10f, 10f)
+        }
 
         val lineData = LineData(dataSet)
         mq7Chart.data = lineData
         mq7Chart.invalidate()
 
-        mq7Chart.visibility = View.VISIBLE
-        shimmerMQ7.visibility = View.GONE
+        shimmerMQ7.animate().alpha(0f).setDuration(300).withEndAction {
+            shimmerMQ7.stopShimmer()
+            shimmerMQ7.visibility = View.GONE
+            mq7Chart.visibility = View.VISIBLE
+            mq7Chart.animate().alpha(1f).setDuration(300)
+        }
     }
+
+
+
 
     private fun observeMq7(){
         sensorsViewModel.mq7ReadingResult.observe(viewLifecycleOwner){ result->

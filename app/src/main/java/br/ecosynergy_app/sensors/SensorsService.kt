@@ -17,7 +17,7 @@ interface SensorsService {
     suspend fun fetchMq7ReadingById(@Header("Authorization") token: String,
                                     @Path("id") id:String) : MQ7ReadingsResponse
 
-    @GET("api/mq7Reading/v1/team/{teamHandle}?page=1&limit=15&direction=asc")
+    @GET("api/mq7Reading/v1/team/{teamHandle}")
     suspend fun fetchMq7ReadingsByTeamHandle(@Path("teamHandle") teamHandle:String, @Header("Authorization") token: String) : MQ7ReadingsResponse
 
     //MQ135 Readings
