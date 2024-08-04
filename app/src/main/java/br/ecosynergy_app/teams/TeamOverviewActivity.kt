@@ -98,7 +98,7 @@ class TeamOverviewActivity : AppCompatActivity() {
         recycleMembers = findViewById(R.id.recycleMembers)
 
         recycleMembers.layoutManager = LinearLayoutManager(this)
-        membersAdapter = MembersAdapter(emptyList())
+        membersAdapter = MembersAdapter(emptyList(), emptyList())
         recycleMembers.adapter = membersAdapter
 
         loadingProgressBar.visibility = View.VISIBLE
@@ -135,14 +135,17 @@ class TeamOverviewActivity : AppCompatActivity() {
         teamsViewModel.deleteTeam(token, teamId)
     }
 
-    private fun observeMembersInfo(memberIds: List<String>){
+    private fun observeMembersInfo(members: List<Member>){
+        val memberIds = members.map { it.id.toString() }
+        val memberRoles = members.map {it.role}
+
         userViewModel.getUsersByIds(memberIds, token)
         userViewModel.users.observe(this) { result ->
             result.onSuccess { users ->
                 shimmerMembers.visibility = View.VISIBLE
                 recycleMembers.visibility = View.GONE
 
-                membersAdapter = MembersAdapter(users)
+                membersAdapter = MembersAdapter(users, memberRoles)
                 recycleMembers.adapter = membersAdapter
 
                 shimmerMembers.animate().alpha(0f).setDuration(300).withEndAction {
@@ -185,7 +188,7 @@ class TeamOverviewActivity : AppCompatActivity() {
                     teamPicture.visibility = View.VISIBLE
                 }
 
-                observeMembersInfo(response.members.map { it.toString() })
+                observeMembersInfo(response.members)
             }.onFailure { error ->
                 error.printStackTrace()
                 Log.d("TeamOverviewActivity", "Team Result Failed: ${error.message}")

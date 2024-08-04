@@ -17,15 +17,20 @@ data class TeamsResponse(
     val description: String,
     val createdAt: String,
     val updatedAt: String,
-    val members: List<Int>,
+    val members: List<Member>,
     val _links: TeamLinks
+)
+
+data class Member(
+    val id: Int?,
+    val role: String
 )
 
 data class TeamsRequest(
     val handle: String,
     val name: String,
     val description: String,
-    val members: List<Int?>
+    val members: List<Member>
 )
 
 data class UpdateRequest(

@@ -68,13 +68,13 @@ class UserViewModel(private val service: UserService) : ViewModel() {
                     usersList.add(response)
                     _users.value = Result.success(usersList)
                 } catch (e: HttpException) {
-                    Log.e("UserViewModel", "HTTP error during fetchUserData", e)
+                    Log.e("UserViewModel", "HTTP error during getUsersByIds", e)
                     _user.value = Result.failure(e)
                 } catch (e: IOException) {
-                    Log.e("UserViewModel", "Network error during fetchUserData", e)
+                    Log.e("UserViewModel", "Network error during getUsersByIds", e)
                     _user.value = Result.failure(e)
                 } catch (e: Exception) {
-                    Log.e("UserViewModel", "Unexpected error during fetchUserData", e)
+                    Log.e("UserViewModel", "Unexpected error during getUsersByIds", e)
                     _user.value = Result.failure(e)
                 }
             }

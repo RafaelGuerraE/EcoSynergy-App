@@ -37,11 +37,11 @@ data class MQ7ReadingEmbedded(
 )
 
 data class FireReadingEmbedded(
-    val mQ135ReadingVOList: List<ReadingVO>
+    val fireReadingVOList: List<ReadingVO>
 )
 
 data class MQ135ReadingEmbedded(
-    val fireReadingVOList: List<ReadingVO>
+    val mQ135ReadingVOList: List<ReadingVO>
 )
 
 data class ReadingVO(

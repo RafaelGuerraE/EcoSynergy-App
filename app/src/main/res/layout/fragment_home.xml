@@ -48,15 +48,13 @@
                     android:visibility="gone"/>
 
                 <com.facebook.shimmer.ShimmerFrameLayout
-                    android:id="@+id/shimmerViewContainer"
+                    android:id="@+id/shimmerName"
                     android:layout_width="150dp"
                     android:layout_height="30dp"
                     android:layout_gravity="start"
                     app:shimmer_auto_start="true"
                     android:visibility="visible">
-
                     <View
-                        android:id="@+id/shimmerLblFirstname"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:background="@drawable/rect_shape"
@@ -78,10 +76,114 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Dados Recentes"
+                    android:text="MQ7"
                     android:textSize="20sp"
                     android:textStyle="bold"
                     android:layout_marginBottom="10dp"/>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="400dp"
+                    android:layout_marginBottom="20dp"
+                    android:orientation="vertical"
+                    android:layout_gravity="center">
+
+                    <com.github.mikephil.charting.charts.LineChart
+                        android:id="@+id/mq7Chart"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:visibility="gone"/>
+
+                    <com.facebook.shimmer.ShimmerFrameLayout
+                        android:id="@+id/shimmerMQ7"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="start"
+                        app:shimmer_auto_start="true"
+                        android:visibility="visible">
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/chart_shape"
+                            android:visibility="visible"
+                            android:backgroundTint="?attr/shimmerColor"/>
+                    </com.facebook.shimmer.ShimmerFrameLayout>
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="MQ135"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="10dp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="400dp"
+                    android:layout_marginBottom="20dp"
+                    android:orientation="vertical"
+                    android:layout_gravity="center">
+
+                    <com.github.mikephil.charting.charts.LineChart
+                        android:id="@+id/mq135Chart"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:visibility="gone"/>
+
+                    <com.facebook.shimmer.ShimmerFrameLayout
+                        android:id="@+id/shimmerMQ135"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="start"
+                        app:shimmer_auto_start="true"
+                        android:visibility="visible">
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/chart_shape"
+                            android:visibility="visible"
+                            android:backgroundTint="?attr/shimmerColor"/>
+                    </com.facebook.shimmer.ShimmerFrameLayout>
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Sensor de Fogo"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="10dp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="400dp"
+                    android:layout_marginBottom="20dp"
+                    android:orientation="vertical"
+                    android:layout_gravity="center">
+
+                    <com.github.mikephil.charting.charts.LineChart
+                        android:id="@+id/fireChart"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:visibility="gone"/>
+
+                    <com.facebook.shimmer.ShimmerFrameLayout
+                        android:id="@+id/shimmerFire"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="start"
+                        app:shimmer_auto_start="true"
+                        android:visibility="visible">
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/chart_shape"
+                            android:visibility="visible"
+                            android:backgroundTint="?attr/shimmerColor"/>
+                    </com.facebook.shimmer.ShimmerFrameLayout>
+                </LinearLayout>
 
                 <com.google.android.material.imageview.ShapeableImageView
                     app:shapeAppearanceOverlay="@style/RoundedSquare"
@@ -89,30 +191,6 @@
                     android:layout_height="70dp"
                     android:background="?attr/fragmentsBackground"
                     android:scaleType="fitStart"
-                    android:layout_gravity="center"
-                    android:layout_marginBottom="30dp"/>
-
-                <com.github.mikephil.charting.charts.LineChart
-                    android:id="@+id/mq7LineChart"
-                    android:layout_width="match_parent"
-                    android:layout_height="400dp"
-                    android:layout_marginBottom="30dp"/>
-
-                <com.google.android.material.imageview.ShapeableImageView
-                    app:shapeAppearanceOverlay="@style/RoundedSquare"
-                    android:layout_width="match_parent"
-                    android:layout_height="300dp"
-                    android:background="?attr/fragmentsBackground"
-                    android:scaleType="center"
-                    android:layout_gravity="center"
-                    android:layout_marginBottom="30dp"/>
-
-                <com.google.android.material.imageview.ShapeableImageView
-                    app:shapeAppearanceOverlay="@style/RoundedSquare"
-                    android:layout_width="match_parent"
-                    android:layout_height="300dp"
-                    android:background="?attr/fragmentsBackground"
-                    android:scaleType="center"
                     android:layout_gravity="center"
                     android:layout_marginBottom="30dp"/>
 

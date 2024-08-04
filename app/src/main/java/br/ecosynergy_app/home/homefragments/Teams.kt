@@ -1,6 +1,5 @@
 package br.ecosynergy_app.home.homefragments
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -8,19 +7,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import br.ecosynergy_app.R
-import br.ecosynergy_app.login.ResetActivity
-import br.ecosynergy_app.teams.CreateTeamActivity
+import br.ecosynergy_app.teams.CreateTeamBottomSheet
 import br.ecosynergy_app.teams.TeamAdapter
-import br.ecosynergy_app.teams.TeamOverviewActivity
 import br.ecosynergy_app.teams.TeamsViewModel
-import br.ecosynergy_app.teams.TeamsResponse
 
 class Teams : Fragment() {
 
@@ -50,8 +44,8 @@ class Teams : Fragment() {
         observeTeamsData(linearAlert)
 
         btnAddTeam.setOnClickListener{
-            val i = Intent(requireContext(), CreateTeamActivity::class.java)
-            startActivity(i)
+            val createTeamBottomSheet = CreateTeamBottomSheet()
+            createTeamBottomSheet.show(parentFragmentManager, "CreateTeamBottomSheet")
         }
     }
 

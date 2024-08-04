@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import br.ecosynergy_app.R
 import com.google.android.material.snackbar.Snackbar
 
-class MembersAdapter(private val membersList: List<UserResponse>) :
+class MembersAdapter(private val membersList: List<UserResponse>, private val memberRoles: List<String>) :
     RecyclerView.Adapter<MembersAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -21,7 +21,7 @@ class MembersAdapter(private val membersList: List<UserResponse>) :
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-       holder.bind(membersList[position])
+       holder.bind(membersList[position], memberRoles[position])
     }
 
     override fun getItemCount(): Int = membersList.size
@@ -33,12 +33,16 @@ class MembersAdapter(private val membersList: List<UserResponse>) :
         private val imgUser: ImageView = itemView.findViewById(R.id.imgUser)
         private val btnRemove: ImageButton = itemView.findViewById(R.id.btnRemove)
 
-        fun bind(user: UserResponse) {
+        fun bind(user: UserResponse, role: String) {
             txtUsername.text = "@${user.username}"
             txtFullname.text = user.fullName
-            txtRole.text = "Administrador"
-            imgUser.setImageResource(getDrawableForLetter(user.fullName.first()))
 
+            imgUser.setImageResource(getDrawableForLetter(user.fullName.first()))
+            when(role){
+                "ADMINISTRATOR" -> txtRole.text = "Administrador"
+                "COMMON_USER" -> txtRole.text = "Membro"
+                else -> "Outro Cargo"
+            }
             btnRemove.setOnClickListener {
 
             }

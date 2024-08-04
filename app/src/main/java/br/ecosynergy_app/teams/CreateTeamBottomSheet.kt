@@ -1,25 +1,25 @@
 package br.ecosynergy_app.teams
 
 import android.content.Context
-import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
-import androidx.appcompat.app.AppCompatActivity
 import br.ecosynergy_app.R
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.android.material.textfield.TextInputEditText
-import com.google.android.material.textfield.TextInputLayout
 import de.hdodenhof.circleimageview.CircleImageView
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ProgressBar
 import androidx.lifecycle.ViewModelProvider
 import br.ecosynergy_app.RetrofitClient
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
-class CreateTeamActivity : AppCompatActivity() {
+class CreateTeamBottomSheet : BottomSheetDialogFragment() {
 
     private lateinit var teamsViewModel: TeamsViewModel
 
@@ -39,31 +39,37 @@ class CreateTeamActivity : AppCompatActivity() {
     private var token: String? = ""
     private var userId: Int? = 0
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_create_team)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return inflater.inflate(R.layout.fragment_create_team_bottom_sheet, container, false)
+    }
 
-        val sp: SharedPreferences = getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val sp: SharedPreferences = requireActivity().getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
         token = sp.getString("accessToken", null)
         userId = sp.getString("id", null)?.toInt()
 
-        loadingProgressBar = findViewById(R.id.loadingProgressBar)
-        overlayView = findViewById(R.id.overlayView)
+        loadingProgressBar = view.findViewById(R.id.loadingProgressBar)
+        overlayView = view.findViewById(R.id.overlayView)
 
-        btnBack = findViewById(R.id.btnBack)
+        btnBack = view.findViewById(R.id.btnBack)
 
-        teamsViewModel = ViewModelProvider(this, TeamsViewModelFactory(RetrofitClient.teamsService))[TeamsViewModel::class.java]
+        teamsViewModel = ViewModelProvider(requireActivity(), TeamsViewModelFactory(RetrofitClient.teamsService))[TeamsViewModel::class.java]
 
-        shimmerImg = findViewById(R.id.shimmerImg)
-        imgTeam = findViewById(R.id.imgTeam)
-        txtHandle = findViewById(R.id.txtHandle)
-        txtTeamName = findViewById(R.id.txtTeamName)
-        txtDescription = findViewById(R.id.txtDescription)
-        txtSector = findViewById(R.id.txtSector)
-        txtPlan = findViewById(R.id.txtPlan)
-        btnCreateTeam = findViewById(R.id.btnCreateTeam)
+        shimmerImg = view.findViewById(R.id.shimmerImg)
+        imgTeam = view.findViewById(R.id.imgTeam)
+        txtHandle = view.findViewById(R.id.txtHandle)
+        txtTeamName = view.findViewById(R.id.txtTeamName)
+        txtDescription = view.findViewById(R.id.txtDescription)
+        txtSector = view.findViewById(R.id.txtSector)
+        txtPlan = view.findViewById(R.id.txtPlan)
+        btnCreateTeam = view.findViewById(R.id.btnCreateTeam)
 
-        btnBack.setOnClickListener{ finish() }
+        btnBack.setOnClickListener{ dismiss() }
 
         btnCreateTeam.setOnClickListener{
             createTeam()
@@ -89,9 +95,7 @@ class CreateTeamActivity : AppCompatActivity() {
             }
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                shimmerImg.startShimmer()
-                shimmerImg.visibility = View.VISIBLE
-                imgTeam.visibility = View.GONE
+
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -100,9 +104,21 @@ class CreateTeamActivity : AppCompatActivity() {
                 imgTeam.visibility = View.GONE
             }
         })
-
-
     }
+
+    private fun createTeam(){
+        loadingProgressBar.visibility = View.VISIBLE
+        overlayView.visibility = View.VISIBLE
+        val handle: String = txtHandle.text.toString()
+        val name: String = txtTeamName.text.toString()
+        val description: String = txtDescription.text.toString()
+        val members: List<Member> = listOf(Member(userId, "ADMINISTRATOR"))
+        val teamsRequest = TeamsRequest(handle,name,description,members)
+        teamsViewModel.createTeam(token, teamsRequest)
+
+        dismiss()
+    }
+}
 
     private fun getDrawableForLetter(letter: Char): Int {
         return when (letter.lowercaseChar()) {
@@ -136,17 +152,3 @@ class CreateTeamActivity : AppCompatActivity() {
         }
     }
 
-    private fun createTeam(){
-        loadingProgressBar.visibility = View.VISIBLE
-        overlayView.visibility = View.VISIBLE
-        val handle: String = txtHandle.text.toString()
-        val name: String = txtTeamName.text.toString()
-        val description: String = txtDescription.text.toString()
-        val members: List<Int?> = listOf(userId)
-        val teamsRequest = TeamsRequest(handle,name,description,members)
-        teamsViewModel.createTeam(token, teamsRequest)
-
-        finish()
-    }
-
-}
