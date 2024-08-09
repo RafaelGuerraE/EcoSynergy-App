@@ -13,7 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import br.ecosynergy_app.R
 
-class TeamAdapter(private val teamsList: List<TeamsResponse>) :
+class TeamAdapter(private var teamsList: List<TeamsResponse>) :
     RecyclerView.Adapter<TeamAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -46,10 +46,10 @@ class TeamAdapter(private val teamsList: List<TeamsResponse>) :
 
             btnInfo.setOnClickListener {
                 val context = itemView.context
-                val i = Intent(context, TeamOverviewActivity::class.java)
-                i.putExtra("TEAM_ID", team.id)
-                i.putExtra("TEAM_HANDLE", team.handle)
-                context.startActivity(i)
+                val intent = Intent(context, TeamOverviewActivity::class.java)
+                intent.putExtra("TEAM_ID", team.id)
+                intent.putExtra("TEAM_HANDLE", team.handle)
+                context.startActivity(intent)
             }
 
             linearClick.setOnClickListener {

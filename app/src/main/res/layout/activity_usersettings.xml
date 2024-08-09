@@ -19,8 +19,8 @@
 
         <ImageButton
             android:id="@+id/btnBack"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:background="@null"
             android:contentDescription="BackButton"
             android:src="@drawable/baseline_arrow_back_24"
@@ -96,9 +96,8 @@
 
                 <ImageButton
                     android:id="@+id/btnEditUsername"
-                    android:layout_width="0dp"
+                    android:layout_width="55dp"
                     android:layout_height="55dp"
-                    android:layout_weight="0.2"
                     android:layout_gravity="center"
                     android:background="@drawable/round_button"
                     android:src="@drawable/baseline_edit_24"
@@ -130,9 +129,8 @@
 
                 <ImageButton
                     android:id="@+id/btnEditFullname"
-                    android:layout_width="0dp"
+                    android:layout_width="55dp"
                     android:layout_height="55dp"
-                    android:layout_weight="0.2"
                     android:layout_gravity="center"
                     android:background="@drawable/round_button"
                     android:src="@drawable/baseline_edit_24"
@@ -165,9 +163,8 @@
 
                 <ImageButton
                     android:id="@+id/btnEditEmail"
-                    android:layout_width="0dp"
+                    android:layout_width="55dp"
                     android:layout_height="55dp"
-                    android:layout_weight="0.2"
                     android:layout_gravity="center"
                     android:background="@drawable/round_button"
                     android:src="@drawable/baseline_edit_24"
@@ -195,9 +192,8 @@
 
                 <ImageButton
                     android:id="@+id/btnEditGender"
-                    android:layout_width="0dp"
+                    android:layout_width="55dp"
                     android:layout_height="55dp"
-                    android:layout_weight="0.2"
                     android:layout_gravity="center"
                     android:background="@drawable/round_button"
                     android:src="@drawable/baseline_edit_24"
@@ -234,9 +230,8 @@
 
                 <ImageButton
                 android:id="@+id/btnEditNationality"
-                android:layout_width="0dp"
+                android:layout_width="55dp"
                 android:layout_height="55dp"
-                android:layout_weight="0.2"
                 android:layout_gravity="center"
                 android:background="@drawable/round_button"
                 android:src="@drawable/baseline_edit_24"

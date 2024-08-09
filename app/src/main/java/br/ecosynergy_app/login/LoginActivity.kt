@@ -42,7 +42,7 @@ class LoginActivity : AppCompatActivity() {
 
         val logoutMessage = intent.getStringExtra("LOGOUT_MESSAGE")
         if (logoutMessage != null) {
-            showSnackBar("Você foi desconectado com sucesso", "FECHAR", R.color.grayDark)
+            showSnackBar("Você foi desconectado", "FECHAR", R.color.grayDark)
         }
 
         if (isLoggedIn()) {

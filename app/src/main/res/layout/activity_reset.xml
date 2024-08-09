@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".login.ResetActivity"
-    android:orientation="vertical"
     android:gravity="top">
 
     <ImageButton
         android:id="@+id/btnBack"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:background="@null"
         app:tint="?android:attr/iconTint"
         android:src="@drawable/baseline_arrow_back_24"
@@ -20,22 +19,26 @@
         android:gravity="top"
         android:layout_margin="15dp"/>
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical"
         android:layout_gravity="center"
         android:gravity="center"
-        android:layout_marginBottom="20dp"
-        android:layout_marginTop="60dp"
-        android:layout_marginStart="30dp"
-        android:layout_marginEnd="30dp">
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Digite o email de sua conta:"
             android:layout_gravity="start"
+            android:textColor="?android:attr/textColorPrimary"
             android:textSize="15sp"
             android:textStyle="bold"/>
 
@@ -49,7 +52,8 @@
                 android:id="@+id/txtEmail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textEmailAddress"/>
+                android:inputType="textEmailAddress"
+                android:textColor="?android:attr/textColorPrimary"/>
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -66,7 +70,7 @@
             android:layout_height="wrap_content"
             android:textStyle="bold"
             android:textSize="15sp"
-            android:textColor="@color/white"
+            android:textColor="?android:attr/textColorPrimary"
             android:visibility="invisible"
             android:layout_marginTop="10dp"
             android:layout_marginStart="10dp"
@@ -75,4 +79,6 @@
 
     </LinearLayout>
 
-</LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>

@@ -37,29 +37,30 @@ class Teams : Fragment() {
 
         recyclerView = view.findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        teamsAdapter = TeamAdapter(emptyList())
 
         btnAddTeam = view.findViewById(R.id.btnAddTeam)
         linearAlert = view.findViewById(R.id.linearAlert)
 
-        observeTeamsData(linearAlert)
+        linearAlert.visibility = View.VISIBLE
+        recyclerView.visibility = View.GONE
 
+        observeTeamsData()
         btnAddTeam.setOnClickListener{
             val createTeamBottomSheet = CreateTeamBottomSheet()
             createTeamBottomSheet.show(parentFragmentManager, "CreateTeamBottomSheet")
         }
     }
 
-    private fun observeTeamsData(linearLayout: LinearLayout) {
+    private fun observeTeamsData() {
         teamsViewModel.teamsResult.observe(viewLifecycleOwner) { result ->
+            Log.d("TeamsFragment", "TeamsResult: $result")
             result.onSuccess { teamData ->
-                if (teamData.isEmpty()) {
-                    linearLayout.visibility = View.VISIBLE
-                    recyclerView.visibility = View.GONE
-                } else {
-                    linearLayout.visibility = View.GONE
+                teamsAdapter = TeamAdapter(teamData)
+                recyclerView.adapter = teamsAdapter
+                if (teamData.isNotEmpty()) {
+                    linearAlert.visibility = View.GONE
                     recyclerView.visibility = View.VISIBLE
-                    teamsAdapter = TeamAdapter(teamData)
-                    recyclerView.adapter = teamsAdapter
                 }
             }.onFailure { e ->
                 Log.e("TeamsFragment", "Error", e)

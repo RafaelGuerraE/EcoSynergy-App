@@ -51,8 +51,6 @@
 
     </LinearLayout>
 
-
-
     <ImageButton
         android:id="@+id/btnAddTeam"
         android:layout_width="60dp"
