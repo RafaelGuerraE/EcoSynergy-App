@@ -1,6 +1,7 @@
 package br.ecosynergy_app.teams
 
 import android.content.Intent
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,6 +9,7 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import br.ecosynergy_app.R
 
@@ -37,7 +39,10 @@ class TeamAdapter(private val teamsList: List<TeamsResponse>) :
             teamName.text = team.name
             teamHandle.text = "@${team.handle}"
             teamDescription.text = team.description
-            teamImage.setImageResource(getDrawableForLetter(team.name.first()))
+
+            val drawableLetter = getDrawableForLetter(team.name.first())
+
+            teamImage.setImageResource(drawableLetter)
 
             btnInfo.setOnClickListener {
                 val context = itemView.context
@@ -47,11 +52,17 @@ class TeamAdapter(private val teamsList: List<TeamsResponse>) :
                 context.startActivity(i)
             }
 
-            linearClick.setOnClickListener{
-                val context = itemView.context
-                val i = Intent(context, TeamActivity::class.java)
-                context.startActivity(i)
+            linearClick.setOnClickListener {
+                val fragmentManager = (itemView.context as AppCompatActivity).supportFragmentManager
+                val teamBottomSheet = TeamBottomSheet().apply {
+                    arguments = Bundle().apply {
+                        putString("TEAM_HANDLE", team.handle)
+                        putInt("TEAM_INITIAL", drawableLetter)
+                    }
+                }
+                teamBottomSheet.show(fragmentManager, "TeamBottomSheet")
             }
+
         }
 
         private fun getDrawableForLetter(letter: Char): Int {

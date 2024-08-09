@@ -71,7 +71,9 @@ class Home : Fragment() {
         shimmerFire = view.findViewById(R.id.shimmerFire)
         fireChart = view.findViewById(R.id.fireChart)
 
-        observeMq7()
+        observeMQ7()
+        observeMQ135()
+        observeFireSensor()
 
         return view
     }
@@ -107,18 +109,17 @@ class Home : Fragment() {
         return typedValue.data
     }
 
-    private fun setupMq7Chart(mq7Readings: List<ReadingVO>) {
+    private fun setupMQ7Chart(mq7Readings: List<ReadingVO>) {
         mq7Chart.visibility = View.GONE
         shimmerMQ7.visibility = View.VISIBLE
 
         Log.d("HomeFragment", "Readings: $mq7Readings")
 
         val dateFormatIn = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault())
-        val dateFormatOut = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        val dateFormatOut = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         val aggregatedData = mutableMapOf<String, Int>()
 
-        // Aggregate the data by date
-        mq7Readings.filter { it.value != 0.0 }.forEach { reading ->
+        mq7Readings.forEach { reading ->
             val parsedDate = dateFormatIn.parse(reading.timestamp)
             val date = if (parsedDate != null) dateFormatOut.format(parsedDate) else "Invalid Date"
             aggregatedData[date] = aggregatedData.getOrDefault(date, 0) + 1
@@ -126,15 +127,15 @@ class Home : Fragment() {
 
         Log.d("HomeFragment", "Aggregated Data: $aggregatedData")
 
+        val sortedData = aggregatedData.entries.sortedBy { it.key }
+
         val entries = ArrayList<Entry>()
-        // Sort the data by date and add it to the chart entries
-        aggregatedData.entries.sortedBy { it.key }.forEachIndexed { index, entry ->
+        sortedData.forEachIndexed { index, entry ->
             entries.add(Entry(index.toFloat(), entry.value.toFloat()))
         }
 
         Log.d("HomeFragment", "Entries: $entries")
 
-        // Create a LineDataSet with the chart data
         val dataSet = LineDataSet(entries, "Nº de alertas por dia").apply {
             color = ContextCompat.getColor(requireContext(), R.color.greenDark)
             valueTextColor = getThemeColor(android.R.attr.textColorPrimary)
@@ -149,16 +150,14 @@ class Home : Fragment() {
             valueFormatter = DefaultValueFormatter(0) // Display integers instead of floats
         }
 
-        // Configure XAxis
         mq7Chart.xAxis.apply {
             position = XAxis.XAxisPosition.BOTTOM
-            valueFormatter = IndexAxisValueFormatter(aggregatedData.keys.toList())
+            valueFormatter = IndexAxisValueFormatter(sortedData.map { it.key })
             setDrawGridLines(false)
             textColor = getThemeColor(android.R.attr.textColorPrimary)
-            setLabelCount(aggregatedData.size, true)
+            setLabelCount(sortedData.size, true)
         }
 
-        // Configure YAxis
         mq7Chart.axisLeft.apply {
             setDrawGridLines(false)
             textColor = getThemeColor(android.R.attr.textColorPrimary)
@@ -168,10 +167,9 @@ class Home : Fragment() {
         mq7Chart.description.isEnabled = false
         mq7Chart.legend.textColor = getThemeColor(android.R.attr.textColorPrimary)
 
-        // Set chart properties
         mq7Chart.apply {
-            isDragEnabled = true // Enable dragging
-            isScaleXEnabled = true // Enable horizontal zooming
+            isDragEnabled = true
+            isScaleXEnabled = true
             setExtraOffsets(10f, 10f, 10f, 10f)
         }
 
@@ -187,13 +185,10 @@ class Home : Fragment() {
         }
     }
 
-
-
-
-    private fun observeMq7(){
+    private fun observeMQ7(){
         sensorsViewModel.mq7ReadingResult.observe(viewLifecycleOwner){ result->
             result.onSuccess { response->
-                handleMq7Readings(response)
+                handleMQ7Readings(response)
                 Log.d("TeamsFragment", "Sensors MQ7Response OK")
             }.onFailure { e->
                 Log.e("TeamsFragment", "Error MQ7", e)
@@ -201,10 +196,10 @@ class Home : Fragment() {
         }
     }
 
-    private fun observeMq135(){
+    private fun observeMQ135(){
         sensorsViewModel.mq135ReadingResult.observe(viewLifecycleOwner){ result->
             result.onSuccess { response->
-                handleMq135Readings(response)
+                handleMQ135Readings(response)
                 Log.d("TeamsFragment", "Sensors MQ135Response OK")
             }.onFailure { e->
                 Log.e("TeamsFragment", "Error MQ135", e)
@@ -212,7 +207,7 @@ class Home : Fragment() {
         }
     }
 
-    private fun observeFire(){
+    private fun observeFireSensor(){
         sensorsViewModel.fireReadingResult.observe(viewLifecycleOwner){ result->
             result.onSuccess { response->
                 handleFireReadings(response)
@@ -223,30 +218,167 @@ class Home : Fragment() {
         }
     }
 
-    private fun setupMq135Chart(mq135Readings: List<ReadingVO>) {
+    private fun setupMQ135Chart(mq135Readings: List<ReadingVO>) {
         mq135Chart.visibility = View.GONE
         shimmerMQ135.visibility = View.VISIBLE
 
-        mq135Chart.visibility = View.VISIBLE
-        shimmerMQ135.visibility = View.GONE
+        Log.d("HomeFragment", "Readings: $mq135Readings")
+
+        val dateFormatIn = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault())
+        val dateFormatOut = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val aggregatedData = mutableMapOf<String, Int>()
+
+        mq135Readings.forEach { reading ->
+            val parsedDate = dateFormatIn.parse(reading.timestamp)
+            val date = if (parsedDate != null) dateFormatOut.format(parsedDate) else "Invalid Date"
+            aggregatedData[date] = aggregatedData.getOrDefault(date, 0) + 1
+        }
+
+        Log.d("HomeFragment", "Aggregated Data: $aggregatedData")
+
+        val sortedData = aggregatedData.entries.sortedBy { it.key }
+
+        val entries = ArrayList<Entry>()
+        sortedData.forEachIndexed { index, entry ->
+            entries.add(Entry(index.toFloat(), entry.value.toFloat()))
+        }
+
+        Log.d("HomeFragment", "Entries: $entries")
+
+        val dataSet = LineDataSet(entries, "Nº de alertas por dia").apply {
+            color = ContextCompat.getColor(requireContext(), R.color.yellow)
+            valueTextColor = getThemeColor(android.R.attr.textColorPrimary)
+            valueTextSize = 10f
+            setDrawValues(true)
+            lineWidth = 3f
+            setDrawCircles(true)
+            setCircleColor(ContextCompat.getColor(requireContext(), R.color.yellow))
+            circleRadius = 5f
+            setDrawFilled(true)
+            fillColor = ContextCompat.getColor(requireContext(), R.color.yellow)
+            valueFormatter = DefaultValueFormatter(0)
+        }
+
+        mq135Chart.xAxis.apply {
+            position = XAxis.XAxisPosition.BOTTOM
+            valueFormatter = IndexAxisValueFormatter(sortedData.map { it.key })
+            setDrawGridLines(false)
+            textColor = getThemeColor(android.R.attr.textColorPrimary)
+            setLabelCount(sortedData.size, true)
+        }
+
+        mq135Chart.axisLeft.apply {
+            setDrawGridLines(false)
+            textColor = getThemeColor(android.R.attr.textColorPrimary)
+        }
+
+        mq135Chart.axisRight.isEnabled = false
+        mq135Chart.description.isEnabled = false
+        mq135Chart.legend.textColor = getThemeColor(android.R.attr.textColorPrimary)
+
+        mq135Chart.apply {
+            isDragEnabled = true
+            isScaleXEnabled = true
+            setExtraOffsets(10f, 10f, 10f, 10f)
+        }
+
+        val lineData = LineData(dataSet)
+        mq135Chart.data = lineData
+        mq135Chart.invalidate()
+
+        shimmerMQ135.animate().alpha(0f).setDuration(300).withEndAction {
+            shimmerMQ135.stopShimmer()
+            shimmerMQ135.visibility = View.GONE
+            mq135Chart.visibility = View.VISIBLE
+            mq135Chart.animate().alpha(1f).setDuration(300)
+        }
     }
 
     private fun setupFireChart(fireReadings: List<ReadingVO>) {
         fireChart.visibility = View.GONE
+
         shimmerFire.visibility = View.VISIBLE
 
-        fireChart.visibility = View.VISIBLE
-        shimmerFire.visibility = View.GONE
+        Log.d("HomeFragment", "Readings: $fireReadings")
+
+        val dateFormatIn = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault())
+        val dateFormatOut = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val aggregatedData = mutableMapOf<String, Int>()
+
+        fireReadings.forEach { reading ->
+            val parsedDate = dateFormatIn.parse(reading.timestamp)
+            val date = if (parsedDate != null) dateFormatOut.format(parsedDate) else "Invalid Date"
+            aggregatedData[date] = aggregatedData.getOrDefault(date, 0) + 1
+        }
+
+        Log.d("HomeFragment", "Aggregated Data: $aggregatedData")
+
+        val sortedData = aggregatedData.entries.sortedBy { it.key }
+
+        val entries = ArrayList<Entry>()
+        sortedData.forEachIndexed { index, entry ->
+            entries.add(Entry(index.toFloat(), entry.value.toFloat()))
+        }
+
+        Log.d("HomeFragment", "Entries: $entries")
+
+        val dataSet = LineDataSet(entries, "Nº de alertas por dia").apply {
+            color = ContextCompat.getColor(requireContext(), R.color.red)
+            valueTextColor = getThemeColor(android.R.attr.textColorPrimary)
+            valueTextSize = 10f
+            setDrawValues(true)
+            lineWidth = 3f
+            setDrawCircles(true)
+            setCircleColor(ContextCompat.getColor(requireContext(), R.color.red))
+            circleRadius = 5f
+            setDrawFilled(true)
+            fillColor = ContextCompat.getColor(requireContext(), R.color.red)
+            valueFormatter = DefaultValueFormatter(0)
+        }
+
+        fireChart.xAxis.apply {
+            position = XAxis.XAxisPosition.BOTTOM
+            valueFormatter = IndexAxisValueFormatter(sortedData.map { it.key })
+            setDrawGridLines(false)
+            textColor = getThemeColor(android.R.attr.textColorPrimary)
+            setLabelCount(sortedData.size, true)
+        }
+
+        fireChart.axisLeft.apply {
+            setDrawGridLines(false)
+            textColor = getThemeColor(android.R.attr.textColorPrimary)
+        }
+
+        fireChart.axisRight.isEnabled = false
+        fireChart.description.isEnabled = false
+        fireChart.legend.textColor = getThemeColor(android.R.attr.textColorPrimary)
+
+        fireChart.apply {
+            isDragEnabled = true
+            isScaleXEnabled = true
+            setExtraOffsets(10f, 10f, 10f, 10f)
+        }
+
+        val lineData = LineData(dataSet)
+        fireChart.data = lineData
+        fireChart.invalidate()
+
+        shimmerFire.animate().alpha(0f).setDuration(300).withEndAction {
+            shimmerFire.stopShimmer()
+            shimmerFire.visibility = View.GONE
+            fireChart.visibility = View.VISIBLE
+            fireChart.animate().alpha(1f).setDuration(300)
+        }
     }
 
-    private fun handleMq7Readings(response: MQ7ReadingsResponse) {
+    private fun handleMQ7Readings(response: MQ7ReadingsResponse) {
         val readingsData = response.embedded.mQ7ReadingVOList
-        setupMq7Chart(readingsData)
+        setupMQ7Chart(readingsData)
     }
 
-    private fun handleMq135Readings(response: MQ135ReadingsResponse) {
+    private fun handleMQ135Readings(response: MQ135ReadingsResponse) {
         val readingsData = response.embedded.mQ135ReadingVOList
-        setupMq135Chart(readingsData)
+        setupMQ135Chart(readingsData)
     }
 
     private fun handleFireReadings(response: FireReadingsResponse) {

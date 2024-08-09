@@ -285,6 +285,8 @@ class HomeActivity : AppCompatActivity() {
             result.onSuccess { teamData ->
                 teamHandles =  teamData.map { it.handle }
                 fetchMQ7ReadingsByTeamHandle()
+                fetchMQ135ReadingsByTeamHandle()
+                fetchFireReadingsByTeamHandle()
             }.onFailure { e ->
                 Log.e("HomeActivity", "Error getting user Team Handles by Id", e)
             }
@@ -294,21 +296,16 @@ class HomeActivity : AppCompatActivity() {
     private fun fetchMQ7ReadingsByTeamHandle() {
         val teamHandle: String = teamHandles[0]
         sensorsViewModel.fetchMQ7ReadingsByTeamHandle(teamHandle, token)
-        sensorsViewModel.mq7ReadingResult.observe(this) { mq7ReadingResult ->
-            mq7ReadingResult.onSuccess { response ->
-                handleReadingsData(response)
-            }.onFailure { e ->
-                Log.e("HomeActivity", "Error fetching MQ7 readings by Team Handle", e)
-            }
-        }
     }
 
-    private fun handleReadingsData(response: MQ7ReadingsResponse) {
-        val readingsData = response.embedded.mQ7ReadingVOList
-        readingsData.forEach { reading ->
-            //Log.d("HomeActivity", "Value: ${reading.value}, Timestamp: ${reading.timestamp}")
-            // Display or process the readings as required
-        }
+    private fun fetchMQ135ReadingsByTeamHandle() {
+        val teamHandle: String = teamHandles[0]
+        sensorsViewModel.fetchMQ135ReadingsByTeamHandle(token, teamHandle)
+    }
+
+    private fun fetchFireReadingsByTeamHandle() {
+        val teamHandle: String = teamHandles[0]
+        sensorsViewModel.fetchFireReadingsByTeamHandle(token, teamHandle)
     }
 
     private fun getDrawableForLetter(letter: Char): Int {

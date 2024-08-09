@@ -17,10 +17,13 @@
         android:theme="@style/Base.Theme.EcoSynergyApp"
         tools:targetApi="31">
         <activity
+            android:name=".MainActivity"
+            android:exported="false" />
+        <activity
             android:name=".teams.CreateTeamActivity"
             android:exported="false" />
         <activity
-            android:name=".teams.TeamActivity"
+            android:name=".teams.TeamBottomSheet"
             android:exported="false" />
         <activity
             android:name=".login.LoginActivity"

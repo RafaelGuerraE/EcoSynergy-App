@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="top"
+            android:layout_gravity="top">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:layout_marginBottom="10dp">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:layout_width="65dp"
+                        android:layout_height="65dp"
+                        android:src="@drawable/default_image"
+                        tools:src="@drawable/e"
+                        android:id="@+id/teamPicture"
+                        android:visibility="gone"
+                        android:layout_marginEnd="10dp"/>
+
+                    <com.facebook.shimmer.ShimmerFrameLayout
+                        android:id="@+id/shimmerImg"
+                        android:layout_width="65dp"
+                        android:layout_height="65dp"
+                        app:shimmer_auto_start="true"
+                        android:visibility="visible"
+                        android:layout_marginEnd="10dp">
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/image_shape"
+                            android:visibility="visible"
+                            android:backgroundTint="?attr/shimmerColor"/>
+                    </com.facebook.shimmer.ShimmerFrameLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.7"
+                        android:hint="Nome da Equipe"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="10dp">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/txtTeamName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="text"
+                            android:text="carregando..."
+                            android:enabled="false"
+                            android:clickable="true"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <ImageButton
+                        android:id="@+id/btnEditTeamName"
+                        android:layout_width="0dp"
+                        android:layout_height="55dp"
+                        android:layout_weight="0.18"
+                        android:layout_gravity="center"
+                        android:background="@drawable/round_button"
+                        android:src="@drawable/baseline_edit_24"
+                        app:tint="?android:attr/iconTint"
+                        android:layout_marginStart="5dp"
+                        android:visibility="gone"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="15dp"
+                    android:layout_gravity="center_vertical">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:hint="\@ da Equipe"
+                        android:layout_marginBottom="4dp">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/txtHandle"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:text="carregando..."
+                            android:inputType="text"
+                            android:enabled="false"
+                            android:clickable="true"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <ImageButton
+                        android:id="@+id/btnEditHandle"
+                        android:layout_width="0dp"
+                        android:layout_height="55dp"
+                        android:layout_weight="0.2"
+                        android:layout_gravity="center"
+                        android:background="@drawable/round_button"
+                        android:src="@drawable/baseline_edit_24"
+                        app:tint="?android:attr/iconTint"
+                        android:layout_marginStart="5dp"
+                        android:visibility="gone"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="15dp"
+                    android:layout_gravity="center_vertical">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:hint="Fuso horário"
+                        android:layout_marginBottom="4dp">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/txtTimezone"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:text="carregando..."
+                            android:inputType="text"
+                            android:enabled="false"
+                            android:clickable="true"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <ImageButton
+                        android:id="@+id/btnEditTimezone"
+                        android:layout_width="0dp"
+                        android:layout_height="55dp"
+                        android:layout_weight="0.2"
+                        android:layout_gravity="center"
+                        android:background="@drawable/round_button"
+                        android:src="@drawable/baseline_edit_24"
+                        app:tint="?android:attr/iconTint"
+                        android:layout_marginStart="5dp"
+                        android:visibility="gone"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="15dp"
+                    android:layout_gravity="center_vertical">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:hint="Descrição"
+                        android:layout_marginBottom="4dp">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/txtDescription"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:text="carregando..."
+                            android:inputType="text"
+                            android:enabled="false"
+                            android:clickable="true"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <ImageButton
+                        android:id="@+id/btnEditDescription"
+                        android:layout_width="0dp"
+                        android:layout_height="55dp"
+                        android:layout_weight="0.2"
+                        android:layout_gravity="center"
+                        android:background="@drawable/round_button"
+                        android:src="@drawable/baseline_edit_24"
+                        app:tint="?android:attr/iconTint"
+                        android:layout_marginStart="5dp"
+                        android:visibility="gone"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="15dp"
+                    android:layout_gravity="center_vertical">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:hint="Setor"
+                        android:layout_marginBottom="4dp">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/txtSector"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:text="carregando..."
+                            android:inputType="text"
+                            android:enabled="false"
+                            android:clickable="true"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <ImageButton
+                        android:id="@+id/btnEditSector"
+                        android:layout_width="0dp"
+                        android:layout_height="55dp"
+                        android:layout_weight="0.2"
+                        android:layout_gravity="center"
+                        android:background="@drawable/round_button"
+                        android:src="@drawable/baseline_edit_24"
+                        app:tint="?android:attr/iconTint"
+                        android:layout_marginStart="5dp"
+                        android:visibility="gone"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="15dp"
+                    android:layout_gravity="center_vertical">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:hint="Plano"
+                        android:layout_marginBottom="4dp">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/txtPlan"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:text="carregando..."
+                            android:inputType="text"
+                            android:enabled="false"
+                            android:clickable="true"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <ImageButton
+                        android:id="@+id/btnEditPlan"
+                        android:layout_width="0dp"
+                        android:layout_height="55dp"
+                        android:layout_weight="0.2"
+                        android:layout_gravity="center"
+                        android:background="@drawable/round_button"
+                        android:src="@drawable/baseline_edit_24"
+                        app:tint="?android:attr/iconTint"
+                        android:layout_marginStart="5dp"
+                        android:visibility="gone"/>
+                </LinearLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnDelete"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="Excluir..."
+                    tools:text="Excluir ecosynergyofc"
+                    app:icon="@drawable/baseline_delete_24"
+                    app:iconSize="20dp"
+                    app:iconTint="@color/red"
+                    app:iconPadding="5dp"
+                    app:iconGravity="textStart"
+                    android:backgroundTint="?android:attr/colorBackground"
+                    android:textColor="@color/red"
+                    android:textStyle="bold"
+                    android:textSize="16sp"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+    <View
+        android:id="@+id/overlayView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#80000000"
+        android:visibility="gone" />
+
+    <ProgressBar
+        android:id="@+id/loadingProgressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone" />
+</RelativeLayout>

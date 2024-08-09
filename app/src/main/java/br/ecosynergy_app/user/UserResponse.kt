@@ -10,6 +10,5 @@ data class UserResponse(
     val accountNonExpired: Boolean,
     val accountNonLocked : Boolean,
     val credentialsNonExpired: Boolean,
-    val enabled: Boolean,
-    val roles: List<String>
+    val enabled: Boolean
 )

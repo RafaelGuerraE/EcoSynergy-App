@@ -69,7 +69,7 @@ class SensorsViewModel(private val service: SensorsService): ViewModel() {
         }
     }
 
-    fun fetchMQ135ReadingsByTeamHandle(token: String, teamHandle: String) {
+    fun fetchMQ135ReadingsByTeamHandle(token: String?, teamHandle: String) {
         viewModelScope.launch {
             try {
                 val response = service.fetchMq135ReadingsByTeamHandle("Bearer $token", teamHandle)
@@ -82,7 +82,7 @@ class SensorsViewModel(private val service: SensorsService): ViewModel() {
         }
     }
 
-    fun fetchMQ135ReadingsById(token: String, id: String) {
+    fun fetchMQ135ReadingsById(token: String?, id: String) {
         viewModelScope.launch {
             try {
                 val response = service.fetchMq135ReadingById("Bearer $token", id)
@@ -112,7 +112,7 @@ class SensorsViewModel(private val service: SensorsService): ViewModel() {
         }
     }
 
-    fun fetchFireReadingsByTeamHandle(token: String, teamHandle: String) {
+    fun fetchFireReadingsByTeamHandle(token: String?, teamHandle: String) {
         viewModelScope.launch {
             try {
                 val response = service.fetchFireReadingsByTeamHandle("Bearer $token", teamHandle)
