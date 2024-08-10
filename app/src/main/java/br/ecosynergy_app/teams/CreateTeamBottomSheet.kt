@@ -24,7 +24,7 @@ class CreateTeamBottomSheet : BottomSheetDialogFragment() {
 
     private lateinit var teamsViewModel: TeamsViewModel
 
-    private lateinit var btnBack: ImageButton
+    private lateinit var btnClose: ImageButton
     private lateinit var shimmerImg: ShimmerFrameLayout
     private lateinit var imgTeam: CircleImageView
     private lateinit var txtHandle: TextInputEditText
@@ -63,7 +63,7 @@ class CreateTeamBottomSheet : BottomSheetDialogFragment() {
         loadingProgressBar = view.findViewById(R.id.loadingProgressBar)
         overlayView = view.findViewById(R.id.overlayView)
 
-        btnBack = view.findViewById(R.id.btnBack)
+        btnClose = view.findViewById(R.id.btnBack)
 
         teamsViewModel = ViewModelProvider(requireActivity(), TeamsViewModelFactory(RetrofitClient.teamsService))[TeamsViewModel::class.java]
 
@@ -76,7 +76,7 @@ class CreateTeamBottomSheet : BottomSheetDialogFragment() {
         txtPlan = view.findViewById(R.id.txtPlan)
         btnCreateTeam = view.findViewById(R.id.btnCreateTeam)
 
-        btnBack.setOnClickListener{ dismiss() }
+        btnClose.setOnClickListener{ dismiss() }
 
         btnCreateTeam.setOnClickListener{
             createTeam()
@@ -125,7 +125,6 @@ class CreateTeamBottomSheet : BottomSheetDialogFragment() {
 
         dismiss()
     }
-}
 
     private fun getDrawableForLetter(letter: Char): Int {
         return when (letter.lowercaseChar()) {
@@ -158,4 +157,5 @@ class CreateTeamBottomSheet : BottomSheetDialogFragment() {
             else -> R.drawable.default_image
         }
     }
+}
 

@@ -12,8 +12,14 @@ import androidx.recyclerview.widget.RecyclerView
 import br.ecosynergy_app.R
 import com.google.android.material.snackbar.Snackbar
 
-class MembersAdapter(private val membersList: List<UserResponse>, private val memberRoles: List<String>) :
+class MembersAdapter(private var membersList: List<UserResponse>, private var memberRoles: List<String>) :
     RecyclerView.Adapter<MembersAdapter.ViewHolder>() {
+
+    fun updateList(newList: List<UserResponse>, newRoles: List<String>) {
+        membersList = newList
+        memberRoles = newRoles
+        notifyDataSetChanged()
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.members_layout, parent, false)

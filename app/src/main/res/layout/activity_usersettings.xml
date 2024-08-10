@@ -4,30 +4,24 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-<ScrollView
-    android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".user.UserSettingsActivity">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="top">
+    <ImageButton
+        android:id="@+id/btnBack"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:background="@null"
+        android:contentDescription="BackButton"
+        android:src="@drawable/baseline_arrow_back_24"
+        android:scaleType="fitXY"
+        android:gravity="top"
+        android:layout_margin="15dp"
+        app:tint="?android:attr/iconTint" />
 
-        <ImageButton
-            android:id="@+id/btnBack"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="@null"
-            android:contentDescription="BackButton"
-            android:src="@drawable/baseline_arrow_back_24"
-            android:scaleType="fitXY"
-            android:gravity="top"
-            android:layout_margin="15dp"
-            app:tint="?android:attr/iconTint" />
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -35,9 +29,8 @@
             android:orientation="vertical"
             android:layout_gravity="center"
             android:gravity="center"
-            android:layout_marginBottom="30dp"
-            android:layout_marginStart="30dp"
-            android:layout_marginEnd="30dp">
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -268,9 +261,6 @@
                 android:textColor="@color/red"
                 android:textStyle="bold"
                 android:textSize="16sp"/>
-
-        </LinearLayout>
-
 
     </LinearLayout>
 

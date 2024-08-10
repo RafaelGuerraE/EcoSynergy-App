@@ -27,6 +27,7 @@ import br.ecosynergy_app.user.UserViewModelFactory
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import com.google.android.material.textfield.TextInputEditText
 import de.hdodenhof.circleimageview.CircleImageView
 
@@ -40,7 +41,7 @@ class TeamOverviewFragment : Fragment(R.layout.fragment_team_overview) {
     private lateinit var txtTeamName: TextInputEditText
     private lateinit var txtHandle: TextInputEditText
     private lateinit var txtDescription: TextInputEditText
-    private lateinit var txtTimezone: TextInputEditText
+    private lateinit var txtTimezone: MaterialAutoCompleteTextView
     private lateinit var txtSector: TextInputEditText
     private lateinit var txtPlan: TextInputEditText
 
@@ -60,7 +61,11 @@ class TeamOverviewFragment : Fragment(R.layout.fragment_team_overview) {
 
     private var token: String? = ""
     private var teamHandle: String? = ""
+    private var teamName: String? = ""
     private var teamId: String? = ""
+
+    private var userId: String? = ""
+    private var members: List<Member> = emptyList()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -78,10 +83,10 @@ class TeamOverviewFragment : Fragment(R.layout.fragment_team_overview) {
 
         val sp: SharedPreferences = requireContext().getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
         token = sp.getString("accessToken", null)
+        userId = sp.getString("id", null)
 
         teamHandle = arguments?.getString("TEAM_HANDLE")
 
-        // Now you can use the teamHandle value
         Log.d("TeamOverviewFragment", "Team Handle: $teamHandle")
 
         teamPicture = view.findViewById(R.id.teamPicture)
@@ -105,6 +110,9 @@ class TeamOverviewFragment : Fragment(R.layout.fragment_team_overview) {
         overlayView = view.findViewById(R.id.overlayView)
 
         shimmerImg = view.findViewById(R.id.shimmerImg)
+
+        txtTimezone.isEnabled = false
+        txtTimezone.setTextColor(ContextCompat.getColor(requireContext(), R.color.disabled))
 
         observeTeamInfo()
 
@@ -135,15 +143,25 @@ class TeamOverviewFragment : Fragment(R.layout.fragment_team_overview) {
 
     private fun observeTeamInfo(){
         teamsViewModel.findTeamByHandle(token, teamHandle)
-        teamsViewModel.teamResult.observe(viewLifecycleOwner){ result->
+        teamsViewModel.teamResult.observe(viewLifecycleOwner){ result ->
             result.onSuccess { response ->
                 teamId = response.id
-                val teamName: String = response.name
+                teamName = response.name
+                members = response.members
+
+                val userMember = members.find { it.id.toString() == userId }
+                val userRole = userMember?.role
+
+                if (userRole == "ADMINISTRATOR") {
+                    allowEdit()
+                } else {
+                    hideEditButtons()
+                }
 
                 shimmerImg.visibility = View.VISIBLE
                 teamPicture.visibility = View.GONE
 
-                val drawableId = getDrawableForLetter(teamName.first())
+                val drawableId = getDrawableForLetter(teamName!!.first())
                 teamPicture.setImageResource(drawableId)
                 txtTeamName.setText(teamName)
                 txtHandle.setText(response.handle)
@@ -163,6 +181,25 @@ class TeamOverviewFragment : Fragment(R.layout.fragment_team_overview) {
                 teamPicture.visibility = View.GONE
             }
         }
+    }
+
+    private fun allowEdit() {
+        // Make all edit buttons visible
+        btnEditTeamName.visibility = View.VISIBLE
+        btnEditHandle.visibility = View.VISIBLE
+        btnEditDescription.visibility = View.VISIBLE
+        btnEditTimezone.visibility = View.VISIBLE
+        btnEditSector.visibility = View.VISIBLE
+        btnEditPlan.visibility = View.VISIBLE
+    }
+
+    private fun hideEditButtons() {
+        btnEditTeamName.visibility = View.GONE
+        btnEditHandle.visibility = View.GONE
+        btnEditDescription.visibility = View.GONE
+        btnEditTimezone.visibility = View.GONE
+        btnEditSector.visibility = View.GONE
+        btnEditPlan.visibility = View.GONE
     }
 
     private fun getDrawableForLetter(letter: Char): Int {
@@ -209,5 +246,46 @@ class TeamOverviewFragment : Fragment(R.layout.fragment_team_overview) {
 
     private fun showToast(message: String) {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun setEditButtons(button: ImageButton) {
+        when (button) {
+            btnEditTeamName -> {
+                enableOnly(btnEditTeamName)
+            }
+            btnEditHandle -> {
+                enableOnly(btnEditHandle)
+            }
+            btnEditDescription -> {
+                enableOnly(btnEditDescription)
+            }
+            btnEditTimezone -> {
+                enableOnly(btnEditTimezone)
+            }
+            btnEditSector -> {
+                enableOnly(btnEditSector)
+            }
+            btnEditPlan -> {
+                enableOnly(btnEditPlan)
+            }
+        }
+    }
+
+    private fun enableOnly(enabledButton: ImageButton) {
+        btnEditTeamName.isEnabled = enabledButton == btnEditTeamName
+        btnEditHandle.isEnabled = enabledButton == btnEditHandle
+        btnEditDescription.isEnabled = enabledButton == btnEditDescription
+        btnEditTimezone.isEnabled = enabledButton == btnEditTimezone
+        btnEditSector.isEnabled = enabledButton == btnEditSector
+        btnEditPlan.isEnabled = enabledButton == btnEditPlan
+    }
+
+    private fun enableAllButtons() {
+        btnEditTeamName.isEnabled = true
+        btnEditHandle.isEnabled = true
+        btnEditDescription.isEnabled = true
+        btnEditTimezone.isEnabled = true
+        btnEditSector.isEnabled = true
+        btnEditPlan.isEnabled = true
     }
 }

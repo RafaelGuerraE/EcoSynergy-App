@@ -32,8 +32,8 @@
                     android:layout_marginBottom="10dp">
 
                     <de.hdodenhof.circleimageview.CircleImageView
-                        android:layout_width="65dp"
-                        android:layout_height="65dp"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
                         android:src="@drawable/default_image"
                         tools:src="@drawable/e"
                         android:id="@+id/teamPicture"
@@ -42,8 +42,8 @@
 
                     <com.facebook.shimmer.ShimmerFrameLayout
                         android:id="@+id/shimmerImg"
-                        android:layout_width="65dp"
-                        android:layout_height="65dp"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
                         app:shimmer_auto_start="true"
                         android:visibility="visible"
                         android:layout_marginEnd="10dp">
@@ -59,7 +59,7 @@
                     <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="0.7"
+                        android:layout_weight="1"
                         android:hint="Nome da Equipe"
                         android:layout_marginTop="8dp"
                         android:layout_marginBottom="10dp">
@@ -76,9 +76,8 @@
 
                     <ImageButton
                         android:id="@+id/btnEditTeamName"
-                        android:layout_width="0dp"
-                        android:layout_height="55dp"
-                        android:layout_weight="0.18"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
                         android:layout_gravity="center"
                         android:background="@drawable/round_button"
                         android:src="@drawable/baseline_edit_24"
@@ -113,9 +112,8 @@
 
                     <ImageButton
                         android:id="@+id/btnEditHandle"
-                        android:layout_width="0dp"
-                        android:layout_height="55dp"
-                        android:layout_weight="0.2"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
                         android:layout_gravity="center"
                         android:background="@drawable/round_button"
                         android:src="@drawable/baseline_edit_24"
@@ -134,26 +132,27 @@
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="60dp"
                         android:layout_weight="1"
                         android:hint="Fuso horário"
                         android:layout_marginBottom="4dp">
 
-                        <com.google.android.material.textfield.TextInputEditText
+                        <com.google.android.material.textfield.MaterialAutoCompleteTextView
                             android:id="@+id/txtTimezone"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:text="carregando..."
                             android:inputType="text"
                             android:enabled="false"
-                            android:clickable="true"/>
+                            android:clickable="true"
+                            android:textSize="16sp"
+                            android:paddingStart="15dp"/>
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <ImageButton
                         android:id="@+id/btnEditTimezone"
-                        android:layout_width="0dp"
-                        android:layout_height="55dp"
-                        android:layout_weight="0.2"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
                         android:layout_gravity="center"
                         android:background="@drawable/round_button"
                         android:src="@drawable/baseline_edit_24"
@@ -189,9 +188,8 @@
 
                     <ImageButton
                         android:id="@+id/btnEditDescription"
-                        android:layout_width="0dp"
-                        android:layout_height="55dp"
-                        android:layout_weight="0.2"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
                         android:layout_gravity="center"
                         android:background="@drawable/round_button"
                         android:src="@drawable/baseline_edit_24"
@@ -227,9 +225,8 @@
 
                     <ImageButton
                         android:id="@+id/btnEditSector"
-                        android:layout_width="0dp"
-                        android:layout_height="55dp"
-                        android:layout_weight="0.2"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
                         android:layout_gravity="center"
                         android:background="@drawable/round_button"
                         android:src="@drawable/baseline_edit_24"
@@ -265,9 +262,8 @@
 
                     <ImageButton
                         android:id="@+id/btnEditPlan"
-                        android:layout_width="0dp"
-                        android:layout_height="55dp"
-                        android:layout_weight="0.2"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
                         android:layout_gravity="center"
                         android:background="@drawable/round_button"
                         android:src="@drawable/baseline_edit_24"

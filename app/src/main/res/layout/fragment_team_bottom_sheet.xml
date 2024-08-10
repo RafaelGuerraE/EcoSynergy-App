@@ -22,13 +22,13 @@
             android:orientation="horizontal"
             android:layout_marginBottom="20dp"
             android:layout_marginTop="30dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp">
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp">
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/imgTeam"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:src="@drawable/default_image"
                 tools:src="@drawable/e"/>
 
@@ -43,13 +43,13 @@
                 tools:text="\@ecosynergyofc"
                 android:textAlignment="center"
                 android:textColor="?android:attr/textColorPrimary"
-                android:textSize="20sp"
+                android:textSize="15sp"
                 android:textStyle="bold" />
 
             <ImageButton
                 android:id="@+id/btnClose"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:scaleType="fitXY"
                 android:src="@drawable/baseline_close_24"
                 android:background="@null"
@@ -67,15 +67,6 @@
             android:gravity="center_vertical"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp">
-
-            <com.google.android.material.imageview.ShapeableImageView
-                app:shapeAppearanceOverlay="@style/RoundedSquare"
-                android:layout_width="match_parent"
-                android:layout_height="300dp"
-                android:background="?attr/fragmentsBackground"
-                android:scaleType="center"
-                android:layout_gravity="center"
-                android:layout_marginBottom="30dp"/>
 
             <com.google.android.material.imageview.ShapeableImageView
                 app:shapeAppearanceOverlay="@style/RoundedSquare"

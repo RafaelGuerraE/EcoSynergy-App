@@ -4,6 +4,8 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -17,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView
 import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.user.MembersAdapter
+import br.ecosynergy_app.user.UserResponse
 import br.ecosynergy_app.user.UserViewModel
 import br.ecosynergy_app.user.UserViewModelFactory
 import com.facebook.shimmer.ShimmerFrameLayout
@@ -33,8 +36,16 @@ class TeamMembersFragment : Fragment(R.layout.fragment_team_members) {
 
     private lateinit var shimmerMembers: ShimmerFrameLayout
 
+    lateinit var txtMember: TextInputEditText
+    lateinit var btnAddMember: ImageButton
+
     private var token: String? = ""
     private var teamHandle: String? = ""
+
+    private var membersList: List<UserResponse> = listOf()
+
+    private var memberIds: List<String> = listOf()
+    private var memberRoles: List<String> = listOf()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -60,22 +71,42 @@ class TeamMembersFragment : Fragment(R.layout.fragment_team_members) {
 
         recycleMembers = view.findViewById(R.id.recycleMembers)
 
+        txtMember = view.findViewById(R.id.txtMember)
+        btnAddMember = view.findViewById(R.id.btnAddMember)
+
         recycleMembers.layoutManager = LinearLayoutManager(requireContext())
         membersAdapter = MembersAdapter(emptyList(), emptyList())
         recycleMembers.adapter = membersAdapter
 
         observeTeamInfo()
+
+        txtMember.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                filterMembers(s.toString())
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
+
+        btnAddMember.setOnClickListener{
+            val addMembersBottomSheet = AddMembersBottomSheet()
+            addMembersBottomSheet.show(parentFragmentManager, "AddMembersBottomSheet")
+        }
     }
 
     private fun observeMembersInfo(members: List<Member>){
-        val memberIds = members.map { it.id.toString() }
-        val memberRoles = members.map {it.role}
+        memberIds = members.map { it.id.toString() }
+        memberRoles = members.map {it.role}
 
         userViewModel.getUsersByIds(memberIds, token)
         userViewModel.users.observe(viewLifecycleOwner) { result ->
             result.onSuccess { users ->
                 shimmerMembers.visibility = View.VISIBLE
                 recycleMembers.visibility = View.GONE
+
+                membersList = users
 
                 membersAdapter = MembersAdapter(users, memberRoles)
                 recycleMembers.adapter = membersAdapter
@@ -105,5 +136,12 @@ class TeamMembersFragment : Fragment(R.layout.fragment_team_members) {
                 Log.d("TeamOverviewFragment", "Team Result Failed: ${error.message}")
             }
         }
+    }
+
+    private fun filterMembers(query: String) {
+        val filteredList = membersList.filter {
+            it.fullName.contains(query, ignoreCase = true) || it.username.contains(query, ignoreCase = true)
+        }
+        membersAdapter.updateList(filteredList, memberRoles)
     }
 }

@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".teams.TeamInviteActivity"
+    tools:context=".teams.AddMembersBottomSheet"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <ScrollView
@@ -18,7 +18,7 @@
             android:gravity="end">
 
             <ImageButton
-                android:id="@+id/btnBack"
+                android:id="@+id/btnClose"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_marginEnd="15dp"
