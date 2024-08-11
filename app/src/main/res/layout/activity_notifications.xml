@@ -11,8 +11,8 @@
 
     <ImageButton
         android:id="@+id/btnBack"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:background="@null"
         android:contentDescription="BackButton"
         android:src="@drawable/baseline_arrow_back_24"
@@ -28,8 +28,8 @@
         android:layout_gravity="center"
         android:gravity="center"
         android:layout_marginTop="10dp"
-        android:layout_marginStart="30dp"
-        android:layout_marginEnd="30dp">
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp">
 
         <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/swReport"

@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -45,12 +46,7 @@ class TeamOverviewFragment : Fragment(R.layout.fragment_team_overview) {
     private lateinit var txtSector: TextInputEditText
     private lateinit var txtPlan: TextInputEditText
 
-    private lateinit var btnEditTeamName: ImageButton
-    private lateinit var btnEditHandle: ImageButton
-    private lateinit var btnEditDescription: ImageButton
-    private lateinit var btnEditTimezone: ImageButton
-    private lateinit var btnEditSector: ImageButton
-    private lateinit var btnEditPlan: ImageButton
+    private lateinit var btnEdit: MaterialButton
 
     private lateinit var btnDelete: MaterialButton
 
@@ -66,6 +62,8 @@ class TeamOverviewFragment : Fragment(R.layout.fragment_team_overview) {
 
     private var userId: String? = ""
     private var members: List<Member> = emptyList()
+
+    private var isEditing: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -97,12 +95,7 @@ class TeamOverviewFragment : Fragment(R.layout.fragment_team_overview) {
         txtSector = view.findViewById(R.id.txtSector)
         txtPlan = view.findViewById(R.id.txtPlan)
 
-        btnEditTeamName = view.findViewById(R.id.btnEditTeamName)
-        btnEditHandle = view.findViewById(R.id.btnEditHandle)
-        btnEditDescription = view.findViewById(R.id.btnEditDescription)
-        btnEditTimezone = view.findViewById(R.id.btnEditTimezone)
-        btnEditSector = view.findViewById(R.id.btnEditSector)
-        btnEditPlan = view.findViewById(R.id.btnEditPlan)
+        btnEdit = view.findViewById(R.id.btnEdit)
 
         btnDelete = view.findViewById(R.id.btnDelete)
 
@@ -135,7 +128,52 @@ class TeamOverviewFragment : Fragment(R.layout.fragment_team_overview) {
             val dialog: AlertDialog = builder.create()
             dialog.show()
         }
+
+        btnEdit.setOnClickListener{
+            if(!isEditing){
+                isEditing = true
+                enableEditTexts()
+                btnEdit.icon = ContextCompat.getDrawable(requireContext(), R.drawable.baseline_check_24)
+                btnEdit.text = "Confirmar edição"
+            }else{
+                isEditing = false
+                disableEditTexts()
+                btnEdit.icon = ContextCompat.getDrawable(requireContext(), R.drawable.baseline_edit_24)
+                btnEdit.text = "Editar dados"
+            }
+        }
     }
+
+    private fun getThemeColor(attrResId: Int): Int {
+        val typedValue = TypedValue()
+        val theme = requireContext().theme
+        theme.resolveAttribute(attrResId, typedValue, true)
+        return typedValue.data
+    }
+
+    private fun enableEditTexts(){
+        txtTimezone.isEnabled = true
+        txtHandle.isEnabled = true
+        txtDescription.isEnabled = true
+        txtTeamName.isEnabled = true
+        txtSector.isEnabled = true
+        txtPlan.isEnabled = true
+
+        txtTimezone.setTextColor(getThemeColor(android.R.attr.textColorPrimary))
+
+    }
+
+    private fun disableEditTexts(){
+        txtTimezone.isEnabled = false
+        txtHandle.isEnabled = false
+        txtDescription.isEnabled = false
+        txtTeamName.isEnabled = false
+        txtSector.isEnabled = false
+        txtPlan.isEnabled = false
+
+        txtTimezone.setTextColor(ContextCompat.getColor(requireContext(), R.color.disabled))
+    }
+
 
     private fun deleteTeam(){
         teamsViewModel.deleteTeam(token, teamId)
@@ -153,9 +191,9 @@ class TeamOverviewFragment : Fragment(R.layout.fragment_team_overview) {
                 val userRole = userMember?.role
 
                 if (userRole == "ADMINISTRATOR") {
-                    allowEdit()
+                    btnEdit.visibility = View.VISIBLE
                 } else {
-                    hideEditButtons()
+                    btnEdit.visibility = View.GONE
                 }
 
                 shimmerImg.visibility = View.VISIBLE
@@ -181,25 +219,6 @@ class TeamOverviewFragment : Fragment(R.layout.fragment_team_overview) {
                 teamPicture.visibility = View.GONE
             }
         }
-    }
-
-    private fun allowEdit() {
-        // Make all edit buttons visible
-        btnEditTeamName.visibility = View.VISIBLE
-        btnEditHandle.visibility = View.VISIBLE
-        btnEditDescription.visibility = View.VISIBLE
-        btnEditTimezone.visibility = View.VISIBLE
-        btnEditSector.visibility = View.VISIBLE
-        btnEditPlan.visibility = View.VISIBLE
-    }
-
-    private fun hideEditButtons() {
-        btnEditTeamName.visibility = View.GONE
-        btnEditHandle.visibility = View.GONE
-        btnEditDescription.visibility = View.GONE
-        btnEditTimezone.visibility = View.GONE
-        btnEditSector.visibility = View.GONE
-        btnEditPlan.visibility = View.GONE
     }
 
     private fun getDrawableForLetter(letter: Char): Int {
@@ -246,46 +265,5 @@ class TeamOverviewFragment : Fragment(R.layout.fragment_team_overview) {
 
     private fun showToast(message: String) {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
-    }
-
-    private fun setEditButtons(button: ImageButton) {
-        when (button) {
-            btnEditTeamName -> {
-                enableOnly(btnEditTeamName)
-            }
-            btnEditHandle -> {
-                enableOnly(btnEditHandle)
-            }
-            btnEditDescription -> {
-                enableOnly(btnEditDescription)
-            }
-            btnEditTimezone -> {
-                enableOnly(btnEditTimezone)
-            }
-            btnEditSector -> {
-                enableOnly(btnEditSector)
-            }
-            btnEditPlan -> {
-                enableOnly(btnEditPlan)
-            }
-        }
-    }
-
-    private fun enableOnly(enabledButton: ImageButton) {
-        btnEditTeamName.isEnabled = enabledButton == btnEditTeamName
-        btnEditHandle.isEnabled = enabledButton == btnEditHandle
-        btnEditDescription.isEnabled = enabledButton == btnEditDescription
-        btnEditTimezone.isEnabled = enabledButton == btnEditTimezone
-        btnEditSector.isEnabled = enabledButton == btnEditSector
-        btnEditPlan.isEnabled = enabledButton == btnEditPlan
-    }
-
-    private fun enableAllButtons() {
-        btnEditTeamName.isEnabled = true
-        btnEditHandle.isEnabled = true
-        btnEditDescription.isEnabled = true
-        btnEditTimezone.isEnabled = true
-        btnEditSector.isEnabled = true
-        btnEditPlan.isEnabled = true
     }
 }

@@ -63,7 +63,7 @@ class CreateTeamBottomSheet : BottomSheetDialogFragment() {
         loadingProgressBar = view.findViewById(R.id.loadingProgressBar)
         overlayView = view.findViewById(R.id.overlayView)
 
-        btnClose = view.findViewById(R.id.btnBack)
+        btnClose = view.findViewById(R.id.btnClose)
 
         teamsViewModel = ViewModelProvider(requireActivity(), TeamsViewModelFactory(RetrofitClient.teamsService))[TeamsViewModel::class.java]
 

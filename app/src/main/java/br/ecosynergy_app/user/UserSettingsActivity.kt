@@ -22,12 +22,14 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.register.Nationality
 import com.facebook.shimmer.ShimmerFrameLayout
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.gson.Gson
@@ -47,20 +49,29 @@ class UserSettingsActivity : AppCompatActivity() {
     private var userNationality: String = ""
     private var userGender: String = ""
 
+    private lateinit var btnBack: ImageButton
+    private lateinit var txtUsername: TextInputEditText
+    private lateinit var txtFullname: TextInputEditText
+    private lateinit var txtEmail: TextInputEditText
+    private lateinit var txtGender: Spinner
+    private lateinit var txtNationality: AutoCompleteTextView
+    private lateinit var btnPassword: MaterialButton
+    private lateinit var btnDelete: MaterialButton
+
     private lateinit var loadingProgressBar: ProgressBar
     private lateinit var overlayView: View
 
     private var token: String? = ""
 
-    private var isEditingUsername = false
-    private var isEditingFullname = false
-    private var isEditingEmail = false
-    private var isEditingGender = false
-    private var isEditingNationality = false
+    private lateinit var  btnEdit : ImageButton
+
+    private var isEditing: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_usersettings)
+
+
 
         userViewModel = ViewModelProvider(this, UserViewModelFactory(RetrofitClient.userService))[UserViewModel::class.java]
 
@@ -68,22 +79,19 @@ class UserSettingsActivity : AppCompatActivity() {
             getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
         token = sharedPreferences.getString("accessToken", null)
 
-        val btnBack = findViewById<ImageButton>(R.id.btnBack)
-        val btnEditUsername = findViewById<ImageButton>(R.id.btnEditUsername)
-        val btnEditFullname = findViewById<ImageButton>(R.id.btnEditFullname)
-        val btnEditEmail = findViewById<ImageButton>(R.id.btnEditEmail)
-        val btnEditGender = findViewById<ImageButton>(R.id.btnEditGender)
-        val btnEditNationality = findViewById<ImageButton>(R.id.btnEditNationality)
-        val txtUsername = findViewById<TextInputEditText>(R.id.txtUsername)
-        val txtFullname = findViewById<TextInputEditText>(R.id.txtFullname)
-        val txtEmail = findViewById<TextInputEditText>(R.id.txtEmail)
-        val txtGender = findViewById<Spinner>(R.id.txtGender)
-        val txtNationality = findViewById<AutoCompleteTextView>(R.id.txtNationality)
-        val btnPassword = findViewById<Button>(R.id.btnPassword)
-        val btnDelete = findViewById<Button>(R.id.btnDelete)
+        btnBack = findViewById(R.id.btnBack)
+        txtUsername = findViewById(R.id.txtUsername)
+        txtFullname = findViewById(R.id.txtFullname)
+        txtEmail = findViewById(R.id.txtEmail)
+        txtGender = findViewById(R.id.txtGender)
+        txtNationality = findViewById(R.id.txtNationality)
+        btnPassword = findViewById(R.id.btnPassword)
+        btnDelete = findViewById(R.id.btnDelete)
 
         loadingProgressBar = findViewById(R.id.loadingProgressBar)
         overlayView = findViewById(R.id.overlayView)
+
+        btnEdit = findViewById(R.id.btnEdit)
 
         val nationalities = loadNationalities()
         val nationalityNames = nationalities.map { it.nationality }
@@ -94,6 +102,12 @@ class UserSettingsActivity : AppCompatActivity() {
         txtGender.isEnabled = false
 
         txtNationality.setTextColor(ContextCompat.getColor(this, R.color.disabled))
+
+        disableEditTexts()
+
+        btnEdit.visibility = View.VISIBLE
+        btnEdit.isEnabled = true
+        btnEdit.isClickable = true
 
         loadingProgressBar.visibility = View.VISIBLE
         overlayView.visibility = View.VISIBLE
@@ -114,74 +128,35 @@ class UserSettingsActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
 
-        fun setEditButtons(button: ImageButton) {
-            when (button) {
-                btnEditUsername -> {
-                    btnEditUsername.isEnabled = true
-                    btnEditFullname.isEnabled = false
-                    btnEditEmail.isEnabled = false
-                    btnEditGender.isEnabled = false
-                    btnEditNationality.isEnabled = false
-                }
-
-                btnEditFullname -> {
-                    btnEditUsername.isEnabled = false
-                    btnEditFullname.isEnabled = true
-                    btnEditEmail.isEnabled = false
-                    btnEditGender.isEnabled = false
-                    btnEditNationality.isEnabled = false
-                }
-
-                btnEditEmail -> {
-                    btnEditUsername.isEnabled = false
-                    btnEditFullname.isEnabled = false
-                    btnEditEmail.isEnabled = true
-                    btnEditGender.isEnabled = false
-                    btnEditNationality.isEnabled = false
-                }
-
-                btnEditGender -> {
-                    btnEditUsername.isEnabled = false
-                    btnEditFullname.isEnabled = false
-                    btnEditEmail.isEnabled = false
-                    btnEditGender.isEnabled = true
-                    btnEditNationality.isEnabled = false
-                }
-
-                btnEditNationality -> {
-                    btnEditUsername.isEnabled = false
-                    btnEditFullname.isEnabled = false
-                    btnEditEmail.isEnabled = false
-                    btnEditGender.isEnabled = false
-                    btnEditNationality.isEnabled = true
-                }
-            }
-        }
-
-        fun enableAllButtons() {
-            btnEditUsername.isEnabled = true
-            btnEditFullname.isEnabled = true
-            btnEditEmail.isEnabled = true
-            btnEditGender.isEnabled = true
-            btnEditNationality.isEnabled = true
-        }
-
-        btnEditUsername.setOnClickListener {
-            toggleEditMode(txtUsername, btnEditUsername, isEditingUsername)
-            setEditButtons(btnEditUsername)
-            isEditingUsername = !isEditingUsername
-            if (!isEditingUsername) {
+        btnEdit.setOnClickListener {
+            Log.d("UserSettingsActivity", "btnEdit clicked")
+            if (!isEditing) {
+                isEditing = true
+                enableEditTexts()
+                btnEdit.setImageResource(R.drawable.baseline_check_24)
+            } else {
                 val builder = AlertDialog.Builder(this)
-                builder.setTitle("Você deseja alterar seu Username?")
-                builder.setMessage("Para alterar seu Username, você deve fazer o login novamente")
+                builder.setTitle("Você deseja alterar suas informações?")
+                builder.setMessage("Se você alterar o seu nome de usuário, você será obrigado a fazer login novamente.")
 
                 builder.setPositiveButton("Sim") { dialog, _ ->
+                    val lastUsername = userUsername
+
                     userUsername = txtUsername.text.toString()
+                    userFullname = txtFullname.text.toString()
+                    userEmail = txtEmail.text.toString()
+                    userGender = txtGender.selectedItem.toString()
+                    userNationality = txtNationality.text.toString()
+
                     updateUserData()
-                    enableAllButtons()
-                    showSnackBar("Nome de usuário alterado com sucesso", "FECHAR", R.color.greenDark)
+
+                    btnEdit.setImageResource(R.drawable.baseline_edit_24)
+                    disableEditTexts()
+                    isEditing = false
                     dialog.dismiss()
-                    finish()
+                    if (lastUsername != txtUsername.text.toString()){
+                        finish()
+                    }
                 }
 
                 builder.setNegativeButton("Cancelar") { dialog, _ ->
@@ -190,43 +165,6 @@ class UserSettingsActivity : AppCompatActivity() {
 
                 val dialog: AlertDialog = builder.create()
                 dialog.show()
-
-            }
-        }
-
-        btnEditFullname.setOnClickListener {
-            toggleEditMode(txtFullname, btnEditFullname, isEditingFullname)
-            setEditButtons(btnEditFullname)
-            isEditingFullname = !isEditingFullname
-            if (!isEditingFullname) {
-                userFullname = txtFullname.text.toString()
-                updateUserData()
-                enableAllButtons()
-                showSnackBar("Nome completo alterado com sucesso", "FECHAR", R.color.greenDark)
-            }
-        }
-
-        btnEditEmail.setOnClickListener {
-            toggleEditMode(txtEmail, btnEditEmail, isEditingEmail)
-            setEditButtons(btnEditEmail)
-            isEditingEmail = !isEditingEmail
-            if (!isEditingEmail) {
-                userEmail = txtEmail.text.toString()
-                updateUserData()
-                enableAllButtons()
-                showSnackBar("Email alterado com sucesso", "FECHAR", R.color.greenDark)
-            }
-        }
-
-        btnEditGender.setOnClickListener {
-            toggleEditMode(txtGender, btnEditGender, isEditingGender)
-            setEditButtons(btnEditGender)
-            isEditingGender = !isEditingGender
-            if (!isEditingGender) {
-                userGender = txtGender.selectedItem.toString()
-                updateUserData()
-                enableAllButtons()
-                showSnackBar("Genêro alterado com sucesso", "FECHAR", R.color.greenDark)
             }
         }
 
@@ -240,20 +178,6 @@ class UserSettingsActivity : AppCompatActivity() {
         fun setTextColorPrimary(autoCompleteTextView: AutoCompleteTextView) {
             val colorPrimary = getTextColorPrimary(autoCompleteTextView.context)
             autoCompleteTextView.setTextColor(colorPrimary)
-        }
-
-        btnEditNationality.setOnClickListener {
-            toggleEditMode(txtNationality, btnEditNationality, isEditingNationality)
-            setEditButtons(btnEditNationality)
-            setTextColorPrimary(txtNationality)
-            isEditingNationality = !isEditingNationality
-            if (!isEditingNationality) {
-                userNationality = txtNationality.text.toString()
-                updateUserData()
-                enableAllButtons()
-                showSnackBar("Nacionalidade alterada com sucesso", "FECHAR", R.color.greenDark)
-                txtNationality.setTextColor(ContextCompat.getColor(this, R.color.disabled))
-            }
         }
 
         btnDelete.setOnClickListener {
@@ -286,6 +210,33 @@ class UserSettingsActivity : AppCompatActivity() {
 
     private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun enableEditTexts(){
+        txtGender.isEnabled = true
+        txtNationality.isEnabled = true
+        txtEmail.isEnabled = true
+        txtFullname.isEnabled = true
+        txtUsername.isEnabled = true
+
+        txtNationality.setTextColor(getThemeColor(android.R.attr.textColorPrimary))
+    }
+
+    private fun disableEditTexts(){
+        txtGender.isEnabled = false
+        txtNationality.isEnabled = false
+        txtEmail.isEnabled = false
+        txtFullname.isEnabled = false
+        txtUsername.isEnabled = false
+
+        txtNationality.setTextColor(ContextCompat.getColor(this, R.color.disabled))
+    }
+
+    private fun getThemeColor(attrResId: Int): Int {
+        val typedValue = TypedValue()
+        val theme = this.theme
+        theme.resolveAttribute(attrResId, typedValue, true)
+        return typedValue.data
     }
 
     private fun fetchUserData() {
@@ -358,7 +309,6 @@ class UserSettingsActivity : AppCompatActivity() {
         )
     }
 
-
     private fun resetPassword() {
         val inflater = LayoutInflater.from(this)
         val view = inflater.inflate(R.layout.dialog_reset_password, null)
@@ -419,20 +369,6 @@ class UserSettingsActivity : AppCompatActivity() {
 
         val dialog = builder.create()
         dialog.show()
-    }
-
-
-    private fun toggleEditMode(editText: View, button: ImageButton, isEditing: Boolean) {
-        if (isEditing) {
-            editText.isEnabled = false
-            button.setImageResource(R.drawable.baseline_edit_24)
-        } else {
-            editText.isEnabled = true
-            editText.requestFocus()
-            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT)
-            button.setImageResource(R.drawable.baseline_check_24)
-        }
     }
 
     private fun showSnackBar(message: String, action: String, bgTint: Int) {

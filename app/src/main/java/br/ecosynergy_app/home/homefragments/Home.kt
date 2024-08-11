@@ -71,16 +71,15 @@ class Home : Fragment() {
         shimmerFire = view.findViewById(R.id.shimmerFire)
         fireChart = view.findViewById(R.id.fireChart)
 
-        observeMQ7()
-        observeMQ135()
-        observeFireSensor()
-
         return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         observeUserData()
+        observeMQ7()
+        observeMQ135()
+        observeFireSensor()
         setupSwipeRefresh()
     }
 

@@ -73,32 +73,13 @@
                             android:enabled="false"
                             android:clickable="true"/>
                     </com.google.android.material.textfield.TextInputLayout>
-
-                    <ImageButton
-                        android:id="@+id/btnEditTeamName"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:layout_gravity="center"
-                        android:background="@drawable/round_button"
-                        android:src="@drawable/baseline_edit_24"
-                        app:tint="?android:attr/iconTint"
-                        android:layout_marginStart="5dp"
-                        android:visibility="gone"/>
                 </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="15dp"
-                    android:layout_gravity="center_vertical">
-
                     <com.google.android.material.textfield.TextInputLayout
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
                         android:hint="\@ da Equipe"
-                        android:layout_marginBottom="4dp">
+                        android:layout_marginBottom="10dp">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/txtHandle"
@@ -110,32 +91,11 @@
                             android:clickable="true"/>
                     </com.google.android.material.textfield.TextInputLayout>
 
-                    <ImageButton
-                        android:id="@+id/btnEditHandle"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:layout_gravity="center"
-                        android:background="@drawable/round_button"
-                        android:src="@drawable/baseline_edit_24"
-                        app:tint="?android:attr/iconTint"
-                        android:layout_marginStart="5dp"
-                        android:visibility="gone"/>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="15dp"
-                    android:layout_gravity="center_vertical">
-
                     <com.google.android.material.textfield.TextInputLayout
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="60dp"
-                        android:layout_weight="1"
                         android:hint="Fuso horário"
-                        android:layout_marginBottom="4dp">
+                        android:layout_marginBottom="10dp">
 
                         <com.google.android.material.textfield.MaterialAutoCompleteTextView
                             android:id="@+id/txtTimezone"
@@ -143,38 +103,18 @@
                             android:layout_height="match_parent"
                             android:text="carregando..."
                             android:inputType="text"
+                            android:textColor="@color/disabled"
                             android:enabled="false"
                             android:clickable="true"
                             android:textSize="16sp"
                             android:paddingStart="15dp"/>
                     </com.google.android.material.textfield.TextInputLayout>
 
-                    <ImageButton
-                        android:id="@+id/btnEditTimezone"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:layout_gravity="center"
-                        android:background="@drawable/round_button"
-                        android:src="@drawable/baseline_edit_24"
-                        app:tint="?android:attr/iconTint"
-                        android:layout_marginStart="5dp"
-                        android:visibility="gone"/>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="15dp"
-                    android:layout_gravity="center_vertical">
-
                     <com.google.android.material.textfield.TextInputLayout
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
                         android:hint="Descrição"
-                        android:layout_marginBottom="4dp">
+                        android:layout_marginBottom="10dp">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/txtDescription"
@@ -186,32 +126,11 @@
                             android:clickable="true"/>
                     </com.google.android.material.textfield.TextInputLayout>
 
-                    <ImageButton
-                        android:id="@+id/btnEditDescription"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:layout_gravity="center"
-                        android:background="@drawable/round_button"
-                        android:src="@drawable/baseline_edit_24"
-                        app:tint="?android:attr/iconTint"
-                        android:layout_marginStart="5dp"
-                        android:visibility="gone"/>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="15dp"
-                    android:layout_gravity="center_vertical">
-
                     <com.google.android.material.textfield.TextInputLayout
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
                         android:hint="Setor"
-                        android:layout_marginBottom="4dp">
+                        android:layout_marginBottom="10dp">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/txtSector"
@@ -223,32 +142,11 @@
                             android:clickable="true"/>
                     </com.google.android.material.textfield.TextInputLayout>
 
-                    <ImageButton
-                        android:id="@+id/btnEditSector"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:layout_gravity="center"
-                        android:background="@drawable/round_button"
-                        android:src="@drawable/baseline_edit_24"
-                        app:tint="?android:attr/iconTint"
-                        android:layout_marginStart="5dp"
-                        android:visibility="gone"/>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="15dp"
-                    android:layout_gravity="center_vertical">
-
                     <com.google.android.material.textfield.TextInputLayout
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
                         android:hint="Plano"
-                        android:layout_marginBottom="4dp">
+                        android:layout_marginBottom="10dp">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/txtPlan"
@@ -260,23 +158,25 @@
                             android:clickable="true"/>
                     </com.google.android.material.textfield.TextInputLayout>
 
-                    <ImageButton
-                        android:id="@+id/btnEditPlan"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:layout_gravity="center"
-                        android:background="@drawable/round_button"
-                        android:src="@drawable/baseline_edit_24"
-                        app:tint="?android:attr/iconTint"
-                        android:layout_marginStart="5dp"
-                        android:visibility="gone"/>
-                </LinearLayout>
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnEdit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Editar dados"
+                    app:icon="@drawable/baseline_edit_24"
+                    app:iconSize="20dp"
+                    app:iconTint="@color/greenDark"
+                    app:iconPadding="5dp"
+                    app:iconGravity="textStart"
+                    android:backgroundTint="?android:attr/colorBackground"
+                    android:textColor="@color/greenDark"
+                    android:textStyle="bold"
+                    android:textSize="16sp"/>
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnDelete"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
                     android:text="Excluir..."
                     tools:text="Excluir ecosynergyofc"
                     app:icon="@drawable/baseline_delete_24"
