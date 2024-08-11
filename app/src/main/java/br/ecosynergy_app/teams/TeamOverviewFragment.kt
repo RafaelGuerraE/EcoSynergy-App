@@ -9,20 +9,15 @@ import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
+import android.widget.ArrayAdapter
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
-import br.ecosynergy_app.login.AuthViewModel
-import br.ecosynergy_app.login.AuthViewModelFactory
-import br.ecosynergy_app.user.MembersAdapter
+import br.ecosynergy_app.register.Nationality
 import br.ecosynergy_app.user.UserViewModel
 import br.ecosynergy_app.user.UserViewModelFactory
 import com.facebook.shimmer.ShimmerFrameLayout
@@ -30,7 +25,10 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import com.google.android.material.textfield.TextInputEditText
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import de.hdodenhof.circleimageview.CircleImageView
+import java.io.IOException
 
 class TeamOverviewFragment : Fragment(R.layout.fragment_team_overview) {
 
@@ -56,9 +54,12 @@ class TeamOverviewFragment : Fragment(R.layout.fragment_team_overview) {
     private lateinit var overlayView: View
 
     private var token: String? = ""
+
     private var teamHandle: String? = ""
     private var teamName: String? = ""
     private var teamId: String? = ""
+    private var teamDescription: String? = ""
+    private var teamTimezone: String? = ""
 
     private var userId: String? = ""
     private var members: List<Member> = emptyList()
@@ -70,11 +71,7 @@ class TeamOverviewFragment : Fragment(R.layout.fragment_team_overview) {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_team_overview, container, false)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        val view = inflater.inflate(R.layout.fragment_team_overview, container, false)
 
         teamsViewModel = ViewModelProvider(this, TeamsViewModelFactory(RetrofitClient.teamsService))[TeamsViewModel::class.java]
         userViewModel = ViewModelProvider(this, UserViewModelFactory(RetrofitClient.userService))[UserViewModel::class.java]
@@ -84,6 +81,9 @@ class TeamOverviewFragment : Fragment(R.layout.fragment_team_overview) {
         userId = sp.getString("id", null)
 
         teamHandle = arguments?.getString("TEAM_HANDLE")
+
+        val timezones = loadTimezones()
+        val timezoneNames = timezones.map { it.text }
 
         Log.d("TeamOverviewFragment", "Team Handle: $teamHandle")
 
@@ -106,6 +106,19 @@ class TeamOverviewFragment : Fragment(R.layout.fragment_team_overview) {
 
         txtTimezone.isEnabled = false
         txtTimezone.setTextColor(ContextCompat.getColor(requireContext(), R.color.disabled))
+
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, timezoneNames)
+        txtTimezone.setAdapter(adapter)
+
+
+
+        return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+
 
         observeTeamInfo()
 
@@ -137,11 +150,17 @@ class TeamOverviewFragment : Fragment(R.layout.fragment_team_overview) {
                 btnEdit.text = "Confirmar edição"
             }else{
                 isEditing = false
+                editTeamInfo()
                 disableEditTexts()
+                showSnackBar("Informações editadas com sucesso!","FECHAR", R.color.greenDark)
                 btnEdit.icon = ContextCompat.getDrawable(requireContext(), R.drawable.baseline_edit_24)
                 btnEdit.text = "Editar dados"
             }
         }
+    }
+
+    private fun editTeamInfo(){
+        teamsViewModel.updateTeam(token, teamId, UpdateRequest(teamHandle, teamName, teamDescription, teamTimezone))
     }
 
     private fun getThemeColor(attrResId: Int): Int {
@@ -192,8 +211,10 @@ class TeamOverviewFragment : Fragment(R.layout.fragment_team_overview) {
 
                 if (userRole == "ADMINISTRATOR") {
                     btnEdit.visibility = View.VISIBLE
+                    btnDelete.visibility = View.VISIBLE
                 } else {
                     btnEdit.visibility = View.GONE
+                    btnDelete.visibility = View.GONE
                 }
 
                 shimmerImg.visibility = View.VISIBLE
@@ -265,5 +286,26 @@ class TeamOverviewFragment : Fragment(R.layout.fragment_team_overview) {
 
     private fun showToast(message: String) {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun loadTimezones(): List<Timezone> {
+        val jsonString = getTimezone("timezones.json")
+        val gson = Gson()
+        val listType = object : TypeToken<List<Timezone>>() {}.type
+        return gson.fromJson(jsonString, listType)
+    }
+
+    private fun getTimezone(fileName: String): String? {
+        return try {
+            val inputStream = requireContext().assets.open(fileName)
+            val size = inputStream.available()
+            val buffer = ByteArray(size)
+            inputStream.read(buffer)
+            inputStream.close()
+            String(buffer, Charsets.UTF_8)
+        } catch (ex: IOException) {
+            ex.printStackTrace()
+            null
+        }
     }
 }

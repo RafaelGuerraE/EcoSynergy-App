@@ -35,10 +35,10 @@ data class TeamsRequest(
 )
 
 data class UpdateRequest(
-    val handle: String,
-    val name: String,
-    val description: String,
-    val members: List<Int>
+    val handle: String?,
+    val name: String?,
+    val description: String?,
+    val timeZone: String?
 )
 
 data class TeamLinks(

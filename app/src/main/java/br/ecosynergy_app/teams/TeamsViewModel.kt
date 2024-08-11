@@ -85,7 +85,7 @@ class TeamsViewModel(private val service: TeamsService): ViewModel() {
         )
     }
 
-    fun updateTeam(token: String?, id: String, request: TeamsRequest) {
+    fun updateTeam(token: String?, id: String?, request: UpdateRequest) {
         makeRequest(
             request = { service.updateTeam("Bearer $token", id, request) },
             onResult = { _teamResult.value = it }
@@ -136,7 +136,7 @@ class TeamsViewModel(private val service: TeamsService): ViewModel() {
         }
     }
 
-    fun removeMember(token: String?, teamId: String, userId: String) {
+    fun removeMember(token: String?, teamId: String?, userId: String?) {
         viewModelScope.launch {
             try {
                 service.removeMember("Bearer $token", teamId, userId)

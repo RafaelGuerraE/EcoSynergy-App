@@ -1,6 +1,5 @@
 package br.ecosynergy_app.teams
 
-import android.app.AlertDialog
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -11,7 +10,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
-import android.widget.ProgressBar
+import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,13 +23,12 @@ import br.ecosynergy_app.user.UserResponse
 import br.ecosynergy_app.user.UserViewModel
 import br.ecosynergy_app.user.UserViewModelFactory
 import com.facebook.shimmer.ShimmerFrameLayout
-import com.google.android.material.button.MaterialButton
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
-import de.hdodenhof.circleimageview.CircleImageView
 
 class TeamMembersFragment : Fragment(R.layout.fragment_team_members) {
     private lateinit var recycleMembers: RecyclerView
-    private lateinit var membersAdapter: MembersAdapter
+    lateinit var membersAdapter: MembersAdapter
 
     private lateinit var userViewModel: UserViewModel
     private lateinit var teamsViewModel: TeamsViewModel
@@ -41,11 +40,14 @@ class TeamMembersFragment : Fragment(R.layout.fragment_team_members) {
 
     private var token: String? = ""
     private var teamHandle: String? = ""
+    private var teamId: String? = ""
 
     private var membersList: List<UserResponse> = listOf()
 
     private var memberIds: List<String> = listOf()
     private var memberRoles: List<String> = listOf()
+    private var currentUserRole: String? = ""
+    private var userId: String? = ""
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -63,9 +65,10 @@ class TeamMembersFragment : Fragment(R.layout.fragment_team_members) {
 
         val sp: SharedPreferences = requireContext().getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
         token = sp.getString("accessToken", null)
+        userId = sp.getString("id", null)
 
         teamHandle = arguments?.getString("TEAM_HANDLE")
-        Log.d("TeamOverviewFragment", "Team Handle: $teamHandle")
+        teamId = arguments?.getString("TEAM_ID")
 
         shimmerMembers = view.findViewById(R.id.shimmerMembers)
 
@@ -75,7 +78,7 @@ class TeamMembersFragment : Fragment(R.layout.fragment_team_members) {
         btnAddMember = view.findViewById(R.id.btnAddMember)
 
         recycleMembers.layoutManager = LinearLayoutManager(requireContext())
-        membersAdapter = MembersAdapter(emptyList(), emptyList())
+        membersAdapter = MembersAdapter(emptyList(), emptyList(), currentUserRole, teamHandle, teamsViewModel, requireActivity(), this)
         recycleMembers.adapter = membersAdapter
 
         observeTeamInfo()
@@ -96,11 +99,22 @@ class TeamMembersFragment : Fragment(R.layout.fragment_team_members) {
         }
     }
 
-    private fun observeMembersInfo(members: List<Member>){
+    private fun observeMembersInfo(members: List<Member>) {
         memberIds = members.map { it.id.toString() }
-        memberRoles = members.map {it.role}
+        memberRoles = members.map { it.role }
 
-        userViewModel.getUsersByIds(memberIds, token)
+        teamsViewModel.teamResult.observe(viewLifecycleOwner) { result ->
+            result.onSuccess { response ->
+                val membersResponse = response.members
+                val userMember = membersResponse.find { it.id.toString() == userId }
+                currentUserRole = userMember?.role
+                userViewModel.getUsersByIds(memberIds, token)
+            }.onFailure { error ->
+                error.printStackTrace()
+                Log.d("TeamOverviewFragment", "Team Result Failed: ${error.message}")
+            }
+        }
+
         userViewModel.users.observe(viewLifecycleOwner) { result ->
             result.onSuccess { users ->
                 shimmerMembers.visibility = View.VISIBLE
@@ -108,7 +122,7 @@ class TeamMembersFragment : Fragment(R.layout.fragment_team_members) {
 
                 membersList = users
 
-                membersAdapter = MembersAdapter(users, memberRoles)
+                membersAdapter = MembersAdapter(users, memberRoles, currentUserRole, teamId, teamsViewModel, requireActivity(), this)
                 recycleMembers.adapter = membersAdapter
 
                 shimmerMembers.animate().alpha(0f).setDuration(300).withEndAction {
@@ -125,6 +139,7 @@ class TeamMembersFragment : Fragment(R.layout.fragment_team_members) {
             }
         }
     }
+
 
     private fun observeTeamInfo(){
         teamsViewModel.findTeamByHandle(token, teamHandle)
@@ -143,5 +158,19 @@ class TeamMembersFragment : Fragment(R.layout.fragment_team_members) {
             it.fullName.contains(query, ignoreCase = true) || it.username.contains(query, ignoreCase = true)
         }
         membersAdapter.updateList(filteredList, memberRoles)
+    }
+
+    private fun showSnackBar(message: String, action: String, bgTint: Int) {
+        val rootView = requireView()
+        val snackBar = Snackbar.make(rootView, message, Snackbar.LENGTH_SHORT)
+            .setAction(action) {}
+        snackBar.setBackgroundTint(ContextCompat.getColor(requireContext(), bgTint))
+        snackBar.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+        snackBar.setActionTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+        snackBar.show()
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 }
