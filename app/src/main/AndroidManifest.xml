@@ -17,17 +17,13 @@
         android:theme="@style/Base.Theme.EcoSynergyApp"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
-            android:exported="false" />
-        <activity
-            android:name=".teams.CreateTeamActivity"
-            android:exported="false" />
-        <activity
             android:name=".teams.TeamBottomSheet"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"/>
         <activity
             android:name=".login.LoginActivity"
-            android:exported="true">
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -36,50 +32,51 @@
         </activity>
         <activity
             android:name=".login.ResetActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"/>
         <activity
             android:name=".home.HomeActivity"
-            android:exported="true" />
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize"/>
         <activity
             android:name=".user.UserSettingsActivity"
-            android:exported="true" />
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize"/>
         <activity
             android:name=".home.AppSettingsActivity"
-            android:exported="true" />
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize"/>
         <activity
             android:name=".home.NotificationsActivity"
-            android:exported="true" />
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize"/>
         <activity
             android:name=".home.TermsActivity"
-            android:exported="true" />
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize"/>
         <activity
             android:name=".register.ConfirmationActivity"
-            android:exported="true" />
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize"/>
         <activity
             android:name=".register.RegisterActivity2"
-            android:exported="true" />
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize"/>
         <activity
             android:name=".register.RegisterActivity"
-            android:exported="true" />
-        <activity
-            android:name=".teams.TeamSettingsActivity"
-            android:exported="true" />
-        <activity
-            android:name=".teams.TeamBansActivity"
-            android:exported="true" />
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize"/>
         <activity
             android:name=".teams.TeamInviteActivity"
-            android:exported="true" />
-        <activity
-            android:name=".teams.TeamMembersActivity"
-            android:exported="true" />
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize"/>
         <activity
             android:name=".teams.TeamOverviewActivity"
-            android:exported="true" />
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize"/>
 
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
     </application>
-
 </manifest>

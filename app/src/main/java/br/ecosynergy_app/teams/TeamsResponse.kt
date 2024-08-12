@@ -27,6 +27,10 @@ data class Member(
     val role: String
 )
 
+data class RoleRequest(
+    val role : String?
+)
+
 data class TeamsRequest(
     val handle: String,
     val name: String,

@@ -11,6 +11,7 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -20,6 +21,7 @@ import androidx.lifecycle.ViewModelStore
 import androidx.recyclerview.widget.RecyclerView
 import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
+import br.ecosynergy_app.teams.RoleRequest
 import br.ecosynergy_app.teams.TeamMembersFragment
 import br.ecosynergy_app.teams.TeamsViewModel
 import br.ecosynergy_app.teams.TeamsViewModelFactory
@@ -30,6 +32,7 @@ class MembersAdapter(
     private var memberRoles: List<String>,
     private var currentUserRole: String?,
     private var teamId: String?,
+    private var teamHandle: String?,
     private val teamsViewModel: TeamsViewModel,
     private val activity: FragmentActivity,
     private val fragment: TeamMembersFragment
@@ -48,7 +51,7 @@ class MembersAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.members_layout, parent, false)
-        return ViewHolder(view, currentUserRole, teamId, teamsViewModel, activity,fragment)
+        return ViewHolder(view, membersList, memberRoles, currentUserRole, teamId, teamHandle, teamsViewModel, activity,fragment)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -59,8 +62,11 @@ class MembersAdapter(
 
     class ViewHolder(
         itemView: View,
+        private var membersList: List<UserResponse>,
+        private var memberRoles: List<String>,
         private var currentUserRole: String?,
         private var teamId: String?,
+        private var teamHandle: String?,
         private val teamsViewModel: TeamsViewModel,
         private val activity: FragmentActivity,
         private val fragment: TeamMembersFragment
@@ -178,7 +184,7 @@ class MembersAdapter(
 
         private fun removeUser(){
             val builder = AlertDialog.Builder(itemView.context)
-            builder.setTitle("Você deseja remover $username?")
+            builder.setTitle("Você deseja remover @$username?")
             builder.setMessage("Este membro será removido da equipe atual.")
 
             builder.setPositiveButton("Sim") { dialog, _ ->
@@ -196,7 +202,31 @@ class MembersAdapter(
             dialog.show()
         }
 
-        private fun editUserRole(){}
+        private fun editUserRole() {
+            val items = arrayOf("Administrador", "Membro")
+
+            val builder = AlertDialog.Builder(itemView.context)
+            builder.setTitle("Alterar o cargo do membro @$username")
+
+            builder.setItems(items) { dialog, which ->
+
+                when (which) {
+                    0 -> {
+                        teamsViewModel.editMemberRole(token, teamHandle, memberId, RoleRequest("ADMINISTRATOR"))
+                    }
+
+                    1 -> {
+                        teamsViewModel.editMemberRole(token, teamHandle, memberId, RoleRequest("COMMON_USER"))
+                    }
+                }
+                dialog.dismiss()
+                fragment.membersAdapter.updateList(membersList, memberRoles)
+                showSnackBar("Cargo alterado com sucesso", "FECHAR", R.color.greenDark)
+            }
+
+            val dialog: AlertDialog = builder.create()
+            dialog.show()
+        }
 
         private fun showSnackBar(message: String, action: String, bgTint: Int) {
             val rootView = itemView

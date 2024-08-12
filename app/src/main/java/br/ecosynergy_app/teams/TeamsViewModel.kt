@@ -55,6 +55,13 @@ class TeamsViewModel(private val service: TeamsService): ViewModel() {
         )
     }
 
+    fun editMemberRole(token: String?, handle: String?, userId: String?, request:RoleRequest){
+        makeRequest(
+            request = {service.editMemberRole("Bearer $token", handle, userId, request)},
+            onResult = { _teamResult.value = it}
+        )
+    }
+
     fun findAllTeams(token: String?) {
         viewModelScope.launch {
             try {

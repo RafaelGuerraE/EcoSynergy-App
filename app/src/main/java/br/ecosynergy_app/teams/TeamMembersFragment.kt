@@ -78,7 +78,7 @@ class TeamMembersFragment : Fragment(R.layout.fragment_team_members) {
         btnAddMember = view.findViewById(R.id.btnAddMember)
 
         recycleMembers.layoutManager = LinearLayoutManager(requireContext())
-        membersAdapter = MembersAdapter(emptyList(), emptyList(), currentUserRole, teamHandle, teamsViewModel, requireActivity(), this)
+        membersAdapter = MembersAdapter(emptyList(), emptyList(), currentUserRole, teamId, teamHandle, teamsViewModel, requireActivity(), this)
         recycleMembers.adapter = membersAdapter
 
         observeTeamInfo()
@@ -122,7 +122,7 @@ class TeamMembersFragment : Fragment(R.layout.fragment_team_members) {
 
                 membersList = users
 
-                membersAdapter = MembersAdapter(users, memberRoles, currentUserRole, teamId, teamsViewModel, requireActivity(), this)
+                membersAdapter = MembersAdapter(users.sortedBy { it.fullName }, memberRoles, currentUserRole, teamId, teamHandle, teamsViewModel, requireActivity(), this)
                 recycleMembers.adapter = membersAdapter
 
                 shimmerMembers.animate().alpha(0f).setDuration(300).withEndAction {
@@ -139,7 +139,6 @@ class TeamMembersFragment : Fragment(R.layout.fragment_team_members) {
             }
         }
     }
-
 
     private fun observeTeamInfo(){
         teamsViewModel.findTeamByHandle(token, teamHandle)

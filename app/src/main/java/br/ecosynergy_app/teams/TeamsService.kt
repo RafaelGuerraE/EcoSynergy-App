@@ -56,4 +56,10 @@ interface TeamsService {
     suspend fun removeMember(@Header("Authorization") token: String?,
                              @Path("teamId") teamId: String?,
                              @Path("userId") userId: String?) : Response<Result<Unit>>
+
+    @PUT("api/team/v1/{teamId}/user/{userId}")
+    suspend fun editMemberRole(@Header("Authorization") token: String?,
+                             @Path("teamId") teamId: String?,
+                             @Path("userId") userId: String?,
+                             @Body request: RoleRequest): TeamsResponse
 }
