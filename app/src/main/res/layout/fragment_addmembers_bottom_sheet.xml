@@ -8,7 +8,8 @@
     android:layout_height="match_parent">
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -23,12 +24,13 @@
                 android:layout_height="30dp"
                 android:layout_marginEnd="15dp"
                 android:layout_marginTop="30dp"
-                android:layout_marginBottom="15dp"
+                android:layout_marginBottom="5dp"
                 android:background="@null"
                 android:gravity="top"
                 android:scaleType="fitXY"
                 android:src="@drawable/baseline_close_24"
                 app:tint="?android:attr/iconTint" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -38,22 +40,67 @@
                 android:layout_marginStart="15dp"
                 android:layout_marginEnd="15dp">
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:orientation="horizontal"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:hint="Pesquisar"
+                        android:layout_gravity="center"
+                        android:layout_marginBottom="3dp">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/txtMember"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:inputType="text"
+                            android:enabled="true"
+                            android:clickable="true"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <ImageButton
+                        android:id="@+id/btnSearch"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:scaleType="fitXY"
+                        android:layout_gravity="center"
+                        android:background="@color/transparent"
+                        android:src="@drawable/baseline_search_24"
+                        app:tint="?android:attr/iconTint"
+                        android:layout_marginStart="5dp"
+                        android:visibility="visible"/>
+
+                </LinearLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycleUsers"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:visibility="gone"/>
+
+                <com.facebook.shimmer.ShimmerFrameLayout
+                    android:id="@+id/shimmerUsers"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:shimmer_auto_start="true"
+                    android:visibility="visible">
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/rect_shape"
+                        android:visibility="visible"
+                        android:backgroundTint="?attr/shimmerColor"/>
+                </com.facebook.shimmer.ShimmerFrameLayout>
 
             </LinearLayout>
         </LinearLayout>
 
     </ScrollView>
-    <View
-        android:id="@+id/overlayView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#80000000"
-        android:visibility="gone" />
-
-    <ProgressBar
-        android:id="@+id/loadingProgressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:visibility="gone" />
 </RelativeLayout>

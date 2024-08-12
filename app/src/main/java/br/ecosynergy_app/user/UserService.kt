@@ -40,4 +40,8 @@ interface UserService {
         @Header("Authorization") token: String,
         @Body request: UpdateRequest
     ) : UserResponse
+
+    @GET("api/user/v1/search/{username}")
+    suspend fun searchUser(@Header("Authorization") token: String?,
+                           @Path("username") username: String?): MutableList<UserResponse>
 }

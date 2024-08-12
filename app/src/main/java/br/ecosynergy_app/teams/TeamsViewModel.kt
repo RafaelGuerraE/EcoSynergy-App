@@ -55,11 +55,12 @@ class TeamsViewModel(private val service: TeamsService): ViewModel() {
         )
     }
 
-    fun editMemberRole(token: String?, handle: String?, userId: String?, request:RoleRequest){
+    fun editMemberRole(token: String?, teamId: String?, userId: String?, request:RoleRequest){
         makeRequest(
-            request = {service.editMemberRole("Bearer $token", handle, userId, request)},
+            request = {service.editMemberRole("Bearer $token", teamId, userId, request)},
             onResult = { _teamResult.value = it}
         )
+        Log.d("TeamsViewModel", "Team ID: $teamId, MemberID: $userId, Request: $request")
     }
 
     fun findAllTeams(token: String?) {
@@ -99,7 +100,7 @@ class TeamsViewModel(private val service: TeamsService): ViewModel() {
         )
     }
 
-    fun addMember(token: String?, teamId: String, userId: String) {
+    fun addMember(token: String?, teamId: String?, userId: String?) {
         makeRequest(
             request = { service.addMember("Bearer $token", teamId, userId) },
             onResult = { _teamResult.value = it }

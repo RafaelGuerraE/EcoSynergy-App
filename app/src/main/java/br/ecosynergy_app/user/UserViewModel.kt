@@ -47,13 +47,13 @@ class UserViewModel(private val service: UserService) : ViewModel() {
                 Log.d("UserViewModel", "User data fetched successfully: $response")
                 _user.value = Result.success(response)
             } catch (e: HttpException) {
-                Log.e("UserViewModel", "HTTP error during fetchUserData", e)
+                Log.e("UserViewModel", "HTTP error during getUserById", e)
                 _user.value = Result.failure(e)
             } catch (e: IOException) {
-                Log.e("UserViewModel", "Network error during fetchUserData", e)
+                Log.e("UserViewModel", "Network error during getUserById", e)
                 _user.value = Result.failure(e)
             } catch (e: Exception) {
-                Log.e("UserViewModel", "Unexpected error during fetchUserData", e)
+                Log.e("UserViewModel", "Unexpected error during getUserById", e)
                 _user.value = Result.failure(e)
             }
         }
@@ -138,6 +138,25 @@ class UserViewModel(private val service: UserService) : ViewModel() {
                 Log.e("UserViewModel", "Network error during recoverPassword", e)
             } catch (e: Exception) {
                 Log.e("UserViewModel", "Unexpected error during recoverPassword", e)
+            }
+        }
+    }
+
+    fun searchUser(token: String?, username: String?){
+        viewModelScope.launch {
+            try{
+                val response = service.searchUser(token, username)
+                Log.d("UserViewModel", "Search Successful")
+                _users.value = Result.success(response)
+            } catch (e: HttpException) {
+                Log.e("UserViewModel", "HTTP error during searchUser", e)
+                _user.value = Result.failure(e)
+            } catch (e: IOException) {
+                Log.e("UserViewModel", "Network error during searchUser", e)
+                _user.value = Result.failure(e)
+            } catch (e: Exception) {
+                Log.e("UserViewModel", "Unexpected error during searchUser", e)
+                _user.value = Result.failure(e)
             }
         }
     }

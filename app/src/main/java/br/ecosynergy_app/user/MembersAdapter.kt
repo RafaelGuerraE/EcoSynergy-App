@@ -39,8 +39,10 @@ class MembersAdapter(
 ) : RecyclerView.Adapter<MembersAdapter.ViewHolder>() {
 
     fun updateList(newList: List<UserResponse>, newRoles: List<String>) {
-        membersList = newList.sortedBy { it.fullName }
-        memberRoles = newRoles
+        val pairedList = newList.zip(newRoles)
+            .sortedBy { it.first.fullName }
+        membersList = pairedList.map { it.first }
+        memberRoles = pairedList.map { it.second }
         notifyDataSetChanged()
     }
 
@@ -212,11 +214,11 @@ class MembersAdapter(
 
                 when (which) {
                     0 -> {
-                        teamsViewModel.editMemberRole(token, teamHandle, memberId, RoleRequest("ADMINISTRATOR"))
+                        teamsViewModel.editMemberRole(token, teamId, memberId, RoleRequest("ADMINISTRATOR"))
                     }
 
                     1 -> {
-                        teamsViewModel.editMemberRole(token, teamHandle, memberId, RoleRequest("COMMON_USER"))
+                        teamsViewModel.editMemberRole(token, teamId, memberId, RoleRequest("COMMON_USER"))
                     }
                 }
                 dialog.dismiss()

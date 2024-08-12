@@ -44,17 +44,7 @@ class CreateTeamBottomSheet : BottomSheetDialogFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_create_team_bottom_sheet, container, false)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        val bottomSheet = dialog?.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
-        bottomSheet?.let {
-            val behavior = BottomSheetBehavior.from(it)
-            behavior.peekHeight = 2000
-        }
+        val view = inflater.inflate(R.layout.fragment_create_team_bottom_sheet, container, false)
 
         val sp: SharedPreferences = requireActivity().getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
         token = sp.getString("accessToken", null)
@@ -75,6 +65,20 @@ class CreateTeamBottomSheet : BottomSheetDialogFragment() {
         txtSector = view.findViewById(R.id.txtSector)
         txtPlan = view.findViewById(R.id.txtPlan)
         btnCreateTeam = view.findViewById(R.id.btnCreateTeam)
+
+        return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val bottomSheet = dialog?.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+        bottomSheet?.let {
+            val behavior = BottomSheetBehavior.from(it)
+            behavior.peekHeight = 2000
+        }
+
+
 
         btnClose.setOnClickListener{ dismiss() }
 
