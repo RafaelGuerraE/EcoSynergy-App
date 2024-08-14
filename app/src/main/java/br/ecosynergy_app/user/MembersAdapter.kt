@@ -35,7 +35,8 @@ class MembersAdapter(
     private var teamHandle: String?,
     private val teamsViewModel: TeamsViewModel,
     private val activity: FragmentActivity,
-    private val fragment: TeamMembersFragment
+    private val fragment: TeamMembersFragment,
+    private val memberIds: MutableList<String>
 ) : RecyclerView.Adapter<MembersAdapter.ViewHolder>() {
 
     fun updateList(newList: List<UserResponse>, newRoles: List<String>) {
@@ -47,6 +48,7 @@ class MembersAdapter(
     }
 
     fun removeMember(memberId: String?) {
+        memberIds.remove(memberId)
         membersList = membersList.filter { it.id.toString() != memberId }
         notifyDataSetChanged()
     }

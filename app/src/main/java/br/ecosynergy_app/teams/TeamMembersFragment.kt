@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.user.MembersAdapter
@@ -34,6 +35,8 @@ class TeamMembersFragment : Fragment(R.layout.fragment_team_members) {
     private lateinit var userViewModel: UserViewModel
     private lateinit var teamsViewModel: TeamsViewModel
 
+    private lateinit var swipeRefresh: SwipeRefreshLayout
+
     lateinit var txtMember: TextInputEditText
     lateinit var btnAddMember: ImageButton
 
@@ -43,7 +46,7 @@ class TeamMembersFragment : Fragment(R.layout.fragment_team_members) {
 
     private var membersList: List<UserResponse> = listOf()
 
-    private var memberIds: List<String> = listOf()
+    private var memberIds: MutableList<String> = mutableListOf()
     private var memberRoles: List<String> = listOf()
     private var currentUserRole: String? = ""
     private var userId: String? = ""
@@ -71,8 +74,10 @@ class TeamMembersFragment : Fragment(R.layout.fragment_team_members) {
         txtMember = view.findViewById(R.id.txtMember)
         btnAddMember = view.findViewById(R.id.btnAddMember)
 
+        swipeRefresh = view.findViewById(R.id.swipeRefresh)
+
         recycleMembers.layoutManager = LinearLayoutManager(requireContext())
-        membersAdapter = MembersAdapter(emptyList(), emptyList(), currentUserRole, teamId, teamHandle, teamsViewModel, requireActivity(), this)
+        membersAdapter = MembersAdapter(emptyList(), emptyList(), currentUserRole, teamId, teamHandle, teamsViewModel, requireActivity(), this, memberIds)
         recycleMembers.adapter = membersAdapter
 
         return  view
@@ -80,8 +85,17 @@ class TeamMembersFragment : Fragment(R.layout.fragment_team_members) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         observeTeamInfo()
+        setupSwipeRefresh()
+
+        parentFragmentManager.setFragmentResultListener("requestKey", this) { key, bundle ->
+            if (key == "requestKey") {
+                shimmerMembers.startShimmer()
+                shimmerMembers.visibility = View.VISIBLE
+                recycleMembers.visibility = View.GONE
+                observeTeamInfo()
+            }
+        }
 
         txtMember.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -94,13 +108,22 @@ class TeamMembersFragment : Fragment(R.layout.fragment_team_members) {
         })
 
         btnAddMember.setOnClickListener{
-            val addMembersBottomSheet = AddMembersBottomSheet()
+            val memberIdsString = memberIds.joinToString(",")
+            val addMembersBottomSheet = AddMembersBottomSheet().apply {
+                arguments = Bundle().apply {
+                    putString("TEAM_HANDLE", teamHandle)
+                    putString("TEAM_ID", teamId)
+                    putString("MEMBER_IDS", memberIdsString)
+                }
+            }
             addMembersBottomSheet.show(parentFragmentManager, "AddMembersBottomSheet")
+            Log.d("btnAddMember", "MemberIDS: $memberIdsString, $teamHandle, $teamId")
         }
     }
 
     private fun observeMembersInfo(members: List<Member>) {
-        memberIds = members.map { it.id.toString() }
+        memberIds = members.map { it.id.toString() }.toMutableList()
+        memberIds = memberIds.toMutableList() as ArrayList<String>
         memberRoles = members.map { it.role }
 
         teamsViewModel.teamResult.observe(viewLifecycleOwner) { result ->
@@ -128,7 +151,7 @@ class TeamMembersFragment : Fragment(R.layout.fragment_team_members) {
                 val sortedUsers = pairedMembers.map { it.first }
                 val sortedRoles = pairedMembers.map { it.second }
 
-                membersAdapter = MembersAdapter(sortedUsers, sortedRoles, currentUserRole, teamId, teamHandle, teamsViewModel, requireActivity(), this)
+                membersAdapter = MembersAdapter(sortedUsers, sortedRoles, currentUserRole, teamId, teamHandle, teamsViewModel, requireActivity(), this, memberIds)
                 recycleMembers.adapter = membersAdapter
 
                 shimmerMembers.animate().alpha(0f).setDuration(300).withEndAction {
@@ -178,5 +201,12 @@ class TeamMembersFragment : Fragment(R.layout.fragment_team_members) {
 
     private fun showToast(message: String) {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun setupSwipeRefresh() {
+        swipeRefresh.setOnRefreshListener {
+            observeTeamInfo()
+            swipeRefresh.isRefreshing = false
+        }
     }
 }

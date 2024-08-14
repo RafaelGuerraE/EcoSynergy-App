@@ -124,7 +124,7 @@ class CreateTeamBottomSheet : BottomSheetDialogFragment() {
         val name: String = txtTeamName.text.toString()
         val description: String = txtDescription.text.toString()
         val members: List<Member> = listOf(Member(userId, "ADMINISTRATOR"))
-        val teamsRequest = TeamsRequest(handle,name,description,members)
+        val teamsRequest = TeamsRequest(handle,name,description, ActivitiesResponse(0, "", ""), "timeZone", members)
         teamsViewModel.createTeam(token, teamsRequest)
 
         dismiss()

@@ -5,8 +5,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import br.ecosynergy_app.ApiError
 import br.ecosynergy_app.home.PasswordRequest
 import br.ecosynergy_app.home.UpdateRequest
+import com.google.gson.Gson
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
@@ -142,14 +144,17 @@ class UserViewModel(private val service: UserService) : ViewModel() {
         }
     }
 
-    fun searchUser(token: String?, username: String?){
+    fun searchUser(token: String?, username: String?) {
         viewModelScope.launch {
-            try{
-                val response = service.searchUser(token, username)
+            Log.d("UserViewModel", "$token")
+            try {
+                val response = service.searchUser("Bearer $token", username)
                 Log.d("UserViewModel", "Search Successful")
                 _users.value = Result.success(response)
             } catch (e: HttpException) {
-                Log.e("UserViewModel", "HTTP error during searchUser", e)
+                val errorBody = e.response()?.errorBody()?.string()
+                val errorResponse = Gson().fromJson(errorBody, ApiError::class.java)
+                Log.e("UserViewModel", "HTTP error during searchUser: ${errorResponse.error} at ${errorResponse.path}")
                 _user.value = Result.failure(e)
             } catch (e: IOException) {
                 Log.e("UserViewModel", "Network error during searchUser", e)

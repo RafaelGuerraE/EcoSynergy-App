@@ -50,7 +50,8 @@ interface TeamsService {
     @POST("api/team/v1/{teamId}/user/{userId}")
     suspend fun addMember(@Header("Authorization") token: String?,
                           @Path("teamId") teamId: String?,
-                          @Path("userId") userId: String?) : TeamsResponse
+                          @Path("userId") userId: String?,
+                          @Body request: RoleRequest) : TeamsResponse
 
     @DELETE("api/team/v1/{teamId}/user/{userId}")
     suspend fun removeMember(@Header("Authorization") token: String?,

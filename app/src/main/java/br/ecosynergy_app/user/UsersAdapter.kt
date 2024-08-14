@@ -34,7 +34,8 @@ class UsersAdapter(
     private var teamHandle: String?,
     private val teamsViewModel: TeamsViewModel,
     private val activity: FragmentActivity,
-    private val fragment: AddMembersBottomSheet
+    private val fragment: AddMembersBottomSheet,
+    private val memberIds: List<String>
 ) : RecyclerView.Adapter<UsersAdapter.ViewHolder>() {
 
     fun updateList(newList: MutableList<UserResponse>) {
@@ -43,8 +44,8 @@ class UsersAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.members_layout, parent, false)
-        return ViewHolder(view, usersList, teamId, teamHandle, teamsViewModel, activity,fragment)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.users_layout, parent, false)
+        return ViewHolder(view, usersList, teamId, teamHandle, teamsViewModel, activity, fragment, memberIds)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -60,7 +61,8 @@ class UsersAdapter(
         private var teamHandle: String?,
         private val teamsViewModel: TeamsViewModel,
         private val activity: FragmentActivity,
-        private val fragment: AddMembersBottomSheet
+        private val fragment: AddMembersBottomSheet,
+        private val memberIds: List<String>
     ) : RecyclerView.ViewHolder(itemView) {
 
         private val txtUsername: TextView = itemView.findViewById(R.id.txtUsername)
@@ -85,6 +87,14 @@ class UsersAdapter(
             memberId = user.id
 
             imgUser.setImageResource(getDrawableForLetter(user.fullName.first()))
+
+            Log.d("UsersAdapter", "MemberIDS: $memberIds")
+
+            if (memberIds.contains(user.id)) {
+                btnInvite.visibility = View.GONE
+            } else {
+                btnInvite.visibility = View.VISIBLE
+            }
 
             btnInvite.setOnClickListener {
                 inviteUser()
@@ -124,8 +134,7 @@ class UsersAdapter(
         }
 
         private fun inviteUser(){
-            Log.d("UsersAdapter", "$token, $teamId, $memberId")
-            teamsViewModel.addMember(token, teamId, memberId)
+            teamsViewModel.addMember(token, teamId, memberId, RoleRequest("COMMON_USER"))
             btnInvite.visibility = View.GONE
             showSnackBar("Usuário adicionado com sucesso!", "FECHAR", R.color.greenDark)
         }

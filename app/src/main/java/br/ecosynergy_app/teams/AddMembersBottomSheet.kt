@@ -13,6 +13,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.user.MembersAdapter
@@ -38,9 +39,25 @@ class AddMembersBottomSheet : BottomSheetDialogFragment() {
     lateinit var usersAdapter: UsersAdapter
     private lateinit var shimmerUsers: ShimmerFrameLayout
 
+
+    private lateinit var swipeRefresh: SwipeRefreshLayout
+
     private var token: String? = ""
     private var teamId: String? = ""
     private var teamHandle: String? = ""
+    var memberIds: ArrayList<String> = arrayListOf()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.let {
+            teamHandle = it.getString("TEAM_HANDLE")
+            teamId = it.getString("TEAM_ID")
+            val memberIdsString = it.getString("MEMBER_IDS") ?: ""
+            memberIds = ArrayList(memberIdsString.split(",")) // Convert the comma-separated string back to a list
+        }
+        Log.d("AddMembers", "MemberIDS in onCreate: $memberIds, $teamHandle, $teamId")
+    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -60,14 +77,13 @@ class AddMembersBottomSheet : BottomSheetDialogFragment() {
         recycleUsers = view.findViewById(R.id.recycleUsers)
 
         recycleUsers.layoutManager = LinearLayoutManager(requireContext())
-        usersAdapter = UsersAdapter(mutableListOf(), teamId, teamHandle, teamsViewModel, requireActivity(), this)
+        usersAdapter = UsersAdapter(mutableListOf(), teamId, teamHandle, teamsViewModel, requireActivity(), this, memberIds)
         recycleUsers.adapter = usersAdapter
 
         val sp: SharedPreferences = requireActivity().getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
         token = sp.getString("accessToken", null)
 
-        teamHandle = arguments?.getString("TEAM_HANDLE")
-        teamId = arguments?.getString("TEAM_ID")
+        Log.d("AddMembers", "MemberIDS in onCreateView: $memberIds, $teamHandle, $teamId")
 
         return view
     }
@@ -81,21 +97,25 @@ class AddMembersBottomSheet : BottomSheetDialogFragment() {
             behavior.peekHeight = 2000
         }
 
-        btnClose.setOnClickListener{ dismiss() }
+        btnClose.setOnClickListener{
+            parentFragmentManager.setFragmentResult("requestKey", Bundle())
+            dismiss()
+        }
 
         btnSearch.setOnClickListener{
-            searchUser(txtMember.text.toString())
+            searchUser(token, txtMember.text.toString())
         }
     }
 
-    private fun searchUser(username : String){
+    private fun searchUser(token: String?, username : String){
+        Log.d("AddMembers", "$token")
         userViewModel.searchUser(token, username)
         userViewModel.users.observe(viewLifecycleOwner){ result ->
             result.onSuccess { response ->
                 shimmerUsers.visibility = View.VISIBLE
                 recycleUsers.visibility = View.GONE
 
-                usersAdapter = UsersAdapter(response, teamId, teamHandle, teamsViewModel, requireActivity(), this)
+                usersAdapter = UsersAdapter(response, teamId, teamHandle, teamsViewModel, requireActivity(), this, memberIds)
                 recycleUsers.adapter = usersAdapter
 
                 shimmerUsers.animate().alpha(0f).setDuration(300).withEndAction {
@@ -111,7 +131,6 @@ class AddMembersBottomSheet : BottomSheetDialogFragment() {
                     recycleUsers.visibility = View.GONE
                     showSnackBar("ERRO: Carregar usuários", "FECHAR", R.color.red)
             }
-
         }
     }
 
