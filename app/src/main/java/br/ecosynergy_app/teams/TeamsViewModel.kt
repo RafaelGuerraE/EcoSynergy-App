@@ -113,7 +113,7 @@ class TeamsViewModel(private val service: TeamsService): ViewModel() {
             } catch (e: HttpException) {
                 val errorBody = e.response()?.errorBody()?.string()
                 val errorResponse = Gson().fromJson(errorBody, ApiError::class.java)
-                Log.e("UserViewModel", "HTTP error during addMember: ${errorResponse.error} at ${errorResponse.path}")
+                Log.e("UserViewModel", "HTTP error during addMember: ${errorResponse.error} at ${errorResponse.path} $e")
                 _teamResult.value = Result.failure(e)
             } catch (e: IOException) {
                 Log.e("UserViewModel", "Network error during addMember", e)

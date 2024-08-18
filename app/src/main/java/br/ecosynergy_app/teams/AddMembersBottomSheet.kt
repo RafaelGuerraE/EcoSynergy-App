@@ -76,6 +76,9 @@ class AddMembersBottomSheet : BottomSheetDialogFragment() {
         shimmerUsers = view.findViewById(R.id.shimmerUsers)
         recycleUsers = view.findViewById(R.id.recycleUsers)
 
+        shimmerUsers.visibility = View.GONE
+        recycleUsers.visibility = View.GONE
+
         recycleUsers.layoutManager = LinearLayoutManager(requireContext())
         usersAdapter = UsersAdapter(mutableListOf(), teamId, teamHandle, teamsViewModel, requireActivity(), this, memberIds)
         recycleUsers.adapter = usersAdapter

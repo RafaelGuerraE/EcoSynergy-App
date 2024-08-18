@@ -132,7 +132,7 @@ class UserViewModel(private val service: UserService) : ViewModel() {
         viewModelScope.launch {
             try {
                 val request = PasswordRequest(username, password)
-                service.recoverPassword("Bearer $token", request)
+                service.resetPassword("Bearer $token", request)
                 Log.d("UserViewModel", "Password recovery successful for user: $username")
             } catch (e: HttpException) {
                 Log.e("UserViewModel", "HTTP error during recoverPassword", e)

@@ -17,6 +17,7 @@ import androidx.lifecycle.ViewModelProvider
 import br.ecosynergy_app.RetrofitClient
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Spinner
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
@@ -30,7 +31,7 @@ class CreateTeamBottomSheet : BottomSheetDialogFragment() {
     private lateinit var txtHandle: TextInputEditText
     private lateinit var txtTeamName: TextInputEditText
     private lateinit var txtDescription: TextInputEditText
-    private lateinit var txtSector: TextInputEditText
+    private lateinit var spinnerActivities: Spinner
     private lateinit var txtPlan: TextInputEditText
     private lateinit var btnCreateTeam: Button
 
@@ -62,7 +63,7 @@ class CreateTeamBottomSheet : BottomSheetDialogFragment() {
         txtHandle = view.findViewById(R.id.txtHandle)
         txtTeamName = view.findViewById(R.id.txtTeamName)
         txtDescription = view.findViewById(R.id.txtDescription)
-        txtSector = view.findViewById(R.id.txtSector)
+        spinnerActivities = view.findViewById(R.id.spinnerActivities)
         txtPlan = view.findViewById(R.id.txtPlan)
         btnCreateTeam = view.findViewById(R.id.btnCreateTeam)
 
@@ -78,7 +79,7 @@ class CreateTeamBottomSheet : BottomSheetDialogFragment() {
             behavior.peekHeight = 2000
         }
 
-
+        spinnerActivities.isEnabled = false
 
         btnClose.setOnClickListener{ dismiss() }
 
@@ -124,7 +125,7 @@ class CreateTeamBottomSheet : BottomSheetDialogFragment() {
         val name: String = txtTeamName.text.toString()
         val description: String = txtDescription.text.toString()
         val members: List<Member> = listOf(Member(userId, "ADMINISTRATOR"))
-        val teamsRequest = TeamsRequest(handle,name,description, ActivitiesResponse(0, "", ""), "timeZone", members)
+        val teamsRequest = TeamsRequest(handle,name,description, ActivitiesRequest(1), "timeZone", members)
         teamsViewModel.createTeam(token, teamsRequest)
 
         dismiss()

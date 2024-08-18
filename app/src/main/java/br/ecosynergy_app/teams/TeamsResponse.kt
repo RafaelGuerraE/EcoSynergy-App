@@ -23,16 +23,6 @@ data class TeamsResponse(
     val _links: TeamLinks
 )
 
-data class ActivitiesRequest(
-    val id : Long
-)
-
-data class ActivitiesResponse(
-    val id : Long,
-    val name: String,
-    val sector: String
-)
-
 data class Member(
     val id: Int?,
     val role: String
@@ -46,7 +36,7 @@ data class TeamsRequest(
     val handle: String,
     val name: String,
     val description: String,
-    val activity: ActivitiesResponse,
+    val activity: ActivitiesRequest,
     val timeZone: String,
     val members: List<Member>
 )

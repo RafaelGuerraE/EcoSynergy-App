@@ -185,14 +185,6 @@
                     </com.facebook.shimmer.ShimmerFrameLayout>
                 </LinearLayout>
 
-                <com.google.android.material.imageview.ShapeableImageView
-                    app:shapeAppearanceOverlay="@style/RoundedSquare"
-                    android:layout_width="match_parent"
-                    android:layout_height="70dp"
-                    android:background="?attr/fragmentsBackground"
-                    android:scaleType="fitStart"
-                    android:layout_gravity="center"
-                    android:layout_marginBottom="30dp"/>
 
             </LinearLayout>
         </LinearLayout>

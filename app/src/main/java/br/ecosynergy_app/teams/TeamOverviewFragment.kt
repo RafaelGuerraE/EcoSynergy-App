@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ProgressBar
+import android.widget.Spinner
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -41,7 +42,7 @@ class TeamOverviewFragment : Fragment(R.layout.fragment_team_overview) {
     private lateinit var txtHandle: TextInputEditText
     private lateinit var txtDescription: TextInputEditText
     private lateinit var txtTimezone: MaterialAutoCompleteTextView
-    private lateinit var txtSector: TextInputEditText
+    private lateinit var spinnerActivities: Spinner
     private lateinit var txtPlan: TextInputEditText
 
     private lateinit var btnEdit: MaterialButton
@@ -92,7 +93,7 @@ class TeamOverviewFragment : Fragment(R.layout.fragment_team_overview) {
         txtHandle = view.findViewById(R.id.txtHandle)
         txtTimezone = view.findViewById(R.id.txtTimezone)
         txtDescription = view.findViewById(R.id.txtDescription)
-        txtSector = view.findViewById(R.id.txtSector)
+        spinnerActivities = view.findViewById(R.id.spinnerActivities)
         txtPlan = view.findViewById(R.id.txtPlan)
 
         btnEdit = view.findViewById(R.id.btnEdit)
@@ -118,9 +119,9 @@ class TeamOverviewFragment : Fragment(R.layout.fragment_team_overview) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
-
         observeTeamInfo()
+
+        spinnerActivities.isEnabled = false
 
         btnDelete.text = "Excluir $teamHandle"
         btnDelete.setOnClickListener{
@@ -175,7 +176,7 @@ class TeamOverviewFragment : Fragment(R.layout.fragment_team_overview) {
         txtHandle.isEnabled = true
         txtDescription.isEnabled = true
         txtTeamName.isEnabled = true
-        txtSector.isEnabled = true
+        spinnerActivities.isEnabled = true
         txtPlan.isEnabled = true
 
         txtTimezone.setTextColor(getThemeColor(android.R.attr.textColorPrimary))
@@ -187,7 +188,7 @@ class TeamOverviewFragment : Fragment(R.layout.fragment_team_overview) {
         txtHandle.isEnabled = false
         txtDescription.isEnabled = false
         txtTeamName.isEnabled = false
-        txtSector.isEnabled = false
+        spinnerActivities.isEnabled = false
         txtPlan.isEnabled = false
 
         txtTimezone.setTextColor(ContextCompat.getColor(requireContext(), R.color.disabled))

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">EcoSynergy</string>
+    <string name="app_name">Ecosynergy</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <string name="nav_open">Open Navigation Drawer</string>
@@ -26,5 +26,9 @@
         <item>Feminino</item>
         <item>Outro</item>
         <item>Prefiro não dizer</item>
+    </string-array>
+
+    <string-array name="activities_array">
+        <item>Tecelagem/Têxtil</item>
     </string-array>
 </resources>

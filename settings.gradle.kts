@@ -14,5 +14,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "EcoSynergy-App"
+rootProject.name = "Ecosynergy"
 include(":app")

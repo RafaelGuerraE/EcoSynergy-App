@@ -12,20 +12,26 @@ import retrofit2.http.PUT
 import retrofit2.http.Path
 
 interface UserService {
-    @GET("api/user/v1/findUsername/{username}")
+    @GET("api/user/v1/username/{username}")
     suspend fun getUserByUsername(
         @Path("username") username: String?,
         @Header("Authorization") token: String?
     ): UserResponse
 
-    @GET("api/user/v1/findId/{id}")
+    @GET("api/user/v1/id/{id}")
     suspend fun getUserById(
         @Path("id") id: String?,
         @Header("Authorization") token: String
     ): UserResponse
 
-    @POST("api/user/v1/recoverPassword")
-    suspend fun recoverPassword(
+    @GET("api/user/v1/email/{email}")
+    suspend fun getUserByEmail(
+        @Path("email") email: String?,
+        @Header("Authorization") token: String
+    ): UserResponse
+
+    @POST("api/user/v1/resetPassword")
+    suspend fun resetPassword(
         @Header("Authorization")token: String,
         @Body request: PasswordRequest
     )

@@ -29,11 +29,11 @@ interface TeamsService {
     @GET("api/team/v1")
     suspend fun findAllTeams(@Header("Authorization") token: String?): AllTeamsResponse
 
-    @GET("api/team/v1/findId/{id}")
+    @GET("api/team/v1/id/{id}")
     suspend fun findTeamById(@Header("Authorization") token: String?,
                              @Path("id") id:String) : TeamsResponse
 
-    @GET("api/team/v1/findHandle/{handle}")
+    @GET("api/team/v1/handle/{handle}")
     suspend fun findTeamByHandle(@Header("Authorization") token: String?,
                                  @Path("handle") handle:String?) : TeamsResponse
 

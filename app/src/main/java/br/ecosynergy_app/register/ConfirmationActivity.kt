@@ -25,11 +25,15 @@ import br.ecosynergy_app.home.HomeActivity
 import br.ecosynergy_app.login.AuthViewModel
 import br.ecosynergy_app.login.AuthViewModelFactory
 import br.ecosynergy_app.login.LoginRequest
+import br.ecosynergy_app.teams.RoleRequest
+import br.ecosynergy_app.teams.TeamsViewModel
+import br.ecosynergy_app.teams.TeamsViewModelFactory
 
 class ConfirmationActivity : AppCompatActivity() {
 
     private lateinit var registerViewModel: RegisterViewModel
     private lateinit var authViewModel: AuthViewModel
+    private lateinit var teamsViewModel: TeamsViewModel
     private lateinit var loadingProgressBar: ProgressBar
     private lateinit var overlayView: View
 
@@ -37,6 +41,8 @@ class ConfirmationActivity : AppCompatActivity() {
     var digit2Text : String = ""
     var digit3Text : String = ""
     var digit4Text : String = ""
+
+    var userId = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,6 +53,11 @@ class ConfirmationActivity : AppCompatActivity() {
         val digit2 = findViewById<EditText>(R.id.digit2)
         val digit3 = findViewById<EditText>(R.id.digit3)
         val digit4 = findViewById<EditText>(R.id.digit4)
+
+        digit1.setText("1")
+        digit2.setText("2")
+        digit3.setText("3")
+        digit4.setText("4")
 
         val txtError = findViewById<LinearLayout>(R.id.txtError)
 
@@ -61,6 +72,7 @@ class ConfirmationActivity : AppCompatActivity() {
 
         registerViewModel = ViewModelProvider(this, RegisterViewModelFactory(RetrofitClient.registerService))[RegisterViewModel::class.java]
         authViewModel = ViewModelProvider(this, AuthViewModelFactory(RetrofitClient.authService))[AuthViewModel::class.java]
+        teamsViewModel = ViewModelProvider(this, TeamsViewModelFactory(RetrofitClient.teamsService))[TeamsViewModel::class.java]
 
         loadingProgressBar = findViewById(R.id.loadingProgressBar)
         overlayView = findViewById(R.id.overlayView)
@@ -69,10 +81,11 @@ class ConfirmationActivity : AppCompatActivity() {
 
         registerViewModel.registerResult.observe(this) { result ->
             showProgressBar(false)
-            result.onSuccess { createUserResponse ->
+            result.onSuccess { response ->
                 Log.d("ConfirmationActivity", "Register success")
                 val loginRequest = LoginRequest(userName, password)
                 authViewModel.loginUser(loginRequest)
+                userId = response.id.toString()
             }.onFailure { error ->
                 error.printStackTrace()
                 Log.d("ConfirmationActivity", "Register failed: ${error.message}")
@@ -83,8 +96,10 @@ class ConfirmationActivity : AppCompatActivity() {
         authViewModel.loginResult.observe(this) { result ->
             showProgressBar(false)
             result.onSuccess { loginResponse ->
+                Log.d("LoginActivity", "UserID: $userId")
                 Log.d("LoginActivity", "Login success")
                 setLoggedIn(true, loginResponse.username, loginResponse.accessToken)
+                teamsViewModel.addMember(loginResponse.accessToken, "89", userId, RoleRequest("COMMON_USER"))
                 startHomeActivity()
             }.onFailure { error ->
                 error.printStackTrace()
