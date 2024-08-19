@@ -18,6 +18,7 @@ import br.ecosynergy_app.user.UserViewModel
 import br.ecosynergy_app.sensors.MQ7ReadingsResponse
 import br.ecosynergy_app.sensors.ReadingVO
 import br.ecosynergy_app.sensors.SensorsViewModel
+import br.ecosynergy_app.teams.CustomMarkerView
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.XAxis
@@ -108,6 +109,39 @@ class Home : Fragment() {
         return typedValue.data
     }
 
+    private fun observeMQ7(){
+        sensorsViewModel.mq7ReadingResult.observe(viewLifecycleOwner){ result->
+            result.onSuccess { response->
+                handleMQ7Readings(response)
+                Log.d("TeamsFragment", "Sensors MQ7Response OK")
+            }.onFailure { e->
+                Log.e("TeamsFragment", "Error MQ7", e)
+            }
+        }
+    }
+
+    private fun observeMQ135(){
+        sensorsViewModel.mq135ReadingResult.observe(viewLifecycleOwner){ result->
+            result.onSuccess { response->
+                handleMQ135Readings(response)
+                Log.d("TeamsFragment", "Sensors MQ135Response OK")
+            }.onFailure { e->
+                Log.e("TeamsFragment", "Error MQ135", e)
+            }
+        }
+    }
+
+    private fun observeFireSensor(){
+        sensorsViewModel.fireReadingResult.observe(viewLifecycleOwner){ result->
+            result.onSuccess { response->
+                handleFireReadings(response)
+                Log.d("TeamsFragment", "Sensors FireResponse OK")
+            }.onFailure { e->
+                Log.e("TeamsFragment", "Fire Error", e)
+            }
+        }
+    }
+
     private fun setupMQ7Chart(mq7Readings: List<ReadingVO>) {
         mq7Chart.visibility = View.GONE
         shimmerMQ7.visibility = View.VISIBLE
@@ -155,6 +189,7 @@ class Home : Fragment() {
             setDrawGridLines(false)
             textColor = getThemeColor(android.R.attr.textColorPrimary)
             setLabelCount(sortedData.size, true)
+            labelRotationAngle = 90f
         }
 
         mq7Chart.axisLeft.apply {
@@ -181,39 +216,6 @@ class Home : Fragment() {
             shimmerMQ7.visibility = View.GONE
             mq7Chart.visibility = View.VISIBLE
             mq7Chart.animate().alpha(1f).setDuration(300)
-        }
-    }
-
-    private fun observeMQ7(){
-        sensorsViewModel.mq7ReadingResult.observe(viewLifecycleOwner){ result->
-            result.onSuccess { response->
-                handleMQ7Readings(response)
-                Log.d("TeamsFragment", "Sensors MQ7Response OK")
-            }.onFailure { e->
-                Log.e("TeamsFragment", "Error MQ7", e)
-            }
-        }
-    }
-
-    private fun observeMQ135(){
-        sensorsViewModel.mq135ReadingResult.observe(viewLifecycleOwner){ result->
-            result.onSuccess { response->
-                handleMQ135Readings(response)
-                Log.d("TeamsFragment", "Sensors MQ135Response OK")
-            }.onFailure { e->
-                Log.e("TeamsFragment", "Error MQ135", e)
-            }
-        }
-    }
-
-    private fun observeFireSensor(){
-        sensorsViewModel.fireReadingResult.observe(viewLifecycleOwner){ result->
-            result.onSuccess { response->
-                handleFireReadings(response)
-                Log.d("TeamsFragment", "Sensors FireResponse OK")
-            }.onFailure { e->
-                Log.e("TeamsFragment", "Fire Error", e)
-            }
         }
     }
 
@@ -262,8 +264,10 @@ class Home : Fragment() {
             position = XAxis.XAxisPosition.BOTTOM
             valueFormatter = IndexAxisValueFormatter(sortedData.map { it.key })
             setDrawGridLines(false)
+            setDrawLabels(true)
             textColor = getThemeColor(android.R.attr.textColorPrimary)
             setLabelCount(sortedData.size, true)
+            labelRotationAngle = 90f
         }
 
         mq135Chart.axisLeft.apply {
@@ -277,8 +281,12 @@ class Home : Fragment() {
 
         mq135Chart.apply {
             isDragEnabled = true
+            setScaleEnabled(true)
             isScaleXEnabled = true
+            isScaleYEnabled = false // Disable vertical scaling if not needed
+            setVisibleXRangeMaximum(5f) // Display only 5 entries at a time
             setExtraOffsets(10f, 10f, 10f, 10f)
+            moveViewToX(0f) // Start chart view at the beginning
         }
 
         val lineData = LineData(dataSet)
@@ -292,6 +300,7 @@ class Home : Fragment() {
             mq135Chart.animate().alpha(1f).setDuration(300)
         }
     }
+
 
     private fun setupFireChart(fireReadings: List<ReadingVO>) {
         fireChart.visibility = View.GONE
@@ -341,6 +350,7 @@ class Home : Fragment() {
             setDrawGridLines(false)
             textColor = getThemeColor(android.R.attr.textColorPrimary)
             setLabelCount(sortedData.size, true)
+            labelRotationAngle = 90f
         }
 
         fireChart.axisLeft.apply {

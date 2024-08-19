@@ -6,6 +6,9 @@
     <group
         android:checkableBehavior="single">
 
+        <item android:id="@+id/notifications"
+            android:icon="@drawable/baseline_notifications_24"
+            android:title="Notificações"/>
         <item android:id="@+id/account_config"
             android:icon="@drawable/baseline_settings_24"
             android:title="Configurações da Conta"/>
@@ -15,9 +18,7 @@
         <item android:id="@+id/terms"
             android:icon="@drawable/baseline_format_terms_24"
             android:title="Termos de Uso e Privacidade"/>
-        <item android:id="@+id/notifications"
-            android:icon="@drawable/baseline_notifications_24"
-            android:title="Notificações"/>
+
 
     </group>
 
