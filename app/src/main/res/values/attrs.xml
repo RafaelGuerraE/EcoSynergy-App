@@ -3,6 +3,7 @@
     <declare-styleable name="CustomTheme">
         <attr name="fragmentsBackground" format="color"/>
         <attr name="shimmerColor" format="color"/>
+        <attr name="spinnerColor" format="color"/>
         <attr name="buttonText" format="color"/>
         <attr name="buttonIconTint" format="color"/>
     </declare-styleable>

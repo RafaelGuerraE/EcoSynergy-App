@@ -1,5 +1,7 @@
-package br.ecosynergy_app.home.homefragments
+package br.ecosynergy_app.home.fragments
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -28,6 +30,10 @@ class Teams : Fragment() {
 
     private lateinit var swipeRefresh: SwipeRefreshLayout
 
+    private var token: String? = ""
+    private var identifier: String? = ""
+    private var userId: String? = ""
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -46,12 +52,17 @@ class Teams : Fragment() {
 
         swipeRefresh = view.findViewById(R.id.swipeRefresh)
 
+        val sp: SharedPreferences = requireContext().getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
+        token = sp.getString("accessToken", null)
+        identifier = sp.getString("identifier", null)
+        userId = sp.getString("id", null)
+
         return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        getTeamsByUserId()
         observeTeamsData()
         btnAddTeam.setOnClickListener{
             val createTeamBottomSheet = CreateTeamBottomSheet()
@@ -59,6 +70,12 @@ class Teams : Fragment() {
         }
         setupSwipeRefresh()
     }
+
+    private fun getTeamsByUserId(){
+        teamsViewModel.findTeamsByUserId(userId, token)
+        teamsViewModel.teamsResult.removeObservers(this)
+        observeTeamsData()
+   }
 
     private fun observeTeamsData() {
         teamsViewModel.teamsResult.observe(viewLifecycleOwner) { result ->

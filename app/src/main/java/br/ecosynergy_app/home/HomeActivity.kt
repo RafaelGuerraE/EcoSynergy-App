@@ -16,18 +16,17 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import br.ecosynergy_app.NotificationService
 import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
-import br.ecosynergy_app.home.homefragments.Home
-import br.ecosynergy_app.home.homefragments.Notifications
-import br.ecosynergy_app.home.homefragments.Teams
+import br.ecosynergy_app.home.fragments.Home
+import br.ecosynergy_app.home.fragments.Notifications
+import br.ecosynergy_app.home.fragments.Teams
 import br.ecosynergy_app.login.LoginActivity
-import br.ecosynergy_app.sensors.MQ7ReadingsResponse
 import br.ecosynergy_app.sensors.SensorsViewModel
 import br.ecosynergy_app.sensors.SensorsViewModelFactory
 import br.ecosynergy_app.teams.TeamsViewModel
@@ -51,7 +50,7 @@ class HomeActivity : AppCompatActivity() {
     private var identifier: String? = ""
     private var userId: String = ""
 
-    private var teamHandles: List<String> =  emptyList()
+    var teamHandles: List<String> =  emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -62,8 +61,13 @@ class HomeActivity : AppCompatActivity() {
             "system" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
         }
 
+        val notificationServiceIntent = Intent(this, NotificationService::class.java)
+        startService(notificationServiceIntent)
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
+
+        val notificationClicked = intent.getBooleanExtra("NOTIFICATION_CLICKED", false)
 
         userViewModel = ViewModelProvider(this, UserViewModelFactory(RetrofitClient.userService))[UserViewModel::class.java]
         sensorsViewModel = ViewModelProvider(this, SensorsViewModelFactory(RetrofitClient.sensorsService))[SensorsViewModel::class.java]
@@ -80,7 +84,6 @@ class HomeActivity : AppCompatActivity() {
         val btnTheme: ImageButton = findViewById(R.id.btnTheme)
 
         fetchUserData()
-
 
         if (sp.getBoolean("just_logged_in", false)) {
             showSnackBar("Conectado com sucesso", "FECHAR", R.color.greenDark)
@@ -108,11 +111,17 @@ class HomeActivity : AppCompatActivity() {
             }
         }
 
-        replaceFragment(Home())
-
-        bottomNavView.menu.findItem(R.id.home)?.isChecked = true
-        bottomNavView.selectedItemId = R.id.home
-        bottomNavView.menu.findItem(R.id.home)?.setIcon(R.drawable.baseline_home_24)
+        if (notificationClicked) {
+            replaceFragment(Notifications())
+            bottomNavView.menu.findItem(R.id.notifications)?.isChecked = true
+            bottomNavView.selectedItemId = R.id.notifications
+            bottomNavView.menu.findItem(R.id.notifications)?.setIcon(R.drawable.baseline_notifications_24)
+        } else {
+            replaceFragment(Home())
+            bottomNavView.menu.findItem(R.id.home)?.isChecked = true
+            bottomNavView.selectedItemId = R.id.home
+            bottomNavView.menu.findItem(R.id.home)?.setIcon(R.drawable.baseline_home_24)
+        }
 
         bottomNavView.setOnItemSelectedListener { item ->
             when (item.itemId) {
@@ -212,7 +221,11 @@ class HomeActivity : AppCompatActivity() {
 
             val dialog: AlertDialog = builder.create()
             dialog.show()
+
+
         }
+
+
     }
 
     override fun onResume() {
@@ -265,7 +278,7 @@ class HomeActivity : AppCompatActivity() {
                     editor.putString("id", userId)
                     editor.apply()
                     updateNavigationHeader(findViewById(R.id.nav_view))
-                    getTeamsByUserId()
+                    //getTeamsByUserId()
                 }.onFailure { e ->
                     Log.e("HomeActivity", "Error observing user data", e)
                     logout()
@@ -276,37 +289,7 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
-    private fun getTeamsByUserId(){
-        Log.d("HomeActivity", "UserId: $userId")
-        Log.d("HomeActivity", "Token: $token")
-        teamsViewModel.findTeamsByUserId(userId, token)
-        teamsViewModel.teamsResult.removeObservers(this)
-        teamsViewModel.teamsResult.observe(this) { result ->
-            result.onSuccess { teamData ->
-                teamHandles =  teamData.map { it.handle }
-                fetchMQ7ReadingsByTeamHandle()
-                fetchMQ135ReadingsByTeamHandle()
-                fetchFireReadingsByTeamHandle()
-            }.onFailure { e ->
-                Log.e("HomeActivity", "Error getting user Team Handles by Id", e)
-            }
-        }
-    }
 
-    private fun fetchMQ7ReadingsByTeamHandle() {
-        val teamHandle: String = teamHandles[0]
-        sensorsViewModel.fetchMQ7ReadingsByTeamHandle(teamHandle, token)
-    }
-
-    private fun fetchMQ135ReadingsByTeamHandle() {
-        val teamHandle: String = teamHandles[0]
-        sensorsViewModel.fetchMQ135ReadingsByTeamHandle(token, teamHandle)
-    }
-
-    private fun fetchFireReadingsByTeamHandle() {
-        val teamHandle: String = teamHandles[0]
-        sensorsViewModel.fetchFireReadingsByTeamHandle(token, teamHandle)
-    }
 
     private fun getDrawableForLetter(letter: Char): Int {
         return when (letter.lowercaseChar()) {

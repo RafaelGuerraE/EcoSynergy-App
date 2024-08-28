@@ -14,6 +14,9 @@
     <color name="yellow">#FFFB00</color>
 
     <color name="shimmer">#979797</color>
+    <color name="spinnerLight">#E0E0E0</color>
+    <color name="spinnerDark">#474747</color>
+
 
     <color name="green_50">#804FDB4A</color>
     <color name="greenDark_50">#8006B600</color>

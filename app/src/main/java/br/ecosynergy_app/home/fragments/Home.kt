@@ -1,11 +1,15 @@
-package br.ecosynergy_app.home.homefragments
+package br.ecosynergy_app.home.fragments
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.Spinner
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -18,7 +22,7 @@ import br.ecosynergy_app.user.UserViewModel
 import br.ecosynergy_app.sensors.MQ7ReadingsResponse
 import br.ecosynergy_app.sensors.ReadingVO
 import br.ecosynergy_app.sensors.SensorsViewModel
-import br.ecosynergy_app.teams.CustomMarkerView
+import br.ecosynergy_app.teams.TeamsViewModel
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.XAxis
@@ -36,6 +40,9 @@ class Home : Fragment() {
     private lateinit var swipeRefresh: SwipeRefreshLayout
     private lateinit var shimmerName: ShimmerFrameLayout
 
+    private lateinit var spinnerTeam: Spinner
+    private lateinit var spinnerPeriod: Spinner
+
     private lateinit var mq7Chart: LineChart
     private lateinit var shimmerMQ7: ShimmerFrameLayout
 
@@ -46,11 +53,22 @@ class Home : Fragment() {
     private lateinit var shimmerFire: ShimmerFrameLayout
 
     private val userViewModel: UserViewModel by activityViewModels()
-
+    private val teamsViewModel: TeamsViewModel by activityViewModels()
     private val sensorsViewModel: SensorsViewModel by activityViewModels()
+
+    private var token: String? = ""
+    private var identifier: String? = ""
+    private var userId: String? = ""
+
+    private var teamHandles: List<String> = emptyList()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val sp: SharedPreferences = requireContext().getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
+        token = sp.getString("accessToken", null)
+        identifier = sp.getString("identifier", null)
+        userId = sp.getString("id", null)
     }
 
     override fun onCreateView(
@@ -72,16 +90,17 @@ class Home : Fragment() {
         shimmerFire = view.findViewById(R.id.shimmerFire)
         fireChart = view.findViewById(R.id.fireChart)
 
+        spinnerTeam = view.findViewById(R.id.spinnerTeam)
+        spinnerPeriod = view.findViewById(R.id.spinnerPeriod)
+
         return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         observeUserData()
-        observeMQ7()
-        observeMQ135()
-        observeFireSensor()
         setupSwipeRefresh()
+        getTeamsByUserId()
     }
 
     private fun observeUserData() {
@@ -102,14 +121,28 @@ class Home : Fragment() {
         }
     }
 
-    private fun getThemeColor(attrResId: Int): Int {
-        val typedValue = TypedValue()
-        val theme = requireContext().theme
-        theme.resolveAttribute(attrResId, typedValue, true)
-        return typedValue.data
+    private fun getTeamsByUserId(){
+        Log.d("HomeFragment", "UserId: $userId")
+        Log.d("HomeFragment", "Token: $token")
+        teamsViewModel.findTeamsByUserId(userId, token)
+        teamsViewModel.teamsResult.removeObservers(this)
+        teamsViewModel.teamsResult.observe(viewLifecycleOwner) { result ->
+            result.onSuccess { teamData ->
+                teamHandles =  listOf("Todas") + teamData.map { it.handle }
+                val teamsArrayAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, teamHandles)
+                spinnerTeam.adapter = teamsArrayAdapter
+                fetchMQ7ReadingsByTeamHandle()
+                fetchMQ135ReadingsByTeamHandle()
+                fetchFireReadingsByTeamHandle()
+            }.onFailure { e ->
+                Log.e("HomeActivity", "Error getting user Team Handles by Id", e)
+            }
+        }
     }
 
-    private fun observeMQ7(){
+    private fun fetchMQ7ReadingsByTeamHandle() {
+        val teamHandle: String = teamHandles[0]
+        sensorsViewModel.fetchMQ7ReadingsByTeamHandle(teamHandle, token)
         sensorsViewModel.mq7ReadingResult.observe(viewLifecycleOwner){ result->
             result.onSuccess { response->
                 handleMQ7Readings(response)
@@ -120,7 +153,9 @@ class Home : Fragment() {
         }
     }
 
-    private fun observeMQ135(){
+    private fun fetchMQ135ReadingsByTeamHandle() {
+        val teamHandle: String = teamHandles[0]
+        sensorsViewModel.fetchMQ135ReadingsByTeamHandle(token, teamHandle)
         sensorsViewModel.mq135ReadingResult.observe(viewLifecycleOwner){ result->
             result.onSuccess { response->
                 handleMQ135Readings(response)
@@ -131,7 +166,9 @@ class Home : Fragment() {
         }
     }
 
-    private fun observeFireSensor(){
+    private fun fetchFireReadingsByTeamHandle() {
+        val teamHandle: String = teamHandles[0]
+        sensorsViewModel.fetchFireReadingsByTeamHandle(token, teamHandle)
         sensorsViewModel.fireReadingResult.observe(viewLifecycleOwner){ result->
             result.onSuccess { response->
                 handleFireReadings(response)
@@ -140,6 +177,13 @@ class Home : Fragment() {
                 Log.e("TeamsFragment", "Fire Error", e)
             }
         }
+    }
+
+    private fun getThemeColor(attrResId: Int): Int {
+        val typedValue = TypedValue()
+        val theme = requireContext().theme
+        theme.resolveAttribute(attrResId, typedValue, true)
+        return typedValue.data
     }
 
     private fun setupMQ7Chart(mq7Readings: List<ReadingVO>) {

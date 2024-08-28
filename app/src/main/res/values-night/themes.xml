@@ -13,6 +13,7 @@
 
         <item name="buttonText">@color/white</item>
         <item name="shimmerColor">@color/shimmer</item>
+        <item name="spinnerColor">@color/spinnerDark</item>
         <item name="fragmentsBackground">@color/grayDark</item>
         <item name="buttonIconTint">@color/white</item>
 

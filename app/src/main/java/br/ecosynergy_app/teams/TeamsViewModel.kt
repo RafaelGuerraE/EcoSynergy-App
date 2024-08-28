@@ -125,7 +125,7 @@ class TeamsViewModel(private val service: TeamsService): ViewModel() {
         }
     }
 
-    fun findTeamsByUserId(id: String,token: String?) {
+    fun findTeamsByUserId(id: String?,token: String?) {
         viewModelScope.launch {
             try {
                 val response = service.findTeamsByUserId(id, "Bearer $token")

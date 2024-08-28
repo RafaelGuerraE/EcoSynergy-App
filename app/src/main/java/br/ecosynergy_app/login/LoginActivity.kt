@@ -2,6 +2,7 @@ package br.ecosynergy_app.login
 
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -17,10 +18,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
+import br.ecosynergy_app.NotificationService
 import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.home.HomeActivity
 import br.ecosynergy_app.register.RegisterActivity
+import br.ecosynergy_app.user.UserViewModel
+import br.ecosynergy_app.user.UserViewModelFactory
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -30,6 +34,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var txtEntry: EditText
     private lateinit var txtPassword: TextInputEditText
     private lateinit var authViewModel: AuthViewModel
+    private lateinit var userViewModel: UserViewModel
     private lateinit var lblReset: TextView
     private var hasErrorShown = false
     private lateinit var loadingProgressBar: ProgressBar
@@ -51,6 +56,7 @@ class LoginActivity : AppCompatActivity() {
         }
 
         authViewModel = ViewModelProvider(this, AuthViewModelFactory(RetrofitClient.authService))[AuthViewModel::class.java]
+        userViewModel = ViewModelProvider(this, UserViewModelFactory(RetrofitClient.userService))[UserViewModel::class.java]
 
         txtEntry = findViewById(R.id.txtEntry)
         txtPassword = findViewById(R.id.txtPassword)
@@ -60,31 +66,15 @@ class LoginActivity : AppCompatActivity() {
         loadingProgressBar = findViewById(R.id.loadingProgressBar)
         overlayView = findViewById(R.id.overlayView)
 
-        btnLogin.setOnClickListener {
+        btnLogin.setOnClickListener {view ->
             val username = txtEntry.text.toString()
             val password = txtPassword.text.toString()
 
-            if (username.isEmpty() || password.isEmpty()) {
-                if (username.isEmpty()) {
-                    txtEntry.error = "Insira seu Nome de Usuário"
-                    txtEntry.requestFocus()
-                }
-                if (password.isEmpty()) {
-                    passwordLayout.endIconMode = TextInputLayout.END_ICON_NONE
-                    txtPassword.error = "Insira sua senha"
-                    txtPassword.requestFocus()
-                    hasErrorShown = true
-                }
-                return@setOnClickListener
-            }
-            val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.hideSoftInputFromWindow(it.windowToken, 0)
-            loadingProgressBar.visibility = View.VISIBLE
-            overlayView.visibility = View.VISIBLE
-
-            val loginRequest = LoginRequest(username, password)
-            authViewModel.loginUser(loginRequest)
+            loginUser(view, username, password, passwordLayout)
         }
+
+        val notificationServiceIntent = Intent(this, NotificationService::class.java)
+        startService(notificationServiceIntent)
 
         txtEntry.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
@@ -122,22 +112,7 @@ class LoginActivity : AppCompatActivity() {
             startActivity(i)
         }
 
-        authViewModel.loginResult.observe(this) { result ->
-            loadingProgressBar.visibility = View.GONE
-            overlayView.visibility = View.GONE
 
-            result.onSuccess { loginResponse ->
-                Log.d("LoginActivity", "Login success")
-                setLoggedIn(true, loginResponse.username, loginResponse.accessToken)
-                startHomeActivity()
-            }.onFailure { error ->
-                error.printStackTrace()
-                Log.d("LoginActivity", "Login failed: ${error.message}")
-                txtEntry.error = "Usuário/Email ou Senha incorreto! Por favor verifique seus dados"
-                txtPassword.text = null
-                txtEntry.requestFocus()
-            }
-        }
 
         lblReset = findViewById(R.id.lblReset)
 
@@ -156,6 +131,58 @@ class LoginActivity : AppCompatActivity() {
         val i = Intent(this, HomeActivity::class.java)
         startActivity(i)
         finish()
+    }
+
+    private fun loginUser(view: View, username: String, password: String, passwordLayout: TextInputLayout){
+        if (username.isEmpty() || password.isEmpty()) {
+            if (username.isEmpty()) {
+                txtEntry.error = "Insira seu Nome de Usuário"
+                txtEntry.requestFocus()
+            }
+            if (password.isEmpty()) {
+                passwordLayout.endIconMode = TextInputLayout.END_ICON_NONE
+                txtPassword.error = "Insira sua senha"
+                txtPassword.requestFocus()
+                hasErrorShown = true
+            }
+            return
+        }
+        val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view.windowToken, 0)
+        loadingProgressBar.visibility = View.VISIBLE
+        overlayView.visibility = View.VISIBLE
+
+        val loginRequest = LoginRequest(username, password)
+        authViewModel.loginUser(loginRequest)
+
+        authViewModel.loginResult.observe(this) { result ->
+            loadingProgressBar.visibility = View.GONE
+            overlayView.visibility = View.GONE
+            result.onSuccess { loginResponse ->
+                userViewModel.fetchUserData(loginResponse.username, loginResponse.accessToken)
+                userViewModel.user.removeObservers(this)
+                userViewModel.user.observe(this) { user ->
+                    user.onSuccess { userData ->
+                        val sp: SharedPreferences = getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
+                        val editor = sp.edit()
+                        editor.putString("id", userData.id.toString())
+                        editor.apply()
+
+                        Log.d("LoginActivity", "Login success")
+                        setLoggedIn(true, loginResponse.username, loginResponse.accessToken)
+                        startHomeActivity()
+                    }.onFailure { e ->
+                        Log.e("HomeActivity", "Error observing user data", e)
+                    }
+                }
+            }.onFailure { error ->
+                error.printStackTrace()
+                Log.d("LoginActivity", "Login failed: ${error.message}")
+                txtEntry.error = "Usuário/Email ou Senha incorreto! Por favor verifique seus dados"
+                txtPassword.text = null
+                txtEntry.requestFocus()
+            }
+        }
     }
 
     private fun showToast(message: String) {

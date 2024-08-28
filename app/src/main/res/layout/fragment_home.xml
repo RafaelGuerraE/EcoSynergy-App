@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".home.homefragments.Home"
+    tools:context=".home.fragments.Home"
     android:id="@+id/swipeRefresh"
     android:focusable="false">
 
@@ -18,15 +18,15 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_gravity="start"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="20dp">
 
@@ -67,11 +67,37 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="10dp">
+
+                <Spinner
+                    android:id="@+id/spinnerTeam"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/spinner_home"
+                    android:spinnerMode="dropdown"
+
+                    />
+
+                <Spinner
+                    android:id="@+id/spinnerPeriod"
+                    android:entries="@array/period_array"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:spinnerMode="dropdown"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/spinner_home"
+                    android:layout_marginStart="5dp"
+                    />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:gravity="start"
-                android:layout_gravity="center"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp">
+                android:gravity="start">
 
                 <TextView
                     android:layout_width="wrap_content"

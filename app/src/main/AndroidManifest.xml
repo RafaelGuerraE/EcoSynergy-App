@@ -2,17 +2,18 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
 
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:enableOnBackInvokedCallback="true"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@drawable/logo_transparent"
+        android:icon="@drawable/logo_transparent_globe"
         android:label="@string/app_name"
         android:networkSecurityConfig="@xml/network_security_config"
-        android:roundIcon="@drawable/logo_transparent"
+        android:roundIcon="@drawable/logo_transparent_globe"
         android:supportsRtl="true"
         android:theme="@style/Base.Theme.EcoSynergyApp"
         tools:targetApi="31">
@@ -78,5 +79,9 @@
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
+
+        <service android:name=".NotificationService"
+            android:exported="true"/>
+
     </application>
 </manifest>

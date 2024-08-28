@@ -44,7 +44,7 @@ interface TeamsService {
     //User Managing
 
     @GET("api/team/v1/user/{id}")
-    suspend fun findTeamsByUserId(@Path("id") id:String, @Header("Authorization") token: String?,
+    suspend fun findTeamsByUserId(@Path("id") userId:String?, @Header("Authorization") token: String?,
                                 ) : Response<List<TeamsResponse>>
 
     @POST("api/team/v1/{teamId}/user/{userId}")

@@ -17,7 +17,7 @@
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="60dp">
+            android:layout_height="50dp">
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/navDrawerButton"
@@ -63,7 +63,7 @@
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottomNavView"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="55dp"
             app:itemIconSize="25dp"
             app:labelVisibilityMode="labeled"
             app:menu="@menu/bottom_nav"
