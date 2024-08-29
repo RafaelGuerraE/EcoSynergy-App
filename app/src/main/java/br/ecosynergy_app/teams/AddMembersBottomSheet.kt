@@ -39,7 +39,6 @@ class AddMembersBottomSheet : BottomSheetDialogFragment() {
     lateinit var usersAdapter: UsersAdapter
     private lateinit var shimmerUsers: ShimmerFrameLayout
 
-
     private lateinit var swipeRefresh: SwipeRefreshLayout
 
     private var token: String? = ""
@@ -53,7 +52,7 @@ class AddMembersBottomSheet : BottomSheetDialogFragment() {
             teamHandle = it.getString("TEAM_HANDLE")
             teamId = it.getString("TEAM_ID")
             val memberIdsString = it.getString("MEMBER_IDS") ?: ""
-            memberIds = ArrayList(memberIdsString.split(",")) // Convert the comma-separated string back to a list
+            memberIds = ArrayList(memberIdsString.split(","))
         }
         Log.d("AddMembers", "MemberIDS in onCreate: $memberIds, $teamHandle, $teamId")
     }

@@ -73,7 +73,7 @@
             android:layout_height="25dp"
             android:layout_gravity="end|center"
             android:contentDescription="ButtonRemoveUser"
-            android:src="@drawable/baseline_send_24"
+            android:src="@drawable/baseline_invite"
             android:background="@color/transparent"
             app:tint="?android:attr/iconTint"
             android:scaleType="fitXY"

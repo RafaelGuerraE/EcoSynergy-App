@@ -1,4 +1,4 @@
-package br.ecosynergy_app.home.fragments
+package br.ecosynergy_app
 
 import com.github.mikephil.charting.formatter.ValueFormatter
 import java.text.SimpleDateFormat

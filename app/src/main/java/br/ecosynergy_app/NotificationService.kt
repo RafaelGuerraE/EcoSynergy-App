@@ -36,8 +36,8 @@ class NotificationService : Service() {
             .setContentTitle("Bom dia, Rafael!")
             .setContentText("Novo relatório disponível, clique aqui para ver!")
             .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setContentIntent(pendingIntent) // Set the PendingIntent
-            .setAutoCancel(true) // Close the notification when clicked
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
             .build()
 
         if (ActivityCompat.checkSelfPermission(
