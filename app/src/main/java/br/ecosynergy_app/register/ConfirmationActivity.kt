@@ -25,6 +25,8 @@ import br.ecosynergy_app.home.HomeActivity
 import br.ecosynergy_app.login.AuthViewModel
 import br.ecosynergy_app.login.AuthViewModelFactory
 import br.ecosynergy_app.login.LoginRequest
+import br.ecosynergy_app.room.AppDatabase
+import br.ecosynergy_app.room.UserRepository
 import br.ecosynergy_app.teams.RoleRequest
 import br.ecosynergy_app.teams.TeamsViewModel
 import br.ecosynergy_app.teams.TeamsViewModelFactory
@@ -71,7 +73,11 @@ class ConfirmationActivity : AppCompatActivity() {
         val gender: String = intent.getStringExtra("GENDER").toString()
 
         registerViewModel = ViewModelProvider(this, RegisterViewModelFactory(RetrofitClient.registerService))[RegisterViewModel::class.java]
-        authViewModel = ViewModelProvider(this, AuthViewModelFactory(RetrofitClient.authService))[AuthViewModel::class.java]
+
+        val userDao = AppDatabase.getDatabase(applicationContext).userDao()
+        val userRepository = UserRepository(userDao)
+
+        authViewModel = ViewModelProvider(this, AuthViewModelFactory(RetrofitClient.authService, userRepository))[AuthViewModel::class.java]
         teamsViewModel = ViewModelProvider(this, TeamsViewModelFactory(RetrofitClient.teamsService))[TeamsViewModel::class.java]
 
         loadingProgressBar = findViewById(R.id.loadingProgressBar)

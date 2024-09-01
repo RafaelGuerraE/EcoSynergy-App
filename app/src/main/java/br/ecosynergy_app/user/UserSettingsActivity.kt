@@ -246,7 +246,7 @@ class UserSettingsActivity : AppCompatActivity() {
         val token = sharedPreferences.getString("accessToken", null)
 
         if (identifier != null && token != null) {
-            userViewModel.fetchUserData(identifier, token)
+            userViewModel.getUserByUsername(identifier, token)
             userViewModel.user.observe(this) { result ->
                 result.onSuccess { userResponse ->
                     userId = userResponse.id.toString()

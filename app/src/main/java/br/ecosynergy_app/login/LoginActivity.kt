@@ -23,6 +23,8 @@ import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.home.HomeActivity
 import br.ecosynergy_app.register.RegisterActivity
+import br.ecosynergy_app.room.AppDatabase
+import br.ecosynergy_app.room.UserRepository
 import br.ecosynergy_app.user.UserViewModel
 import br.ecosynergy_app.user.UserViewModelFactory
 import com.google.android.material.snackbar.Snackbar
@@ -34,7 +36,6 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var txtEntry: EditText
     private lateinit var txtPassword: TextInputEditText
     private lateinit var authViewModel: AuthViewModel
-    private lateinit var userViewModel: UserViewModel
     private lateinit var lblReset: TextView
     private var hasErrorShown = false
     private lateinit var loadingProgressBar: ProgressBar
@@ -55,8 +56,10 @@ class LoginActivity : AppCompatActivity() {
             return
         }
 
-        authViewModel = ViewModelProvider(this, AuthViewModelFactory(RetrofitClient.authService))[AuthViewModel::class.java]
-        userViewModel = ViewModelProvider(this, UserViewModelFactory(RetrofitClient.userService))[UserViewModel::class.java]
+        val userDao = AppDatabase.getDatabase(applicationContext).userDao()
+        val userRepository = UserRepository(userDao)
+
+        authViewModel = ViewModelProvider(this, AuthViewModelFactory(RetrofitClient.authService, userRepository))[AuthViewModel::class.java]
 
         txtEntry = findViewById(R.id.txtEntry)
         txtPassword = findViewById(R.id.txtPassword)
@@ -73,8 +76,8 @@ class LoginActivity : AppCompatActivity() {
             loginUser(view, username, password, passwordLayout)
         }
 
-        val notificationServiceIntent = Intent(this, NotificationService::class.java)
-        startService(notificationServiceIntent)
+//        val notificationServiceIntent = Intent(this, NotificationService::class.java)
+//        startService(notificationServiceIntent)
 
         txtEntry.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
@@ -111,8 +114,6 @@ class LoginActivity : AppCompatActivity() {
             val i = Intent(this, RegisterActivity::class.java)
             startActivity(i)
         }
-
-
 
         lblReset = findViewById(R.id.lblReset)
 
@@ -153,28 +154,15 @@ class LoginActivity : AppCompatActivity() {
         overlayView.visibility = View.VISIBLE
 
         val loginRequest = LoginRequest(username, password)
-        authViewModel.loginUser(loginRequest)
 
+        authViewModel.loginUser(loginRequest)
         authViewModel.loginResult.observe(this) { result ->
             loadingProgressBar.visibility = View.GONE
             overlayView.visibility = View.GONE
             result.onSuccess { loginResponse ->
-                userViewModel.fetchUserData(loginResponse.username, loginResponse.accessToken)
-                userViewModel.user.removeObservers(this)
-                userViewModel.user.observe(this) { user ->
-                    user.onSuccess { userData ->
-                        val sp: SharedPreferences = getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
-                        val editor = sp.edit()
-                        editor.putString("id", userData.id.toString())
-                        editor.apply()
-
-                        Log.d("LoginActivity", "Login success")
-                        setLoggedIn(true, loginResponse.username, loginResponse.accessToken)
-                        startHomeActivity()
-                    }.onFailure { e ->
-                        Log.e("HomeActivity", "Error observing user data", e)
-                    }
-                }
+                Log.d("LoginActivity", "Login success")
+                setLoggedIn(true, loginResponse.username, loginResponse.accessToken)
+                startHomeActivity()
             }.onFailure { error ->
                 error.printStackTrace()
                 Log.d("LoginActivity", "Login failed: ${error.message}")

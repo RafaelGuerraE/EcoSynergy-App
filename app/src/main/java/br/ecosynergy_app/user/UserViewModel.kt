@@ -19,11 +19,9 @@ class UserViewModel(private val service: UserService) : ViewModel() {
     val user: LiveData<Result<UserResponse>> = _user
     private val _users = MutableLiveData<Result<MutableList<UserResponse>>>()
     val users: LiveData<Result<MutableList<UserResponse>>> = _users
-    private val _delete = MutableLiveData<Result<Unit>>()
-    val delete: LiveData<Result<Unit>> = _delete
 
 
-    fun fetchUserData(identifier: String?, token: String?) {
+    fun getUserByUsername(identifier: String?, token: String?) {
         viewModelScope.launch {
             try {
                 val response = service.getUserByUsername(identifier, "Bearer $token")
@@ -90,20 +88,15 @@ class UserViewModel(private val service: UserService) : ViewModel() {
                 val response = service.deleteUser(id, "Bearer $token")
                 if (response.isSuccessful) {
                     Log.d("UserViewModel", "User deleted successfully")
-                    _delete.value = Result.success(Unit)
                 } else {
                     Log.e("UserViewModel", "Error deleting user: ${response.errorBody()?.string()}")
-                    _delete.value = Result.failure(HttpException(response))
                 }
             } catch (e: HttpException) {
                 Log.e("UserViewModel", "HTTP error during deleteUserData", e)
-                _delete.value = Result.failure(e)
             } catch (e: IOException) {
                 Log.e("UserViewModel", "Network error during deleteUserData", e)
-                _delete.value = Result.failure(e)
             } catch (e: Exception) {
                 Log.e("UserViewModel", "Unexpected error during deleteUserData", e)
-                _delete.value = Result.failure(e)
             }
         }
     }

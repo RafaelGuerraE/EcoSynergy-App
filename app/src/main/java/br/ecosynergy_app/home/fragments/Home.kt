@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import br.ecosynergy_app.R
+import br.ecosynergy_app.login.AuthViewModel
 import br.ecosynergy_app.sensors.FireReadingsResponse
 import br.ecosynergy_app.sensors.MQ135ReadingsResponse
 import br.ecosynergy_app.user.UserViewModel
@@ -55,6 +56,7 @@ class Home : Fragment() {
     private val userViewModel: UserViewModel by activityViewModels()
     private val teamsViewModel: TeamsViewModel by activityViewModels()
     private val sensorsViewModel: SensorsViewModel by activityViewModels()
+    private val authViewModel: AuthViewModel by activityViewModels()
 
     private var token: String? = ""
     private var identifier: String? = ""
@@ -65,10 +67,7 @@ class Home : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val sp: SharedPreferences = requireContext().getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
-        token = sp.getString("accessToken", null)
-        identifier = sp.getString("identifier", null)
-        userId = sp.getString("id", null)
+
     }
 
     override fun onCreateView(
@@ -98,32 +97,45 @@ class Home : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        observeUserData()
         setupSwipeRefresh()
-        getTeamsByUserId()
+        observeUserData()
+       // getTeamsByUserId()
     }
 
     private fun observeUserData() {
-        userViewModel.user.observe(viewLifecycleOwner) { result ->
+//        userViewModel.user.observe(viewLifecycleOwner) { result ->
+//            shimmerName.animate().alpha(0f).setDuration(300).withEndAction {
+//                shimmerName.stopShimmer()
+//                shimmerName.visibility = View.GONE
+//                lblFirstname.visibility = View.VISIBLE
+//                lblFirstname.animate().alpha(1f).setDuration(300)
+//            }
+//            result.onSuccess { user ->
+//                val firstName = user.fullName.split(" ").firstOrNull()
+//                lblFirstname.text = "$firstName!"
+//            }.onFailure { throwable ->
+//                Log.e("HomeFragment", "Error fetching user data", throwable)
+//                lblFirstname.text = ""
+//            }
+//        }
+
+        authViewModel.userInfo.observe(viewLifecycleOwner){user ->
             shimmerName.animate().alpha(0f).setDuration(300).withEndAction {
                 shimmerName.stopShimmer()
                 shimmerName.visibility = View.GONE
                 lblFirstname.visibility = View.VISIBLE
                 lblFirstname.animate().alpha(1f).setDuration(300)
             }
-            result.onSuccess { user ->
-                val firstName = user.fullName.split(" ").firstOrNull()
-                lblFirstname.text = "$firstName!"
-            }.onFailure { throwable ->
-                Log.e("HomeFragment", "Error fetching user data", throwable)
-                lblFirstname.text = ""
-            }
+            val firstName = user?.fullName?.split(" ")?.firstOrNull()
+            lblFirstname.text = "$firstName!"
+
+            token = user?.accessToken
+            identifier = user?.username
+            userId = user?.id
         }
     }
 
     private fun getTeamsByUserId(){
-        Log.d("HomeFragment", "UserId: $userId")
-        Log.d("HomeFragment", "Token: $token")
         teamsViewModel.findTeamsByUserId(userId, token)
         teamsViewModel.teamsResult.removeObservers(this)
         teamsViewModel.teamsResult.observe(viewLifecycleOwner) { result ->
@@ -224,7 +236,7 @@ class Home : Fragment() {
             circleRadius = 5f
             setDrawFilled(true)
             fillColor = ContextCompat.getColor(requireContext(), R.color.greenDark_50)
-            valueFormatter = DefaultValueFormatter(0) // Display integers instead of floats
+            valueFormatter = DefaultValueFormatter(0)
         }
 
         mq7Chart.xAxis.apply {

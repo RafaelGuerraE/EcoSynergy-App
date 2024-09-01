@@ -26,7 +26,12 @@ import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.home.fragments.Home
 import br.ecosynergy_app.home.fragments.Notifications
 import br.ecosynergy_app.home.fragments.Teams
+import br.ecosynergy_app.login.AuthViewModel
+import br.ecosynergy_app.login.AuthViewModelFactory
 import br.ecosynergy_app.login.LoginActivity
+import br.ecosynergy_app.room.AppDatabase
+import br.ecosynergy_app.room.User
+import br.ecosynergy_app.room.UserRepository
 import br.ecosynergy_app.sensors.SensorsViewModel
 import br.ecosynergy_app.sensors.SensorsViewModelFactory
 import br.ecosynergy_app.teams.TeamsViewModel
@@ -45,12 +50,23 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var userViewModel: UserViewModel
     private lateinit var sensorsViewModel: SensorsViewModel
     private lateinit var teamsViewModel: TeamsViewModel
+    private lateinit var authViewModel: AuthViewModel
 
     private var token: String? = ""
     private var identifier: String? = ""
     private var userId: String = ""
 
+    private lateinit var bottomNavView: BottomNavigationView
+    private lateinit var drawerLayout: DrawerLayout
+    private lateinit var navDrawerButton: CircleImageView
+    private lateinit var navView: NavigationView
+    private lateinit var btnTheme: ImageButton
+
+    private lateinit var progressBar: ProgressBar
+
     var teamHandles: List<String> =  emptyList()
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -61,29 +77,33 @@ class HomeActivity : AppCompatActivity() {
             "system" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
         }
 
-        val notificationServiceIntent = Intent(this, NotificationService::class.java)
-        startService(notificationServiceIntent)
+//        val notificationServiceIntent = Intent(this, NotificationService::class.java)
+//        startService(notificationServiceIntent)
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
         val notificationClicked = intent.getBooleanExtra("NOTIFICATION_CLICKED", false)
 
+        val userDao = AppDatabase.getDatabase(applicationContext).userDao()
+        val userRepository = UserRepository(userDao)
+
         userViewModel = ViewModelProvider(this, UserViewModelFactory(RetrofitClient.userService))[UserViewModel::class.java]
         sensorsViewModel = ViewModelProvider(this, SensorsViewModelFactory(RetrofitClient.sensorsService))[SensorsViewModel::class.java]
         teamsViewModel = ViewModelProvider(this, TeamsViewModelFactory(RetrofitClient.teamsService))[TeamsViewModel::class.java]
+        authViewModel = ViewModelProvider(this,AuthViewModelFactory(RetrofitClient.authService, userRepository))[AuthViewModel::class.java]
 
         val sp: SharedPreferences = getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
-        token = sp.getString("accessToken", null)
-        identifier = sp.getString("identifier", null)
 
-        val bottomNavView: BottomNavigationView = findViewById(R.id.bottomNavView)
-        val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
-        val navDrawerButton: CircleImageView = findViewById(R.id.navDrawerButton)
-        val navView: NavigationView = findViewById(R.id.nav_view)
-        val btnTheme: ImageButton = findViewById(R.id.btnTheme)
+        bottomNavView = findViewById(R.id.bottomNavView)
+        drawerLayout  = findViewById(R.id.drawer_layout)
+        navDrawerButton = findViewById(R.id.navDrawerButton)
+        navView = findViewById(R.id.nav_view)
+        btnTheme = findViewById(R.id.btnTheme)
 
-        fetchUserData()
+        progressBar = findViewById(R.id.progressBar)
+
+        getUserByUsername()
 
         if (sp.getBoolean("just_logged_in", false)) {
             showSnackBar("Conectado com sucesso", "FECHAR", R.color.greenDark)
@@ -192,47 +212,46 @@ class HomeActivity : AppCompatActivity() {
         }
 
         btnTheme.setOnClickListener{
-            val items = arrayOf("Padrão do Sistema", "Claro", "Escuro")
-
-            val builder = AlertDialog.Builder(this)
-            builder.setTitle("Selecione o tema desejado")
-
-            builder.setItems(items) { dialog, which ->
-                val sp: SharedPreferences = getSharedPreferences("theme_prefs", Context.MODE_PRIVATE)
-                val editor = sp.edit()
-
-                when (which) {
-                    0 -> {
-                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
-                        editor.putString("theme", "system")
-                    }
-                    1 -> {
-                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                        editor.putString("theme", "light")
-                    }
-                    2 -> {
-                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                        editor.putString("theme", "dark")
-                    }
-                }
-                editor.apply()
-                dialog.dismiss()
-            }
-
-            val dialog: AlertDialog = builder.create()
-            dialog.show()
-
-
+            manageThemes()
         }
-
-
     }
 
     override fun onResume() {
         super.onResume()
-        val navView: NavigationView = findViewById(R.id.nav_view)
         clearNavigationViewSelection(navView)
-        fetchUserData()
+        getUserByUsername()
+    }
+
+    private fun manageThemes(){
+        val items = arrayOf("Padrão do Sistema", "Claro", "Escuro")
+
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Selecione o tema desejado")
+
+        builder.setItems(items) { dialog, which ->
+            val sp: SharedPreferences = getSharedPreferences("theme_prefs", Context.MODE_PRIVATE)
+            val editor = sp.edit()
+
+            when (which) {
+                0 -> {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+                    editor.putString("theme", "system")
+                }
+                1 -> {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                    editor.putString("theme", "light")
+                }
+                2 -> {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                    editor.putString("theme", "dark")
+                }
+            }
+            editor.apply()
+            dialog.dismiss()
+        }
+
+        val dialog: AlertDialog = builder.create()
+        dialog.show()
     }
 
     private fun clearNavigationViewSelection(navView: NavigationView) {
@@ -249,15 +268,18 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun logout() {
-        val spLogin: SharedPreferences = getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
         val spTheme: SharedPreferences = getSharedPreferences("theme_prefs", Context.MODE_PRIVATE)
-        val editLogin = spLogin.edit()
         val editTheme = spTheme.edit()
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
         editTheme.putString("theme", "system")
-        editLogin.clear()
-        editLogin.apply()
         editTheme.apply()
+
+        val spLog = getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
+        val editLog = spLog.edit()
+        editLog.putBoolean("isLoggedIn", false)
+        editLog.apply()
+
+        authViewModel.deleteUserInfo()
 
         val i = Intent(this, LoginActivity::class.java)
         i.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -266,30 +288,17 @@ class HomeActivity : AppCompatActivity() {
         finish()
     }
 
-    private fun fetchUserData() {
-        if (identifier != null && token != null) {
-            userViewModel.fetchUserData(identifier, token)
-            userViewModel.user.removeObservers(this)
-            userViewModel.user.observe(this) { user ->
-                user.onSuccess { userData ->
-                    userId = userData.id.toString()
-                    val sp: SharedPreferences = getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
-                    val editor = sp.edit()
-                    editor.putString("id", userId)
-                    editor.apply()
-                    updateNavigationHeader(findViewById(R.id.nav_view))
-                    //getTeamsByUserId()
-                }.onFailure { e ->
-                    Log.e("HomeActivity", "Error observing user data", e)
-                    logout()
-                }
+    private fun getUserByUsername() {
+        authViewModel.getUserInfo()
+        authViewModel.userInfo.observe(this) { user ->
+            Log.d("HomeActivity", "User: $user")
+            if (user != null) {
+                updateNavigationHeader(navView, user)
+            } else {
+                showToast("No user found")
             }
-        } else {
-            Log.e("HomeActivity", "Invalid identifier or token")
         }
     }
-
-
 
     private fun getDrawableForLetter(letter: Char): Int {
         return when (letter.lowercaseChar()) {
@@ -323,41 +332,29 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateNavigationHeader(navView: NavigationView) {
+    private fun updateNavigationHeader(navView: NavigationView, userData: User) {
         val headerView = navView.getHeaderView(0)
-        val progressBar: ProgressBar = findViewById(R.id.progressBar)
-        val navDrawerButton: CircleImageView = findViewById(R.id.navDrawerButton)
         val userPicture: CircleImageView = headerView.findViewById(R.id.userPicture)
         val lblUserFullname: TextView = headerView.findViewById(R.id.lblUserFullname)
         val lblUsername: TextView = headerView.findViewById(R.id.lblUsername)
         val lblUserEmail: TextView = headerView.findViewById(R.id.lblUserEmail)
 
-        userViewModel.user.value?.let { user ->
-            progressBar.visibility = View.VISIBLE
-            navDrawerButton.visibility = View.GONE
-
-            user.onSuccess { userData ->
-                lblUserFullname.text = userData.fullName
-                lblUsername.text = "@${userData.username}"
-                lblUserEmail.text = userData.email
-                val firstName = userData.fullName.split(" ").firstOrNull()
-                if (!firstName.isNullOrEmpty()) {
-                    progressBar.visibility = View.GONE
-                    navDrawerButton.visibility = View.VISIBLE
-                    val firstLetter = firstName[0]
-                    val drawableId = getDrawableForLetter(firstLetter)
-                    userPicture.setImageResource(drawableId)
-                    navDrawerButton.setImageResource(drawableId)
-                } else {
-                    progressBar.visibility = View.GONE
-                    navDrawerButton.visibility = View.VISIBLE
-                    showToast("ERRO: Imagem de Perfil")
-                }
-            }.onFailure { throwable ->
-                Log.e("HomeActivity", "Error updating navigation header", throwable)
-                logout()
-            }
-        } ?: Log.e("HomeActivity", "User data is not available")
+        lblUserFullname.text = userData.fullName
+        lblUsername.text = "@${userData.username}"
+        lblUserEmail.text = userData.email
+        val firstName = userData.fullName.split(" ").firstOrNull()
+        if (!firstName.isNullOrEmpty()) {
+            progressBar.visibility = View.GONE
+            navDrawerButton.visibility = View.VISIBLE
+            val firstLetter = firstName[0]
+            val drawableId = getDrawableForLetter(firstLetter)
+            userPicture.setImageResource(drawableId)
+            navDrawerButton.setImageResource(drawableId)
+        } else {
+            progressBar.visibility = View.GONE
+            navDrawerButton.visibility = View.VISIBLE
+            showToast("ERRO: Imagem de Perfil")
+        }
     }
 
 
