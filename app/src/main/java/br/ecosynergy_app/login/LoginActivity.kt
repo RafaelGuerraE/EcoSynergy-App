@@ -161,8 +161,12 @@ class LoginActivity : AppCompatActivity() {
             overlayView.visibility = View.GONE
             result.onSuccess { loginResponse ->
                 Log.d("LoginActivity", "Login success")
-                setLoggedIn(true, loginResponse.username, loginResponse.accessToken)
-                startHomeActivity()
+                authViewModel.user.observe(this){result->
+                    result.onSuccess {
+                        setLoggedIn(true, loginResponse.username, loginResponse.accessToken)
+                        startHomeActivity()
+                    }
+                }
             }.onFailure { error ->
                 error.printStackTrace()
                 Log.d("LoginActivity", "Login failed: ${error.message}")

@@ -44,10 +44,12 @@ class AuthViewModel(
         viewModelScope.launch {
             try {
                 val response = authService.getUserByUsername(username, "Bearer $access")
-                Log.d("AuthViewModel", "User data fetched: $response")
                 _user.value = Result.success(response)
+
                 val userStored = response.toUser(access, refresh)
                 userRepository.insertUser(userStored)
+
+                Log.d("AuthViewModel", "User data fetched: $response")
                 Log.d("AuthViewModel", "UserRepository: $userStored")
             } catch (e: IOException) {
                 Log.e("AuthViewModel", "Network error during getUserByUsername", e)
@@ -65,9 +67,11 @@ class AuthViewModel(
     fun getUserInfo() {
         viewModelScope.launch {
             try {
-                val user = userRepository.getUser()
-                Log.d("AuthViewModel", "UserRepositoryGetUser: $user")
-                _userInfo.value = user
+                val response = userRepository.getUser()
+                _userInfo.value = response
+
+                Log.d("AuthViewModel", "GetUserInfo: $response")
+
             } catch (e: Exception) {
                 Log.e("AuthViewModel", "Unexpected error during getUserInfo", e)
             }
@@ -77,8 +81,9 @@ class AuthViewModel(
     fun deleteUserInfo() {
         viewModelScope.launch {
             try {
-                val user = userRepository.deleteUser()
-                Log.d("AuthViewModel", "DeleteUserInfo: $user")
+                val delete = userRepository.deleteUser()
+                val deleteState = if(delete == Unit) "OK" else "ERROR"
+                Log.d("AuthViewModel", "DeleteUserInfo: $deleteState")
             } catch (e: Exception) {
                 Log.e("AuthViewModel", "Unexpected error during deleteUserInfo", e)
             }

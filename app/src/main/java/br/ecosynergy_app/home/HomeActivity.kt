@@ -103,7 +103,7 @@ class HomeActivity : AppCompatActivity() {
 
         progressBar = findViewById(R.id.progressBar)
 
-        getUserByUsername()
+        getUserInfo()
 
         if (sp.getBoolean("just_logged_in", false)) {
             showSnackBar("Conectado com sucesso", "FECHAR", R.color.greenDark)
@@ -219,7 +219,7 @@ class HomeActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         clearNavigationViewSelection(navView)
-        getUserByUsername()
+        //getUserInfo()
     }
 
     private fun manageThemes(){
@@ -267,6 +267,18 @@ class HomeActivity : AppCompatActivity() {
             .commit()
     }
 
+    private fun getUserInfo() {
+        authViewModel.getUserInfo()
+        authViewModel.userInfo.observe(this) { user ->
+            Log.d("HomeActivity", "User data retrieved: $user")
+            if (user != null) {
+                updateNavigationHeader(navView, user)
+            } else {
+                showToast("No user found")
+            }
+        }
+    }
+
     private fun logout() {
         val spTheme: SharedPreferences = getSharedPreferences("theme_prefs", Context.MODE_PRIVATE)
         val editTheme = spTheme.edit()
@@ -288,19 +300,7 @@ class HomeActivity : AppCompatActivity() {
         finish()
     }
 
-    private fun getUserByUsername() {
-        authViewModel.getUserInfo()
-        authViewModel.userInfo.observe(this) { user ->
-            Log.d("HomeActivity", "User: $user")
-            if (user != null) {
-                updateNavigationHeader(navView, user)
-            } else {
-                showToast("No user found")
-            }
-        }
-    }
-
-    private fun getDrawableForLetter(letter: Char): Int {
+    fun getDrawableForLetter(letter: Char): Int {
         return when (letter.lowercaseChar()) {
             'a' -> R.drawable.a
             'b' -> R.drawable.b
