@@ -7,17 +7,17 @@ import androidx.room.*
 interface MembersDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(user: Members)
+    suspend fun insertMember(member: Members)
 
     @Update
-    suspend fun update(user: Members)
+    suspend fun updateMember(member: Members)
 
     @Delete
-    suspend fun delete(user: Members)
+    suspend fun deleteMember(member: Members)
 
-    @Query("SELECT * FROM users WHERE id = :userId")
-    suspend fun getUserById(userId: Int): Members?
+    @Query("SELECT * FROM members WHERE id = :id")
+    suspend fun getMemberById(id: Int): Members?
 
-    @Query("SELECT * FROM users")
-    fun getAllUsers(): LiveData<List<Members>>
+    @Query("SELECT * FROM members")
+    fun getAllMembers(): LiveData<List<Members>>
 }

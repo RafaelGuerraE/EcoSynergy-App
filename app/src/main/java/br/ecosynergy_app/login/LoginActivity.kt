@@ -24,7 +24,13 @@ import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.home.HomeActivity
 import br.ecosynergy_app.register.RegisterActivity
 import br.ecosynergy_app.room.AppDatabase
+import br.ecosynergy_app.room.TeamsRepository
 import br.ecosynergy_app.room.UserRepository
+import br.ecosynergy_app.sensors.SensorsViewModel
+import br.ecosynergy_app.sensors.SensorsViewModelFactory
+import br.ecosynergy_app.teams.TeamAdapter
+import br.ecosynergy_app.teams.TeamsViewModel
+import br.ecosynergy_app.teams.TeamsViewModelFactory
 import br.ecosynergy_app.user.UserViewModel
 import br.ecosynergy_app.user.UserViewModelFactory
 import com.google.android.material.snackbar.Snackbar
@@ -35,11 +41,15 @@ class LoginActivity : AppCompatActivity() {
 
     private lateinit var txtEntry: EditText
     private lateinit var txtPassword: TextInputEditText
-    private lateinit var authViewModel: AuthViewModel
+
     private lateinit var lblReset: TextView
     private var hasErrorShown = false
     private lateinit var loadingProgressBar: ProgressBar
     private lateinit var overlayView: View
+
+    private lateinit var authViewModel: AuthViewModel
+    private lateinit var teamsViewModel: TeamsViewModel
+    private lateinit var sensorsViewModel: SensorsViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
@@ -59,7 +69,12 @@ class LoginActivity : AppCompatActivity() {
         val userDao = AppDatabase.getDatabase(applicationContext).userDao()
         val userRepository = UserRepository(userDao)
 
+        val teamsDao = AppDatabase.getDatabase(applicationContext).teamsDao()
+        val teamsRepository = TeamsRepository(teamsDao)
+
         authViewModel = ViewModelProvider(this, AuthViewModelFactory(RetrofitClient.authService, userRepository))[AuthViewModel::class.java]
+        teamsViewModel = ViewModelProvider(this, TeamsViewModelFactory(RetrofitClient.teamsService, teamsRepository))[TeamsViewModel::class.java]
+        sensorsViewModel = ViewModelProvider(this, SensorsViewModelFactory(RetrofitClient.sensorsService))[SensorsViewModel::class.java]
 
         txtEntry = findViewById(R.id.txtEntry)
         txtPassword = findViewById(R.id.txtPassword)
@@ -173,6 +188,19 @@ class LoginActivity : AppCompatActivity() {
                 txtEntry.error = "Usuário/Email ou Senha incorreto! Por favor verifique seus dados"
                 txtPassword.text = null
                 txtEntry.requestFocus()
+            }
+        }
+    }
+
+    private fun getTeamsByUserId(userId: String, token: String){
+        teamsViewModel.findTeamsByUserId(userId, token)
+        teamsViewModel.teamsResult.removeObservers(this)
+        teamsViewModel.teamsResult.observe(this) { result ->
+            Log.d("TeamsFragment", "TeamsResult: $result")
+            result.onSuccess { teamData ->
+
+            }.onFailure { e ->
+                Log.e("TeamsFragment", "Error", e)
             }
         }
     }

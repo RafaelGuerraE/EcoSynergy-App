@@ -4,21 +4,21 @@ import androidx.lifecycle.LiveData
 
 class MembersRepository(private val membersDao: MembersDao) {
 
-    val allUsers: LiveData<List<Members>> = membersDao.getAllUsers()
+    val allMembers: LiveData<List<Members>> = membersDao.getAllMembers()
 
-    suspend fun insert(member: Members) {
-        membersDao.insert(member)
+    suspend fun insertMember(member: Members) {
+        membersDao.insertMember(member)
     }
 
-    suspend fun update(member: Members) {
-        membersDao.update(member)
+    suspend fun updateMember(member: Members) {
+        membersDao.updateMember(member)
     }
 
-    suspend fun delete(member: Members) {
-        membersDao.delete(member)
+    suspend fun deleteMember(member: Members) {
+        membersDao.deleteMember(member)
     }
 
-    suspend fun getUserById(id: Int): Members? {
-        return membersDao.getUserById(id)
+    suspend fun getMemberById(id: Int): Members? {
+        return membersDao.getMemberById(id)
     }
 }

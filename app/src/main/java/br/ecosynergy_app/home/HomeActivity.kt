@@ -67,7 +67,6 @@ class HomeActivity : AppCompatActivity() {
     var teamHandles: List<String> =  emptyList()
 
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
 
         val sharedPreferences: SharedPreferences = getSharedPreferences("theme_prefs", Context.MODE_PRIVATE)
@@ -356,7 +355,6 @@ class HomeActivity : AppCompatActivity() {
             showToast("ERRO: Imagem de Perfil")
         }
     }
-
 
     private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
