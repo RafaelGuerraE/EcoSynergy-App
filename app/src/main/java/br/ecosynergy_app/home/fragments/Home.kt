@@ -62,7 +62,7 @@ class Home : Fragment() {
     private var identifier: String? = ""
     private var userId: String? = ""
 
-    private var teamHandles: List<String> = emptyList()
+    private var teamHandles: List<String> = listOf("Todas") + emptyList()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -100,6 +100,9 @@ class Home : Fragment() {
         setupSwipeRefresh()
         observeUserData()
        // getTeamsByUserId()
+
+        val teamsArrayAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, teamHandles)
+        spinnerTeam.adapter = teamsArrayAdapter
     }
 
     private fun observeUserData() {
@@ -153,7 +156,7 @@ class Home : Fragment() {
     }
 
     private fun fetchMQ7ReadingsByTeamHandle() {
-        val teamHandle: String = teamHandles[0]
+        val teamHandle: String = teamHandles[1]
         sensorsViewModel.fetchMQ7ReadingsByTeamHandle(teamHandle, token)
         sensorsViewModel.mq7ReadingResult.observe(viewLifecycleOwner){ result->
             result.onSuccess { response->
@@ -166,7 +169,7 @@ class Home : Fragment() {
     }
 
     private fun fetchMQ135ReadingsByTeamHandle() {
-        val teamHandle: String = teamHandles[0]
+        val teamHandle: String = teamHandles[1]
         sensorsViewModel.fetchMQ135ReadingsByTeamHandle(token, teamHandle)
         sensorsViewModel.mq135ReadingResult.observe(viewLifecycleOwner){ result->
             result.onSuccess { response->
@@ -179,7 +182,7 @@ class Home : Fragment() {
     }
 
     private fun fetchFireReadingsByTeamHandle() {
-        val teamHandle: String = teamHandles[0]
+        val teamHandle: String = teamHandles[1]
         sensorsViewModel.fetchFireReadingsByTeamHandle(token, teamHandle)
         sensorsViewModel.fireReadingResult.observe(viewLifecycleOwner){ result->
             result.onSuccess { response->

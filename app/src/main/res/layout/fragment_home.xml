@@ -64,18 +64,21 @@
 
             </LinearLayout>
 
-            <LinearLayout
+            <HorizontalScrollView
                 android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scrollbarStyle="insideOverlay">
+            <LinearLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_marginBottom="10dp">
 
                 <Spinner
                     android:id="@+id/spinnerTeam"
-                    android:layout_width="0dp"
+                    android:layout_width="150dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="5dp"
-                    android:layout_weight="1"
                     android:background="@drawable/spinner_home"
                     android:spinnerMode="dropdown"
 
@@ -84,14 +87,24 @@
                 <Spinner
                     android:id="@+id/spinnerPeriod"
                     android:entries="@array/period_array"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
+                    android:layout_width="150dp"
+                    android:spinnerMode="dropdown"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/spinner_home"
+                    android:layout_marginStart="5dp"
+                    />
+
+                <Spinner
+                    android:entries="@array/period_array"
+                    android:layout_width="150dp"
                     android:spinnerMode="dropdown"
                     android:layout_height="wrap_content"
                     android:background="@drawable/spinner_home"
                     android:layout_marginStart="5dp"
                     />
             </LinearLayout>
+
+            </HorizontalScrollView>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -136,6 +149,15 @@
                             android:backgroundTint="?attr/shimmerColor"/>
                     </com.facebook.shimmer.ShimmerFrameLayout>
                 </LinearLayout>
+
+                <ImageButton
+                    android:id="@+id/btnShare"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:background="@color/transparent"
+                    android:contentDescription="ButtonShare"
+                    android:src="@drawable/share_24"
+                    android:scaleType="fitCenter"/>
 
                 <TextView
                     android:layout_width="wrap_content"
