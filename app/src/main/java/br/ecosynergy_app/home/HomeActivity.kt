@@ -20,7 +20,6 @@ import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import br.ecosynergy_app.NotificationService
 import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.home.fragments.Home
@@ -32,8 +31,10 @@ import br.ecosynergy_app.login.LoginActivity
 import br.ecosynergy_app.room.AppDatabase
 import br.ecosynergy_app.room.User
 import br.ecosynergy_app.room.UserRepository
-import br.ecosynergy_app.sensors.SensorsViewModel
-import br.ecosynergy_app.sensors.SensorsViewModelFactory
+import br.ecosynergy_app.readings.ReadingsViewModel
+import br.ecosynergy_app.readings.ReadingsViewModelFactory
+import br.ecosynergy_app.room.ReadingsRepository
+import br.ecosynergy_app.room.TeamsRepository
 import br.ecosynergy_app.teams.TeamsViewModel
 import br.ecosynergy_app.teams.TeamsViewModelFactory
 import br.ecosynergy_app.user.UserSettingsActivity
@@ -48,7 +49,7 @@ import com.google.android.material.snackbar.Snackbar
 class HomeActivity : AppCompatActivity() {
 
     private lateinit var userViewModel: UserViewModel
-    private lateinit var sensorsViewModel: SensorsViewModel
+    private lateinit var sensorsViewModel: ReadingsViewModel
     private lateinit var teamsViewModel: TeamsViewModel
     private lateinit var authViewModel: AuthViewModel
 
@@ -87,9 +88,15 @@ class HomeActivity : AppCompatActivity() {
         val userDao = AppDatabase.getDatabase(applicationContext).userDao()
         val userRepository = UserRepository(userDao)
 
+        val teamsDao = AppDatabase.getDatabase(applicationContext).teamsDao()
+        val teamsRepository = TeamsRepository(teamsDao)
+
+        val readingsDao = AppDatabase.getDatabase(applicationContext).readingsDao()
+        val readingsRepository = ReadingsRepository(readingsDao)
+
         userViewModel = ViewModelProvider(this, UserViewModelFactory(RetrofitClient.userService))[UserViewModel::class.java]
-        sensorsViewModel = ViewModelProvider(this, SensorsViewModelFactory(RetrofitClient.sensorsService))[SensorsViewModel::class.java]
-        teamsViewModel = ViewModelProvider(this, TeamsViewModelFactory(RetrofitClient.teamsService))[TeamsViewModel::class.java]
+        sensorsViewModel = ViewModelProvider(this, ReadingsViewModelFactory(RetrofitClient.readingsService, readingsRepository))[ReadingsViewModel::class.java]
+        teamsViewModel = ViewModelProvider(this, TeamsViewModelFactory(RetrofitClient.teamsService, teamsRepository))[TeamsViewModel::class.java]
         authViewModel = ViewModelProvider(this,AuthViewModelFactory(RetrofitClient.authService, userRepository))[AuthViewModel::class.java]
 
         val sp: SharedPreferences = getSharedPreferences("login_prefs", Context.MODE_PRIVATE)

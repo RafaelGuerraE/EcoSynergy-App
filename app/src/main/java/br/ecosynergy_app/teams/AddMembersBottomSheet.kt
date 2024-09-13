@@ -16,6 +16,8 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
+import br.ecosynergy_app.room.AppDatabase
+import br.ecosynergy_app.room.TeamsRepository
 import br.ecosynergy_app.user.MembersAdapter
 import br.ecosynergy_app.user.UserViewModel
 import br.ecosynergy_app.user.UserViewModelFactory
@@ -42,7 +44,7 @@ class AddMembersBottomSheet : BottomSheetDialogFragment() {
     private lateinit var swipeRefresh: SwipeRefreshLayout
 
     private var token: String? = ""
-    private var teamId: String? = ""
+    private var teamId: Int = 0
     private var teamHandle: String? = ""
     var memberIds: ArrayList<String> = arrayListOf()
 
@@ -50,7 +52,7 @@ class AddMembersBottomSheet : BottomSheetDialogFragment() {
         super.onCreate(savedInstanceState)
         arguments?.let {
             teamHandle = it.getString("TEAM_HANDLE")
-            teamId = it.getString("TEAM_ID")
+            teamId = it.getString("TEAM_ID")?.toInt() ?: 0
             val memberIdsString = it.getString("MEMBER_IDS") ?: ""
             memberIds = ArrayList(memberIdsString.split(","))
         }
@@ -64,7 +66,10 @@ class AddMembersBottomSheet : BottomSheetDialogFragment() {
     ): View? {
         val view =  inflater.inflate(R.layout.fragment_addmembers_bottom_sheet, container, false)
 
-        teamsViewModel = ViewModelProvider(requireActivity(), TeamsViewModelFactory(RetrofitClient.teamsService))[TeamsViewModel::class.java]
+        val teamsDao = AppDatabase.getDatabase(requireContext()).teamsDao()
+        val teamsRepository = TeamsRepository(teamsDao)
+
+        teamsViewModel = ViewModelProvider(requireActivity(), TeamsViewModelFactory(RetrofitClient.teamsService, teamsRepository))[TeamsViewModel::class.java]
         userViewModel = ViewModelProvider(requireActivity(), UserViewModelFactory(RetrofitClient.userService))[UserViewModel::class.java]
 
         btnClose = view.findViewById(R.id.btnClose)

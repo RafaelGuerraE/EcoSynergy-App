@@ -2,6 +2,8 @@ package br.ecosynergy_app.room
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import br.ecosynergy_app.teams.TeamsResponse
+import br.ecosynergy_app.user.UserResponse
 
 @Entity(tableName = "teams")
 data class Teams(
@@ -19,3 +21,20 @@ data class Teams(
     val linksRel: String,
     val linksHref: String
 )
+
+fun TeamsResponse.toTeam(): Teams {
+    return Teams(
+        id = this.id,
+        handle = this.handle,
+        name = this.name,
+        description = this.description,
+        activityId = this.activity.id,
+        activityName = this.activity.name,
+        activitySector = this.activity.sector,
+        timeZone = this.timeZone,
+        createdAt = this.createdAt,
+        updatedAt = this.updatedAt,
+        linksRel = this.links.rel,
+        linksHref = this.links.href
+    )
+}

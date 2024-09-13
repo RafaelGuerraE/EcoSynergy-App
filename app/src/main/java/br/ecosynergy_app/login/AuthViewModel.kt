@@ -11,7 +11,7 @@ import retrofit2.HttpException
 import java.io.IOException
 
 class AuthViewModel(
-    private val authService: AuthService,
+    private val service: AuthService,
     private val userRepository: UserRepository
 ) : ViewModel() {
 
@@ -21,13 +21,13 @@ class AuthViewModel(
     private val _user = MutableLiveData<Result<UserResponse>>()
     val user: LiveData<Result<UserResponse>> get() = _user
 
-    private val _userInfo = MutableLiveData<User?>()
-    val userInfo: LiveData<User?> get() = _userInfo
+    private val _userInfo = MutableLiveData<User>()
+    val userInfo: LiveData<User> get() = _userInfo
 
     fun loginUser(loginRequest: LoginRequest) {
         viewModelScope.launch {
             try {
-                val loginResponse = authService.loginUser(loginRequest)
+                val loginResponse = service.loginUser(loginRequest)
                 _loginResult.value = Result.success(loginResponse)
 
                 getUserByUsername(loginRequest.identifier, loginResponse.accessToken, loginResponse.refreshToken)
@@ -43,7 +43,7 @@ class AuthViewModel(
     fun getUserByUsername(username: String?, access: String?, refresh: String?) {
         viewModelScope.launch {
             try {
-                val response = authService.getUserByUsername(username, "Bearer $access")
+                val response = service.getUserByUsername(username, "Bearer $access")
                 _user.value = Result.success(response)
 
                 val userStored = response.toUser(access, refresh)

@@ -26,6 +26,7 @@ import br.ecosynergy_app.login.AuthViewModel
 import br.ecosynergy_app.login.AuthViewModelFactory
 import br.ecosynergy_app.login.LoginRequest
 import br.ecosynergy_app.room.AppDatabase
+import br.ecosynergy_app.room.TeamsRepository
 import br.ecosynergy_app.room.UserRepository
 import br.ecosynergy_app.teams.RoleRequest
 import br.ecosynergy_app.teams.TeamsViewModel
@@ -44,7 +45,7 @@ class ConfirmationActivity : AppCompatActivity() {
     var digit3Text : String = ""
     var digit4Text : String = ""
 
-    var userId = ""
+    private var userId: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,8 +78,11 @@ class ConfirmationActivity : AppCompatActivity() {
         val userDao = AppDatabase.getDatabase(applicationContext).userDao()
         val userRepository = UserRepository(userDao)
 
+        val teamsDao = AppDatabase.getDatabase(applicationContext).teamsDao()
+        val teamsRepository = TeamsRepository(teamsDao)
+
         authViewModel = ViewModelProvider(this, AuthViewModelFactory(RetrofitClient.authService, userRepository))[AuthViewModel::class.java]
-        teamsViewModel = ViewModelProvider(this, TeamsViewModelFactory(RetrofitClient.teamsService))[TeamsViewModel::class.java]
+        teamsViewModel = ViewModelProvider(this, TeamsViewModelFactory(RetrofitClient.teamsService, teamsRepository))[TeamsViewModel::class.java]
 
         loadingProgressBar = findViewById(R.id.loadingProgressBar)
         overlayView = findViewById(R.id.overlayView)
@@ -91,7 +95,7 @@ class ConfirmationActivity : AppCompatActivity() {
                 Log.d("ConfirmationActivity", "Register success")
                 val loginRequest = LoginRequest(userName, password)
                 authViewModel.loginUser(loginRequest)
-                userId = response.id.toString()
+                userId = response.id
             }.onFailure { error ->
                 error.printStackTrace()
                 Log.d("ConfirmationActivity", "Register failed: ${error.message}")
@@ -105,7 +109,7 @@ class ConfirmationActivity : AppCompatActivity() {
                 Log.d("LoginActivity", "UserID: $userId")
                 Log.d("LoginActivity", "Login success")
                 setLoggedIn(true, loginResponse.username, loginResponse.accessToken)
-                teamsViewModel.addMember(loginResponse.accessToken, "89", userId, RoleRequest("COMMON_USER"))
+                teamsViewModel.addMember(loginResponse.accessToken, 89, userId, RoleRequest("COMMON_USER"))
                 startHomeActivity()
             }.onFailure { error ->
                 error.printStackTrace()

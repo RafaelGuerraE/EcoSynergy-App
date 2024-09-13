@@ -17,11 +17,11 @@ interface TeamsService {
 
     @DELETE("api/team/v1/{id}")
     suspend fun deleteTeam(@Header("Authorization") token: String?,
-                           @Path("id") id:String?)
+                           @Path("id") id:Int)
 
     @PUT("api/team/v1/{id}")
     suspend fun updateTeam(@Header("Authorization") token: String?,
-                           @Path("id") id:String?,
+                           @Path("id") id:Int,
                            @Body request: UpdateRequest) : TeamsResponse
 
     //Finding Teams
@@ -44,23 +44,23 @@ interface TeamsService {
     //User Managing
 
     @GET("api/team/v1/user/{id}")
-    suspend fun findTeamsByUserId(@Path("id") userId:String?, @Header("Authorization") token: String?,
+    suspend fun findTeamsByUserId(@Path("id") userId:Int, @Header("Authorization") token: String?,
                                 ) : Response<List<TeamsResponse>>
 
     @POST("api/team/v1/{teamId}/user/{userId}")
     suspend fun addMember(@Header("Authorization") token: String?,
-                          @Path("teamId") teamId: String?,
-                          @Path("userId") userId: String?,
+                          @Path("teamId") teamId: Int,
+                          @Path("userId") userId: Int,
                           @Body request: RoleRequest) : TeamsResponse
 
     @DELETE("api/team/v1/{teamId}/user/{userId}")
     suspend fun removeMember(@Header("Authorization") token: String?,
-                             @Path("teamId") teamId: String?,
-                             @Path("userId") userId: String?) : Response<Result<Unit>>
+                             @Path("teamId") teamId: Int,
+                             @Path("userId") userId: Int) : Response<Result<Unit>>
 
     @PUT("api/team/v1/{teamId}/user/{userId}")
     suspend fun editMemberRole(@Header("Authorization") token: String?,
-                             @Path("teamId") teamId: String?,
-                             @Path("userId") userId: String?,
+                             @Path("teamId") teamId: Int,
+                             @Path("userId") userId: Int,
                              @Body request: RoleRequest): TeamsResponse
 }

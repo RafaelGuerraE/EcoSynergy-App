@@ -1,13 +1,17 @@
-package br.ecosynergy_app.sensors
+package br.ecosynergy_app.readings
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import br.ecosynergy_app.room.ReadingsRepository
+import br.ecosynergy_app.room.UserRepository
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 
-class SensorsViewModel(private val service: SensorsService): ViewModel() {
+class ReadingsViewModel(
+    private val service: ReadingsService
+): ViewModel() {
 
     // MQ7 Readings
     private val _mq7ReadingResult = MutableLiveData<Result<MQ7ReadingsResponse>>()

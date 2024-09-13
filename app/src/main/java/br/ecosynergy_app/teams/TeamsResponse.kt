@@ -11,7 +11,7 @@ data class Embedded(
 )
 
 data class TeamsResponse(
-    val id: String,
+    val id: Int,
     val handle: String,
     val name: String,
     val description: String,
@@ -20,7 +20,7 @@ data class TeamsResponse(
     val createdAt: String,
     val updatedAt: String,
     val members: List<Member>,
-    val _links: TeamLinks
+    val links: TeamLinks
 )
 
 data class Member(
@@ -49,7 +49,8 @@ data class UpdateRequest(
 )
 
 data class TeamLinks(
-    val self: Href
+    val rel: String,
+    val href: String
 )
 
 data class PaginationLinks(

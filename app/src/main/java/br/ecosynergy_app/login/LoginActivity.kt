@@ -2,7 +2,6 @@ package br.ecosynergy_app.login
 
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -18,7 +17,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
-import br.ecosynergy_app.NotificationService
 import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.home.HomeActivity
@@ -26,13 +24,11 @@ import br.ecosynergy_app.register.RegisterActivity
 import br.ecosynergy_app.room.AppDatabase
 import br.ecosynergy_app.room.TeamsRepository
 import br.ecosynergy_app.room.UserRepository
-import br.ecosynergy_app.sensors.SensorsViewModel
-import br.ecosynergy_app.sensors.SensorsViewModelFactory
-import br.ecosynergy_app.teams.TeamAdapter
+import br.ecosynergy_app.readings.ReadingsViewModel
+import br.ecosynergy_app.readings.ReadingsViewModelFactory
+import br.ecosynergy_app.room.ReadingsRepository
 import br.ecosynergy_app.teams.TeamsViewModel
 import br.ecosynergy_app.teams.TeamsViewModelFactory
-import br.ecosynergy_app.user.UserViewModel
-import br.ecosynergy_app.user.UserViewModelFactory
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -49,7 +45,7 @@ class LoginActivity : AppCompatActivity() {
 
     private lateinit var authViewModel: AuthViewModel
     private lateinit var teamsViewModel: TeamsViewModel
-    private lateinit var sensorsViewModel: SensorsViewModel
+    private lateinit var sensorsViewModel: ReadingsViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
@@ -72,9 +68,12 @@ class LoginActivity : AppCompatActivity() {
         val teamsDao = AppDatabase.getDatabase(applicationContext).teamsDao()
         val teamsRepository = TeamsRepository(teamsDao)
 
+        val readingsDao = AppDatabase.getDatabase(applicationContext).readingsDao()
+        val readingsRepository = ReadingsRepository(readingsDao)
+
         authViewModel = ViewModelProvider(this, AuthViewModelFactory(RetrofitClient.authService, userRepository))[AuthViewModel::class.java]
         teamsViewModel = ViewModelProvider(this, TeamsViewModelFactory(RetrofitClient.teamsService, teamsRepository))[TeamsViewModel::class.java]
-        sensorsViewModel = ViewModelProvider(this, SensorsViewModelFactory(RetrofitClient.sensorsService))[SensorsViewModel::class.java]
+        sensorsViewModel = ViewModelProvider(this, ReadingsViewModelFactory(RetrofitClient.readingsService, readingsRepository))[ReadingsViewModel::class.java]
 
         txtEntry = findViewById(R.id.txtEntry)
         txtPassword = findViewById(R.id.txtPassword)
@@ -177,7 +176,8 @@ class LoginActivity : AppCompatActivity() {
             result.onSuccess { loginResponse ->
                 Log.d("LoginActivity", "Login success")
                 authViewModel.user.observe(this){result->
-                    result.onSuccess {
+                    result.onSuccess { userData->
+                        getTeamsByUserId(userData.id, loginResponse.accessToken)
                         setLoggedIn(true, loginResponse.username, loginResponse.accessToken)
                         startHomeActivity()
                     }
@@ -192,17 +192,17 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun getTeamsByUserId(userId: String, token: String){
+    private fun getTeamsByUserId(userId: Int, token: String){
         teamsViewModel.findTeamsByUserId(userId, token)
-        teamsViewModel.teamsResult.removeObservers(this)
-        teamsViewModel.teamsResult.observe(this) { result ->
-            Log.d("TeamsFragment", "TeamsResult: $result")
-            result.onSuccess { teamData ->
-
-            }.onFailure { e ->
-                Log.e("TeamsFragment", "Error", e)
-            }
-        }
+//        teamsViewModel.teamsResult.removeObservers(this)
+//        teamsViewModel.teamsResult.observe(this) { result ->
+//            Log.d("TeamsFragment", "TeamsResult: $result")
+//            result.onSuccess { teamData ->
+//
+//            }.onFailure { e ->
+//                Log.e("TeamsFragment", "Error", e)
+//            }
+//        }
     }
 
     private fun showToast(message: String) {

@@ -6,7 +6,7 @@ import br.ecosynergy_app.user.UserResponse
 
 @Entity(tableName = "user")
 data class User(
-    @PrimaryKey val id: String,
+    @PrimaryKey val id: Int,
     val username: String,
     val fullName: String,
     val email: String,
@@ -18,7 +18,7 @@ data class User(
 
 fun UserResponse.toUser(accessToken: String?, refreshToken: String?): User {
     return User(
-        id = this.id ?: "",
+        id = this.id,
         username = this.username,
         fullName = this.fullName,
         email = this.email,

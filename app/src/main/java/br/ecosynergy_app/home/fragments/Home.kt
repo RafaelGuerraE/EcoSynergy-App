@@ -1,7 +1,5 @@
 package br.ecosynergy_app.home.fragments
 
-import android.content.Context
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
@@ -17,12 +15,12 @@ import androidx.fragment.app.activityViewModels
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import br.ecosynergy_app.R
 import br.ecosynergy_app.login.AuthViewModel
-import br.ecosynergy_app.sensors.FireReadingsResponse
-import br.ecosynergy_app.sensors.MQ135ReadingsResponse
+import br.ecosynergy_app.readings.FireReadingsResponse
+import br.ecosynergy_app.readings.MQ135ReadingsResponse
 import br.ecosynergy_app.user.UserViewModel
-import br.ecosynergy_app.sensors.MQ7ReadingsResponse
-import br.ecosynergy_app.sensors.ReadingVO
-import br.ecosynergy_app.sensors.SensorsViewModel
+import br.ecosynergy_app.readings.MQ7ReadingsResponse
+import br.ecosynergy_app.readings.ReadingVO
+import br.ecosynergy_app.readings.ReadingsViewModel
 import br.ecosynergy_app.teams.TeamsViewModel
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.github.mikephil.charting.charts.LineChart
@@ -55,12 +53,12 @@ class Home : Fragment() {
 
     private val userViewModel: UserViewModel by activityViewModels()
     private val teamsViewModel: TeamsViewModel by activityViewModels()
-    private val sensorsViewModel: SensorsViewModel by activityViewModels()
+    private val sensorsViewModel: ReadingsViewModel by activityViewModels()
     private val authViewModel: AuthViewModel by activityViewModels()
 
     private var token: String? = ""
     private var identifier: String? = ""
-    private var userId: String? = ""
+    private var userId: Int = 0
 
     private var teamHandles: List<String> = listOf("Todas") + emptyList()
 
@@ -134,7 +132,7 @@ class Home : Fragment() {
 
             token = user?.accessToken
             identifier = user?.username
-            userId = user?.id
+            userId = user.id
         }
     }
 

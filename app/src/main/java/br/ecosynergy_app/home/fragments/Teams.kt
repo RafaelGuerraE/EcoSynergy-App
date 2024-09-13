@@ -32,7 +32,7 @@ class Teams : Fragment() {
 
     private var token: String? = ""
     private var identifier: String? = ""
-    private var userId: String? = ""
+    private var userId: Int = 0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -51,11 +51,6 @@ class Teams : Fragment() {
         recyclerView.visibility = View.GONE
 
         swipeRefresh = view.findViewById(R.id.swipeRefresh)
-
-        val sp: SharedPreferences = requireContext().getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
-        token = sp.getString("accessToken", null)
-        identifier = sp.getString("identifier", null)
-        userId = sp.getString("id", null)
 
         return view
     }

@@ -6,13 +6,17 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import br.ecosynergy_app.ApiError
+import br.ecosynergy_app.room.TeamsRepository
+import br.ecosynergy_app.room.toTeam
 import com.google.gson.Gson
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import retrofit2.Response
 import java.io.IOException
 
-class TeamsViewModel(private val service: TeamsService): ViewModel() {
+class TeamsViewModel(
+    private val service: TeamsService,
+    private val teamsRepository: TeamsRepository): ViewModel() {
     private val _teamsResult = MutableLiveData<Result<List<TeamsResponse>>>()
     val teamsResult: LiveData<Result<List<TeamsResponse>>> get() = _teamsResult
 
@@ -58,7 +62,7 @@ class TeamsViewModel(private val service: TeamsService): ViewModel() {
         )
     }
 
-    fun editMemberRole(token: String?, teamId: String?, userId: String?, request:RoleRequest){
+    fun editMemberRole(token: String?, teamId: Int, userId: Int, request:RoleRequest){
         makeRequest(
             request = {service.editMemberRole("Bearer $token", teamId, userId, request)},
             onResult = { _teamResult.value = it}
@@ -96,14 +100,14 @@ class TeamsViewModel(private val service: TeamsService): ViewModel() {
         )
     }
 
-    fun updateTeam(token: String?, id: String?, request: UpdateRequest) {
+    fun updateTeam(token: String?, id: Int, request: UpdateRequest) {
         makeRequest(
             request = { service.updateTeam("Bearer $token", id, request) },
             onResult = { _teamResult.value = it }
         )
     }
 
-    fun addMember(token: String?, teamId: String?, userId: String?, request: RoleRequest) {
+    fun addMember(token: String?, teamId: Int, userId: Int, request: RoleRequest) {
         viewModelScope.launch{
             Log.d("TeamsViewModel", "Token: $token, MemberID: $userId, TeamID: $teamId")
             try {
@@ -125,13 +129,20 @@ class TeamsViewModel(private val service: TeamsService): ViewModel() {
         }
     }
 
-    fun findTeamsByUserId(id: String?,token: String?) {
+    fun findTeamsByUserId(id: Int, token: String?) {
         viewModelScope.launch {
             try {
                 val response = service.findTeamsByUserId(id, "Bearer $token")
                 if (response.isSuccessful) {
-                    Log.d("TeamsViewModel", "Response: ${response.body()}")
-                    _teamsResult.value = Result.success(response.body() ?: emptyList())
+                    val teams = response.body() ?: emptyList()
+                    teams.forEach { team ->
+                        Log.d("TeamsViewModel", "$team")
+                        val teamEntity = team.toTeam()
+                        teamsRepository.insertTeam(teamEntity)
+                    }
+                    _teamsResult.value = Result.success(teams)
+
+                    Log.d("TeamsViewModel", "Added Teams to DB Successfully")
                 } else {
                     Log.e("TeamsViewModel", "HTTP error while findTeamsByUserId: ${response.errorBody()?.string()}")
                     _teamsResult.value = Result.failure(HttpException(response))
@@ -146,7 +157,7 @@ class TeamsViewModel(private val service: TeamsService): ViewModel() {
         }
     }
 
-    fun deleteTeam(token: String?, id: String?) {
+    fun deleteTeam(token: String?, id: Int) {
         viewModelScope.launch {
             try {
                 service.deleteTeam("Bearer $token", id)
@@ -161,7 +172,7 @@ class TeamsViewModel(private val service: TeamsService): ViewModel() {
         }
     }
 
-    fun removeMember(token: String?, teamId: String?, userId: String?) {
+    fun removeMember(token: String?, teamId: Int, userId: Int) {
         viewModelScope.launch {
             try {
                 service.removeMember("Bearer $token", teamId, userId)

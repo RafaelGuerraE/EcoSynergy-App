@@ -1,7 +1,7 @@
 package br.ecosynergy_app.user
 
 data class UserResponse(
-    val id: String?,
+    val id: Int,
     val username: String,
     val fullName: String,
     val email: String,

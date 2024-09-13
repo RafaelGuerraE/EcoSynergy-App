@@ -30,7 +30,7 @@ import com.google.android.material.snackbar.Snackbar
 
 class UsersAdapter(
     private var usersList: MutableList<UserResponse>,
-    private var teamId: String?,
+    private var teamId: Int,
     private var teamHandle: String?,
     private val teamsViewModel: TeamsViewModel,
     private val activity: FragmentActivity,
@@ -57,7 +57,7 @@ class UsersAdapter(
     class ViewHolder(
         itemView: View,
         private var usersList: MutableList<UserResponse>,
-        private var teamId: String?,
+        private var teamId: Int,
         private var teamHandle: String?,
         private val teamsViewModel: TeamsViewModel,
         private val activity: FragmentActivity,
@@ -72,15 +72,15 @@ class UsersAdapter(
         private val btnInvite: ImageButton = itemView.findViewById(R.id.btnInvite)
 
         private var token: String? = ""
-        private var userId: String? = ""
+        private var userId: Int = 0
         private var username: String? = null
-        private var memberId: String? = null
+        private var memberId: Int = 0
 
         fun bind(user: UserResponse) {
             username = user.username
-            val sp: SharedPreferences = itemView.context.getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
-            token = sp.getString("accessToken", null)
-            userId = sp.getString("id", null)
+//            val sp: SharedPreferences = itemView.context.getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
+//            token = sp.getString("accessToken", null)
+//            userId = sp.getString("id", null)
 
             txtFullname.text = user.fullName
             txtUsername.text = "@$username"
@@ -90,7 +90,7 @@ class UsersAdapter(
 
             Log.d("UsersAdapter", "MemberIDS: $memberIds")
 
-            if (memberIds.contains(user.id)) {
+            if (memberIds.contains(memberId.toString())) {
                 btnInvite.visibility = View.GONE
             } else {
                 btnInvite.visibility = View.VISIBLE

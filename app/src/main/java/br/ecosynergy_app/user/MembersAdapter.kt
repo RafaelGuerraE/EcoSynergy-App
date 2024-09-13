@@ -31,7 +31,7 @@ class MembersAdapter(
     private var membersList: List<UserResponse>,
     private var memberRoles: List<String>,
     private var currentUserRole: String?,
-    private var teamId: String?,
+    private var teamId: Int,
     private var teamHandle: String?,
     private val teamsViewModel: TeamsViewModel,
     private val activity: FragmentActivity,
@@ -47,7 +47,7 @@ class MembersAdapter(
         notifyDataSetChanged()
     }
 
-    fun removeMember(memberId: String?) {
+    fun removeMember(memberId: String) {
         memberIds.remove(memberId)
         membersList = membersList.filter { it.id.toString() != memberId }
         notifyDataSetChanged()
@@ -69,7 +69,7 @@ class MembersAdapter(
         private var membersList: List<UserResponse>,
         private var memberRoles: List<String>,
         private var currentUserRole: String?,
-        private var teamId: String?,
+        private var teamId: Int,
         private var teamHandle: String?,
         private val teamsViewModel: TeamsViewModel,
         private val activity: FragmentActivity,
@@ -85,15 +85,15 @@ class MembersAdapter(
         private val btnExitTeam: ImageButton = itemView.findViewById(R.id.btnExitTeam)
 
         private var token: String? = ""
-        private var userId: String? = ""
-        private var username: String? = null
-        private var memberId: String? = null
+        private var userId: Int = 0
+        private var username: String = ""
+        private var memberId: Int = 0
 
         fun bind(user: UserResponse, role: String) {
             username = user.username
-            val sp: SharedPreferences = itemView.context.getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
-            token = sp.getString("accessToken", null)
-            userId = sp.getString("id", null)
+//            val sp: SharedPreferences = itemView.context.getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
+//            token = sp.getString("accessToken", null)
+//            userId = sp.getString("id", null)
 
             txtUsername.text = "@$username"
             memberId = user.id
@@ -194,7 +194,7 @@ class MembersAdapter(
             builder.setPositiveButton("Sim") { dialog, _ ->
                 teamsViewModel.removeMember(token, teamId, memberId)
                 dialog.dismiss()
-                fragment.membersAdapter.removeMember(memberId)
+                fragment.membersAdapter.removeMember(memberId.toString())
                 showSnackBar("Usuário removido com sucesso", "FECHAR", R.color.greenDark)
             }
 

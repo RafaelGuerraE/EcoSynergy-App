@@ -1,11 +1,11 @@
-package br.ecosynergy_app.sensors
+package br.ecosynergy_app.readings
 
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.Path
 
-interface SensorsService {
+interface ReadingsService {
     //MQ7 Readings
     @POST("api/mq7Reading/v1/{id}")
     suspend fun createMq7Reading(@Path("id")id:String) : ReadingVO

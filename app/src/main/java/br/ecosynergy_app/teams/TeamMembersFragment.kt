@@ -19,6 +19,8 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
+import br.ecosynergy_app.room.AppDatabase
+import br.ecosynergy_app.room.TeamsRepository
 import br.ecosynergy_app.user.MembersAdapter
 import br.ecosynergy_app.user.UserResponse
 import br.ecosynergy_app.user.UserViewModel
@@ -42,7 +44,7 @@ class TeamMembersFragment : Fragment(R.layout.fragment_team_members) {
 
     private var token: String? = ""
     private var teamHandle: String? = ""
-    private var teamId: String? = ""
+    private var teamId: Int = 0
 
     private var membersList: List<UserResponse> = listOf()
 
@@ -58,15 +60,18 @@ class TeamMembersFragment : Fragment(R.layout.fragment_team_members) {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_team_members, container, false)
 
-        teamsViewModel = ViewModelProvider(this, TeamsViewModelFactory(RetrofitClient.teamsService))[TeamsViewModel::class.java]
+        val teamsDao = AppDatabase.getDatabase(requireContext()).teamsDao()
+        val teamsRepository = TeamsRepository(teamsDao)
+
+        teamsViewModel = ViewModelProvider(this, TeamsViewModelFactory(RetrofitClient.teamsService, teamsRepository))[TeamsViewModel::class.java]
         userViewModel = ViewModelProvider(this, UserViewModelFactory(RetrofitClient.userService))[UserViewModel::class.java]
 
         val sp: SharedPreferences = requireContext().getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
         token = sp.getString("accessToken", null)
         userId = sp.getString("id", null)
 
-        teamHandle = arguments?.getString("TEAM_HANDLE")
-        teamId = arguments?.getString("TEAM_ID")
+//        teamHandle = arguments?.getString("TEAM_HANDLE")
+//        teamId = arguments?.getString("TEAM_ID")
 
         shimmerMembers = view.findViewById(R.id.shimmerMembers)
         recycleMembers = view.findViewById(R.id.recycleMembers)
@@ -112,7 +117,7 @@ class TeamMembersFragment : Fragment(R.layout.fragment_team_members) {
             val addMembersBottomSheet = AddMembersBottomSheet().apply {
                 arguments = Bundle().apply {
                     putString("TEAM_HANDLE", teamHandle)
-                    putString("TEAM_ID", teamId)
+                    putInt("TEAM_ID", teamId)
                     putString("MEMBER_IDS", memberIdsString)
                 }
             }

@@ -1,4 +1,4 @@
-package br.ecosynergy_app.sensors
+package br.ecosynergy_app.readings
 
 import com.google.gson.annotations.SerializedName
 

@@ -10,7 +10,7 @@ class TeamsViewModelFactory(private val service: TeamsService,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(TeamsViewModel::class.java)) {
-            return TeamsViewModel(service) as T
+            return TeamsViewModel(service, teamsRepository) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

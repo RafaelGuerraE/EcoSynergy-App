@@ -18,6 +18,8 @@ import br.ecosynergy_app.RetrofitClient
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Spinner
+import br.ecosynergy_app.room.AppDatabase
+import br.ecosynergy_app.room.TeamsRepository
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
@@ -51,12 +53,15 @@ class CreateTeamBottomSheet : BottomSheetDialogFragment() {
         token = sp.getString("accessToken", null)
         userId = sp.getString("id", null)?.toInt()
 
+        val teamsDao = AppDatabase.getDatabase(requireContext()).teamsDao()
+        val teamsRepository = TeamsRepository(teamsDao)
+
         loadingProgressBar = view.findViewById(R.id.loadingProgressBar)
         overlayView = view.findViewById(R.id.overlayView)
 
         btnClose = view.findViewById(R.id.btnClose)
 
-        teamsViewModel = ViewModelProvider(requireActivity(), TeamsViewModelFactory(RetrofitClient.teamsService))[TeamsViewModel::class.java]
+        teamsViewModel = ViewModelProvider(requireActivity(), TeamsViewModelFactory(RetrofitClient.teamsService, teamsRepository))[TeamsViewModel::class.java]
 
         shimmerImg = view.findViewById(R.id.shimmerImg)
         imgTeam = view.findViewById(R.id.imgTeam)

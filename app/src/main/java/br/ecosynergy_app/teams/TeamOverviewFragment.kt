@@ -19,6 +19,8 @@ import androidx.lifecycle.ViewModelProvider
 import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.register.Nationality
+import br.ecosynergy_app.room.AppDatabase
+import br.ecosynergy_app.room.TeamsRepository
 import br.ecosynergy_app.user.UserViewModel
 import br.ecosynergy_app.user.UserViewModelFactory
 import com.facebook.shimmer.ShimmerFrameLayout
@@ -58,7 +60,7 @@ class TeamOverviewFragment : Fragment(R.layout.fragment_team_overview) {
 
     private var teamHandle: String? = ""
     private var teamName: String? = ""
-    private var teamId: String? = ""
+    private var teamId: Int = 0
     private var teamDescription: String? = ""
     private var teamTimezone: String? = ""
 
@@ -74,7 +76,10 @@ class TeamOverviewFragment : Fragment(R.layout.fragment_team_overview) {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_team_overview, container, false)
 
-        teamsViewModel = ViewModelProvider(this, TeamsViewModelFactory(RetrofitClient.teamsService))[TeamsViewModel::class.java]
+        val teamsDao = AppDatabase.getDatabase(requireContext()).teamsDao()
+        val teamsRepository = TeamsRepository(teamsDao)
+
+        teamsViewModel = ViewModelProvider(this, TeamsViewModelFactory(RetrofitClient.teamsService, teamsRepository))[TeamsViewModel::class.java]
         userViewModel = ViewModelProvider(this, UserViewModelFactory(RetrofitClient.userService))[UserViewModel::class.java]
 
         val sp: SharedPreferences = requireContext().getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
