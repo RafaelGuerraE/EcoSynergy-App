@@ -129,10 +129,11 @@ class TeamsViewModel(
         }
     }
 
-    fun findTeamsByUserId(id: Int, token: String?) {
+    fun findTeamsByUserId(userId: Int, token: String) {
         viewModelScope.launch {
             try {
-                val response = service.findTeamsByUserId(id, "Bearer $token")
+
+                val response = service.findTeamsByUserId(userId, "Bearer $token")
                 if (response.isSuccessful) {
                     val teams = response.body() ?: emptyList()
                     teams.forEach { team ->
@@ -157,11 +158,27 @@ class TeamsViewModel(
         }
     }
 
-    fun deleteTeam(token: String?, id: Int) {
+    fun deleteTeamsFromDB() {
         viewModelScope.launch {
             try {
-                service.deleteTeam("Bearer $token", id)
+                val delete = teamsRepository.deleteAllTeams()
+                val deleteState = if(delete == Unit) "OK" else "ERROR"
+                Log.d("TeamsViewModel", "DeleteUserTeams: $deleteState")
+            } catch (e: Exception) {
+                Log.e("TeamsViewModel", "Unexpected error during deleteUserTeams", e)
+            }
+        }
+    }
+
+    fun deleteTeam(token: String?, teamId: Int) {
+        viewModelScope.launch {
+            try {
+                service.deleteTeam("Bearer $token", teamId)
                 _deleteResult.value = Result.success(Unit)
+
+               // val delete = teamsRepository.deleteTeam()
+              //  val deleteState = if(delete == Unit) "OK" else "ERROR"
+              //  Log.d("TeamsViewModel", "DeleteUserTeams: $deleteState")
             } catch (e: HttpException) {
                 Log.e("TeamsViewModel", "HTTP error during Delete Team", e)
                 _deleteResult.value = Result.failure(e)

@@ -2,6 +2,8 @@ package br.ecosynergy_app.user
 
 import br.ecosynergy_app.home.PasswordRequest
 import br.ecosynergy_app.home.UpdateRequest
+import br.ecosynergy_app.login.LoginRequest
+import br.ecosynergy_app.login.LoginResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -12,6 +14,10 @@ import retrofit2.http.PUT
 import retrofit2.http.Path
 
 interface UserService {
+
+    @POST("auth/signin")
+    suspend fun loginUser(@Body loginUserRequest: LoginRequest): LoginResponse
+
     @GET("api/user/v1/username/{username}")
     suspend fun getUserByUsername(
         @Path("username") username: String?,

@@ -20,7 +20,7 @@ data class TeamsResponse(
     val createdAt: String,
     val updatedAt: String,
     val members: List<Member>,
-    val links: TeamLinks
+    val links: List<TeamLinks>
 )
 
 data class Member(

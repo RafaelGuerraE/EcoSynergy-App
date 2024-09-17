@@ -8,6 +8,7 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.ProgressBar
@@ -25,9 +26,8 @@ import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.home.fragments.Home
 import br.ecosynergy_app.home.fragments.Notifications
 import br.ecosynergy_app.home.fragments.Teams
-import br.ecosynergy_app.login.AuthViewModel
-import br.ecosynergy_app.login.AuthViewModelFactory
 import br.ecosynergy_app.login.LoginActivity
+import br.ecosynergy_app.login.LoginRequest
 import br.ecosynergy_app.room.AppDatabase
 import br.ecosynergy_app.room.User
 import br.ecosynergy_app.room.UserRepository
@@ -45,13 +45,13 @@ import com.google.android.material.navigation.NavigationView
 import de.hdodenhof.circleimageview.CircleImageView
 
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.textfield.TextInputLayout
 
 class HomeActivity : AppCompatActivity() {
 
     private lateinit var userViewModel: UserViewModel
     private lateinit var sensorsViewModel: ReadingsViewModel
     private lateinit var teamsViewModel: TeamsViewModel
-    private lateinit var authViewModel: AuthViewModel
 
     private var token: String? = ""
     private var identifier: String? = ""
@@ -94,12 +94,18 @@ class HomeActivity : AppCompatActivity() {
         val readingsDao = AppDatabase.getDatabase(applicationContext).readingsDao()
         val readingsRepository = ReadingsRepository(readingsDao)
 
-        userViewModel = ViewModelProvider(this, UserViewModelFactory(RetrofitClient.userService))[UserViewModel::class.java]
+        userViewModel = ViewModelProvider(this, UserViewModelFactory(RetrofitClient.userService, userRepository))[UserViewModel::class.java]
         sensorsViewModel = ViewModelProvider(this, ReadingsViewModelFactory(RetrofitClient.readingsService, readingsRepository))[ReadingsViewModel::class.java]
         teamsViewModel = ViewModelProvider(this, TeamsViewModelFactory(RetrofitClient.teamsService, teamsRepository))[TeamsViewModel::class.java]
-        authViewModel = ViewModelProvider(this,AuthViewModelFactory(RetrofitClient.authService, userRepository))[AuthViewModel::class.java]
 
         val sp: SharedPreferences = getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
+        val isLoggedIn = sp.getBoolean("isLoggedIn", false)
+        val justLoggedIn = sp.getBoolean("just_logged_in", false)
+
+        if(isLoggedIn && !justLoggedIn){
+
+            getUserInfoFromDB()
+        }
 
         bottomNavView = findViewById(R.id.bottomNavView)
         drawerLayout  = findViewById(R.id.drawer_layout)
@@ -109,9 +115,9 @@ class HomeActivity : AppCompatActivity() {
 
         progressBar = findViewById(R.id.progressBar)
 
-        getUserInfo()
+        getUserInfoFromDB()
 
-        if (sp.getBoolean("just_logged_in", false)) {
+        if (justLoggedIn) {
             showSnackBar("Conectado com sucesso", "FECHAR", R.color.greenDark)
             val editor = sp.edit()
             editor.putBoolean("just_logged_in", false)
@@ -273,16 +279,42 @@ class HomeActivity : AppCompatActivity() {
             .commit()
     }
 
-    private fun getUserInfo() {
-        authViewModel.getUserInfo()
-        authViewModel.userInfo.observe(this) { user ->
-            Log.d("HomeActivity", "User data retrieved: $user")
-            if (user != null) {
-                updateNavigationHeader(navView, user)
-            } else {
-                showToast("No user found")
+    private fun getUserInfoFromDB() {
+        userViewModel.getUserInfoFromDB()
+
+            userViewModel.userInfo.observe(this) { user ->
+                Log.d("HomeActivity", "User data retrieved: $user")
+                if (user != null) {
+                    updateNavigationHeader(navView, user)
+                } else {
+                    showToast("No user found")
+                }
+            }
+
+    }
+
+    private fun requestUserInfo(username: String, password: String){
+
+        val loginRequest = LoginRequest(username, password)
+
+        userViewModel.loginUser(loginRequest)
+        userViewModel.loginResult.observe(this) { result ->
+            result.onSuccess { loginResponse ->
+                Log.d("LoginActivity", "Login success")
+                userViewModel.user.observe(this){result->
+                    result.onSuccess { userData->
+                        getTeamsByUserId(userData.id, loginResponse.accessToken)
+                    }
+                }
+            }.onFailure { error ->
+                error.printStackTrace()
+                Log.d("LoginActivity", "Login failed: ${error.message}")
             }
         }
+    }
+
+    private fun getTeamsByUserId(userId: Int, token: String){
+        teamsViewModel.findTeamsByUserId(userId, token)
     }
 
     private fun logout() {
@@ -297,7 +329,8 @@ class HomeActivity : AppCompatActivity() {
         editLog.putBoolean("isLoggedIn", false)
         editLog.apply()
 
-        authViewModel.deleteUserInfo()
+        userViewModel.deleteUserInfoFromDB()
+        teamsViewModel.deleteTeamsFromDB()
 
         val i = Intent(this, LoginActivity::class.java)
         i.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK

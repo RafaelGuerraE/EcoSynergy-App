@@ -22,8 +22,6 @@ import androidx.transition.Visibility
 import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.home.HomeActivity
-import br.ecosynergy_app.login.AuthViewModel
-import br.ecosynergy_app.login.AuthViewModelFactory
 import br.ecosynergy_app.login.LoginRequest
 import br.ecosynergy_app.room.AppDatabase
 import br.ecosynergy_app.room.TeamsRepository
@@ -31,11 +29,13 @@ import br.ecosynergy_app.room.UserRepository
 import br.ecosynergy_app.teams.RoleRequest
 import br.ecosynergy_app.teams.TeamsViewModel
 import br.ecosynergy_app.teams.TeamsViewModelFactory
+import br.ecosynergy_app.user.UserViewModel
+import br.ecosynergy_app.user.UserViewModelFactory
 
 class ConfirmationActivity : AppCompatActivity() {
 
     private lateinit var registerViewModel: RegisterViewModel
-    private lateinit var authViewModel: AuthViewModel
+    private lateinit var userViewModel: UserViewModel
     private lateinit var teamsViewModel: TeamsViewModel
     private lateinit var loadingProgressBar: ProgressBar
     private lateinit var overlayView: View
@@ -81,7 +81,7 @@ class ConfirmationActivity : AppCompatActivity() {
         val teamsDao = AppDatabase.getDatabase(applicationContext).teamsDao()
         val teamsRepository = TeamsRepository(teamsDao)
 
-        authViewModel = ViewModelProvider(this, AuthViewModelFactory(RetrofitClient.authService, userRepository))[AuthViewModel::class.java]
+        userViewModel = ViewModelProvider(this, UserViewModelFactory(RetrofitClient.userService, userRepository))[UserViewModel::class.java]
         teamsViewModel = ViewModelProvider(this, TeamsViewModelFactory(RetrofitClient.teamsService, teamsRepository))[TeamsViewModel::class.java]
 
         loadingProgressBar = findViewById(R.id.loadingProgressBar)
@@ -94,7 +94,7 @@ class ConfirmationActivity : AppCompatActivity() {
             result.onSuccess { response ->
                 Log.d("ConfirmationActivity", "Register success")
                 val loginRequest = LoginRequest(userName, password)
-                authViewModel.loginUser(loginRequest)
+                userViewModel.loginUser(loginRequest)
                 userId = response.id
             }.onFailure { error ->
                 error.printStackTrace()
@@ -103,7 +103,7 @@ class ConfirmationActivity : AppCompatActivity() {
             }
         }
 
-        authViewModel.loginResult.observe(this) { result ->
+        userViewModel.loginResult.observe(this) { result ->
             showProgressBar(false)
             result.onSuccess { loginResponse ->
                 Log.d("LoginActivity", "UserID: $userId")

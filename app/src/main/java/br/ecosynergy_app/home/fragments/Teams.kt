@@ -30,8 +30,8 @@ class Teams : Fragment() {
 
     private lateinit var swipeRefresh: SwipeRefreshLayout
 
-    private var token: String? = ""
-    private var identifier: String? = ""
+    private var token: String = ""
+    private var identifier: String = ""
     private var userId: Int = 0
 
     override fun onCreateView(

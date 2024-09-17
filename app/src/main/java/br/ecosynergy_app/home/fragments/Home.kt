@@ -14,7 +14,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import br.ecosynergy_app.R
-import br.ecosynergy_app.login.AuthViewModel
 import br.ecosynergy_app.readings.FireReadingsResponse
 import br.ecosynergy_app.readings.MQ135ReadingsResponse
 import br.ecosynergy_app.user.UserViewModel
@@ -54,10 +53,9 @@ class Home : Fragment() {
     private val userViewModel: UserViewModel by activityViewModels()
     private val teamsViewModel: TeamsViewModel by activityViewModels()
     private val sensorsViewModel: ReadingsViewModel by activityViewModels()
-    private val authViewModel: AuthViewModel by activityViewModels()
 
-    private var token: String? = ""
-    private var identifier: String? = ""
+    private var token: String = ""
+    private var identifier: String = ""
     private var userId: Int = 0
 
     private var teamHandles: List<String> = listOf("Todas") + emptyList()
@@ -120,7 +118,7 @@ class Home : Fragment() {
 //            }
 //        }
 
-        authViewModel.userInfo.observe(viewLifecycleOwner){user ->
+        userViewModel.userInfo.observe(viewLifecycleOwner){user ->
             shimmerName.animate().alpha(0f).setDuration(300).withEndAction {
                 shimmerName.stopShimmer()
                 shimmerName.visibility = View.GONE
@@ -130,8 +128,8 @@ class Home : Fragment() {
             val firstName = user?.fullName?.split(" ")?.firstOrNull()
             lblFirstname.text = "$firstName!"
 
-            token = user?.accessToken
-            identifier = user?.username
+            token = user.accessToken
+            identifier = user.username
             userId = user.id
         }
     }

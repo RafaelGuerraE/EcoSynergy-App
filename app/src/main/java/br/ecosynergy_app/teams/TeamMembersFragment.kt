@@ -21,6 +21,7 @@ import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.room.AppDatabase
 import br.ecosynergy_app.room.TeamsRepository
+import br.ecosynergy_app.room.UserRepository
 import br.ecosynergy_app.user.MembersAdapter
 import br.ecosynergy_app.user.UserResponse
 import br.ecosynergy_app.user.UserViewModel
@@ -60,11 +61,14 @@ class TeamMembersFragment : Fragment(R.layout.fragment_team_members) {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_team_members, container, false)
 
+        val userDao = AppDatabase.getDatabase(requireContext()).userDao()
+        val userRepository = UserRepository(userDao)
+
         val teamsDao = AppDatabase.getDatabase(requireContext()).teamsDao()
         val teamsRepository = TeamsRepository(teamsDao)
 
         teamsViewModel = ViewModelProvider(this, TeamsViewModelFactory(RetrofitClient.teamsService, teamsRepository))[TeamsViewModel::class.java]
-        userViewModel = ViewModelProvider(this, UserViewModelFactory(RetrofitClient.userService))[UserViewModel::class.java]
+        userViewModel = ViewModelProvider(this, UserViewModelFactory(RetrofitClient.userService, userRepository))[UserViewModel::class.java]
 
         val sp: SharedPreferences = requireContext().getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
         token = sp.getString("accessToken", null)

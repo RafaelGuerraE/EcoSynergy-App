@@ -12,11 +12,11 @@ data class User(
     val email: String,
     val gender: String,
     val nationality: String,
-    val accessToken: String?,
-    val refreshToken: String?
+    val accessToken: String,
+    val refreshToken: String
 )
 
-fun UserResponse.toUser(accessToken: String?, refreshToken: String?): User {
+fun UserResponse.toUser(accessToken: String, refreshToken: String): User {
     return User(
         id = this.id,
         username = this.username,

@@ -18,6 +18,7 @@ import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.room.AppDatabase
 import br.ecosynergy_app.room.TeamsRepository
+import br.ecosynergy_app.room.UserRepository
 import br.ecosynergy_app.user.MembersAdapter
 import br.ecosynergy_app.user.UserViewModel
 import br.ecosynergy_app.user.UserViewModelFactory
@@ -66,11 +67,14 @@ class AddMembersBottomSheet : BottomSheetDialogFragment() {
     ): View? {
         val view =  inflater.inflate(R.layout.fragment_addmembers_bottom_sheet, container, false)
 
+        val userDao = AppDatabase.getDatabase(requireContext()).userDao()
+        val userRepository = UserRepository(userDao)
+
         val teamsDao = AppDatabase.getDatabase(requireContext()).teamsDao()
         val teamsRepository = TeamsRepository(teamsDao)
 
         teamsViewModel = ViewModelProvider(requireActivity(), TeamsViewModelFactory(RetrofitClient.teamsService, teamsRepository))[TeamsViewModel::class.java]
-        userViewModel = ViewModelProvider(requireActivity(), UserViewModelFactory(RetrofitClient.userService))[UserViewModel::class.java]
+        userViewModel = ViewModelProvider(requireActivity(), UserViewModelFactory(RetrofitClient.userService, userRepository))[UserViewModel::class.java]
 
         btnClose = view.findViewById(R.id.btnClose)
 

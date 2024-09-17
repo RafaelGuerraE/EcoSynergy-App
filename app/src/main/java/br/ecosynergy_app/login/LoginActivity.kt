@@ -29,6 +29,8 @@ import br.ecosynergy_app.readings.ReadingsViewModelFactory
 import br.ecosynergy_app.room.ReadingsRepository
 import br.ecosynergy_app.teams.TeamsViewModel
 import br.ecosynergy_app.teams.TeamsViewModelFactory
+import br.ecosynergy_app.user.UserViewModel
+import br.ecosynergy_app.user.UserViewModelFactory
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -43,7 +45,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var loadingProgressBar: ProgressBar
     private lateinit var overlayView: View
 
-    private lateinit var authViewModel: AuthViewModel
+    private lateinit var userViewModel: UserViewModel
     private lateinit var teamsViewModel: TeamsViewModel
     private lateinit var sensorsViewModel: ReadingsViewModel
 
@@ -71,7 +73,7 @@ class LoginActivity : AppCompatActivity() {
         val readingsDao = AppDatabase.getDatabase(applicationContext).readingsDao()
         val readingsRepository = ReadingsRepository(readingsDao)
 
-        authViewModel = ViewModelProvider(this, AuthViewModelFactory(RetrofitClient.authService, userRepository))[AuthViewModel::class.java]
+        userViewModel = ViewModelProvider(this, UserViewModelFactory(RetrofitClient.userService, userRepository))[UserViewModel::class.java]
         teamsViewModel = ViewModelProvider(this, TeamsViewModelFactory(RetrofitClient.teamsService, teamsRepository))[TeamsViewModel::class.java]
         sensorsViewModel = ViewModelProvider(this, ReadingsViewModelFactory(RetrofitClient.readingsService, readingsRepository))[ReadingsViewModel::class.java]
 
@@ -169,13 +171,13 @@ class LoginActivity : AppCompatActivity() {
 
         val loginRequest = LoginRequest(username, password)
 
-        authViewModel.loginUser(loginRequest)
-        authViewModel.loginResult.observe(this) { result ->
+        userViewModel.loginUser(loginRequest)
+        userViewModel.loginResult.observe(this) { result ->
             loadingProgressBar.visibility = View.GONE
             overlayView.visibility = View.GONE
             result.onSuccess { loginResponse ->
                 Log.d("LoginActivity", "Login success")
-                authViewModel.user.observe(this){result->
+                userViewModel.user.observe(this){result->
                     result.onSuccess { userData->
                         getTeamsByUserId(userData.id, loginResponse.accessToken)
                         setLoggedIn(true, loginResponse.username, loginResponse.accessToken)
@@ -194,15 +196,6 @@ class LoginActivity : AppCompatActivity() {
 
     private fun getTeamsByUserId(userId: Int, token: String){
         teamsViewModel.findTeamsByUserId(userId, token)
-//        teamsViewModel.teamsResult.removeObservers(this)
-//        teamsViewModel.teamsResult.observe(this) { result ->
-//            Log.d("TeamsFragment", "TeamsResult: $result")
-//            result.onSuccess { teamData ->
-//
-//            }.onFailure { e ->
-//                Log.e("TeamsFragment", "Error", e)
-//            }
-//        }
     }
 
     private fun showToast(message: String) {

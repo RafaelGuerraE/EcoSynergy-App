@@ -2,7 +2,6 @@ package br.ecosynergy_app.register
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import br.ecosynergy_app.login.AuthViewModel
 
 class RegisterViewModelFactory(private val service: RegisterService) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

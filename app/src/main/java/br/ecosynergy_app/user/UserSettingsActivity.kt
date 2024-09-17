@@ -28,6 +28,8 @@ import androidx.lifecycle.ViewModelProvider
 import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.register.Nationality
+import br.ecosynergy_app.room.AppDatabase
+import br.ecosynergy_app.room.UserRepository
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
@@ -71,9 +73,10 @@ class UserSettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_usersettings)
 
+        val userDao = AppDatabase.getDatabase(this).userDao()
+        val userRepository = UserRepository(userDao)
 
-
-        userViewModel = ViewModelProvider(this, UserViewModelFactory(RetrofitClient.userService))[UserViewModel::class.java]
+        userViewModel = ViewModelProvider(this, UserViewModelFactory(RetrofitClient.userService, userRepository))[UserViewModel::class.java]
 
         val sharedPreferences: SharedPreferences =
             getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
@@ -246,15 +249,14 @@ class UserSettingsActivity : AppCompatActivity() {
         val token = sharedPreferences.getString("accessToken", null)
 
         if (identifier != null && token != null) {
-            userViewModel.getUserByUsername(identifier, token)
-            userViewModel.user.observe(this) { result ->
-                result.onSuccess { userResponse ->
-                    userId = userResponse.id.toString()
-                    userUsername = userResponse.username
-                    userFullname = userResponse.fullName
-                    userEmail = userResponse.email
-                    userGender = userResponse.gender
-                    userNationality = userResponse.nationality
+            userViewModel.getUserInfoFromDB()
+            userViewModel.userInfo.observe(this) { result ->
+                    userId = result.id.toString()
+                    userUsername = result.username
+                    userFullname = result.fullName
+                    userEmail = result.email
+                    userGender = result.gender
+                    userNationality = result.nationality
 
                     if (userGender == "Male") {
                         gender = 0
@@ -274,10 +276,6 @@ class UserSettingsActivity : AppCompatActivity() {
 
                     loadingProgressBar.visibility = View.GONE
                     overlayView.visibility = View.GONE
-                }.onFailure {
-                    showSnackBar("Algo de errado ocorreu!", "FECHAR", R.color.red)
-                    Log.e("HomeActivity", "Failed to fetch user data", it)
-                }
             }
         } else {
             showToast("Invalid Username or Token")

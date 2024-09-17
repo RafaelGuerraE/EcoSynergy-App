@@ -1,7 +1,6 @@
 package br.ecosynergy_app
 
 import br.ecosynergy_app.user.UserService
-import br.ecosynergy_app.login.AuthService
 import br.ecosynergy_app.register.RegisterService
 import br.ecosynergy_app.readings.ReadingsService
 import br.ecosynergy_app.teams.TeamsService
@@ -17,10 +16,6 @@ object RetrofitClient {
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
-        }
-
-        val authService: AuthService by lazy {
-            retrofit.create(AuthService::class.java)
         }
 
         val registerService: RegisterService by lazy{
