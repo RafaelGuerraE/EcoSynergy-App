@@ -54,8 +54,11 @@ class UserViewModel(
     fun refreshToken(username: String, refreshToken: String){
         viewModelScope.launch {
             try {
-                val refreshResponse = service.refreshToken(username, refreshToken)
+                val refreshResponse = service.refreshToken(username, "Bearer $refreshToken")
                 _loginResult.value = Result.success(refreshResponse)
+
+                getUserByUsername(username, refreshResponse.accessToken, refreshResponse.refreshToken)
+
             } catch (e: IOException) {
                 Log.e("UserViewModel", "Network error during refreshToken", e)
                 _user.value = Result.failure(IOException("Network error, please check your connection", e))
@@ -69,16 +72,15 @@ class UserViewModel(
         }
     }
 
-    fun getUserByUsername(username: String, access: String, refresh: String) {
+    private fun getUserByUsername(username: String, access: String, refresh: String) {
         viewModelScope.launch {
             try {
                 val response = service.getUserByUsername(username, "Bearer $access")
                 _user.value = Result.success(response)
 
+                Log.d("UserViewModel", "User data fetched: $response")
                 val userStored = response.toUser(access, refresh)
                 userRepository.insertUser(userStored)
-
-                Log.d("UserViewModel", "User data fetched: $response")
                 Log.d("UserViewModel", "UserRepository: $userStored")
             } catch (e: IOException) {
                 Log.e("UserViewModel", "Network error during getUserByUsername", e)
@@ -93,6 +95,15 @@ class UserViewModel(
         }
     }
 
+    fun insertUserInfoDB(response: UserResponse, access: String, refresh: String){
+        viewModelScope.launch {
+            val userStored = response.toUser(access, refresh)
+            userRepository.insertUser(userStored)
+
+            Log.d("UserViewModel", "UserRepository: $userStored")
+        }
+    }
+
     fun updateUserInfoDB(userId: Int,
                          newUsername: String,
                          newFullName: String,
@@ -104,6 +115,8 @@ class UserViewModel(
         viewModelScope.launch {
             try {
                 val response = userRepository.updateUser(userId, newUsername, newFullName, newEmail, newGender, newNationality, newAccessToken, newRefreshToken)
+
+                Log.d("UserViewModel", "response Update: $userId, $newUsername, $newFullName, $newEmail, $newGender, $newNationality, $newAccessToken, $newRefreshToken")
             }
              catch (e: IOException) {
                 Log.e("UserViewModel", "Network error during updateUserInfoDB", e)

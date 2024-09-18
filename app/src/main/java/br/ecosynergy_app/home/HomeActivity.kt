@@ -53,10 +53,6 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var sensorsViewModel: ReadingsViewModel
     private lateinit var teamsViewModel: TeamsViewModel
 
-    private var token: String? = ""
-    private var identifier: String? = ""
-    private var userId: String = ""
-
     private lateinit var bottomNavView: BottomNavigationView
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var navDrawerButton: CircleImageView
@@ -102,9 +98,15 @@ class HomeActivity : AppCompatActivity() {
         val isLoggedIn = sp.getBoolean("isLoggedIn", false)
         val justLoggedIn = sp.getBoolean("just_logged_in", false)
 
+        Log.d("HomeActivity", "isLoggedIn: $isLoggedIn JustLoggedIn: $justLoggedIn")
+
+        updateUserInfo()
+
         if(isLoggedIn && !justLoggedIn){
 
-            getUserInfoFromDB()
+        }
+        else{
+
         }
 
         bottomNavView = findViewById(R.id.bottomNavView)
@@ -115,7 +117,7 @@ class HomeActivity : AppCompatActivity() {
 
         progressBar = findViewById(R.id.progressBar)
 
-        getUserInfoFromDB()
+        displayUserInfoFromDB()
 
         if (justLoggedIn) {
             showSnackBar("Conectado com sucesso", "FECHAR", R.color.greenDark)
@@ -278,7 +280,7 @@ class HomeActivity : AppCompatActivity() {
             .commit()
     }
 
-    private fun getUserInfoFromDB() {
+    private fun displayUserInfoFromDB() {
         userViewModel.getUserInfoFromDB()
 
         userViewModel.userInfo.observe(this) { user ->
@@ -291,19 +293,34 @@ class HomeActivity : AppCompatActivity() {
             }
     }
 
-    private fun updateUserInfo(userId: Int,
-                                 newUsername: String,
-                                 newFullName: String,
-                                 newEmail: String,
-                                 newGender: String,
-                                 newNationality: String,
-                                 newAccessToken: String,
-                                 newRefreshToken: String){
+    private fun updateUserInfo(){
         userViewModel.getUserInfoFromDB()
         userViewModel.userInfo.observe(this){userInfo->
+            if(userInfo != null){
             userViewModel.refreshToken(userInfo.username, userInfo.refreshToken)
+            userViewModel.loginResult.observe(this){ loginResult->
+                loginResult.onSuccess { refreshTokenResponse->
+                    if(refreshTokenResponse != null){
+                        val newAccessToken = refreshTokenResponse.accessToken
+                        val newRefreshToken = refreshTokenResponse.refreshToken
+                        userViewModel.updateUserInfoDB(
+                            userInfo.id,
+                            userInfo.username,
+                            userInfo.fullName,
+                            userInfo.email,
+                            userInfo.gender,
+                            userInfo.nationality,
+                            newAccessToken,
+                            newRefreshToken
+                        )
+
+                        displayUserInfoFromDB()
+                    }
+                }
+
+            }
+            }
         }
-        userViewModel.updateUserInfoDB(userId, newUsername, newFullName, newEmail, newGender, newNationality, newAccessToken, newRefreshToken)
     }
 
     private fun requestUserInfo(username: String, password: String){

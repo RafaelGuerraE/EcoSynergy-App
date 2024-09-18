@@ -179,6 +179,7 @@ class LoginActivity : AppCompatActivity() {
                 Log.d("LoginActivity", "Login success")
                 userViewModel.user.observe(this){result->
                     result.onSuccess { userData->
+                        userViewModel.insertUserInfoDB(userData, loginResponse.accessToken, loginResponse.refreshToken)
                         getTeamsByUserId(userData.id, loginResponse.accessToken)
                         setLoggedIn(true, loginResponse.username, loginResponse.accessToken)
                         startHomeActivity()
