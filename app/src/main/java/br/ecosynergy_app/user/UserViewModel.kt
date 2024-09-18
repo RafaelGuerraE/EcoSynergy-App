@@ -51,6 +51,24 @@ class UserViewModel(
         }
     }
 
+    fun refreshToken(username: String, refreshToken: String){
+        viewModelScope.launch {
+            try {
+                val refreshResponse = service.refreshToken(username, refreshToken)
+                _loginResult.value = Result.success(refreshResponse)
+            } catch (e: IOException) {
+                Log.e("UserViewModel", "Network error during refreshToken", e)
+                _user.value = Result.failure(IOException("Network error, please check your connection", e))
+            } catch (e: HttpException) {
+                Log.e("UserViewModel", "HTTP error during refreshToken", e)
+                _user.value = Result.failure(HttpException(e.response()))
+            } catch (e: Exception) {
+                Log.e("UserViewModel", "Unexpected error during refreshToken", e)
+                _user.value = Result.failure(Exception("Unexpected error occurred", e))
+            }
+        }
+    }
+
     fun getUserByUsername(username: String, access: String, refresh: String) {
         viewModelScope.launch {
             try {
@@ -60,16 +78,41 @@ class UserViewModel(
                 val userStored = response.toUser(access, refresh)
                 userRepository.insertUser(userStored)
 
-                Log.d("AuthViewModel", "User data fetched: $response")
-                Log.d("AuthViewModel", "UserRepository: $userStored")
+                Log.d("UserViewModel", "User data fetched: $response")
+                Log.d("UserViewModel", "UserRepository: $userStored")
             } catch (e: IOException) {
-                Log.e("AuthViewModel", "Network error during getUserByUsername", e)
+                Log.e("UserViewModel", "Network error during getUserByUsername", e)
                 _user.value = Result.failure(IOException("Network error, please check your connection", e))
             } catch (e: HttpException) {
-                Log.e("AuthViewModel", "HTTP error during getUserByUsername", e)
+                Log.e("UserViewModel", "HTTP error during getUserByUsername", e)
                 _user.value = Result.failure(HttpException(e.response()))
             } catch (e: Exception) {
-                Log.e("AuthViewModel", "Unexpected error during getUserByUsername", e)
+                Log.e("UserViewModel", "Unexpected error during getUserByUsername", e)
+                _user.value = Result.failure(Exception("Unexpected error occurred", e))
+            }
+        }
+    }
+
+    fun updateUserInfoDB(userId: Int,
+                         newUsername: String,
+                         newFullName: String,
+                         newEmail: String,
+                         newGender: String,
+                         newNationality: String,
+                         newAccessToken: String,
+                         newRefreshToken: String){
+        viewModelScope.launch {
+            try {
+                val response = userRepository.updateUser(userId, newUsername, newFullName, newEmail, newGender, newNationality, newAccessToken, newRefreshToken)
+            }
+             catch (e: IOException) {
+                Log.e("UserViewModel", "Network error during updateUserInfoDB", e)
+                _user.value = Result.failure(IOException("Network error, please check your connection", e))
+            } catch (e: HttpException) {
+                Log.e("UserViewModel", "HTTP error during updateUserInfoDB", e)
+                _user.value = Result.failure(HttpException(e.response()))
+            } catch (e: Exception) {
+                Log.e("UserViewModel", "Unexpected error during updateUserInfoDB", e)
                 _user.value = Result.failure(Exception("Unexpected error occurred", e))
             }
         }
@@ -81,10 +124,9 @@ class UserViewModel(
                 val response = userRepository.getUser()
                 response?.let { _userInfo.value = it }
 
-                Log.d("AuthViewModel", "GetUserInfo: $response")
-
+                Log.d("UserViewModel", "GetUserInfo: $response")
             } catch (e: Exception) {
-                Log.e("AuthViewModel", "Unexpected error during getUserInfo", e)
+                Log.e("UserViewModel", "Unexpected error during getUserInfo", e)
             }
         }
     }
@@ -94,9 +136,9 @@ class UserViewModel(
             try {
                 val delete = userRepository.deleteUser()
                 val deleteState = if(delete == Unit) "OK" else "ERROR"
-                Log.d("AuthViewModel", "DeleteUserInfo: $deleteState")
+                Log.d("UserViewModel", "DeleteUserInfo: $deleteState")
             } catch (e: Exception) {
-                Log.e("AuthViewModel", "Unexpected error during deleteUserInfo", e)
+                Log.e("UserViewModel", "Unexpected error during deleteUserInfo", e)
             }
         }
     }

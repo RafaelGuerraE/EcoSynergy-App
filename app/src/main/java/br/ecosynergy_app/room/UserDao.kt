@@ -19,4 +19,24 @@ interface UserDao {
 
     @Delete
     suspend fun deleteUser(user: User)
+
+    @Query("UPDATE user SET " +
+            "username = :newUsername, " +
+            "fullName = :newFullName, " +
+            "email = :newEmail, " +
+            "gender = :newGender, " +
+            "nationality = :newNationality, " +
+            "accessToken = :newAccessToken, " +
+            "refreshToken = :newRefreshToken " +
+            "WHERE id = :userId")
+    suspend fun updateUser(
+        userId: Int,
+        newUsername: String,
+        newFullName: String,
+        newEmail: String,
+        newGender: String,
+        newNationality: String,
+        newAccessToken: String,
+        newRefreshToken: String
+    )
 }

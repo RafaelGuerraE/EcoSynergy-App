@@ -231,7 +231,6 @@ class HomeActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         clearNavigationViewSelection(navView)
-        //getUserInfo()
     }
 
     private fun manageThemes(){
@@ -282,7 +281,7 @@ class HomeActivity : AppCompatActivity() {
     private fun getUserInfoFromDB() {
         userViewModel.getUserInfoFromDB()
 
-            userViewModel.userInfo.observe(this) { user ->
+        userViewModel.userInfo.observe(this) { user ->
                 Log.d("HomeActivity", "User data retrieved: $user")
                 if (user != null) {
                     updateNavigationHeader(navView, user)
@@ -290,7 +289,21 @@ class HomeActivity : AppCompatActivity() {
                     showToast("No user found")
                 }
             }
+    }
 
+    private fun updateUserInfo(userId: Int,
+                                 newUsername: String,
+                                 newFullName: String,
+                                 newEmail: String,
+                                 newGender: String,
+                                 newNationality: String,
+                                 newAccessToken: String,
+                                 newRefreshToken: String){
+        userViewModel.getUserInfoFromDB()
+        userViewModel.userInfo.observe(this){userInfo->
+            userViewModel.refreshToken(userInfo.username, userInfo.refreshToken)
+        }
+        userViewModel.updateUserInfoDB(userId, newUsername, newFullName, newEmail, newGender, newNationality, newAccessToken, newRefreshToken)
     }
 
     private fun requestUserInfo(username: String, password: String){

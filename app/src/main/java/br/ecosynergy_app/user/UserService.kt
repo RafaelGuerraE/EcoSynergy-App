@@ -18,6 +18,10 @@ interface UserService {
     @POST("auth/signin")
     suspend fun loginUser(@Body loginUserRequest: LoginRequest): LoginResponse
 
+    @POST("auth/refresh/{username}")
+    suspend fun refreshToken(@Path("username") username:String,
+                             @Header("Authorization") refreshToken: String): LoginResponse
+
     @GET("api/user/v1/username/{username}")
     suspend fun getUserByUsername(
         @Path("username") username: String?,
