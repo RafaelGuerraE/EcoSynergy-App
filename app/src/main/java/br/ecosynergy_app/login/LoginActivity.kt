@@ -2,6 +2,7 @@ package br.ecosynergy_app.login
 
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -49,10 +50,13 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var teamsViewModel: TeamsViewModel
     private lateinit var sensorsViewModel: ReadingsViewModel
 
+    private lateinit var sp: SharedPreferences
+
     override fun onCreate(savedInstanceState: Bundle?) {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+        sp = getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
 
         val logoutMessage = intent.getStringExtra("LOGOUT_MESSAGE")
         if (logoutMessage != null) {
@@ -72,6 +76,8 @@ class LoginActivity : AppCompatActivity() {
 
         val readingsDao = AppDatabase.getDatabase(applicationContext).readingsDao()
         val readingsRepository = ReadingsRepository(readingsDao)
+
+
 
         userViewModel = ViewModelProvider(this, UserViewModelFactory(RetrofitClient.userService, userRepository))[UserViewModel::class.java]
         teamsViewModel = ViewModelProvider(this, TeamsViewModelFactory(RetrofitClient.teamsService, teamsRepository))[TeamsViewModel::class.java]
@@ -140,9 +146,8 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun startHomeActivity() {
-        val sharedPreferences = getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        editor.putBoolean("just_logged_in", true)
+        val editor = sp.edit()
+        editor.putBoolean("open", true)
         editor.apply()
 
         val i = Intent(this, HomeActivity::class.java)
@@ -181,8 +186,11 @@ class LoginActivity : AppCompatActivity() {
                     result.onSuccess { userData->
                         userViewModel.insertUserInfoDB(userData, loginResponse.accessToken, loginResponse.refreshToken)
                         getTeamsByUserId(userData.id, loginResponse.accessToken)
-                        setLoggedIn(true, loginResponse.username, loginResponse.accessToken)
+                        setLoggedIn(true)
                         startHomeActivity()
+                        val editor = sp.edit()
+                        editor.putBoolean("just_logged_in", true)
+                        editor.apply()
                     }
                 }
             }.onFailure { error ->
@@ -203,22 +211,14 @@ class LoginActivity : AppCompatActivity() {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
-    private fun setLoggedIn(isLoggedIn: Boolean, identifier: String? = null, accessToken: String? = null) {
-        val sharedPreferences = getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
+    private fun setLoggedIn(isLoggedIn: Boolean) {
+        val editor = sp.edit()
         editor.putBoolean("isLoggedIn", isLoggedIn)
-        if (identifier != null) {
-            editor.putString("identifier", identifier)
-        }
-        if (accessToken != null) {
-            editor.putString("accessToken", accessToken)
-        }
         editor.apply()
     }
 
     private fun isLoggedIn(): Boolean {
-        val sharedPreferences = getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
-        return sharedPreferences.getBoolean("isLoggedIn", false)
+        return sp.getBoolean("isLoggedIn", false)
     }
 
     private fun showSnackBar(message: String, action: String, bgTint: Int) {

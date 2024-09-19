@@ -63,11 +63,13 @@ class HomeActivity : AppCompatActivity() {
 
     var teamHandles: List<String> =  emptyList()
 
+    private lateinit var loginSp: SharedPreferences
+    private lateinit var themeSp: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
-        val sharedPreferences: SharedPreferences = getSharedPreferences("theme_prefs", Context.MODE_PRIVATE)
-        when (sharedPreferences.getString("theme", "system")) {
+        themeSp = getSharedPreferences("theme_prefs", Context.MODE_PRIVATE)
+        when (themeSp.getString("theme", "system")) {
             "light" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             "dark" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
             "system" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
@@ -94,19 +96,25 @@ class HomeActivity : AppCompatActivity() {
         sensorsViewModel = ViewModelProvider(this, ReadingsViewModelFactory(RetrofitClient.readingsService, readingsRepository))[ReadingsViewModel::class.java]
         teamsViewModel = ViewModelProvider(this, TeamsViewModelFactory(RetrofitClient.teamsService, teamsRepository))[TeamsViewModel::class.java]
 
-        val sp: SharedPreferences = getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
-        val isLoggedIn = sp.getBoolean("isLoggedIn", false)
-        val justLoggedIn = sp.getBoolean("just_logged_in", false)
+        loginSp = getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
+        val isLoggedIn = loginSp.getBoolean("isLoggedIn", false)
+        val justLoggedIn = loginSp.getBoolean("just_logged_in", false)
+        val open = loginSp.getBoolean("open", false)
 
-        Log.d("HomeActivity", "isLoggedIn: $isLoggedIn JustLoggedIn: $justLoggedIn")
 
-        updateUserInfo()
 
-        if(isLoggedIn && !justLoggedIn){
 
+
+        if(isLoggedIn && !open){
+            updateUserInfo()
+            Log.d("HomeActivity", "isLoggedIn: $isLoggedIn JustLoggedIn: $justLoggedIn Open: $open")
         }
         else{
-
+            displayUserInfoFromDB()
+            val editor = loginSp.edit()
+            editor.putBoolean("open", false)
+            editor.apply()
+            Log.d("HomeActivity", "isLoggedIn: $isLoggedIn JustLoggedIn: $justLoggedIn Open: $open")
         }
 
         bottomNavView = findViewById(R.id.bottomNavView)
@@ -117,11 +125,11 @@ class HomeActivity : AppCompatActivity() {
 
         progressBar = findViewById(R.id.progressBar)
 
-        displayUserInfoFromDB()
 
-        if (justLoggedIn) {
+
+        if(justLoggedIn){
             showSnackBar("Conectado com sucesso", "FECHAR", R.color.greenDark)
-            val editor = sp.edit()
+            val editor = loginSp.edit()
             editor.putBoolean("just_logged_in", false)
             editor.apply()
         }
@@ -242,8 +250,7 @@ class HomeActivity : AppCompatActivity() {
         builder.setTitle("Selecione o tema desejado")
 
         builder.setItems(items) { dialog, which ->
-            val sp: SharedPreferences = getSharedPreferences("theme_prefs", Context.MODE_PRIVATE)
-            val editor = sp.edit()
+            val editor = themeSp.edit()
 
             when (which) {
                 0 -> {
@@ -297,48 +304,29 @@ class HomeActivity : AppCompatActivity() {
         userViewModel.getUserInfoFromDB()
         userViewModel.userInfo.observe(this){userInfo->
             if(userInfo != null){
-            userViewModel.refreshToken(userInfo.username, userInfo.refreshToken)
-            userViewModel.loginResult.observe(this){ loginResult->
-                loginResult.onSuccess { refreshTokenResponse->
-                    if(refreshTokenResponse != null){
-                        val newAccessToken = refreshTokenResponse.accessToken
-                        val newRefreshToken = refreshTokenResponse.refreshToken
-                        userViewModel.updateUserInfoDB(
-                            userInfo.id,
-                            userInfo.username,
-                            userInfo.fullName,
-                            userInfo.email,
-                            userInfo.gender,
-                            userInfo.nationality,
-                            newAccessToken,
-                            newRefreshToken
-                        )
 
-                        displayUserInfoFromDB()
-                    }
+                userViewModel.refreshToken(userInfo.username, userInfo.refreshToken)
+                userViewModel.loginResult.observe(this){ loginResult->
+                    loginResult.onSuccess { refreshTokenResponse->
+                        if(refreshTokenResponse != null){
+                            val newAccessToken = refreshTokenResponse.accessToken
+                            val newRefreshToken = refreshTokenResponse.refreshToken
+                            userViewModel.updateUserInfoDB(
+                                userInfo.id,
+                                userInfo.username,
+                                userInfo.fullName,
+                                userInfo.email,
+                                userInfo.gender,
+                                userInfo.nationality,
+                                newAccessToken,
+                                newRefreshToken
+                            )
+
+                            displayUserInfoFromDB()
+                        }
                 }
 
             }
-            }
-        }
-    }
-
-    private fun requestUserInfo(username: String, password: String){
-
-        val loginRequest = LoginRequest(username, password)
-
-        userViewModel.loginUser(loginRequest)
-        userViewModel.loginResult.observe(this) { result ->
-            result.onSuccess { loginResponse ->
-                Log.d("LoginActivity", "Login success")
-                userViewModel.user.observe(this){result->
-                    result.onSuccess { userData->
-                        getTeamsByUserId(userData.id, loginResponse.accessToken)
-                    }
-                }
-            }.onFailure { error ->
-                error.printStackTrace()
-                Log.d("LoginActivity", "Login failed: ${error.message}")
             }
         }
     }
@@ -348,14 +336,12 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun logout() {
-        val spTheme: SharedPreferences = getSharedPreferences("theme_prefs", Context.MODE_PRIVATE)
-        val editTheme = spTheme.edit()
+        val editTheme = themeSp.edit()
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
         editTheme.putString("theme", "system")
         editTheme.apply()
 
-        val spLog = getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
-        val editLog = spLog.edit()
+        val editLog = loginSp.edit()
         editLog.putBoolean("isLoggedIn", false)
         editLog.apply()
 

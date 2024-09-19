@@ -57,6 +57,7 @@ class UserViewModel(
                 val refreshResponse = service.refreshToken(username, "Bearer $refreshToken")
                 _loginResult.value = Result.success(refreshResponse)
 
+
                 getUserByUsername(username, refreshResponse.accessToken, refreshResponse.refreshToken)
 
             } catch (e: IOException) {
@@ -79,9 +80,6 @@ class UserViewModel(
                 _user.value = Result.success(response)
 
                 Log.d("UserViewModel", "User data fetched: $response")
-                val userStored = response.toUser(access, refresh)
-                userRepository.insertUser(userStored)
-                Log.d("UserViewModel", "UserRepository: $userStored")
             } catch (e: IOException) {
                 Log.e("UserViewModel", "Network error during getUserByUsername", e)
                 _user.value = Result.failure(IOException("Network error, please check your connection", e))
@@ -100,7 +98,7 @@ class UserViewModel(
             val userStored = response.toUser(access, refresh)
             userRepository.insertUser(userStored)
 
-            Log.d("UserViewModel", "UserRepository: $userStored")
+            Log.d("UserViewModel", "User inserted in DB: $userStored")
         }
     }
 
@@ -137,7 +135,7 @@ class UserViewModel(
                 val response = userRepository.getUser()
                 response?.let { _userInfo.value = it }
 
-                Log.d("UserViewModel", "GetUserInfo: $response")
+                Log.d("UserViewModel", "User got from DB: $response")
             } catch (e: Exception) {
                 Log.e("UserViewModel", "Unexpected error during getUserInfo", e)
             }
