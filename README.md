@@ -41,4 +41,4 @@ Once installed, users can:
 
 ## Contact
 
-For any questions or inquiries, please contact [tcc2024.dev@gmail.com](mailto:contato@ecosynergybr.com).
+For any questions or inquiries, please contact [contato@ecosynergybr.com](mailto:contato@ecosynergybr.com).
