@@ -1,4 +1,4 @@
-# EcoSynergy Android App 
+# Ecosynergy
 
 EcoSynergy-App is a Kotlin-based mobile application designed to provide users with a comprehensive Gas Emission Management System. The app aims to help individuals and organizations track, manage, and reduce their carbon footprint by providing access to real-time data on gas emissions.
 
@@ -39,10 +39,6 @@ Once installed, users can:
 - Receive notifications and alerts.
 - Access environmental tips and recommendations.
 
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
 ## Contact
 
-For any questions or inquiries, please contact [tcc2024.dev@gmail.com](mailto:tcc2024.dev@gmail.com).
+For any questions or inquiries, please contact [tcc2024.dev@gmail.com](mailto:contato@ecosynergybr.com).
