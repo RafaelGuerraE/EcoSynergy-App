@@ -32,6 +32,9 @@ class UserViewModel(
     private val _loginResult = MutableLiveData<Result<LoginResponse>>()
     val loginResult: LiveData<Result<LoginResponse>> get() = _loginResult
 
+    private val _refreshResult = MutableLiveData<Result<LoginResponse>>()
+    val refreshResult: LiveData<Result<LoginResponse>> get() = _refreshResult
+
     private val _userInfo = MutableLiveData<User>()
     val userInfo: LiveData<User> get() = _userInfo
 
@@ -55,19 +58,19 @@ class UserViewModel(
         viewModelScope.launch {
             try {
                 val refreshResponse = service.refreshToken(username, "Bearer $refreshToken")
-                _loginResult.value = Result.success(refreshResponse)
+                _refreshResult.value = Result.success(refreshResponse)
 
                 getUserByUsername(username, refreshResponse.accessToken, refreshResponse.refreshToken)
 
             } catch (e: IOException) {
                 Log.e("UserViewModel", "Network error during refreshToken", e)
-                _loginResult.value = Result.failure(IOException("Network error, please check your connection", e))
+                _refreshResult.value = Result.failure(IOException("Network error, please check your connection", e))
             } catch (e: HttpException) {
                 Log.e("UserViewModel", "HTTP error during refreshToken", e)
-                _loginResult.value = Result.failure(HttpException(e.response()))
+                _refreshResult.value = Result.failure(HttpException(e.response()))
             } catch (e: Exception) {
                 Log.e("UserViewModel", "Unexpected error during refreshToken", e)
-                _loginResult.value = Result.failure(Exception("Unexpected error occurred", e))
+                _refreshResult.value = Result.failure(Exception("Unexpected error occurred", e))
             }
         }
     }
@@ -113,6 +116,8 @@ class UserViewModel(
             try {
                 userRepository.updateUser(userId, newUsername, newFullName, newEmail, newGender, newNationality, newAccessToken, newRefreshToken)
                 Log.d("UserViewModel", "response Update: $userId, $newUsername, $newFullName, $newEmail, $newGender, $newNationality, $newAccessToken, $newRefreshToken")
+
+                getUserInfoFromDB()
             }
              catch (e: IOException) {
                 Log.e("UserViewModel", "Network error during updateUserInfoDB", e)

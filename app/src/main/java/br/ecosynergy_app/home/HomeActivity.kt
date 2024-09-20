@@ -59,16 +59,25 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var navView: NavigationView
     private lateinit var btnTheme: ImageButton
 
+
+
     private lateinit var progressBar: ProgressBar
 
     var teamHandles: List<String> =  emptyList()
 
     private lateinit var loginSp: SharedPreferences
     private lateinit var themeSp: SharedPreferences
-
-    private var isUpdatingUserInfo = false
+    var userId: Int = 0
+    var userUsername: String = ""
+    var userFullname: String = ""
+    var userEmail: String = ""
+    var userGender: String = ""
+    var userNationality: String = ""
+    var accessToken : String = ""
+    var refreshToken: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
 
         themeSp = getSharedPreferences("theme_prefs", Context.MODE_PRIVATE)
         when (themeSp.getString("theme", "system")) {
@@ -103,14 +112,12 @@ class HomeActivity : AppCompatActivity() {
         var justLoggedIn = loginSp.getBoolean("just_logged_in", false)
         var open = loginSp.getBoolean("open", false)
 
-        observeUserInfo()
-        observeLoginResult()
-
         if(isLoggedIn && !open){
             updateUserInfo()
-            Log.d("HomeActivity", "UPDATE")
+            displayUserInfoFromDB()
         }
         else{
+            userViewModel.getUserInfoFromDB()
             displayUserInfoFromDB()
             loginSp.edit().putBoolean("open", false).apply()
         }
@@ -283,8 +290,6 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun displayUserInfoFromDB() {
-        userViewModel.getUserInfoFromDB()
-
         userViewModel.userInfo.observe(this) { user ->
                 Log.d("HomeActivity", "User data retrieved: $user")
                 if (user != null) {
@@ -295,44 +300,44 @@ class HomeActivity : AppCompatActivity() {
             }
     }
 
-    private fun observeUserInfo() {
+    private fun updateUserInfo() {
+        userViewModel.getUserInfoFromDB()
+
         userViewModel.userInfo.observe(this) { userInfo ->
-            if (userInfo != null && !isUpdatingUserInfo) {
-                isUpdatingUserInfo = true
+            if (userInfo != null) {
                 userViewModel.refreshToken(userInfo.username, userInfo.refreshToken)
             }
         }
-    }
 
-    private fun observeLoginResult() {
-        userViewModel.loginResult.observe(this) { loginResult ->
-            loginResult.onSuccess { refreshTokenResponse ->
+        userViewModel.refreshResult.observe(this) { refreshResult ->
+            refreshResult.onSuccess { refreshResponse ->
                 userViewModel.user.observe(this) { result ->
                     result.onSuccess { userData ->
-                        val newAccessToken = refreshTokenResponse.accessToken
-                        val newRefreshToken = refreshTokenResponse.refreshToken
+                         accessToken = refreshResponse.accessToken
+                        refreshToken = refreshResponse.refreshToken
 
-                        userViewModel.updateUserInfoDB(
-                            userData.id,
-                            userData.username,
-                            userData.fullName,
-                            userData.email,
-                            userData.gender,
-                            userData.nationality,
-                            newAccessToken,
-                            newRefreshToken
-                        )
+                        userId = userData.id
+                        userUsername = userData.username
+                        userFullname = userData.fullName
+                        userEmail = userData.email
+                        userGender = userData.gender
+                        userNationality = userData.nationality
 
-                        isUpdatingUserInfo = false
-                        displayUserInfoFromDB() // Call this after the update completes
                     }
                 }
             }
+            userViewModel.updateUserInfoDB(
+                userId,
+                userUsername,
+                userFullname,
+                userEmail,
+                userGender,
+                userGender,
+                accessToken,
+                refreshToken,
+            )
         }
-    }
 
-    private fun updateUserInfo() {
-        userViewModel.getUserInfoFromDB()
     }
 
 
