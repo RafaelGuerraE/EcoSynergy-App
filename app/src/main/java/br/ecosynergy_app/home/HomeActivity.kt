@@ -66,6 +66,8 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var loginSp: SharedPreferences
     private lateinit var themeSp: SharedPreferences
 
+    private var isUpdatingUserInfo = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
 
         themeSp = getSharedPreferences("theme_prefs", Context.MODE_PRIVATE)
@@ -97,24 +99,20 @@ class HomeActivity : AppCompatActivity() {
         teamsViewModel = ViewModelProvider(this, TeamsViewModelFactory(RetrofitClient.teamsService, teamsRepository))[TeamsViewModel::class.java]
 
         loginSp = getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
-        val isLoggedIn = loginSp.getBoolean("isLoggedIn", false)
-        val justLoggedIn = loginSp.getBoolean("just_logged_in", false)
-        val open = loginSp.getBoolean("open", false)
+        var isLoggedIn = loginSp.getBoolean("isLoggedIn", false)
+        var justLoggedIn = loginSp.getBoolean("just_logged_in", false)
+        var open = loginSp.getBoolean("open", false)
 
-
-
-
+        observeUserInfo()
+        observeLoginResult()
 
         if(isLoggedIn && !open){
             updateUserInfo()
-            Log.d("HomeActivity", "isLoggedIn: $isLoggedIn JustLoggedIn: $justLoggedIn Open: $open")
+            Log.d("HomeActivity", "UPDATE")
         }
         else{
             displayUserInfoFromDB()
-            val editor = loginSp.edit()
-            editor.putBoolean("open", false)
-            editor.apply()
-            Log.d("HomeActivity", "isLoggedIn: $isLoggedIn JustLoggedIn: $justLoggedIn Open: $open")
+            loginSp.edit().putBoolean("open", false).apply()
         }
 
         bottomNavView = findViewById(R.id.bottomNavView)
@@ -126,12 +124,9 @@ class HomeActivity : AppCompatActivity() {
         progressBar = findViewById(R.id.progressBar)
 
 
-
         if(justLoggedIn){
             showSnackBar("Conectado com sucesso", "FECHAR", R.color.greenDark)
-            val editor = loginSp.edit()
-            editor.putBoolean("just_logged_in", false)
-            editor.apply()
+            loginSp.edit().putBoolean("just_logged_in", false).apply()
         }
 
         when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
@@ -300,36 +295,46 @@ class HomeActivity : AppCompatActivity() {
             }
     }
 
-    private fun updateUserInfo(){
-        userViewModel.getUserInfoFromDB()
-        userViewModel.userInfo.observe(this){userInfo->
-            if(userInfo != null){
-
+    private fun observeUserInfo() {
+        userViewModel.userInfo.observe(this) { userInfo ->
+            if (userInfo != null && !isUpdatingUserInfo) {
+                isUpdatingUserInfo = true
                 userViewModel.refreshToken(userInfo.username, userInfo.refreshToken)
-                userViewModel.loginResult.observe(this){ loginResult->
-                    loginResult.onSuccess { refreshTokenResponse->
-                        if(refreshTokenResponse != null){
-                            val newAccessToken = refreshTokenResponse.accessToken
-                            val newRefreshToken = refreshTokenResponse.refreshToken
-                            userViewModel.updateUserInfoDB(
-                                userInfo.id,
-                                userInfo.username,
-                                userInfo.fullName,
-                                userInfo.email,
-                                userInfo.gender,
-                                userInfo.nationality,
-                                newAccessToken,
-                                newRefreshToken
-                            )
-
-                            displayUserInfoFromDB()
-                        }
-                }
-
-            }
             }
         }
     }
+
+    private fun observeLoginResult() {
+        userViewModel.loginResult.observe(this) { loginResult ->
+            loginResult.onSuccess { refreshTokenResponse ->
+                userViewModel.user.observe(this) { result ->
+                    result.onSuccess { userData ->
+                        val newAccessToken = refreshTokenResponse.accessToken
+                        val newRefreshToken = refreshTokenResponse.refreshToken
+
+                        userViewModel.updateUserInfoDB(
+                            userData.id,
+                            userData.username,
+                            userData.fullName,
+                            userData.email,
+                            userData.gender,
+                            userData.nationality,
+                            newAccessToken,
+                            newRefreshToken
+                        )
+
+                        isUpdatingUserInfo = false
+                        displayUserInfoFromDB() // Call this after the update completes
+                    }
+                }
+            }
+        }
+    }
+
+    private fun updateUserInfo() {
+        userViewModel.getUserInfoFromDB()
+    }
+
 
     private fun getTeamsByUserId(userId: Int, token: String){
         teamsViewModel.findTeamsByUserId(userId, token)

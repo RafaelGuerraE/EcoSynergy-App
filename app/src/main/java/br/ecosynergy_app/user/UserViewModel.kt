@@ -57,18 +57,17 @@ class UserViewModel(
                 val refreshResponse = service.refreshToken(username, "Bearer $refreshToken")
                 _loginResult.value = Result.success(refreshResponse)
 
-
                 getUserByUsername(username, refreshResponse.accessToken, refreshResponse.refreshToken)
 
             } catch (e: IOException) {
                 Log.e("UserViewModel", "Network error during refreshToken", e)
-                _user.value = Result.failure(IOException("Network error, please check your connection", e))
+                _loginResult.value = Result.failure(IOException("Network error, please check your connection", e))
             } catch (e: HttpException) {
                 Log.e("UserViewModel", "HTTP error during refreshToken", e)
-                _user.value = Result.failure(HttpException(e.response()))
+                _loginResult.value = Result.failure(HttpException(e.response()))
             } catch (e: Exception) {
                 Log.e("UserViewModel", "Unexpected error during refreshToken", e)
-                _user.value = Result.failure(Exception("Unexpected error occurred", e))
+                _loginResult.value = Result.failure(Exception("Unexpected error occurred", e))
             }
         }
     }
@@ -112,19 +111,15 @@ class UserViewModel(
                          newRefreshToken: String){
         viewModelScope.launch {
             try {
-                val response = userRepository.updateUser(userId, newUsername, newFullName, newEmail, newGender, newNationality, newAccessToken, newRefreshToken)
-
+                userRepository.updateUser(userId, newUsername, newFullName, newEmail, newGender, newNationality, newAccessToken, newRefreshToken)
                 Log.d("UserViewModel", "response Update: $userId, $newUsername, $newFullName, $newEmail, $newGender, $newNationality, $newAccessToken, $newRefreshToken")
             }
              catch (e: IOException) {
                 Log.e("UserViewModel", "Network error during updateUserInfoDB", e)
-                _user.value = Result.failure(IOException("Network error, please check your connection", e))
             } catch (e: HttpException) {
                 Log.e("UserViewModel", "HTTP error during updateUserInfoDB", e)
-                _user.value = Result.failure(HttpException(e.response()))
             } catch (e: Exception) {
                 Log.e("UserViewModel", "Unexpected error during updateUserInfoDB", e)
-                _user.value = Result.failure(Exception("Unexpected error occurred", e))
             }
         }
     }
@@ -220,6 +215,7 @@ class UserViewModel(
             try {
                 val request = UpdateRequest(username, fullName, email, gender, nationality)
                 val response = service.updateUser(id, "Bearer $token", request)
+
                 Log.d("UserViewModel", "User updated successfully: $response")
                 _user.value = Result.success(response)
             } catch (e: HttpException) {

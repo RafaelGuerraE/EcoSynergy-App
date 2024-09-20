@@ -146,10 +146,6 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun startHomeActivity() {
-        val editor = sp.edit()
-        editor.putBoolean("open", true)
-        editor.apply()
-
         val i = Intent(this, HomeActivity::class.java)
         startActivity(i)
         finish()
@@ -190,6 +186,7 @@ class LoginActivity : AppCompatActivity() {
                         startHomeActivity()
                         val editor = sp.edit()
                         editor.putBoolean("just_logged_in", true)
+                        editor.putBoolean("open", true)
                         editor.apply()
                     }
                 }
