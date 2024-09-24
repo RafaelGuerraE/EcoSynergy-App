@@ -141,9 +141,11 @@ class TeamMembersFragment : Fragment(R.layout.fragment_team_members) {
             val memberIdsString = memberIds.joinToString(",")
             val addMembersBottomSheet = AddMembersBottomSheet().apply {
                 arguments = Bundle().apply {
-                    //putString("TEAM_HANDLE", teamHandle)
+                    putString("TEAM_HANDLE", teamHandle)
                     putInt("TEAM_ID", teamId)
                     putString("MEMBER_IDS", memberIdsString)
+                    putInt("USER_ID", userId)
+                    putString("ACCESS_TOKEN", accessToken)
                 }
             }
             addMembersBottomSheet.show(parentFragmentManager, "AddMembersBottomSheet")

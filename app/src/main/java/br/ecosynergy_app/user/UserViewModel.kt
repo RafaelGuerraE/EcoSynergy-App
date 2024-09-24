@@ -251,13 +251,13 @@ class UserViewModel(
         }
     }
 
-    fun searchUser(token: String?, username: String?) {
+    fun searchUser(username: String, accessToken: String) {
         viewModelScope.launch {
-            Log.d("UserViewModel", "$token")
             try {
-                val response = service.searchUser("Bearer $token", username)
-                Log.d("UserViewModel", "Search Successful")
+                val response = service.searchUser(username, "Bearer $accessToken")
                 _users.value = Result.success(response)
+
+                Log.d("UserViewModel", "Search users Successful")
             } catch (e: HttpException) {
                 val errorBody = e.response()?.errorBody()?.string()
                 val errorResponse = Gson().fromJson(errorBody, ApiError::class.java)

@@ -80,7 +80,7 @@ class TeamsViewModel(
                 Log.d("TeamsViewModel", "Members: $members")
 
             } catch (e: Exception) {
-                Log.e("TeamsViewModel", "Error while getAllTeamsFromDB", e)
+                Log.e("TeamsViewModel", "Error while getMembersByTeamId", e)
                 _teamsResult.value = Result.failure(e)
             }
         }

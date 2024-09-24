@@ -110,9 +110,6 @@ class Home : Fragment() {
 
             startActivity(Intent.createChooser(shareIntent, "Compartilhar relatório via"))
         }
-
-        val teamsArrayAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, teamHandles)
-        spinnerTeam.adapter = teamsArrayAdapter
     }
 
     private fun observeUserData() {
@@ -136,8 +133,10 @@ class Home : Fragment() {
         teamsViewModel.getAllTeamsFromDB()
         teamsViewModel.allTeamsDB.observe(viewLifecycleOwner) { teamData ->
             teamHandles = listOf("Todas") + teamData.map { it.handle }
+
             val teamsArrayAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, teamHandles)
             spinnerTeam.adapter = teamsArrayAdapter
+
             fetchMQ7ReadingsByTeamHandle()
             fetchMQ135ReadingsByTeamHandle()
             fetchFireReadingsByTeamHandle()

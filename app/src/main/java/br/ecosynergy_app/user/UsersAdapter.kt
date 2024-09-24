@@ -21,6 +21,7 @@ import androidx.lifecycle.ViewModelStore
 import androidx.recyclerview.widget.RecyclerView
 import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
+import br.ecosynergy_app.home.HomeActivity
 import br.ecosynergy_app.teams.AddMembersBottomSheet
 import br.ecosynergy_app.teams.RoleRequest
 import br.ecosynergy_app.teams.TeamMembersFragment
@@ -31,11 +32,12 @@ import com.google.android.material.snackbar.Snackbar
 class UsersAdapter(
     private var usersList: MutableList<UserResponse>,
     private var teamId: Int,
-    private var teamHandle: String?,
+    private var teamHandle: String,
     private val teamsViewModel: TeamsViewModel,
-    private val activity: FragmentActivity,
-    private val fragment: AddMembersBottomSheet,
-    private val memberIds: List<String>
+    private val memberIds: List<String>,
+    private val accessToken: String,
+    private val userId: Int,
+    private val username: String
 ) : RecyclerView.Adapter<UsersAdapter.ViewHolder>() {
 
     fun updateList(newList: MutableList<UserResponse>) {
@@ -45,7 +47,7 @@ class UsersAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.users_layout, parent, false)
-        return ViewHolder(view, usersList, teamId, teamHandle, teamsViewModel, activity, fragment, memberIds)
+        return ViewHolder(view, usersList, teamId, teamHandle, teamsViewModel, memberIds, accessToken, userId, username)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -58,11 +60,12 @@ class UsersAdapter(
         itemView: View,
         private var usersList: MutableList<UserResponse>,
         private var teamId: Int,
-        private var teamHandle: String?,
+        private var teamHandle: String,
         private val teamsViewModel: TeamsViewModel,
-        private val activity: FragmentActivity,
-        private val fragment: AddMembersBottomSheet,
-        private val memberIds: List<String>
+        private val memberIds: List<String>,
+        private val accessToken: String,
+        private val userId: Int,
+        private var username: String
     ) : RecyclerView.ViewHolder(itemView) {
 
         private val txtUsername: TextView = itemView.findViewById(R.id.txtUsername)
@@ -70,23 +73,16 @@ class UsersAdapter(
         private val txtView: TextView = itemView.findViewById(R.id.txtView)
         private val imgUser: ImageView = itemView.findViewById(R.id.imgUser)
         private val btnInvite: ImageButton = itemView.findViewById(R.id.btnInvite)
-
-        private var token: String? = ""
-        private var userId: Int = 0
-        private var username: String? = null
         private var memberId: Int = 0
 
         fun bind(user: UserResponse) {
             username = user.username
-//            val sp: SharedPreferences = itemView.context.getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
-//            token = sp.getString("accessToken", null)
-//            userId = sp.getString("id", null)
 
             txtFullname.text = user.fullName
             txtUsername.text = "@$username"
             memberId = user.id
 
-            imgUser.setImageResource(getDrawableForLetter(user.fullName.first()))
+            imgUser.setImageResource(HomeActivity().getDrawableForLetter(user.fullName.first()))
 
             Log.d("UsersAdapter", "MemberIDS: $memberIds")
 
@@ -101,40 +97,8 @@ class UsersAdapter(
             }
         }
 
-        private fun getDrawableForLetter(letter: Char): Int {
-            return when (letter.lowercaseChar()) {
-                'a' -> R.drawable.a
-                'b' -> R.drawable.b
-                'c' -> R.drawable.c
-                'd' -> R.drawable.d
-                'e' -> R.drawable.e
-                'f' -> R.drawable.f
-                'g' -> R.drawable.g
-                'h' -> R.drawable.h
-                'i' -> R.drawable.i
-                'j' -> R.drawable.j
-                'k' -> R.drawable.k
-                'l' -> R.drawable.l
-                'm' -> R.drawable.m
-                'n' -> R.drawable.n
-                'o' -> R.drawable.o
-                'p' -> R.drawable.p
-                'q' -> R.drawable.q
-                'r' -> R.drawable.r
-                's' -> R.drawable.s
-                't' -> R.drawable.t
-                'u' -> R.drawable.u
-                'v' -> R.drawable.v
-                'w' -> R.drawable.w
-                'x' -> R.drawable.x
-                'y' -> R.drawable.y
-                'z' -> R.drawable.z
-                else -> R.drawable.default_image
-            }
-        }
-
         private fun inviteUser(){
-            teamsViewModel.addMember(token, teamId, memberId, RoleRequest("COMMON_USER"))
+            teamsViewModel.addMember(accessToken, teamId, memberId, RoleRequest("COMMON_USER"))
             btnInvite.visibility = View.GONE
             showSnackBar("Usuário adicionado com sucesso!", "FECHAR", R.color.greenDark)
         }

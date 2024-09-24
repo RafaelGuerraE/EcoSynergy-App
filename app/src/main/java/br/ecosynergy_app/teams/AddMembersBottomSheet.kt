@@ -45,18 +45,19 @@ class AddMembersBottomSheet : BottomSheetDialogFragment() {
 
     private lateinit var swipeRefresh: SwipeRefreshLayout
 
-    private var token: String? = ""
+    private var accessToken: String = ""
     private var teamId: Int = 0
-    private var teamHandle: String? = ""
-    var memberIds: ArrayList<String> = arrayListOf()
+    private var teamHandle: String = ""
+    private var memberIds: ArrayList<String> = arrayListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            teamHandle = it.getString("TEAM_HANDLE")
-            teamId = it.getString("TEAM_ID")?.toInt() ?: 0
+            teamHandle = it.getString("TEAM_HANDLE").toString()
+            teamId = it.getInt("TEAM_ID")
             val memberIdsString = it.getString("MEMBER_IDS") ?: ""
             memberIds = ArrayList(memberIdsString.split(","))
+            accessToken = it.getString("ACCESS_TOKEN", "")
         }
         Log.d("AddMembers", "MemberIDS in onCreate: $memberIds, $teamHandle, $teamId")
     }
@@ -95,9 +96,6 @@ class AddMembersBottomSheet : BottomSheetDialogFragment() {
         usersAdapter = UsersAdapter(mutableListOf(), teamId, teamHandle, teamsViewModel, requireActivity(), this, memberIds)
         recycleUsers.adapter = usersAdapter
 
-        val sp: SharedPreferences = requireActivity().getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
-        token = sp.getString("accessToken", null)
-
         Log.d("AddMembers", "MemberIDS in onCreateView: $memberIds, $teamHandle, $teamId")
 
         return view
@@ -118,13 +116,12 @@ class AddMembersBottomSheet : BottomSheetDialogFragment() {
         }
 
         btnSearch.setOnClickListener{
-            searchUser(token, txtMember.text.toString())
+            searchUser(txtMember.text.toString(), accessToken)
         }
     }
 
-    private fun searchUser(token: String?, username : String){
-        Log.d("AddMembers", "$token")
-        userViewModel.searchUser(token, username)
+    private fun searchUser(username: String, accessToken : String){
+        userViewModel.searchUser(username, accessToken)
         userViewModel.users.observe(viewLifecycleOwner){ result ->
             result.onSuccess { response ->
                 shimmerUsers.visibility = View.VISIBLE
