@@ -1,5 +1,6 @@
 package br.ecosynergy_app.teams
 
+import br.ecosynergy_app.user.UserResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -44,8 +45,14 @@ interface TeamsService {
     //User Managing
 
     @GET("api/team/v1/user/{id}")
-    suspend fun findTeamsByUserId(@Path("id") userId: Int, @Header("Authorization") token: String,
+    suspend fun getTeamsByUserId(@Path("id") userId: Int, @Header("Authorization") token: String,
                                 ) : Response<List<TeamsResponse>>
+
+    @GET("api/user/v1/id/{id}")
+    suspend fun getMembersById(
+        @Path("id") id: Int?,
+        @Header("Authorization") token: String
+    ): UserResponse
 
     @POST("api/team/v1/{teamId}/user/{userId}")
     suspend fun addMember(@Header("Authorization") token: String?,

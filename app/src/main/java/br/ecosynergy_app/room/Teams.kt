@@ -1,11 +1,13 @@
 package br.ecosynergy_app.room
 
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import br.ecosynergy_app.teams.TeamsResponse
 import br.ecosynergy_app.user.UserResponse
 
-@Entity(tableName = "teams")
+@Entity(tableName = "teams",
+    indices = [Index(value = ["handle"], unique = true)])
 data class Teams(
     @PrimaryKey(autoGenerate = false)
     val id: Int,

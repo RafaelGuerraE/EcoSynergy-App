@@ -32,8 +32,9 @@ interface ReadingsService {
                                       @Path("id") id:String) : MQ135ReadingsResponse
 
     @GET("api/mq135Reading/v1/team/{teamHandle}")
-    suspend fun fetchMq135ReadingsByTeamHandle(@Header("Authorization") token: String,
-                                               @Path("teamHandle") teamHandle:String) : MQ135ReadingsResponse
+    suspend fun fetchMq135ReadingsByTeamHandle(@Path("teamHandle") teamHandle:String,
+                                               @Header("Authorization") token: String
+                                               ) : MQ135ReadingsResponse
 
     //Fire Readings
     @POST("api/fireReading/v1/{id}")
@@ -47,6 +48,6 @@ interface ReadingsService {
                                      @Path("id") id:String): FireReadingsResponse
 
     @GET("api/fireReading/v1/team/{teamHandle}")
-    suspend fun fetchFireReadingsByTeamHandle(@Header("Authorization") token: String,
-                                             @Path("teamHandle") teamHandle:String): FireReadingsResponse
+    suspend fun fetchFireReadingsByTeamHandle(@Path("teamHandle") teamHandle:String,
+                                              @Header("Authorization") token: String): FireReadingsResponse
 }

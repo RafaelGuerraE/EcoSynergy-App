@@ -9,7 +9,7 @@ class UserRepository(private val userDao: UserDao) {
         userDao.deleteAllUsers()
     }
 
-    suspend fun getUser(): User? {
+    suspend fun getUser(): User {
         return userDao.getUser()
     }
 

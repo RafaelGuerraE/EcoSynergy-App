@@ -12,8 +12,10 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import br.ecosynergy_app.R
+import br.ecosynergy_app.home.HomeActivity
+import br.ecosynergy_app.room.Teams
 
-class TeamAdapter(private var teamsList: List<TeamsResponse>) :
+class TeamAdapter(private var teamsList: List<Teams>) :
     RecyclerView.Adapter<TeamAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -35,12 +37,12 @@ class TeamAdapter(private var teamsList: List<TeamsResponse>) :
         private val btnInfo: ImageButton = itemView.findViewById(R.id.btnInfo)
         private val linearClick: LinearLayout = itemView.findViewById(R.id.linearClick)
 
-        fun bind(team: TeamsResponse) {
+        fun bind(team: Teams) {
             teamName.text = team.name
             teamHandle.text = "@${team.handle}"
             teamDescription.text = team.description
 
-            val drawableLetter = getDrawableForLetter(team.name.first())
+            val drawableLetter = HomeActivity().getDrawableForLetter(team.name.first())
 
             teamImage.setImageResource(drawableLetter)
 
@@ -61,39 +63,6 @@ class TeamAdapter(private var teamsList: List<TeamsResponse>) :
                     }
                 }
                 teamBottomSheet.show(fragmentManager, "TeamBottomSheet")
-            }
-
-        }
-
-        private fun getDrawableForLetter(letter: Char): Int {
-            return when (letter.lowercaseChar()) {
-                'a' -> R.drawable.a
-                'b' -> R.drawable.b
-                'c' -> R.drawable.c
-                'd' -> R.drawable.d
-                'e' -> R.drawable.e
-                'f' -> R.drawable.f
-                'g' -> R.drawable.g
-                'h' -> R.drawable.h
-                'i' -> R.drawable.i
-                'j' -> R.drawable.j
-                'k' -> R.drawable.k
-                'l' -> R.drawable.l
-                'm' -> R.drawable.m
-                'n' -> R.drawable.n
-                'o' -> R.drawable.o
-                'p' -> R.drawable.p
-                'q' -> R.drawable.q
-                'r' -> R.drawable.r
-                's' -> R.drawable.s
-                't' -> R.drawable.t
-                'u' -> R.drawable.u
-                'v' -> R.drawable.v
-                'w' -> R.drawable.w
-                'x' -> R.drawable.x
-                'y' -> R.drawable.y
-                'z' -> R.drawable.z
-                else -> R.drawable.default_image
             }
         }
     }

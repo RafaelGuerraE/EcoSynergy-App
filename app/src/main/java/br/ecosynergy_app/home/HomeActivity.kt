@@ -8,7 +8,6 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.view.inputmethod.InputMethodManager
 import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.ProgressBar
@@ -21,20 +20,21 @@ import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import br.ecosynergy_app.NotificationService
 import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.home.fragments.Home
 import br.ecosynergy_app.home.fragments.Notifications
 import br.ecosynergy_app.home.fragments.Teams
 import br.ecosynergy_app.login.LoginActivity
-import br.ecosynergy_app.login.LoginRequest
-import br.ecosynergy_app.room.AppDatabase
-import br.ecosynergy_app.room.User
-import br.ecosynergy_app.room.UserRepository
 import br.ecosynergy_app.readings.ReadingsViewModel
 import br.ecosynergy_app.readings.ReadingsViewModelFactory
+import br.ecosynergy_app.room.AppDatabase
+import br.ecosynergy_app.room.MembersRepository
 import br.ecosynergy_app.room.ReadingsRepository
 import br.ecosynergy_app.room.TeamsRepository
+import br.ecosynergy_app.room.User
+import br.ecosynergy_app.room.UserRepository
 import br.ecosynergy_app.teams.TeamsViewModel
 import br.ecosynergy_app.teams.TeamsViewModelFactory
 import br.ecosynergy_app.user.UserSettingsActivity
@@ -42,15 +42,13 @@ import br.ecosynergy_app.user.UserViewModel
 import br.ecosynergy_app.user.UserViewModelFactory
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
-import de.hdodenhof.circleimageview.CircleImageView
-
 import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.textfield.TextInputLayout
+import de.hdodenhof.circleimageview.CircleImageView
 
 class HomeActivity : AppCompatActivity() {
 
     private lateinit var userViewModel: UserViewModel
-    private lateinit var sensorsViewModel: ReadingsViewModel
+    private lateinit var readingsViewModel: ReadingsViewModel
     private lateinit var teamsViewModel: TeamsViewModel
 
     private lateinit var bottomNavView: BottomNavigationView
@@ -59,7 +57,7 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var navView: NavigationView
     private lateinit var btnTheme: ImageButton
 
-
+    private var accessToken: String = ""
 
     private lateinit var progressBar: ProgressBar
 
@@ -67,14 +65,6 @@ class HomeActivity : AppCompatActivity() {
 
     private lateinit var loginSp: SharedPreferences
     private lateinit var themeSp: SharedPreferences
-    var userId: Int = 0
-    var userUsername: String = ""
-    var userFullname: String = ""
-    var userEmail: String = ""
-    var userGender: String = ""
-    var userNationality: String = ""
-    var accessToken : String = ""
-    var refreshToken: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -86,8 +76,9 @@ class HomeActivity : AppCompatActivity() {
             "system" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
         }
 
-//        val notificationServiceIntent = Intent(this, NotificationService::class.java)
-//        startService(notificationServiceIntent)
+
+        val notificationServiceIntent = Intent(this, NotificationService::class.java)
+        startService(notificationServiceIntent)
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
@@ -103,9 +94,12 @@ class HomeActivity : AppCompatActivity() {
         val readingsDao = AppDatabase.getDatabase(applicationContext).readingsDao()
         val readingsRepository = ReadingsRepository(readingsDao)
 
+        val membersDao = AppDatabase.getDatabase(applicationContext).membersDao()
+        val membersRepository = MembersRepository(membersDao)
+
         userViewModel = ViewModelProvider(this, UserViewModelFactory(RetrofitClient.userService, userRepository))[UserViewModel::class.java]
-        sensorsViewModel = ViewModelProvider(this, ReadingsViewModelFactory(RetrofitClient.readingsService, readingsRepository))[ReadingsViewModel::class.java]
-        teamsViewModel = ViewModelProvider(this, TeamsViewModelFactory(RetrofitClient.teamsService, teamsRepository))[TeamsViewModel::class.java]
+        readingsViewModel = ViewModelProvider(this, ReadingsViewModelFactory(RetrofitClient.readingsService, readingsRepository))[ReadingsViewModel::class.java]
+        teamsViewModel = ViewModelProvider(this, TeamsViewModelFactory(RetrofitClient.teamsService, teamsRepository, membersRepository))[TeamsViewModel::class.java]
 
         loginSp = getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
         var isLoggedIn = loginSp.getBoolean("isLoggedIn", false)
@@ -114,11 +108,14 @@ class HomeActivity : AppCompatActivity() {
 
         if(isLoggedIn && !open){
             updateUserInfo()
-            displayUserInfoFromDB()
         }
         else{
-            userViewModel.getUserInfoFromDB()
-            displayUserInfoFromDB()
+            displayUserInfoFromDB{
+                readingsViewModel.deleteAllReadingsFromDB()
+                readingsViewModel.fetchMQ7ReadingsByTeamHandle("ecosynergyofc", accessToken)
+                readingsViewModel.fetchMQ135ReadingsByTeamHandle("ecosynergyofc", accessToken)
+                readingsViewModel.fetchFireReadingsByTeamHandle("ecosynergyofc", accessToken)
+            }
             loginSp.edit().putBoolean("open", false).apply()
         }
 
@@ -243,6 +240,7 @@ class HomeActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         clearNavigationViewSelection(navView)
+        displayUserInfoFromDB{}
     }
 
     private fun manageThemes(){
@@ -289,60 +287,77 @@ class HomeActivity : AppCompatActivity() {
             .commit()
     }
 
-    private fun displayUserInfoFromDB() {
-        userViewModel.userInfo.observe(this) { user ->
-                Log.d("HomeActivity", "User data retrieved: $user")
+    private fun displayUserInfoFromDB(onComplete: () -> Unit) {
+        userViewModel.getUserInfoFromDB(){
+            userViewModel.userInfo.observe(this) { user ->
                 if (user != null) {
+                    Log.i("HomeActivity", "UserData displayed: $user")
                     updateNavigationHeader(navView, user)
+                    accessToken = user.accessToken
                 } else {
-                    showToast("No user found")
+                    logout()
                 }
+                userViewModel.userInfo.removeObservers(this)
+                onComplete()
             }
+        }
     }
 
+
     private fun updateUserInfo() {
-        userViewModel.getUserInfoFromDB()
+        userViewModel.getUserInfoFromDB{}
 
         userViewModel.userInfo.observe(this) { userInfo ->
             if (userInfo != null) {
                 userViewModel.refreshToken(userInfo.username, userInfo.refreshToken)
-            }
-        }
+                userViewModel.refreshResult.observe(this) { refreshResult ->
+                    refreshResult.onSuccess { refreshResponse ->
+                        userViewModel.user.observe(this) { result ->
+                            result.onSuccess { userData ->
+                                userViewModel.updateUserInfoDB(
+                                    userData.id,
+                                    userData.username,
+                                    userData.fullName,
+                                    userData.email,
+                                    userData.gender,
+                                    userData.nationality,
+                                    refreshResponse.accessToken,
+                                    refreshResponse.refreshToken
+                                ){
+                                    updateTeamInfo(userData.id, refreshResponse.accessToken)
+                                    displayUserInfoFromDB{}
 
-        userViewModel.refreshResult.observe(this) { refreshResult ->
-            refreshResult.onSuccess { refreshResponse ->
-                userViewModel.user.observe(this) { result ->
-                    result.onSuccess { userData ->
-                         accessToken = refreshResponse.accessToken
-                        refreshToken = refreshResponse.refreshToken
+                                    readingsViewModel.deleteAllReadingsFromDB()
+                                    readingsViewModel.fetchMQ7ReadingsByTeamHandle("ecosynergyofc", refreshResponse.accessToken)
+                                    readingsViewModel.fetchMQ135ReadingsByTeamHandle("ecosynergyofc", accessToken)
+                                    readingsViewModel.fetchFireReadingsByTeamHandle("ecosynergyofc", accessToken)
+                                }
 
-                        userId = userData.id
-                        userUsername = userData.username
-                        userFullname = userData.fullName
-                        userEmail = userData.email
-                        userGender = userData.gender
-                        userNationality = userData.nationality
+                                userViewModel.user.removeObservers(this)
+                            }
+                        }
+                    }
 
+                    refreshResult.onFailure {
+                        Log.e("HomeActivity", "Failed to refresh token")
+                        displayUserInfoFromDB {  }
                     }
                 }
+                userViewModel.userInfo.removeObservers(this)
+            } else {
+                Log.d("HomeActivity", "User info is null, cannot refresh token.")
+                logout()
             }
-            userViewModel.updateUserInfoDB(
-                userId,
-                userUsername,
-                userFullname,
-                userEmail,
-                userGender,
-                userGender,
-                accessToken,
-                refreshToken,
-            )
         }
-
     }
 
+    private fun updateTeamInfo(userId: Int, accessToken: String){
+        teamsViewModel.deleteTeamsFromDB()
+        teamsViewModel.getTeamsByUserId(userId, accessToken) {}
+    }
 
     private fun getTeamsByUserId(userId: Int, token: String){
-        teamsViewModel.findTeamsByUserId(userId, token)
+        teamsViewModel.getTeamsByUserId(userId, token){}
     }
 
     private fun logout() {
@@ -357,6 +372,7 @@ class HomeActivity : AppCompatActivity() {
 
         userViewModel.deleteUserInfoFromDB()
         teamsViewModel.deleteTeamsFromDB()
+        readingsViewModel.deleteAllReadingsFromDB()
 
         val i = Intent(this, LoginActivity::class.java)
         i.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK

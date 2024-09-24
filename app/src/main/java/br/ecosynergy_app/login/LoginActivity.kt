@@ -27,6 +27,7 @@ import br.ecosynergy_app.room.TeamsRepository
 import br.ecosynergy_app.room.UserRepository
 import br.ecosynergy_app.readings.ReadingsViewModel
 import br.ecosynergy_app.readings.ReadingsViewModelFactory
+import br.ecosynergy_app.room.MembersRepository
 import br.ecosynergy_app.room.ReadingsRepository
 import br.ecosynergy_app.teams.TeamsViewModel
 import br.ecosynergy_app.teams.TeamsViewModelFactory
@@ -48,15 +49,15 @@ class LoginActivity : AppCompatActivity() {
 
     private lateinit var userViewModel: UserViewModel
     private lateinit var teamsViewModel: TeamsViewModel
-    private lateinit var sensorsViewModel: ReadingsViewModel
+    private lateinit var readingsViewModel: ReadingsViewModel
 
-    private lateinit var sp: SharedPreferences
+    private lateinit var loginSp: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-        sp = getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
+        loginSp = getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
 
         val logoutMessage = intent.getStringExtra("LOGOUT_MESSAGE")
         if (logoutMessage != null) {
@@ -77,11 +78,13 @@ class LoginActivity : AppCompatActivity() {
         val readingsDao = AppDatabase.getDatabase(applicationContext).readingsDao()
         val readingsRepository = ReadingsRepository(readingsDao)
 
-
+        val membersDao = AppDatabase.getDatabase(applicationContext).membersDao()
+        val membersRepository = MembersRepository(membersDao)
 
         userViewModel = ViewModelProvider(this, UserViewModelFactory(RetrofitClient.userService, userRepository))[UserViewModel::class.java]
-        teamsViewModel = ViewModelProvider(this, TeamsViewModelFactory(RetrofitClient.teamsService, teamsRepository))[TeamsViewModel::class.java]
-        sensorsViewModel = ViewModelProvider(this, ReadingsViewModelFactory(RetrofitClient.readingsService, readingsRepository))[ReadingsViewModel::class.java]
+        teamsViewModel = ViewModelProvider(this, TeamsViewModelFactory(RetrofitClient.teamsService, teamsRepository, membersRepository))[TeamsViewModel::class.java]
+        readingsViewModel = ViewModelProvider(this, ReadingsViewModelFactory(RetrofitClient.readingsService, readingsRepository))[ReadingsViewModel::class.java]
+
 
         txtEntry = findViewById(R.id.txtEntry)
         txtPassword = findViewById(R.id.txtPassword)
@@ -151,7 +154,7 @@ class LoginActivity : AppCompatActivity() {
         finish()
     }
 
-    private fun loginUser(view: View, username: String, password: String, passwordLayout: TextInputLayout){
+    private fun loginUser(view: View, username: String, password: String, passwordLayout: TextInputLayout) {
         if (username.isEmpty() || password.isEmpty()) {
             if (username.isEmpty()) {
                 txtEntry.error = "Insira seu Nome de Usuário"
@@ -165,6 +168,7 @@ class LoginActivity : AppCompatActivity() {
             }
             return
         }
+
         val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view.windowToken, 0)
         loadingProgressBar.visibility = View.VISIBLE
@@ -174,48 +178,51 @@ class LoginActivity : AppCompatActivity() {
 
         userViewModel.loginUser(loginRequest)
         userViewModel.loginResult.observe(this) { result ->
-            loadingProgressBar.visibility = View.GONE
-            overlayView.visibility = View.GONE
+
             result.onSuccess { loginResponse ->
                 Log.d("LoginActivity", "Login success")
-                userViewModel.user.observe(this){result->
-                    result.onSuccess { userData->
+                userViewModel.user.observe(this) { result ->
+                    result.onSuccess { userData ->
                         userViewModel.insertUserInfoDB(userData, loginResponse.accessToken, loginResponse.refreshToken)
-                        getTeamsByUserId(userData.id, loginResponse.accessToken)
-                        setLoggedIn(true)
-                        startHomeActivity()
-                        val editor = sp.edit()
-                        editor.putBoolean("just_logged_in", true)
-                        editor.putBoolean("open", true)
-                        editor.apply()
+                        teamsViewModel.getTeamsByUserId(userData.id, loginResponse.accessToken) {
+                            setLoggedIn(true)
+                            startHomeActivity()
+                            loginSp.edit().apply {
+                                putBoolean("just_logged_in", true)
+                                putBoolean("open", true)
+                                apply()
+                            }
+                        }
                     }
+                    userViewModel.user.removeObservers(this)
                 }
             }.onFailure { error ->
+                loadingProgressBar.visibility = View.GONE
+                overlayView.visibility = View.GONE
                 error.printStackTrace()
                 Log.d("LoginActivity", "Login failed: ${error.message}")
                 txtEntry.error = "Usuário/Email ou Senha incorreto! Por favor verifique seus dados"
                 txtPassword.text = null
                 txtEntry.requestFocus()
             }
+
+            userViewModel.loginResult.removeObservers(this)
         }
     }
 
-    private fun getTeamsByUserId(userId: Int, token: String){
-        teamsViewModel.findTeamsByUserId(userId, token)
-    }
 
     private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
     private fun setLoggedIn(isLoggedIn: Boolean) {
-        val editor = sp.edit()
+        val editor = loginSp.edit()
         editor.putBoolean("isLoggedIn", isLoggedIn)
         editor.apply()
     }
 
     private fun isLoggedIn(): Boolean {
-        return sp.getBoolean("isLoggedIn", false)
+        return loginSp.getBoolean("isLoggedIn", false)
     }
 
     private fun showSnackBar(message: String, action: String, bgTint: Int) {

@@ -6,7 +6,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 
-class OverviewAdapter(activity: AppCompatActivity, private val teamHandle: String?, private val teamId: String?) : FragmentStateAdapter(activity) {
+class OverviewAdapter(activity: AppCompatActivity, private val teamId: Int, private val teamHandle: String, private val userId: Int, private val accessToken: String) : FragmentStateAdapter(activity) {
 
     override fun getItemCount(): Int = 2
 
@@ -14,14 +14,18 @@ class OverviewAdapter(activity: AppCompatActivity, private val teamHandle: Strin
         return when (position) {
             0 -> TeamOverviewFragment().apply {
                 arguments = Bundle().apply {
+                    putInt("TEAM_ID", teamId)
                     putString("TEAM_HANDLE", teamHandle)
-                    putString("TEAM_ID", teamId)
+                    putInt("USER_ID", userId)
+                    putString("ACCESS_TOKEN", accessToken)
                 }
             }
             1 -> TeamMembersFragment().apply {
                 arguments = Bundle().apply {
+                    putInt("TEAM_ID", teamId)
                     putString("TEAM_HANDLE", teamHandle)
-                    putString("TEAM_ID", teamId)
+                    putInt("USER_ID", userId)
+                    putString("ACCESS_TOKEN", accessToken)
                 }
             }
             else -> Fragment()

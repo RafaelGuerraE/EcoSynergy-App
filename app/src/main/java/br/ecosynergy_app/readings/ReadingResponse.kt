@@ -45,7 +45,7 @@ data class MQ135ReadingEmbedded(
 )
 
 data class ReadingVO(
-    val id: String,
+    val id: Int,
     val teamHandle: String,
     val value: Double,
     val timestamp: String,

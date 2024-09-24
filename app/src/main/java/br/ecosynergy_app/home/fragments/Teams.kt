@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -28,11 +29,9 @@ class Teams : Fragment() {
     private lateinit var btnAddTeam: ImageButton
     private lateinit var linearAlert: LinearLayout
 
-    private lateinit var swipeRefresh: SwipeRefreshLayout
+    private lateinit var progressBar: ProgressBar
 
-    private var token: String = ""
-    private var identifier: String = ""
-    private var userId: Int = 0
+    private lateinit var swipeRefresh: SwipeRefreshLayout
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,8 +46,11 @@ class Teams : Fragment() {
         btnAddTeam = view.findViewById(R.id.btnAddTeam)
         linearAlert = view.findViewById(R.id.linearAlert)
 
-        linearAlert.visibility = View.VISIBLE
-        recyclerView.visibility = View.GONE
+        progressBar = view.findViewById(R.id.loadingProgressBar)
+
+        linearAlert.visibility = View.GONE
+        recyclerView.visibility = View.VISIBLE
+        progressBar.visibility = View.VISIBLE
 
         swipeRefresh = view.findViewById(R.id.swipeRefresh)
 
@@ -57,34 +59,24 @@ class Teams : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        getTeamsByUserId()
         observeTeamsData()
-        btnAddTeam.setOnClickListener{
+        btnAddTeam.setOnClickListener {
             val createTeamBottomSheet = CreateTeamBottomSheet()
             createTeamBottomSheet.show(parentFragmentManager, "CreateTeamBottomSheet")
         }
         setupSwipeRefresh()
     }
 
-    private fun getTeamsByUserId(){
-        teamsViewModel.findTeamsByUserId(userId, token)
-        teamsViewModel.teamsResult.removeObservers(this)
-        observeTeamsData()
-   }
-
     private fun observeTeamsData() {
-        teamsViewModel.teamsResult.observe(viewLifecycleOwner) { result ->
-            Log.d("TeamsFragment", "TeamsResult: $result")
-            result.onSuccess { teamData ->
-                teamsAdapter = TeamAdapter(teamData)
-                recyclerView.adapter = teamsAdapter
-                if (teamData.isNotEmpty()) {
-                    linearAlert.visibility = View.GONE
-                    recyclerView.visibility = View.VISIBLE
-                }
-            }.onFailure { e ->
-                Log.e("TeamsFragment", "Error", e)
+        teamsViewModel.getAllTeamsFromDB()
+        teamsViewModel.allTeamsDB.observe(viewLifecycleOwner) { teamData ->
+            teamsAdapter = TeamAdapter(teamData)
+            recyclerView.adapter = teamsAdapter
+            if (teamData.isEmpty()) {
+                linearAlert.visibility = View.VISIBLE
+                recyclerView.visibility = View.GONE
             }
+            progressBar.visibility = View.GONE
         }
     }
 

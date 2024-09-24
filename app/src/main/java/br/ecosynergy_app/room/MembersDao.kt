@@ -15,9 +15,15 @@ interface MembersDao {
     @Delete
     suspend fun deleteMember(member: Members)
 
+    @Query("DELETE FROM members")
+    suspend fun deleteAllMembers()
+
     @Query("SELECT * FROM members WHERE id = :id")
-    suspend fun getMemberById(id: Int): Members?
+    suspend fun getMemberById(id: Int): Members
+
+    @Query("SELECT * FROM members WHERE teamId = :teamId")
+    suspend fun getMembersByTeamId(teamId: Int): List<Members>
 
     @Query("SELECT * FROM members")
-    fun getAllMembers(): LiveData<List<Members>>
+    suspend fun getAllMembers(): List<Members>
 }

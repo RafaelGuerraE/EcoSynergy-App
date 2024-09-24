@@ -47,12 +47,12 @@ interface UserService {
     )
 
     @DELETE("api/user/v1/{id}")
-    suspend fun deleteUser(@Path("id") id: String,
+    suspend fun deleteUser(@Path("id") id: Int,
                            @Header("Authorization") token: String): Response<Result<Unit>>
 
     @PUT("api/user/v1/{id}")
     suspend fun updateUser(
-        @Path("id") id: String,
+        @Path("id") id: Int,
         @Header("Authorization") token: String,
         @Body request: UpdateRequest
     ) : UserResponse

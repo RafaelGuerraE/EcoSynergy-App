@@ -17,6 +17,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.room.AppDatabase
+import br.ecosynergy_app.room.MembersRepository
 import br.ecosynergy_app.room.TeamsRepository
 import br.ecosynergy_app.room.UserRepository
 import br.ecosynergy_app.user.MembersAdapter
@@ -73,7 +74,10 @@ class AddMembersBottomSheet : BottomSheetDialogFragment() {
         val teamsDao = AppDatabase.getDatabase(requireContext()).teamsDao()
         val teamsRepository = TeamsRepository(teamsDao)
 
-        teamsViewModel = ViewModelProvider(requireActivity(), TeamsViewModelFactory(RetrofitClient.teamsService, teamsRepository))[TeamsViewModel::class.java]
+        val membersDao = AppDatabase.getDatabase(requireContext()).membersDao()
+        val membersRepository = MembersRepository(membersDao)
+
+        teamsViewModel = ViewModelProvider(requireActivity(), TeamsViewModelFactory(RetrofitClient.teamsService, teamsRepository, membersRepository))[TeamsViewModel::class.java]
         userViewModel = ViewModelProvider(requireActivity(), UserViewModelFactory(RetrofitClient.userService, userRepository))[UserViewModel::class.java]
 
         btnClose = view.findViewById(R.id.btnClose)

@@ -24,43 +24,54 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_gravity="start"
+                android:layout_height="36dp"
                 android:layout_marginTop="15dp"
-                android:layout_marginBottom="20dp">
+                android:layout_marginBottom="20dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Bem vindo, "
                     android:textSize="22sp"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold" />
 
                 <TextView
+                    android:id="@+id/lblFirstname"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/lblFirstname"
-                    tools:text="Usuário!"
-                    android:textSize="22sp"
                     android:textColor="@color/greenDark"
+                    android:textSize="22sp"
                     android:textStyle="bold"
-                    android:visibility="gone"/>
+                    android:visibility="gone"
+                    tools:text="Usuário!" />
 
                 <com.facebook.shimmer.ShimmerFrameLayout
                     android:id="@+id/shimmerName"
                     android:layout_width="150dp"
                     android:layout_height="30dp"
-                    android:layout_gravity="start"
-                    app:shimmer_auto_start="true"
-                    android:visibility="visible">
+                    android:visibility="visible"
+                    app:shimmer_auto_start="true">
+
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:background="@drawable/rect_shape"
-                        android:visibility="visible"
-                        android:backgroundTint="?attr/shimmerColor"/>
+                        android:backgroundTint="?attr/shimmerColor"
+                        android:visibility="visible" />
                 </com.facebook.shimmer.ShimmerFrameLayout>
+
+                <ImageButton
+                    android:id="@+id/btnShare"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:background="@color/transparent"
+                    android:contentDescription="ButtonShare"
+                    android:scaleType="fitEnd"
+                    android:layout_gravity="end"
+                    android:src="@drawable/share_24"
+                    app:tint="?android:attr/iconTint" />
 
             </LinearLayout>
 
@@ -101,6 +112,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/spinner_home"
                     android:layout_marginStart="5dp"
+                    android:visibility="gone"
                     />
             </LinearLayout>
 
@@ -149,15 +161,6 @@
                             android:backgroundTint="?attr/shimmerColor"/>
                     </com.facebook.shimmer.ShimmerFrameLayout>
                 </LinearLayout>
-
-                <ImageButton
-                    android:id="@+id/btnShare"
-                    android:layout_width="match_parent"
-                    android:layout_height="30dp"
-                    android:background="@color/transparent"
-                    android:contentDescription="ButtonShare"
-                    android:src="@drawable/share_24"
-                    android:scaleType="fitCenter"/>
 
                 <TextView
                     android:layout_width="wrap_content"

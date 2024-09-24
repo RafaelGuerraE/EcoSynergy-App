@@ -10,7 +10,8 @@ class ReadingsViewModelFactory(
 ): ViewModelProvider.Factory  {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(ReadingsViewModel::class.java)) {
-            return ReadingsViewModel(service) as T
+            return ReadingsViewModel(service,
+                readingsRepository) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

@@ -14,11 +14,15 @@ class TeamsRepository(private val teamsDao: TeamsDao) {
         return teamsDao.getAllTeams()
     }
 
-    suspend fun getTeamById(id: Int): Teams? {
+    suspend fun getTeamById(id: Int): Teams {
         return teamsDao.getTeamById(id)
     }
 
-    suspend fun deleteTeam(team: Teams) {
-        teamsDao.deleteTeam(team)
+    suspend fun getTeamByHandle(handle: String): Teams {
+        return teamsDao.getTeamByHandle(handle)
+    }
+
+    suspend fun deleteTeamById(teamId: Int) {
+        teamsDao.deleteTeamById(teamId)
     }
 }

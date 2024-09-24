@@ -19,8 +19,12 @@ interface TeamsDao {
     suspend fun getAllTeams(): List<Teams>
 
     @Query("SELECT * FROM teams WHERE id = :id")
-    suspend fun getTeamById(id: Int): Teams?
+    suspend fun getTeamById(id: Int): Teams
 
-    @Delete
-    suspend fun deleteTeam(team: Teams)
+    @Query("SELECT * FROM teams WHERE handle = :handle")
+    suspend fun getTeamByHandle(handle: String): Teams
+
+    @Query("DELETE FROM teams WHERE id = :teamId")
+    suspend fun deleteTeamById(teamId: Int)
+
 }

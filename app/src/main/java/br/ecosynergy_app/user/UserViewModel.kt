@@ -62,6 +62,8 @@ class UserViewModel(
 
                 getUserByUsername(username, refreshResponse.accessToken, refreshResponse.refreshToken)
 
+                Log.d("UserViewModel", "RefreshTokenOK")
+
             } catch (e: IOException) {
                 Log.e("UserViewModel", "Network error during refreshToken", e)
                 _refreshResult.value = Result.failure(IOException("Network error, please check your connection", e))
@@ -111,13 +113,16 @@ class UserViewModel(
                          newGender: String,
                          newNationality: String,
                          newAccessToken: String,
-                         newRefreshToken: String){
+                         newRefreshToken: String,
+                         onComplete: () -> Unit){
         viewModelScope.launch {
             try {
                 userRepository.updateUser(userId, newUsername, newFullName, newEmail, newGender, newNationality, newAccessToken, newRefreshToken)
-                Log.d("UserViewModel", "response Update: $userId, $newUsername, $newFullName, $newEmail, $newGender, $newNationality, $newAccessToken, $newRefreshToken")
+                //getUserInfoFromDB()
+                //Log.d("UserViewModel", "UpdatedInfo: $userId, $newUsername, $newFullName, $newEmail, $newGender, $newNationality, $newAccessToken, $newRefreshToken")
+                Log.d("UserViewModel", "Update user info completed on DB")
 
-                getUserInfoFromDB()
+                onComplete()
             }
              catch (e: IOException) {
                 Log.e("UserViewModel", "Network error during updateUserInfoDB", e)
@@ -129,13 +134,46 @@ class UserViewModel(
         }
     }
 
-    fun getUserInfoFromDB() {
+    fun updateUserData(userId: Int, accessToken: String, refreshToken: String, username: String, fullName: String, email: String, gender: String, nationality: String) {
+        viewModelScope.launch {
+            try {
+                val request = UpdateRequest(username, fullName, email, gender, nationality)
+                val response = service.updateUser(userId, "Bearer $accessToken", request)
+
+                Log.d("UserViewModel", "User updated successfully on API")
+                _user.value = Result.success(response)
+
+                updateUserInfoDB(
+                    userId,
+                    username,
+                    fullName,
+                    email,
+                    gender,
+                    nationality,
+                    accessToken,
+                    refreshToken
+                ){}
+            } catch (e: HttpException) {
+                Log.e("UserViewModel", "HTTP error during updateUserData", e)
+                _user.value = Result.failure(e)
+            } catch (e: IOException) {
+                Log.e("UserViewModel", "Network error during updateUserData", e)
+                _user.value = Result.failure(e)
+            } catch (e: Exception) {
+                Log.e("UserViewModel", "Unexpected error during updateUserData", e)
+                _user.value = Result.failure(e)
+            }
+        }
+    }
+
+    fun getUserInfoFromDB(onComplete: () -> Unit) {
         viewModelScope.launch {
             try {
                 val response = userRepository.getUser()
-                response?.let { _userInfo.value = it }
+                _userInfo.value = response
 
                 Log.d("UserViewModel", "User got from DB: $response")
+                onComplete()
             } catch (e: Exception) {
                 Log.e("UserViewModel", "Unexpected error during getUserInfo", e)
             }
@@ -173,38 +211,18 @@ class UserViewModel(
         }
     }
 
-    fun getUsersByIds(ids: List<String>, token: String?) {
-        viewModelScope.launch {
-            val usersList = mutableListOf<UserResponse>()
-            for (id in ids) {
-                try {
-                    val response = service.getUserById(id, "Bearer $token")
-                    usersList.add(response)
-                    _users.value = Result.success(usersList)
-                } catch (e: HttpException) {
-                    Log.e("UserViewModel", "HTTP error during getUsersByIds", e)
-                    _user.value = Result.failure(e)
-                } catch (e: IOException) {
-                    Log.e("UserViewModel", "Network error during getUsersByIds", e)
-                    _user.value = Result.failure(e)
-                } catch (e: Exception) {
-                    Log.e("UserViewModel", "Unexpected error during getUsersByIds", e)
-                    _user.value = Result.failure(e)
-                }
-            }
-
-        }
-    }
-
-    fun deleteUserData(id: String, token: String?) {
+    fun deleteUserData(id: Int, token: String?) {
         viewModelScope.launch {
             try {
                 val response = service.deleteUser(id, "Bearer $token")
                 if (response.isSuccessful) {
-                    Log.d("UserViewModel", "User deleted successfully")
+                    Log.d("UserViewModel", "User deleted successfully from API")
                 } else {
                     Log.e("UserViewModel", "Error deleting user: ${response.errorBody()?.string()}")
                 }
+
+                deleteUserInfoFromDB()
+
             } catch (e: HttpException) {
                 Log.e("UserViewModel", "HTTP error during deleteUserData", e)
             } catch (e: IOException) {
@@ -215,26 +233,7 @@ class UserViewModel(
         }
     }
 
-    fun updateUserData(id: String, token: String?, username: String, fullName: String, email: String, gender: String, nationality: String) {
-        viewModelScope.launch {
-            try {
-                val request = UpdateRequest(username, fullName, email, gender, nationality)
-                val response = service.updateUser(id, "Bearer $token", request)
 
-                Log.d("UserViewModel", "User updated successfully: $response")
-                _user.value = Result.success(response)
-            } catch (e: HttpException) {
-                Log.e("UserViewModel", "HTTP error during updateUserData", e)
-                _user.value = Result.failure(e)
-            } catch (e: IOException) {
-                Log.e("UserViewModel", "Network error during updateUserData", e)
-                _user.value = Result.failure(e)
-            } catch (e: Exception) {
-                Log.e("UserViewModel", "Unexpected error during updateUserData", e)
-                _user.value = Result.failure(e)
-            }
-        }
-    }
 
     fun resetPassword(username: String, password: String, token: String) {
         viewModelScope.launch {

@@ -27,6 +27,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
+import br.ecosynergy_app.home.HomeActivity
 import br.ecosynergy_app.register.Nationality
 import br.ecosynergy_app.room.AppDatabase
 import br.ecosynergy_app.room.UserRepository
@@ -44,12 +45,14 @@ class UserSettingsActivity : AppCompatActivity() {
     private lateinit var userViewModel: UserViewModel
     private var gender: Int = 0
 
-    private var userId: String = ""
+    private var userId: Int = 0
     private var userUsername: String = ""
     private var userFullname: String = ""
     private var userEmail: String = ""
     private var userNationality: String = ""
     private var userGender: String = ""
+    private var accessToken: String = ""
+    private var refreshToken: String = ""
 
     private lateinit var btnBack: ImageButton
     private lateinit var txtUsername: TextInputEditText
@@ -60,10 +63,13 @@ class UserSettingsActivity : AppCompatActivity() {
     private lateinit var btnPassword: MaterialButton
     private lateinit var btnDelete: MaterialButton
 
+    private lateinit var shimmerEffect: ShimmerFrameLayout
+    private lateinit var imgProfile: CircleImageView
+
     private lateinit var loadingProgressBar: ProgressBar
     private lateinit var overlayView: View
 
-    private var token: String? = ""
+    private lateinit var loginSp : SharedPreferences
 
     private lateinit var  btnEdit : ImageButton
 
@@ -78,9 +84,7 @@ class UserSettingsActivity : AppCompatActivity() {
 
         userViewModel = ViewModelProvider(this, UserViewModelFactory(RetrofitClient.userService, userRepository))[UserViewModel::class.java]
 
-        val sharedPreferences: SharedPreferences =
-            getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
-        token = sharedPreferences.getString("accessToken", null)
+        loginSp = getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
 
         btnBack = findViewById(R.id.btnBack)
         txtUsername = findViewById(R.id.txtUsername)
@@ -90,6 +94,9 @@ class UserSettingsActivity : AppCompatActivity() {
         txtNationality = findViewById(R.id.txtNationality)
         btnPassword = findViewById(R.id.btnPassword)
         btnDelete = findViewById(R.id.btnDelete)
+
+        shimmerEffect = findViewById(R.id.shimmerImage)
+        imgProfile = findViewById(R.id.imgProfile)
 
         loadingProgressBar = findViewById(R.id.loadingProgressBar)
         overlayView = findViewById(R.id.overlayView)
@@ -191,7 +198,6 @@ class UserSettingsActivity : AppCompatActivity() {
             builder.setPositiveButton("Sim") { dialog, _ ->
                 deleteUserData()
                 dialog.dismiss()
-                finish()
             }
 
             builder.setNegativeButton("Cancelar") { dialog, _ ->
@@ -243,49 +249,41 @@ class UserSettingsActivity : AppCompatActivity() {
     }
 
     private fun fetchUserData() {
-        val sharedPreferences: SharedPreferences =
-            getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
-        val identifier = sharedPreferences.getString("identifier", null)
-        val token = sharedPreferences.getString("accessToken", null)
+        userViewModel.getUserInfoFromDB {
+            userViewModel.userInfo.observe(this) { userInfo ->
+                userId = userInfo.id
+                userUsername = userInfo.username
+                userFullname = userInfo.fullName
+                userEmail = userInfo.email
+                userGender = userInfo.gender
+                userNationality = userInfo.nationality
 
-        if (identifier != null && token != null) {
-            userViewModel.getUserInfoFromDB()
-            userViewModel.userInfo.observe(this) { result ->
-                    userId = result.id.toString()
-                    userUsername = result.username
-                    userFullname = result.fullName
-                    userEmail = result.email
-                    userGender = result.gender
-                    userNationality = result.nationality
+                accessToken = userInfo.accessToken
+                refreshToken = userInfo.refreshToken
 
-                    if (userGender == "Male") {
-                        gender = 0
-                    } else if (userGender == "Female") {
-                        gender = 1
-                    } else if (userGender == "Other") {
-                        gender = 2
-                    } else if (userGender == "PNS") {
-                        gender = 3
-                    }
+                gender = when (userGender) {
+                    "Male" -> 0
+                    "Female" -> 1
+                    "Other" -> 2
+                    "PNS" -> 3
+                    else -> -1
+                }
 
-                    findViewById<TextInputEditText>(R.id.txtUsername).setText(userUsername)
-                    findViewById<TextInputEditText>(R.id.txtFullname).setText(userFullname)
-                    findViewById<TextInputEditText>(R.id.txtEmail).setText(userEmail)
-                    findViewById<Spinner>(R.id.txtGender).setSelection(gender)
-                    findViewById<AutoCompleteTextView>(R.id.txtNationality).setText(userNationality)
+                txtUsername.setText(userUsername)
+                txtFullname.setText(userFullname)
+                txtEmail.setText(userEmail)
+                txtGender.setSelection(gender)
+                txtNationality.setText(userNationality)
 
-                    loadingProgressBar.visibility = View.GONE
-                    overlayView.visibility = View.GONE
+                loadingProgressBar.visibility = View.GONE
+                overlayView.visibility = View.GONE
             }
-        } else {
-            showToast("Invalid Username or Token")
-            Log.e("HomeActivity", "Invalid username or token")
         }
     }
 
     private fun deleteUserData() {
-        token = getSharedPreferences("login_prefs", Context.MODE_PRIVATE).getString("accessToken", null)
-        userViewModel.deleteUserData(userId, token)
+        userViewModel.deleteUserData(userId, accessToken)
+        finish()
     }
 
     private fun updateUserData() {
@@ -298,7 +296,8 @@ class UserSettingsActivity : AppCompatActivity() {
         }
         userViewModel.updateUserData(
             userId,
-            token,
+            accessToken,
+            refreshToken,
             userUsername,
             userFullname,
             userEmail,
@@ -348,17 +347,10 @@ class UserSettingsActivity : AppCompatActivity() {
                 } else if (newPassword != confirmNewPassword) {
                     showSnackBar("Erro: as senhas devem se corresponder", "FECHAR", R.color.red)
                 } else {
-                    val sharedPreferences: SharedPreferences =
-                        getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
-                    val username = sharedPreferences.getString("username", null)
-
-                    if (username != null && token != null) {
-                        dialog.dismiss()
-                        userViewModel.resetPassword(username, newPassword, token!!)
-                        showSnackBar("Senha alterada com sucesso", "FECHAR", R.color.greenDark)
-                    } else {
-                        showToast("Invalid Username or Token")
-                    }
+                    val username = userUsername
+                    userViewModel.resetPassword(username, newPassword, accessToken!!)
+                    showSnackBar("Senha alterada com sucesso", "FECHAR", R.color.greenDark)
+                    dialog.dismiss()
                 }
             }
             .setNegativeButton("Cancelar") { dialog, _ ->
@@ -400,46 +392,11 @@ class UserSettingsActivity : AppCompatActivity() {
         }
     }
 
-    private fun getDrawableForLetter(letter: Char): Int {
-        return when (letter.lowercaseChar()) {
-            'a' -> R.drawable.a
-            'b' -> R.drawable.b
-            'c' -> R.drawable.c
-            'd' -> R.drawable.d
-            'e' -> R.drawable.e
-            'f' -> R.drawable.f
-            'g' -> R.drawable.g
-            'h' -> R.drawable.h
-            'i' -> R.drawable.i
-            'j' -> R.drawable.j
-            'k' -> R.drawable.k
-            'l' -> R.drawable.l
-            'm' -> R.drawable.m
-            'n' -> R.drawable.n
-            'o' -> R.drawable.o
-            'p' -> R.drawable.p
-            'q' -> R.drawable.q
-            'r' -> R.drawable.r
-            's' -> R.drawable.s
-            't' -> R.drawable.t
-            'u' -> R.drawable.u
-            'v' -> R.drawable.v
-            'w' -> R.drawable.w
-            'x' -> R.drawable.x
-            'y' -> R.drawable.y
-            'z' -> R.drawable.z
-            else -> R.drawable.default_image
-        }
-    }
-
     private fun updateProfileImage() {
-        val shimmerEffect = findViewById<ShimmerFrameLayout>(R.id.shimmerImage)
-        val imgProfile: CircleImageView = findViewById(R.id.imgProfile)
-
-        userViewModel.user.observe(this) { user ->
-            user.onSuccess { userData ->
+        userViewModel.userInfo.observe(this) { userData ->
                 shimmerEffect.visibility = View.VISIBLE
                 imgProfile.visibility = View.GONE
+
                 val fullName = userData.fullName
 
                 if (fullName.isNotEmpty()) {
@@ -447,7 +404,7 @@ class UserSettingsActivity : AppCompatActivity() {
 
                     if (firstName.isNotEmpty()) {
                         val firstLetter = firstName.first()
-                        val drawableId = getDrawableForLetter(firstLetter)
+                        val drawableId = HomeActivity().getDrawableForLetter(firstLetter)
                         imgProfile.setImageResource(drawableId)
                     } else {
                         Log.e("UserSettingsActivity", "First name is empty")
@@ -464,11 +421,6 @@ class UserSettingsActivity : AppCompatActivity() {
                     shimmerEffect.visibility = View.GONE
                     imgProfile.visibility = View.VISIBLE
                 }
-            }.onFailure { throwable ->
-                Log.e("HomeActivity", "Error updating navigation header", throwable)
-                shimmerEffect.visibility = View.GONE
-                imgProfile.visibility = View.VISIBLE
-            }
         }
     }
 

@@ -18,8 +18,11 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
+import br.ecosynergy_app.home.HomeActivity
 import br.ecosynergy_app.register.Nationality
 import br.ecosynergy_app.room.AppDatabase
+import br.ecosynergy_app.room.Members
+import br.ecosynergy_app.room.MembersRepository
 import br.ecosynergy_app.room.TeamsRepository
 import br.ecosynergy_app.room.UserRepository
 import br.ecosynergy_app.user.UserViewModel
@@ -57,16 +60,16 @@ class TeamOverviewFragment : Fragment(R.layout.fragment_team_overview) {
     private lateinit var loadingProgressBar: ProgressBar
     private lateinit var overlayView: View
 
-    private var token: String? = ""
+    private var accessToken: String = ""
 
-    private var teamHandle: String? = ""
     private var teamName: String? = ""
     private var teamId: Int = 0
     private var teamDescription: String? = ""
     private var teamTimezone: String? = ""
 
-    private var userId: String? = ""
-    private var members: List<Member> = emptyList()
+    private var userId: Int = 0
+    private var teamHandle: String = ""
+    private var members: List<Members> = emptyList()
 
     private var isEditing: Boolean = false
 
@@ -83,19 +86,26 @@ class TeamOverviewFragment : Fragment(R.layout.fragment_team_overview) {
         val teamsDao = AppDatabase.getDatabase(requireContext()).teamsDao()
         val teamsRepository = TeamsRepository(teamsDao)
 
-        teamsViewModel = ViewModelProvider(this, TeamsViewModelFactory(RetrofitClient.teamsService, teamsRepository))[TeamsViewModel::class.java]
-        userViewModel = ViewModelProvider(this, UserViewModelFactory(RetrofitClient.userService, userRepository))[UserViewModel::class.java]
+        val membersDao = AppDatabase.getDatabase(requireContext()).membersDao()
+        val membersRepository = MembersRepository(membersDao)
 
-        val sp: SharedPreferences = requireContext().getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
-        token = sp.getString("accessToken", null)
-        userId = sp.getString("id", null)
+        teamsViewModel = ViewModelProvider(
+            this,
+            TeamsViewModelFactory(RetrofitClient.teamsService, teamsRepository, membersRepository)
+        )[TeamsViewModel::class.java]
+        userViewModel = ViewModelProvider(
+            this,
+            UserViewModelFactory(RetrofitClient.userService, userRepository)
+        )[UserViewModel::class.java]
 
-        teamHandle = arguments?.getString("TEAM_HANDLE")
+        teamId = requireArguments().getInt("TEAM_ID")
+        teamHandle = requireArguments().getString("TEAM_HANDLE").toString()
+        userId = requireArguments().getInt("USER_ID")
+        accessToken = requireArguments().getString("ACCESS_TOKEN").toString()
 
         val timezones = loadTimezones()
         val timezoneNames = timezones.map { it.text }
 
-        Log.d("TeamOverviewFragment", "Team Handle: $teamHandle")
 
         teamPicture = view.findViewById(R.id.teamPicture)
         txtTeamName = view.findViewById(R.id.txtTeamName)
@@ -117,10 +127,12 @@ class TeamOverviewFragment : Fragment(R.layout.fragment_team_overview) {
         txtTimezone.isEnabled = false
         txtTimezone.setTextColor(ContextCompat.getColor(requireContext(), R.color.disabled))
 
-        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, timezoneNames)
+        val adapter = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_dropdown_item_1line,
+            timezoneNames
+        )
         txtTimezone.setAdapter(adapter)
-
-
 
         return view
     }
@@ -133,7 +145,7 @@ class TeamOverviewFragment : Fragment(R.layout.fragment_team_overview) {
         spinnerActivities.isEnabled = false
 
         btnDelete.text = "Excluir $teamHandle"
-        btnDelete.setOnClickListener{
+        btnDelete.setOnClickListener {
             val builder = AlertDialog.Builder(requireContext())
             builder.setTitle("Você deseja excluir $teamHandle?")
             builder.setMessage("Se excluir esta equipe, perderá todos os dados armazenados nela.")
@@ -152,25 +164,31 @@ class TeamOverviewFragment : Fragment(R.layout.fragment_team_overview) {
             dialog.show()
         }
 
-        btnEdit.setOnClickListener{
-            if(!isEditing){
+        btnEdit.setOnClickListener {
+            if (!isEditing) {
                 isEditing = true
                 enableEditTexts()
-                btnEdit.icon = ContextCompat.getDrawable(requireContext(), R.drawable.baseline_check_24)
+                btnEdit.icon =
+                    ContextCompat.getDrawable(requireContext(), R.drawable.baseline_check_24)
                 btnEdit.text = "Confirmar edição"
-            }else{
+            } else {
                 isEditing = false
                 editTeamInfo()
                 disableEditTexts()
-                showSnackBar("Informações editadas com sucesso!","FECHAR", R.color.greenDark)
-                btnEdit.icon = ContextCompat.getDrawable(requireContext(), R.drawable.baseline_edit_24)
+                showSnackBar("Informações editadas com sucesso!", "FECHAR", R.color.greenDark)
+                btnEdit.icon =
+                    ContextCompat.getDrawable(requireContext(), R.drawable.baseline_edit_24)
                 btnEdit.text = "Editar dados"
             }
         }
     }
 
-    private fun editTeamInfo(){
-        teamsViewModel.updateTeam(token, teamId, UpdateRequest(teamHandle, teamName, teamDescription, teamTimezone))
+    private fun editTeamInfo() {
+        teamsViewModel.updateTeam(
+            accessToken,
+            teamId,
+            UpdateRequest(teamHandle, teamName, teamDescription, teamTimezone)
+        )
     }
 
     private fun getThemeColor(attrResId: Int): Int {
@@ -180,7 +198,7 @@ class TeamOverviewFragment : Fragment(R.layout.fragment_team_overview) {
         return typedValue.data
     }
 
-    private fun enableEditTexts(){
+    private fun enableEditTexts() {
         txtTimezone.isEnabled = true
         txtHandle.isEnabled = true
         txtDescription.isEnabled = true
@@ -192,7 +210,7 @@ class TeamOverviewFragment : Fragment(R.layout.fragment_team_overview) {
 
     }
 
-    private fun disableEditTexts(){
+    private fun disableEditTexts() {
         txtTimezone.isEnabled = false
         txtHandle.isEnabled = false
         txtDescription.isEnabled = false
@@ -203,20 +221,21 @@ class TeamOverviewFragment : Fragment(R.layout.fragment_team_overview) {
         txtTimezone.setTextColor(ContextCompat.getColor(requireContext(), R.color.disabled))
     }
 
-
-    private fun deleteTeam(){
-        teamsViewModel.deleteTeam(token, teamId)
+    private fun deleteTeam() {
+        teamsViewModel.deleteTeam(accessToken, teamId)
     }
 
-    private fun observeTeamInfo(){
-        teamsViewModel.findTeamByHandle(token, teamHandle)
-        teamsViewModel.teamResult.observe(viewLifecycleOwner){ result ->
-            result.onSuccess { response ->
-                teamId = response.id
-                teamName = response.name
-                members = response.members
+    private fun observeTeamInfo() {
+        teamsViewModel.getTeamById(teamId)
+        teamsViewModel.teamDB.observe(viewLifecycleOwner) { teamInfo ->
+            teamsViewModel.getMembersByTeamId(teamId)
+            teamsViewModel.allMembersDB.observe(viewLifecycleOwner) { membersInfo ->
 
-                val userMember = members.find { it.id.toString() == userId }
+                teamId = teamInfo.id
+                teamName = teamInfo.name
+                members = membersInfo
+
+                val userMember = members.find { it.id == userId }
                 val userRole = userMember?.role
 
                 if (userRole == "ADMINISTRATOR") {
@@ -230,12 +249,12 @@ class TeamOverviewFragment : Fragment(R.layout.fragment_team_overview) {
                 shimmerImg.visibility = View.VISIBLE
                 teamPicture.visibility = View.GONE
 
-                val drawableId = getDrawableForLetter(teamName!!.first())
+                val drawableId = HomeActivity().getDrawableForLetter(teamName!!.first())
                 teamPicture.setImageResource(drawableId)
                 txtTeamName.setText(teamName)
-                txtHandle.setText(response.handle)
-                txtDescription.setText(response.description)
-                txtTimezone.setText(response.timeZone)
+                txtHandle.setText(teamInfo.handle)
+                txtDescription.setText(teamInfo.description)
+                txtTimezone.setText(teamInfo.timeZone)
 
                 shimmerImg.animate().alpha(0f).setDuration(300).withEndAction {
                     shimmerImg.stopShimmer()
@@ -243,44 +262,7 @@ class TeamOverviewFragment : Fragment(R.layout.fragment_team_overview) {
                     shimmerImg.visibility = View.GONE
                     teamPicture.visibility = View.VISIBLE
                 }
-            }.onFailure { error ->
-                error.printStackTrace()
-                Log.d("TeamOverviewFragment", "Team Result Failed: ${error.message}")
-                shimmerImg.visibility = View.VISIBLE
-                teamPicture.visibility = View.GONE
             }
-        }
-    }
-
-    private fun getDrawableForLetter(letter: Char): Int {
-        return when (letter.lowercaseChar()) {
-            'a' -> R.drawable.a
-            'b' -> R.drawable.b
-            'c' -> R.drawable.c
-            'd' -> R.drawable.d
-            'e' -> R.drawable.e
-            'f' -> R.drawable.f
-            'g' -> R.drawable.g
-            'h' -> R.drawable.h
-            'i' -> R.drawable.i
-            'j' -> R.drawable.j
-            'k' -> R.drawable.k
-            'l' -> R.drawable.l
-            'm' -> R.drawable.m
-            'n' -> R.drawable.n
-            'o' -> R.drawable.o
-            'p' -> R.drawable.p
-            'q' -> R.drawable.q
-            'r' -> R.drawable.r
-            's' -> R.drawable.s
-            't' -> R.drawable.t
-            'u' -> R.drawable.u
-            'v' -> R.drawable.v
-            'w' -> R.drawable.w
-            'x' -> R.drawable.x
-            'y' -> R.drawable.y
-            'z' -> R.drawable.z
-            else -> R.drawable.default_image
         }
     }
 

@@ -20,6 +20,8 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.room.AppDatabase
+import br.ecosynergy_app.room.Members
+import br.ecosynergy_app.room.MembersRepository
 import br.ecosynergy_app.room.TeamsRepository
 import br.ecosynergy_app.room.UserRepository
 import br.ecosynergy_app.user.MembersAdapter
@@ -40,19 +42,19 @@ class TeamMembersFragment : Fragment(R.layout.fragment_team_members) {
 
     private lateinit var swipeRefresh: SwipeRefreshLayout
 
-    lateinit var txtMember: TextInputEditText
-    lateinit var btnAddMember: ImageButton
+    private lateinit var txtMember: TextInputEditText
+    private lateinit var btnAddMember: ImageButton
 
-    private var token: String? = ""
-    private var teamHandle: String? = ""
-    private var teamId: Int = 0
-
-    private var membersList: List<UserResponse> = listOf()
-
-    private var memberIds: MutableList<String> = mutableListOf()
+    private var membersList: List<Members> = listOf()
+    private var memberIds: MutableList<Int> = mutableListOf()
     private var memberRoles: List<String> = listOf()
     private var currentUserRole: String? = ""
-    private var userId: String? = ""
+
+    private var userId: Int = 0
+    private var teamId: Int = 0
+    private var accessToken: String = ""
+    private var teamHandle: String = ""
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -67,15 +69,22 @@ class TeamMembersFragment : Fragment(R.layout.fragment_team_members) {
         val teamsDao = AppDatabase.getDatabase(requireContext()).teamsDao()
         val teamsRepository = TeamsRepository(teamsDao)
 
-        teamsViewModel = ViewModelProvider(this, TeamsViewModelFactory(RetrofitClient.teamsService, teamsRepository))[TeamsViewModel::class.java]
-        userViewModel = ViewModelProvider(this, UserViewModelFactory(RetrofitClient.userService, userRepository))[UserViewModel::class.java]
+        val membersDao = AppDatabase.getDatabase(requireContext()).membersDao()
+        val membersRepository = MembersRepository(membersDao)
 
-        val sp: SharedPreferences = requireContext().getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
-        token = sp.getString("accessToken", null)
-        userId = sp.getString("id", null)
+        teamsViewModel = ViewModelProvider(
+            this,
+            TeamsViewModelFactory(RetrofitClient.teamsService, teamsRepository, membersRepository)
+        )[TeamsViewModel::class.java]
+        userViewModel = ViewModelProvider(
+            this,
+            UserViewModelFactory(RetrofitClient.userService, userRepository)
+        )[UserViewModel::class.java]
 
-//        teamHandle = arguments?.getString("TEAM_HANDLE")
-//        teamId = arguments?.getString("TEAM_ID")
+        teamId = requireArguments().getInt("TEAM_ID")
+        teamHandle = requireArguments().getString("TEAM_HANDLE").toString()
+        userId = requireArguments().getInt("USER_ID")
+        accessToken = requireArguments().getString("ACCESS_TOKEN").toString()
 
         shimmerMembers = view.findViewById(R.id.shimmerMembers)
         recycleMembers = view.findViewById(R.id.recycleMembers)
@@ -86,23 +95,35 @@ class TeamMembersFragment : Fragment(R.layout.fragment_team_members) {
         swipeRefresh = view.findViewById(R.id.swipeRefresh)
 
         recycleMembers.layoutManager = LinearLayoutManager(requireContext())
-        membersAdapter = MembersAdapter(emptyList(), emptyList(), currentUserRole, teamId, teamHandle, teamsViewModel, requireActivity(), this, memberIds)
+        membersAdapter = MembersAdapter(
+            emptyList(),
+            emptyList(),
+            currentUserRole,
+            teamId,
+            userId,
+            accessToken,
+            teamsViewModel,
+            requireActivity(),
+            this,
+            memberIds
+        )
         recycleMembers.adapter = membersAdapter
 
-        return  view
+        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        observeTeamInfo()
+
+        observeMembersInfo()
         setupSwipeRefresh()
 
-        parentFragmentManager.setFragmentResultListener("requestKey", this) { key, bundle ->
+        parentFragmentManager.setFragmentResultListener("requestKey", this) { key, _ ->
             if (key == "requestKey") {
                 shimmerMembers.startShimmer()
                 shimmerMembers.visibility = View.VISIBLE
                 recycleMembers.visibility = View.GONE
-                observeTeamInfo()
+                observeMembersInfo()
             }
         }
 
@@ -116,84 +137,71 @@ class TeamMembersFragment : Fragment(R.layout.fragment_team_members) {
             override fun afterTextChanged(s: Editable?) {}
         })
 
-        btnAddMember.setOnClickListener{
+        btnAddMember.setOnClickListener {
             val memberIdsString = memberIds.joinToString(",")
             val addMembersBottomSheet = AddMembersBottomSheet().apply {
                 arguments = Bundle().apply {
-                    putString("TEAM_HANDLE", teamHandle)
+                    //putString("TEAM_HANDLE", teamHandle)
                     putInt("TEAM_ID", teamId)
                     putString("MEMBER_IDS", memberIdsString)
                 }
             }
             addMembersBottomSheet.show(parentFragmentManager, "AddMembersBottomSheet")
-            Log.d("btnAddMember", "MemberIDS: $memberIdsString, $teamHandle, $teamId")
+            Log.d("btnAddMember", "MemberIDS: $memberIdsString, $teamId")
         }
     }
 
-    private fun observeMembersInfo(members: List<Member>) {
-        memberIds = members.map { it.id.toString() }.toMutableList()
-        memberIds = memberIds.toMutableList() as ArrayList<String>
-        memberRoles = members.map { it.role }
+    private fun observeMembersInfo() {
+        teamsViewModel.getMembersByTeamId(teamId)
+        teamsViewModel.allMembersDB.observe(viewLifecycleOwner) { membersResponse ->
+            memberIds = membersResponse.map { it.id }.toMutableList()
+            memberRoles = membersResponse.map { it.role }
 
-        teamsViewModel.teamResult.observe(viewLifecycleOwner) { result ->
-            result.onSuccess { response ->
-                val membersResponse = response.members
-                val userMember = membersResponse.find { it.id.toString() == userId }
-                currentUserRole = userMember?.role
-                userViewModel.getUsersByIds(memberIds, token)
-            }.onFailure { error ->
-                error.printStackTrace()
-                Log.d("TeamOverviewFragment", "Team Result Failed: ${error.message}")
+            val userMember = membersResponse.find { it.id == userId }
+            currentUserRole = userMember?.role
+
+            shimmerMembers.visibility = View.VISIBLE
+            recycleMembers.visibility = View.GONE
+
+            val pairedMembers = membersResponse.map { member ->
+                val role = membersResponse.find { it.id.toString() == member.id.toString() }?.role
+                    ?: "Unknown"
+                Pair(member, role)
+            }.sortedBy { it.first.fullName }
+
+            val sortedUsers = pairedMembers.map { it.first }
+            val sortedRoles = pairedMembers.map { it.second }
+
+            membersAdapter = MembersAdapter(
+                sortedUsers,
+                sortedRoles,
+                currentUserRole,
+                teamId,
+                userId,
+                accessToken,
+                teamsViewModel,
+                requireActivity(),
+                this,
+                memberIds
+            )
+            recycleMembers.adapter = membersAdapter
+
+            shimmerMembers.animate().alpha(0f).setDuration(300).withEndAction {
+                shimmerMembers.stopShimmer()
+                shimmerMembers.animate().alpha(1f).setDuration(300)
+                shimmerMembers.visibility = View.GONE
+                recycleMembers.visibility = View.VISIBLE
             }
-        }
 
-        userViewModel.users.observe(viewLifecycleOwner) { result ->
-            result.onSuccess { users ->
-                shimmerMembers.visibility = View.VISIBLE
-                recycleMembers.visibility = View.GONE
-
-                val pairedMembers = users.map { user ->
-                    val role = members.find { it.id.toString() == user.id.toString() }?.role ?: "Unknown"
-                    Pair(user, role)
-                }.sortedBy { it.first.fullName }
-
-                val sortedUsers = pairedMembers.map { it.first }
-                val sortedRoles = pairedMembers.map { it.second }
-
-                membersAdapter = MembersAdapter(sortedUsers, sortedRoles, currentUserRole, teamId, teamHandle, teamsViewModel, requireActivity(), this, memberIds)
-                recycleMembers.adapter = membersAdapter
-
-                shimmerMembers.animate().alpha(0f).setDuration(300).withEndAction {
-                    shimmerMembers.stopShimmer()
-                    shimmerMembers.animate().alpha(1f).setDuration(300)
-                    shimmerMembers.visibility = View.GONE
-                    recycleMembers.visibility = View.VISIBLE
-                }
-            }.onFailure { error ->
-                error.printStackTrace()
-                Log.d("TeamOverviewFragment", "User Result Failed: ${error.message}")
-                shimmerMembers.visibility = View.VISIBLE
-                recycleMembers.visibility = View.GONE
-            }
-        }
-    }
-
-
-    private fun observeTeamInfo(){
-        teamsViewModel.findTeamByHandle(token, teamHandle)
-        teamsViewModel.teamResult.observe(viewLifecycleOwner){ result->
-            result.onSuccess { response ->
-                observeMembersInfo(response.members)
-            }.onFailure { error ->
-                error.printStackTrace()
-                Log.d("TeamOverviewFragment", "Team Result Failed: ${error.message}")
-            }
         }
     }
 
     private fun filterMembers(query: String) {
         val filteredList = membersList.filter {
-            it.fullName.contains(query, ignoreCase = true) || it.username.contains(query, ignoreCase = true)
+            it.fullName.contains(query, ignoreCase = true) || it.username.contains(
+                query,
+                ignoreCase = true
+            )
         }
         membersAdapter.updateList(filteredList, memberRoles)
     }
@@ -214,7 +222,7 @@ class TeamMembersFragment : Fragment(R.layout.fragment_team_members) {
 
     private fun setupSwipeRefresh() {
         swipeRefresh.setOnRefreshListener {
-            observeTeamInfo()
+            observeMembersInfo()
             swipeRefresh.isRefreshing = false
         }
     }

@@ -2,6 +2,7 @@ package br.ecosynergy_app.register
 
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -24,6 +25,7 @@ import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.home.HomeActivity
 import br.ecosynergy_app.login.LoginRequest
 import br.ecosynergy_app.room.AppDatabase
+import br.ecosynergy_app.room.MembersRepository
 import br.ecosynergy_app.room.TeamsRepository
 import br.ecosynergy_app.room.UserRepository
 import br.ecosynergy_app.teams.RoleRequest
@@ -40,6 +42,13 @@ class ConfirmationActivity : AppCompatActivity() {
     private lateinit var loadingProgressBar: ProgressBar
     private lateinit var overlayView: View
 
+    private lateinit var email: String
+    private lateinit var password: String
+    private lateinit var fullName: String
+    private lateinit var userName: String
+    private lateinit var nationality: String
+    private lateinit var gender: String
+
     var digit1Text : String = ""
     var digit2Text : String = ""
     var digit3Text : String = ""
@@ -47,9 +56,13 @@ class ConfirmationActivity : AppCompatActivity() {
 
     private var userId: Int = 0
 
+    private lateinit var loginSp : SharedPreferences
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_confirmation)
+
+        loginSp = getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
 
         val txtResend = findViewById<TextView>(R.id.txtResend)
         val digit1 = findViewById<EditText>(R.id.digit1)
@@ -57,23 +70,23 @@ class ConfirmationActivity : AppCompatActivity() {
         val digit3 = findViewById<EditText>(R.id.digit3)
         val digit4 = findViewById<EditText>(R.id.digit4)
 
-        digit1.setText("1")
-        digit2.setText("2")
-        digit3.setText("3")
-        digit4.setText("4")
+//        digit1.setText("1")
+//        digit2.setText("2")
+//        digit3.setText("3")
+//        digit4.setText("4")
 
         val txtError = findViewById<LinearLayout>(R.id.txtError)
 
         val btnCheck: Button = findViewById(R.id.btnCheck)
         val btnBack = findViewById<ImageButton>(R.id.btnBack)
-        val email: String = intent.getStringExtra("EMAIL").toString()
-        val password: String = intent.getStringExtra("PASSWORD").toString()
-        val fullName: String = intent.getStringExtra("FULLNAME").toString()
-        val userName: String = intent.getStringExtra("USERNAME").toString()
-        val nationality: String = intent.getStringExtra("NATIONALITY").toString()
-        val gender: String = intent.getStringExtra("GENDER").toString()
 
-        registerViewModel = ViewModelProvider(this, RegisterViewModelFactory(RetrofitClient.registerService))[RegisterViewModel::class.java]
+        email = intent.getStringExtra("EMAIL").toString()
+        password = intent.getStringExtra("PASSWORD").toString()
+        fullName = intent.getStringExtra("FULLNAME").toString()
+        userName = intent.getStringExtra("USERNAME").toString()
+        nationality = intent.getStringExtra("NATIONALITY").toString()
+        gender = intent.getStringExtra("GENDER").toString()
+
 
         val userDao = AppDatabase.getDatabase(applicationContext).userDao()
         val userRepository = UserRepository(userDao)
@@ -81,42 +94,18 @@ class ConfirmationActivity : AppCompatActivity() {
         val teamsDao = AppDatabase.getDatabase(applicationContext).teamsDao()
         val teamsRepository = TeamsRepository(teamsDao)
 
+        val membersDao = AppDatabase.getDatabase(applicationContext).membersDao()
+        val membersRepository = MembersRepository(membersDao)
+
         userViewModel = ViewModelProvider(this, UserViewModelFactory(RetrofitClient.userService, userRepository))[UserViewModel::class.java]
-        teamsViewModel = ViewModelProvider(this, TeamsViewModelFactory(RetrofitClient.teamsService, teamsRepository))[TeamsViewModel::class.java]
+        teamsViewModel = ViewModelProvider(this, TeamsViewModelFactory(RetrofitClient.teamsService, teamsRepository, membersRepository))[TeamsViewModel::class.java]
+        registerViewModel = ViewModelProvider(this, RegisterViewModelFactory(RetrofitClient.registerService))[RegisterViewModel::class.java]
 
         loadingProgressBar = findViewById(R.id.loadingProgressBar)
         overlayView = findViewById(R.id.overlayView)
 
         btnBack.setOnClickListener { finish() }
 
-        registerViewModel.registerResult.observe(this) { result ->
-            showProgressBar(false)
-            result.onSuccess { response ->
-                Log.d("ConfirmationActivity", "Register success")
-                val loginRequest = LoginRequest(userName, password)
-                userViewModel.loginUser(loginRequest)
-                userId = response.id
-            }.onFailure { error ->
-                error.printStackTrace()
-                Log.d("ConfirmationActivity", "Register failed: ${error.message}")
-                showToast("Erro RegisterResult: ${error.message}")
-            }
-        }
-
-        userViewModel.loginResult.observe(this) { result ->
-            showProgressBar(false)
-            result.onSuccess { loginResponse ->
-                Log.d("LoginActivity", "UserID: $userId")
-                Log.d("LoginActivity", "Login success")
-                setLoggedIn(true, loginResponse.username, loginResponse.accessToken)
-                teamsViewModel.addMember(loginResponse.accessToken, 89, userId, RoleRequest("COMMON_USER"))
-                startHomeActivity()
-            }.onFailure { error ->
-                error.printStackTrace()
-                Log.d("LoginActivity", "Login failed: ${error.message}")
-                showToast("Erro LoginResponse: ${error.message}")
-            }
-        }
 
         btnCheck.setOnClickListener {
             digit1Text = digit1.text.toString()
@@ -132,7 +121,7 @@ class ConfirmationActivity : AppCompatActivity() {
                 txtError.visibility = View.INVISIBLE
                 showProgressBar(true)
                 val createUserRequest = CreateUserRequest(userName, fullName, email, password, gender, nationality)
-                registerViewModel.registerUser(createUserRequest)
+                registerUser(createUserRequest)
             }
         }
 
@@ -144,6 +133,51 @@ class ConfirmationActivity : AppCompatActivity() {
         setEditTextFocusChange(digit1, digit2)
         setEditTextFocusChange(digit2, digit3)
         setEditTextFocusChange(digit3, digit4)
+    }
+
+    private fun registerUser(createUserRequest: CreateUserRequest){
+        registerViewModel.registerUser(createUserRequest)
+
+        registerViewModel.registerResult.observe(this) { result ->
+            result.onSuccess { response ->
+                val loginRequest = LoginRequest(userName, password)
+                userViewModel.loginUser(loginRequest)
+                userId = response.id
+            }.onFailure { error ->
+                error.printStackTrace()
+                Log.d("ConfirmationActivity", "Register failed: ${error.message}")
+            }
+        }
+
+        userViewModel.loginResult.observe(this) { result ->
+            showProgressBar(false)
+            result.onSuccess { loginResponse ->
+                Log.d("ConfirmationActivity", "Login success")
+                teamsViewModel.addMember(loginResponse.accessToken, 89, userId, RoleRequest("COMMON_USER"))
+                userViewModel.user.observe(this) { result ->
+                    result.onSuccess { userData ->
+                        userViewModel.insertUserInfoDB(
+                            userData,
+                            loginResponse.accessToken,
+                            loginResponse.refreshToken
+                        )
+                        teamsViewModel.getTeamsByUserId(userData.id, loginResponse.accessToken) {
+                            setLoggedIn(true)
+                            startHomeActivity()
+                            loginSp.edit().apply {
+                                putBoolean("just_logged_in", true)
+                                putBoolean("open", true)
+                                apply()
+                            }
+                        }
+                    }
+                    userViewModel.user.removeObservers(this)
+                }
+            }.onFailure { error ->
+                error.printStackTrace()
+                Log.d("ConfirmationActivity", "Login failed: ${error.message}")
+            }
+        }
     }
 
     private fun showProgressBar(show: Boolean) {
@@ -189,16 +223,9 @@ class ConfirmationActivity : AppCompatActivity() {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
-    private fun setLoggedIn(isLoggedIn: Boolean, identifier: String? = null, accessToken: String? = null) {
-        val sharedPreferences = getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
+    private fun setLoggedIn(isLoggedIn: Boolean) {
+        val editor = loginSp.edit()
         editor.putBoolean("isLoggedIn", isLoggedIn)
-        if (identifier != null) {
-            editor.putString("identifier", identifier)
-        }
-        if (accessToken != null) {
-            editor.putString("accessToken", accessToken)
-        }
         editor.apply()
     }
 }
