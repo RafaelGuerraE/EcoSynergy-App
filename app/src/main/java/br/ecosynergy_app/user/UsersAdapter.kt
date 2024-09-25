@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView
 import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.home.HomeActivity
+import br.ecosynergy_app.login.LoginActivity
 import br.ecosynergy_app.teams.AddMembersBottomSheet
 import br.ecosynergy_app.teams.RoleRequest
 import br.ecosynergy_app.teams.TeamMembersFragment
@@ -100,17 +101,7 @@ class UsersAdapter(
         private fun inviteUser(){
             teamsViewModel.addMember(accessToken, teamId, memberId, RoleRequest("COMMON_USER"))
             btnInvite.visibility = View.GONE
-            showSnackBar("Usuário adicionado com sucesso!", "FECHAR", R.color.greenDark)
-        }
-
-        private fun showSnackBar(message: String, action: String, bgTint: Int) {
-            val rootView = itemView
-            val snackBar = Snackbar.make(rootView, message, Snackbar.LENGTH_SHORT)
-                .setAction(action) {}
-            snackBar.setBackgroundTint(ContextCompat.getColor(itemView.context, bgTint))
-            snackBar.setTextColor(ContextCompat.getColor(itemView.context, R.color.white))
-            snackBar.setActionTextColor(ContextCompat.getColor(itemView.context, R.color.white))
-            snackBar.show()
+            LoginActivity().showSnackBar("Usuário adicionado com sucesso!", "FECHAR", R.color.greenDark)
         }
     }
 }

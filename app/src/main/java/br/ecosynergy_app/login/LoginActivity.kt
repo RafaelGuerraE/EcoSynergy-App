@@ -39,7 +39,7 @@ import com.google.android.material.textfield.TextInputLayout
 
 class LoginActivity : AppCompatActivity() {
 
-    private lateinit var txtEntry: EditText
+    private lateinit var txtEntry: TextInputEditText
     private lateinit var txtPassword: TextInputEditText
 
     private lateinit var lblReset: TextView
@@ -225,7 +225,7 @@ class LoginActivity : AppCompatActivity() {
         return loginSp.getBoolean("isLoggedIn", false)
     }
 
-    private fun showSnackBar(message: String, action: String, bgTint: Int) {
+    fun showSnackBar(message: String, action: String, bgTint: Int) {
         val rootView = findViewById<View>(android.R.id.content)
         val snackBar = Snackbar.make(rootView, message, Snackbar.LENGTH_SHORT)
             .setAction(action) {}

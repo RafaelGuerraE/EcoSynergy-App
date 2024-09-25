@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
+import br.ecosynergy_app.login.LoginActivity
 import br.ecosynergy_app.room.AppDatabase
 import br.ecosynergy_app.room.MembersRepository
 import br.ecosynergy_app.room.TeamsRepository
@@ -49,6 +50,9 @@ class AddMembersBottomSheet : BottomSheetDialogFragment() {
     private var teamId: Int = 0
     private var teamHandle: String = ""
     private var memberIds: ArrayList<String> = arrayListOf()
+
+    private var userId: Int = 0
+    private var username: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -93,7 +97,7 @@ class AddMembersBottomSheet : BottomSheetDialogFragment() {
         recycleUsers.visibility = View.GONE
 
         recycleUsers.layoutManager = LinearLayoutManager(requireContext())
-        usersAdapter = UsersAdapter(mutableListOf(), teamId, teamHandle, teamsViewModel, requireActivity(), this, memberIds)
+        usersAdapter = UsersAdapter(mutableListOf(), teamId, teamHandle, teamsViewModel, memberIds, accessToken, userId, username)
         recycleUsers.adapter = usersAdapter
 
         Log.d("AddMembers", "MemberIDS in onCreateView: $memberIds, $teamHandle, $teamId")
@@ -123,11 +127,11 @@ class AddMembersBottomSheet : BottomSheetDialogFragment() {
     private fun searchUser(username: String, accessToken : String){
         userViewModel.searchUser(username, accessToken)
         userViewModel.users.observe(viewLifecycleOwner){ result ->
-            result.onSuccess { response ->
+            result.onSuccess { usersList ->
                 shimmerUsers.visibility = View.VISIBLE
                 recycleUsers.visibility = View.GONE
 
-                usersAdapter = UsersAdapter(response, teamId, teamHandle, teamsViewModel, requireActivity(), this, memberIds)
+                usersAdapter = UsersAdapter(usersList, teamId, teamHandle, teamsViewModel, memberIds, accessToken, userId, username)
                 recycleUsers.adapter = usersAdapter
 
                 shimmerUsers.animate().alpha(0f).setDuration(300).withEndAction {
@@ -137,23 +141,12 @@ class AddMembersBottomSheet : BottomSheetDialogFragment() {
                     recycleUsers.visibility = View.VISIBLE
                 }
             }.onFailure { error->
-                    error.printStackTrace()
-                    Log.d("TeamOverviewFragment", "User Result Failed: ${error.message}")
-                    shimmerUsers.visibility = View.VISIBLE
-                    recycleUsers.visibility = View.GONE
-                    showSnackBar("ERRO: Carregar usuários", "FECHAR", R.color.red)
+                error.printStackTrace()
+                Log.d("TeamOverviewFragment", "User Result Failed: ${error.message}")
+                shimmerUsers.visibility = View.GONE
+                recycleUsers.visibility = View.GONE
+                LoginActivity().showSnackBar("ERRO: Carregar usuários", "FECHAR", R.color.red)
             }
         }
     }
-
-    private fun showSnackBar(message: String, action: String, bgTint: Int) {
-        val rootView = requireView()
-        val snackBar = Snackbar.make(rootView, message, Snackbar.LENGTH_SHORT)
-            .setAction(action) {}
-        snackBar.setBackgroundTint(ContextCompat.getColor(requireContext(), bgTint))
-        snackBar.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
-        snackBar.setActionTextColor(ContextCompat.getColor(requireContext(), R.color.white))
-        snackBar.show()
-    }
-
 }
