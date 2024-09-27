@@ -38,4 +38,7 @@
         <item>Mensal</item>
         <item>Anual</item>
     </string-array>
+
+
+    <string name="emoji">Hi &#128072;</string>
 </resources>

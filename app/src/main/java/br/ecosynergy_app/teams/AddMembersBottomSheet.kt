@@ -97,7 +97,7 @@ class AddMembersBottomSheet : BottomSheetDialogFragment() {
         recycleUsers.visibility = View.GONE
 
         recycleUsers.layoutManager = LinearLayoutManager(requireContext())
-        usersAdapter = UsersAdapter(mutableListOf(), teamId, teamHandle, teamsViewModel, memberIds, accessToken, userId, username)
+        usersAdapter = UsersAdapter(mutableListOf(), teamId, teamHandle, teamsViewModel, memberIds, accessToken, userId, username, requireActivity())
         recycleUsers.adapter = usersAdapter
 
         Log.d("AddMembers", "MemberIDS in onCreateView: $memberIds, $teamHandle, $teamId")
@@ -131,7 +131,7 @@ class AddMembersBottomSheet : BottomSheetDialogFragment() {
                 shimmerUsers.visibility = View.VISIBLE
                 recycleUsers.visibility = View.GONE
 
-                usersAdapter = UsersAdapter(usersList, teamId, teamHandle, teamsViewModel, memberIds, accessToken, userId, username)
+                usersAdapter = UsersAdapter(usersList, teamId, teamHandle, teamsViewModel, memberIds, accessToken, userId, username, requireActivity())
                 recycleUsers.adapter = usersAdapter
 
                 shimmerUsers.animate().alpha(0f).setDuration(300).withEndAction {

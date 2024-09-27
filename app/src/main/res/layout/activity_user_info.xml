@@ -12,48 +12,189 @@
 
     <LinearLayout
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="top">
+
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@null"
+            android:contentDescription="BackButton"
+            android:src="@drawable/baseline_close_24"
+            android:scaleType="fitXY"
+            app:tint="?android:attr/iconTint"
+            android:layout_margin="15dp"
+            android:layout_gravity="center_vertical"
+            android:clickable="true"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:text="Informações do Usuário"
+            android:textAlignment="center"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginEnd="60dp"
+            />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:gravity="center_horizontal">
+        android:gravity="center_horizontal"
+        android:layout_marginTop="70dp">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/imgUser"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:src="@drawable/r"/>
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:src="@drawable/r"
+            android:layout_marginBottom="10dp"/>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:layout_gravity="center"
             android:layout_marginStart="30dp"
-            android:layout_marginEnd="30dp">
+            android:layout_marginEnd="30dp"
+            android:layout_marginBottom="10dp">
             <TextView
-                android:id="@+id/txtUsername"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Username: @rafaelguerra"/>
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="20dp"
-                android:src="@drawable/copy"/>
+                tools:text="Nome Completo"
+                android:textSize="12sp"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textStyle="bold"/>
+            <TextView
+                android:id="@+id/txtFullname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="Rafael Guerra Evangelista"
+                android:textSize="16sp"/>
         </LinearLayout>
 
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Username"/>
-        <TextView
+            android:orientation="vertical"
+            android:layout_gravity="center"
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="30dp"
+            android:layout_marginBottom="10dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nome de Usuário"
+                android:textSize="12sp"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textStyle="bold"/>
+            <TextView
+                android:id="@+id/txtUsername"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="\@rafaelguerra"
+                android:textSize="16sp"/>
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Username"/>
-        <TextView
+            android:orientation="vertical"
+            android:layout_gravity="center"
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="30dp"
+            android:layout_marginBottom="10dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Email"
+                android:textSize="12sp"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textStyle="bold"/>
+            <TextView
+                android:id="@+id/txtEmail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="rafael\@ecosynergy.com"
+                android:textSize="16sp"/>
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Username"/>
+            android:orientation="vertical"
+            android:layout_gravity="center"
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="30dp"
+            android:layout_marginBottom="10dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Gênero"
+                android:textSize="12sp"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textStyle="bold"/>
+            <TextView
+                android:id="@+id/txtGender"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Masculino"
+                android:textSize="16sp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center"
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="30dp"
+            android:layout_marginBottom="10dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nacionalidade"
+                android:textSize="12sp"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textStyle="bold"/>
+            <TextView
+                android:id="@+id/txtNationality"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Brasileiro"
+                android:textSize="16sp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center"
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="30dp"
+            android:layout_marginBottom="10dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Conta criada em"
+                android:textSize="12sp"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textStyle="bold"/>
+            <TextView
+                android:id="@+id/txtCreation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Masculino"
+                android:textSize="16sp"/>
+        </LinearLayout>
 
     </LinearLayout>
 

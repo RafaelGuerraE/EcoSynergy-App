@@ -2,6 +2,7 @@ package br.ecosynergy_app.user
 
 import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.util.Log
 import android.view.LayoutInflater
@@ -38,7 +39,8 @@ class UsersAdapter(
     private val memberIds: List<String>,
     private val accessToken: String,
     private val userId: Int,
-    private val username: String
+    private val username: String,
+    private val activity: FragmentActivity
 ) : RecyclerView.Adapter<UsersAdapter.ViewHolder>() {
 
     fun updateList(newList: MutableList<UserResponse>) {
@@ -48,7 +50,7 @@ class UsersAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.users_layout, parent, false)
-        return ViewHolder(view, usersList, teamId, teamHandle, teamsViewModel, memberIds, accessToken, userId, username)
+        return ViewHolder(view, usersList, teamId, teamHandle, teamsViewModel, memberIds, accessToken, userId, username, activity)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -66,12 +68,12 @@ class UsersAdapter(
         private val memberIds: List<String>,
         private val accessToken: String,
         private val userId: Int,
-        private var username: String
+        private var username: String,
+        private val activity: FragmentActivity
     ) : RecyclerView.ViewHolder(itemView) {
 
         private val txtUsername: TextView = itemView.findViewById(R.id.txtUsername)
         private val txtFullname: TextView = itemView.findViewById(R.id.txtFullname)
-        private val txtView: TextView = itemView.findViewById(R.id.txtView)
         private val imgUser: ImageView = itemView.findViewById(R.id.imgUser)
         private val btnInvite: ImageButton = itemView.findViewById(R.id.btnInvite)
         private var memberId: Int = 0
@@ -84,6 +86,11 @@ class UsersAdapter(
             memberId = user.id
 
             imgUser.setImageResource(HomeActivity().getDrawableForLetter(user.fullName.first()))
+
+            imgUser.setOnClickListener{
+                val i = Intent(activity, UserInfoActivity::class.java)
+                activity.startActivity(i)
+            }
 
             Log.d("UsersAdapter", "MemberIDS: $memberIds")
 

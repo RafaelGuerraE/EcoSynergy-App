@@ -54,12 +54,12 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
 
     implementation("com.google.mlkit:vision-internal-vkp:18.2.3")
-    implementation("androidx.activity:activity-ktx:1.9.1")
-    implementation("androidx.fragment:fragment-ktx:1.8.2")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.4")
-    implementation("androidx.activity:activity-ktx:1.9.1")
+    implementation("androidx.activity:activity-ktx:1.9.2")
+    implementation("androidx.fragment:fragment-ktx:1.8.3")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.6")
+    implementation("androidx.activity:activity-ktx:1.9.2")
     implementation("androidx.room:room-common:2.6.1")
-    implementation("androidx.activity:activity:1.8.0")
+    implementation("androidx.activity:activity-ktx:1.9.2")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
@@ -82,4 +82,6 @@ dependencies {
     implementation("androidx.room:room-runtime:2.6.1")
     ksp("androidx.room:room-compiler:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
+
+    implementation("androidx.emoji2:emoji2:1.5.0")
 }

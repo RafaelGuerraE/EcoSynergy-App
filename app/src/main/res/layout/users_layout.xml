@@ -19,6 +19,7 @@
             android:layout_height="45dp"
             android:src="@drawable/default_image"
             tools:src="@drawable/r"
+            android:clickable="true"
             android:layout_marginStart="10dp"
             android:layout_gravity="center"/>
 
@@ -47,18 +48,6 @@
                     android:ellipsize="end"
                     android:maxLines="1"
                     android:layout_marginEnd="5dp" />
-
-                <TextView
-                    android:id="@+id/txtView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Ver Perfil"
-                    android:textStyle="bold"
-                    android:textSize="12sp"
-                    android:clickable="true"
-                    android:textColor="?android:attr/textColorSecondary"
-                    android:layout_gravity="bottom"
-                    android:layout_marginStart="5dp" /> <!-- Add margin for spacing -->
 
             </LinearLayout>
 
