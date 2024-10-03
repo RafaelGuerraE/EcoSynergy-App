@@ -161,7 +161,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Editar dados"
-                    android:visibility="gone"
+                    android:visibility="invisible"
                     app:icon="@drawable/baseline_edit_24"
                     app:iconSize="20dp"
                     app:iconTint="@color/greenDark"
@@ -177,7 +177,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Excluir..."
-                    android:visibility="gone"
+                    android:visibility="invisible"
                     tools:text="Excluir ecosynergyofc"
                     app:icon="@drawable/baseline_delete_24"
                     app:iconSize="20dp"
@@ -193,17 +193,4 @@
 
         </LinearLayout>
     </ScrollView>
-    <View
-        android:id="@+id/overlayView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#80000000"
-        android:visibility="gone" />
-
-    <ProgressBar
-        android:id="@+id/loadingProgressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:visibility="gone" />
 </RelativeLayout>

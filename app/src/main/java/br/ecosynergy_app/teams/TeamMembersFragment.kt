@@ -54,6 +54,7 @@ class TeamMembersFragment : Fragment(R.layout.fragment_team_members) {
     private var teamId: Int = 0
     private var accessToken: String = ""
     private var teamHandle: String = ""
+    private var userRole: String = ""
 
 
     override fun onCreateView(
@@ -154,6 +155,13 @@ class TeamMembersFragment : Fragment(R.layout.fragment_team_members) {
     }
 
     private fun observeMembersInfo() {
+        userRole = TeamOverviewFragment().userRole
+        if (userRole == "ADMINISTRATOR") {
+            btnAddMember.visibility = View.VISIBLE
+        } else {
+            btnAddMember.visibility = View.GONE
+        }
+
         teamsViewModel.getMembersByTeamId(teamId)
         teamsViewModel.allMembersDB.observe(viewLifecycleOwner) { membersResponse ->
             memberIds = membersResponse.map { it.userId }.toMutableList()

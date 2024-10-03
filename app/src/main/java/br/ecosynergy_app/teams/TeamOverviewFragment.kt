@@ -52,9 +52,6 @@ class TeamOverviewFragment : Fragment(R.layout.fragment_team_overview) {
 
     private lateinit var shimmerImg: ShimmerFrameLayout
 
-    private lateinit var loadingProgressBar: ProgressBar
-    private lateinit var overlayView: View
-
     private var accessToken: String = ""
 
     private var timezone : String = ""
@@ -71,6 +68,8 @@ class TeamOverviewFragment : Fragment(R.layout.fragment_team_overview) {
     private var members: List<Members> = emptyList()
 
     private var isEditing: Boolean = false
+
+    var userRole : String = ""
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -113,9 +112,6 @@ class TeamOverviewFragment : Fragment(R.layout.fragment_team_overview) {
         btnEdit = view.findViewById(R.id.btnEdit)
 
         btnDelete = view.findViewById(R.id.btnDelete)
-
-        loadingProgressBar = view.findViewById(R.id.loadingProgressBar)
-        overlayView = view.findViewById(R.id.overlayView)
 
         shimmerImg = view.findViewById(R.id.shimmerImg)
 
@@ -241,7 +237,7 @@ class TeamOverviewFragment : Fragment(R.layout.fragment_team_overview) {
                 members = membersInfo
 
                 val userMember = members.find { it.userId == userId }
-                val userRole = userMember?.role
+                userRole = userMember?.role.toString()
 
                 if (userRole == "ADMINISTRATOR") {
                     btnEdit.visibility = View.VISIBLE
