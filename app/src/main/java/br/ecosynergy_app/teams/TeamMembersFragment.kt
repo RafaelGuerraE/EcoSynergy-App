@@ -42,7 +42,7 @@ class TeamMembersFragment : Fragment(R.layout.fragment_team_members) {
 
     private lateinit var swipeRefresh: SwipeRefreshLayout
 
-    private lateinit var txtMember: TextInputEditText
+    private lateinit var txtSearch: TextInputEditText
     private lateinit var btnAddMember: ImageButton
 
     private var membersList: List<Members> = listOf()
@@ -89,7 +89,7 @@ class TeamMembersFragment : Fragment(R.layout.fragment_team_members) {
         shimmerMembers = view.findViewById(R.id.shimmerMembers)
         recycleMembers = view.findViewById(R.id.recycleMembers)
 
-        txtMember = view.findViewById(R.id.txtMember)
+        txtSearch = view.findViewById(R.id.txtSearch)
         btnAddMember = view.findViewById(R.id.btnAddMember)
 
         swipeRefresh = view.findViewById(R.id.swipeRefresh)
@@ -127,7 +127,7 @@ class TeamMembersFragment : Fragment(R.layout.fragment_team_members) {
             }
         }
 
-        txtMember.addTextChangedListener(object : TextWatcher {
+        txtSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -156,17 +156,18 @@ class TeamMembersFragment : Fragment(R.layout.fragment_team_members) {
     private fun observeMembersInfo() {
         teamsViewModel.getMembersByTeamId(teamId)
         teamsViewModel.allMembersDB.observe(viewLifecycleOwner) { membersResponse ->
-            memberIds = membersResponse.map { it.id }.toMutableList()
+            memberIds = membersResponse.map { it.userId }.toMutableList()
             memberRoles = membersResponse.map { it.role }
+            membersList = membersResponse
 
-            val userMember = membersResponse.find { it.id == userId }
+            val userMember = membersResponse.find { it.userId == userId }
             currentUserRole = userMember?.role
 
             shimmerMembers.visibility = View.VISIBLE
             recycleMembers.visibility = View.GONE
 
             val pairedMembers = membersResponse.map { member ->
-                val role = membersResponse.find { it.id.toString() == member.id.toString() }?.role
+                val role = membersResponse.find { it.userId.toString() == member.userId.toString() }?.role
                     ?: "Unknown"
                 Pair(member, role)
             }.sortedBy { it.first.fullName }

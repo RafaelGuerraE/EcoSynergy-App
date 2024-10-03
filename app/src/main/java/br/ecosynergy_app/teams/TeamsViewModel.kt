@@ -249,14 +249,15 @@ class TeamsViewModel(
                 val role = roles[index]
 
                 val member = Members(
-                    id = id!!,
+                    userId = id!!,
                     role = role,
                     teamId = teamId,
                     username = response.username,
                     fullName = response.fullName,
                     email = response.email,
                     gender = response.gender,
-                    nationality = response.nationality
+                    nationality = response.nationality,
+                    createdAt = response.createdAt
                 )
 
                 membersRepository.insertMember(member)

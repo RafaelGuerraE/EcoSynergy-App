@@ -19,6 +19,7 @@ import br.ecosynergy_app.R
 import br.ecosynergy_app.teams.CreateTeamBottomSheet
 import br.ecosynergy_app.teams.TeamAdapter
 import br.ecosynergy_app.teams.TeamsViewModel
+import br.ecosynergy_app.user.UserViewModel
 
 class Teams : Fragment() {
 
@@ -29,9 +30,14 @@ class Teams : Fragment() {
     private lateinit var btnAddTeam: ImageButton
     private lateinit var linearAlert: LinearLayout
 
+    private val userViewModel: UserViewModel by activityViewModels()
     private lateinit var progressBar: ProgressBar
 
     private lateinit var swipeRefresh: SwipeRefreshLayout
+
+    private var userId: Int = 0
+    private var userIdentifier: String = ""
+    private var accessToken: String = ""
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -62,9 +68,25 @@ class Teams : Fragment() {
         observeTeamsData()
         btnAddTeam.setOnClickListener {
             val createTeamBottomSheet = CreateTeamBottomSheet()
+
+            val bundle = Bundle().apply {
+                putInt("USER_ID", userId)
+                putString("USER_IDENTIFIER", userIdentifier)
+                putString("ACCESS_TOKEN", accessToken)
+            }
+
+            createTeamBottomSheet.arguments = bundle
             createTeamBottomSheet.show(parentFragmentManager, "CreateTeamBottomSheet")
         }
         setupSwipeRefresh()
+    }
+
+    private fun observeUserData() {
+        userViewModel.userInfo.observe(viewLifecycleOwner){user ->
+            accessToken = user.accessToken
+            userIdentifier = user.username
+            userId = user.id
+        }
     }
 
     private fun observeTeamsData() {

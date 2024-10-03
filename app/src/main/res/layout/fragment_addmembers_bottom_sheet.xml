@@ -101,6 +101,15 @@
 
             </LinearLayout>
         </LinearLayout>
-
     </ScrollView>
+
+
+    <View
+        android:layout_width="40dp"
+        android:layout_height="5dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/image_shape"
+        android:backgroundTint="?attr/shimmerColor"
+        android:layout_centerHorizontal="true"/>
+
 </RelativeLayout>

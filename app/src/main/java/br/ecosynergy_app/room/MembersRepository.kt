@@ -1,10 +1,8 @@
 package br.ecosynergy_app.room
 
-import androidx.lifecycle.LiveData
-
 class MembersRepository(private val membersDao: MembersDao) {
 
-    suspend fun getAllMembers(): List<Members>{
+    suspend fun getAllMembers(): List<Members> {
         return membersDao.getAllMembers()
     }
 
@@ -20,15 +18,15 @@ class MembersRepository(private val membersDao: MembersDao) {
         membersDao.deleteMember(member)
     }
 
-    suspend fun deleteAllMembers(){
+    suspend fun deleteAllMembers() {
         membersDao.deleteAllMembers()
     }
 
-    suspend fun getMemberById(id: Int): Members {
-        return membersDao.getMemberById(id)
+    suspend fun getMember(userId: Int, teamId: Int): Members {
+        return membersDao.getMember(userId, teamId)
     }
 
-    suspend fun getMembersByTeamId(id: Int): List<Members>{
-        return membersDao.getMembersByTeamId(id)
+    suspend fun getMembersByTeamId(teamId: Int): List<Members> {
+        return membersDao.getMembersByTeamId(teamId)
     }
 }

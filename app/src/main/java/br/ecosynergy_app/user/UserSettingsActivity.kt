@@ -10,10 +10,8 @@ import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
-import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
-import android.widget.Button
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.ProgressBar
@@ -21,14 +19,12 @@ import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.home.HomeActivity
-import br.ecosynergy_app.register.Nationality
+import br.ecosynergy_app.signup.Nationality
 import br.ecosynergy_app.room.AppDatabase
 import br.ecosynergy_app.room.UserRepository
 import com.facebook.shimmer.ShimmerFrameLayout
@@ -43,7 +39,6 @@ import java.io.IOException
 class UserSettingsActivity : AppCompatActivity() {
 
     private lateinit var userViewModel: UserViewModel
-    private var gender: Int = 0
 
     private var userId: Int = 0
     private var userUsername: String = ""
@@ -53,6 +48,9 @@ class UserSettingsActivity : AppCompatActivity() {
     private var userGender: String = ""
     private var accessToken: String = ""
     private var refreshToken: String = ""
+    private var gender: Int = 0
+
+    private var nationalityMap: Map<String?, String> = mapOf()
 
     private lateinit var btnBack: ImageButton
     private lateinit var txtUsername: TextInputEditText
@@ -103,17 +101,19 @@ class UserSettingsActivity : AppCompatActivity() {
 
         btnEdit = findViewById(R.id.btnEdit)
 
-        val nationalities = loadNationalities()
-        val nationalityNames = nationalities.map { it.nationality }
-        val adapter =
-            ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, nationalityNames)
-        txtNationality.setAdapter(adapter)
-
         txtGender.isEnabled = false
 
         txtNationality.setTextColor(ContextCompat.getColor(this, R.color.disabled))
 
         disableEditTexts()
+
+        val nationalities = loadNationalities()
+        nationalityMap = nationalities.associate { it.nationality_br to it.nationality }
+
+        val nationalityBr = nationalities.map { it.nationality_br }
+
+        val nationalityAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, nationalityBr)
+        txtNationality.setAdapter(nationalityAdapter)
 
         btnEdit.visibility = View.VISIBLE
         btnEdit.isEnabled = true
@@ -249,6 +249,9 @@ class UserSettingsActivity : AppCompatActivity() {
     }
 
     private fun fetchUserData() {
+        val nationalities = loadNationalities()
+        val nationalityReverseMap = nationalities.associate { it.nationality to it.nationality_br }
+
         userViewModel.getUserInfoFromDB {
             userViewModel.userInfo.observe(this) { userInfo ->
                 userId = userInfo.id
@@ -256,7 +259,8 @@ class UserSettingsActivity : AppCompatActivity() {
                 userFullname = userInfo.fullName
                 userEmail = userInfo.email
                 userGender = userInfo.gender
-                userNationality = userInfo.nationality
+
+                userNationality = nationalityReverseMap[userInfo.nationality].toString()
 
                 accessToken = userInfo.accessToken
                 refreshToken = userInfo.refreshToken
@@ -294,6 +298,12 @@ class UserSettingsActivity : AppCompatActivity() {
             "Prefiro não dizer" -> "PNS"
             else -> userGender
         }
+
+        val nationalities = loadNationalities()
+        val nationalityMap = nationalities.associate { it.nationality_br to it.nationality }
+
+        userNationality = nationalityMap[userNationality].toString()
+
         userViewModel.updateUserData(
             userId,
             accessToken,

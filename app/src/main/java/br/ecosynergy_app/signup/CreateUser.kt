@@ -1,4 +1,12 @@
-package br.ecosynergy_app.register
+package br.ecosynergy_app.signup
+
+data class CreateUserRequest(
+    val username: String,
+    val fullName: String,
+    val email: String,
+    val password: String,
+    val gender: String,
+    val nationality: String)
 
 data class CreateUserResponse(
     val id: Int,

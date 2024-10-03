@@ -1,7 +1,7 @@
 package br.ecosynergy_app
 
 import br.ecosynergy_app.user.UserService
-import br.ecosynergy_app.register.RegisterService
+import br.ecosynergy_app.signup.RegisterService
 import br.ecosynergy_app.readings.ReadingsService
 import br.ecosynergy_app.teams.TeamsService
 import retrofit2.Retrofit

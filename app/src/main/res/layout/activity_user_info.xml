@@ -49,13 +49,14 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:gravity="center_horizontal"
-        android:layout_marginTop="70dp">
+        android:layout_marginTop="90dp">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/imgUser"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:src="@drawable/r"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:src="@drawable/default_image"
+            tools:src="@drawable/r"
             android:layout_marginBottom="10dp"/>
 
         <LinearLayout
@@ -69,7 +70,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:text="Nome Completo"
+                android:text="Nome Completo"
                 android:textSize="12sp"
                 android:textColor="?android:attr/textColorPrimary"
                 android:textStyle="bold"/>
@@ -77,6 +78,7 @@
                 android:id="@+id/txtFullname"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="..."
                 tools:text="Rafael Guerra Evangelista"
                 android:textSize="16sp"/>
         </LinearLayout>
@@ -100,7 +102,8 @@
                 android:id="@+id/txtUsername"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="\@rafaelguerra"
+                android:text="..."
+                tools:text="\@rafaelguerra"
                 android:textSize="16sp"/>
         </LinearLayout>
 
@@ -123,7 +126,8 @@
                 android:id="@+id/txtEmail"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="rafael\@ecosynergy.com"
+                android:text="..."
+                tools:text="rafael\@ecosynergy.com"
                 android:textSize="16sp"/>
         </LinearLayout>
 
@@ -146,7 +150,8 @@
                 android:id="@+id/txtGender"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Masculino"
+                android:text="..."
+                tools:text="Masculino"
                 android:textSize="16sp"/>
         </LinearLayout>
 
@@ -157,7 +162,7 @@
             android:layout_gravity="center"
             android:layout_marginStart="30dp"
             android:layout_marginEnd="30dp"
-            android:layout_marginBottom="10dp">
+            android:layout_marginBottom="30dp">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -169,31 +174,27 @@
                 android:id="@+id/txtNationality"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Brasileiro"
+                android:text="..."
+                tools:text="Brasileiro"
                 android:textSize="16sp"/>
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
+            android:orientation="horizontal"
+            android:gravity="center"
             android:layout_gravity="center"
             android:layout_marginStart="30dp"
             android:layout_marginEnd="30dp"
             android:layout_marginBottom="10dp">
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Conta criada em"
-                android:textSize="12sp"
-                android:textColor="?android:attr/textColorPrimary"
-                android:textStyle="bold"/>
-            <TextView
                 android:id="@+id/txtCreation"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Masculino"
-                android:textSize="16sp"/>
+                tools:text="Conta criada há ..."
+                android:textSize="12sp"
+                android:layout_marginEnd="2dp"/>
         </LinearLayout>
 
     </LinearLayout>

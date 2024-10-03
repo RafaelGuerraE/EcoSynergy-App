@@ -1,4 +1,4 @@
-package br.ecosynergy_app.register
+package br.ecosynergy_app.signup
 
 import android.util.Log
 import androidx.lifecycle.LiveData

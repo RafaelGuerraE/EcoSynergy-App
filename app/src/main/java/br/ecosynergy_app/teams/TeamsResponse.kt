@@ -16,6 +16,7 @@ data class TeamsResponse(
     val name: String,
     val description: String,
     val activity: ActivitiesResponse,
+    val goal: Double,
     val timeZone: String,
     val createdAt: String,
     val updatedAt: String,
@@ -37,15 +38,16 @@ data class TeamsRequest(
     val name: String,
     val description: String,
     val activity: ActivitiesRequest,
+    val goal: Double,
     val timeZone: String,
     val members: List<Member>
 )
 
 data class UpdateRequest(
-    val handle: String?,
-    val name: String?,
-    val description: String?,
-    val timeZone: String?
+    val handle: String,
+    val name: String,
+    val description: String,
+    val timeZone: String
 )
 
 data class TeamLinks(

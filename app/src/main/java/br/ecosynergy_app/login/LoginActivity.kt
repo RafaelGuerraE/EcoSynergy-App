@@ -10,7 +10,6 @@ import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
-import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
@@ -21,7 +20,7 @@ import androidx.lifecycle.ViewModelProvider
 import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.home.HomeActivity
-import br.ecosynergy_app.register.RegisterActivity
+import br.ecosynergy_app.signup.SignUpActivity
 import br.ecosynergy_app.room.AppDatabase
 import br.ecosynergy_app.room.TeamsRepository
 import br.ecosynergy_app.room.UserRepository
@@ -136,7 +135,7 @@ class LoginActivity : AppCompatActivity() {
         })
 
         btnRegister.setOnClickListener {
-            val i = Intent(this, RegisterActivity::class.java)
+            val i = Intent(this, SignUpActivity::class.java)
             startActivity(i)
         }
 

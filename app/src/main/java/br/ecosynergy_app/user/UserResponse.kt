@@ -7,6 +7,7 @@ data class UserResponse(
     val email: String,
     val gender: String,
     val nationality: String,
+    val createdAt: String,
     val accountNonExpired: Boolean,
     val accountNonLocked : Boolean,
     val credentialsNonExpired: Boolean,

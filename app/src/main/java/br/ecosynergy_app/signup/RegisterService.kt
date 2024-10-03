@@ -1,4 +1,4 @@
-package br.ecosynergy_app.register
+package br.ecosynergy_app.signup
 
 import retrofit2.http.Body
 import retrofit2.http.POST

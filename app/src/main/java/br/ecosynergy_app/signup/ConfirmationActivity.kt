@@ -1,4 +1,4 @@
-package br.ecosynergy_app.register
+package br.ecosynergy_app.signup
 
 import android.content.Context
 import android.content.Intent
@@ -19,7 +19,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import androidx.transition.Visibility
 import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.home.HomeActivity
@@ -45,7 +44,7 @@ class ConfirmationActivity : AppCompatActivity() {
     private lateinit var email: String
     private lateinit var password: String
     private lateinit var fullName: String
-    private lateinit var userName: String
+    private lateinit var username: String
     private lateinit var nationality: String
     private lateinit var gender: String
 
@@ -69,11 +68,8 @@ class ConfirmationActivity : AppCompatActivity() {
         val digit2 = findViewById<EditText>(R.id.digit2)
         val digit3 = findViewById<EditText>(R.id.digit3)
         val digit4 = findViewById<EditText>(R.id.digit4)
-
-//        digit1.setText("1")
-//        digit2.setText("2")
-//        digit3.setText("3")
-//        digit4.setText("4")
+        val digit5 = findViewById<EditText>(R.id.digit5)
+        val digit6 = findViewById<EditText>(R.id.digit6)
 
         val txtError = findViewById<LinearLayout>(R.id.txtError)
 
@@ -83,9 +79,11 @@ class ConfirmationActivity : AppCompatActivity() {
         email = intent.getStringExtra("EMAIL").toString()
         password = intent.getStringExtra("PASSWORD").toString()
         fullName = intent.getStringExtra("FULLNAME").toString()
-        userName = intent.getStringExtra("USERNAME").toString()
+        username = intent.getStringExtra("USERNAME").toString()
         nationality = intent.getStringExtra("NATIONALITY").toString()
         gender = intent.getStringExtra("GENDER").toString()
+
+        Log.d("ConfirmationActivity" , "$email $password $fullName $username $nationality $gender")
 
 
         val userDao = AppDatabase.getDatabase(applicationContext).userDao()
@@ -120,7 +118,7 @@ class ConfirmationActivity : AppCompatActivity() {
             else{
                 txtError.visibility = View.INVISIBLE
                 showProgressBar(true)
-                val createUserRequest = CreateUserRequest(userName, fullName, email, password, gender, nationality)
+                val createUserRequest = CreateUserRequest(username, fullName, email, password, gender, nationality)
                 registerUser(createUserRequest)
             }
         }
@@ -140,7 +138,7 @@ class ConfirmationActivity : AppCompatActivity() {
 
         registerViewModel.registerResult.observe(this) { result ->
             result.onSuccess { response ->
-                val loginRequest = LoginRequest(userName, password)
+                val loginRequest = LoginRequest(username, password)
                 userViewModel.loginUser(loginRequest)
                 userId = response.id
             }.onFailure { error ->

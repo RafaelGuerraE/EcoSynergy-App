@@ -12,6 +12,7 @@ data class User(
     val email: String,
     val gender: String,
     val nationality: String,
+    val createdAt: String,
     val accessToken: String,
     val refreshToken: String
 )
@@ -24,6 +25,7 @@ fun UserResponse.toUser(accessToken: String, refreshToken: String): User {
         email = this.email,
         gender = this.gender,
         nationality = this.nationality,
+        createdAt = this.createdAt,
         accessToken = accessToken,
         refreshToken = refreshToken
     )

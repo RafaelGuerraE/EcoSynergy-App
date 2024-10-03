@@ -1,4 +1,4 @@
-package br.ecosynergy_app.register
+package br.ecosynergy_app.signup
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

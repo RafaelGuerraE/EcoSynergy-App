@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView
 import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.home.HomeActivity
+import br.ecosynergy_app.login.LoginActivity
 import br.ecosynergy_app.room.Members
 import br.ecosynergy_app.teams.RoleRequest
 import br.ecosynergy_app.teams.TeamMembersFragment
@@ -53,7 +54,7 @@ class MembersAdapter(
 
     fun removeMember(memberId: Int) {
         memberIds.remove(memberId)
-        membersList = membersList.filter { it.id != memberId}
+        membersList = membersList.filter { it.userId != memberId}
         notifyDataSetChanged()
     }
 
@@ -94,7 +95,7 @@ class MembersAdapter(
 
         fun bind(user: Members, role: String) {
             username = user.username
-            memberId = user.id
+            memberId = user.userId
 
             txtUsername.text = "@$username"
 
@@ -137,6 +138,15 @@ class MembersAdapter(
 
             imgUser.setOnClickListener{
                 val i = Intent(activity, UserInfoActivity::class.java)
+                i.apply {
+                    putExtra("USERNAME", user.username)
+                    putExtra("FULLNAME", user.fullName)
+                    putExtra("EMAIL", user.email)
+                    putExtra("GENDER", user.gender)
+                    putExtra("NATIONALITY", user.nationality)
+                    putExtra("FULLNAME", user.fullName)
+                    putExtra("CREATED", user.createdAt)
+                }
                 activity.startActivity(i)
             }
         }
@@ -169,7 +179,7 @@ class MembersAdapter(
                 teamsViewModel.removeMember(accessToken, teamId, memberId)
                 dialog.dismiss()
                 fragment.membersAdapter.removeMember(memberId)
-                showSnackBar("Usuário removido com sucesso", "FECHAR", R.color.greenDark)
+                LoginActivity().showSnackBar("Usuário removido com sucesso", "FECHAR", R.color.greenDark)
             }
 
             builder.setNegativeButton("Cancelar") { dialog, _ ->
@@ -199,21 +209,11 @@ class MembersAdapter(
                 }
                 dialog.dismiss()
                 fragment.membersAdapter.updateList(membersList, memberRoles)
-                showSnackBar("Cargo alterado com sucesso", "FECHAR", R.color.greenDark)
+                LoginActivity().showSnackBar("Cargo alterado com sucesso", "FECHAR", R.color.greenDark)
             }
 
             val dialog: AlertDialog = builder.create()
             dialog.show()
-        }
-
-        private fun showSnackBar(message: String, action: String, bgTint: Int) {
-            val rootView = itemView
-            val snackBar = Snackbar.make(rootView, message, Snackbar.LENGTH_SHORT)
-                .setAction(action) {}
-            snackBar.setBackgroundTint(ContextCompat.getColor(itemView.context, bgTint))
-            snackBar.setTextColor(ContextCompat.getColor(itemView.context, R.color.white))
-            snackBar.setActionTextColor(ContextCompat.getColor(itemView.context, R.color.white))
-            snackBar.show()
         }
     }
 }

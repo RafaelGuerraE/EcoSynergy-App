@@ -28,8 +28,8 @@ class TeamBottomSheet : BottomSheetDialogFragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        teamHandle = arguments?.getString("TEAM_HANDLE")
-        teamInitial = arguments?.getInt("TEAM_INITIAL") ?: 0
+        teamHandle = requireArguments().getString("TEAM_HANDLE")
+        teamInitial = requireArguments().getInt("TEAM_INITIAL")
 
         return inflater.inflate(R.layout.fragment_team_bottom_sheet, container, false)
     }

@@ -47,8 +47,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@drawable/image_shape"
-                    android:visibility="visible"
-                    android:backgroundTint="?attr/shimmerColor"/>
+                    android:backgroundTint="?attr/shimmerColor"
+                    android:visibility="visible"/>
             </com.facebook.shimmer.ShimmerFrameLayout>
             </LinearLayout>
 
@@ -100,6 +100,17 @@
                         android:enabled="false"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
+
+                <TextView
+                    android:text="Gênero"
+                    android:layout_gravity="start"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:textSize="12sp"
+                    android:visibility="visible"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginBottom="2dp"/>
 
                 <Spinner
                     android:id="@+id/txtGender"
@@ -168,7 +179,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_gravity="top">
+        android:layout_gravity="top"
+        android:background="?android:attr/colorBackground">
 
         <ImageButton
             android:id="@+id/btnBack"
@@ -197,8 +209,8 @@
 
         <ImageButton
             android:id="@+id/btnEdit"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:background="@null"
             android:contentDescription="EditButton"
             android:src="@drawable/baseline_edit_24"

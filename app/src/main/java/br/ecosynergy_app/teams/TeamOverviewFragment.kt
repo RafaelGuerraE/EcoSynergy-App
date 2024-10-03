@@ -1,10 +1,7 @@
 package br.ecosynergy_app.teams
 
 import android.app.AlertDialog
-import android.content.Context
-import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -12,14 +9,13 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ProgressBar
 import android.widget.Spinner
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.home.HomeActivity
-import br.ecosynergy_app.register.Nationality
+import br.ecosynergy_app.login.LoginActivity
 import br.ecosynergy_app.room.AppDatabase
 import br.ecosynergy_app.room.Members
 import br.ecosynergy_app.room.MembersRepository
@@ -29,7 +25,6 @@ import br.ecosynergy_app.user.UserViewModel
 import br.ecosynergy_app.user.UserViewModelFactory
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.android.material.button.MaterialButton
-import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import com.google.android.material.textfield.TextInputEditText
 import com.google.gson.Gson
@@ -62,10 +57,14 @@ class TeamOverviewFragment : Fragment(R.layout.fragment_team_overview) {
 
     private var accessToken: String = ""
 
-    private var teamName: String? = ""
+    private var timezone : String = ""
+
+    private var utcToTextMap: Map<String?, String> = mapOf()
+
+    private var teamName: String = ""
     private var teamId: Int = 0
-    private var teamDescription: String? = ""
-    private var teamTimezone: String? = ""
+    private var teamDescription: String = ""
+    private var teamTimezone: String = ""
 
     private var userId: Int = 0
     private var teamHandle: String = ""
@@ -103,10 +102,6 @@ class TeamOverviewFragment : Fragment(R.layout.fragment_team_overview) {
         userId = requireArguments().getInt("USER_ID")
         accessToken = requireArguments().getString("ACCESS_TOKEN").toString()
 
-        val timezones = loadTimezones()
-        val timezoneNames = timezones.map { it.text }
-
-
         teamPicture = view.findViewById(R.id.teamPicture)
         txtTeamName = view.findViewById(R.id.txtTeamName)
         txtHandle = view.findViewById(R.id.txtHandle)
@@ -127,12 +122,19 @@ class TeamOverviewFragment : Fragment(R.layout.fragment_team_overview) {
         txtTimezone.isEnabled = false
         txtTimezone.setTextColor(ContextCompat.getColor(requireContext(), R.color.disabled))
 
-        val adapter = ArrayAdapter(
-            requireContext(),
-            android.R.layout.simple_dropdown_item_1line,
-            timezoneNames
-        )
-        txtTimezone.setAdapter(adapter)
+
+        val timezones = loadTimezones()
+        val timezonesMap = timezones.associate { it.text to it.utc.firstOrNull() }
+        utcToTextMap = timezones.associate { it.utc.firstOrNull() to it.text }
+        val timezoneText = timezones.map { it.text }
+        val timezoneAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, timezoneText)
+        txtTimezone.setAdapter(timezoneAdapter)
+
+        txtTimezone.setOnItemClickListener { parent, _, position, _ ->
+            val selectedTimezoneText = parent.getItemAtPosition(position) as String
+            val selectedTimezoneUtc = timezonesMap[selectedTimezoneText]
+            timezone = selectedTimezoneUtc.toString()
+        }
 
         return view
     }
@@ -172,12 +174,15 @@ class TeamOverviewFragment : Fragment(R.layout.fragment_team_overview) {
                     ContextCompat.getDrawable(requireContext(), R.drawable.baseline_check_24)
                 btnEdit.text = "Confirmar edição"
             } else {
+                teamDescription = txtDescription.text.toString()
+                teamTimezone = timezone
+                teamName = txtTeamName.text.toString()
+
                 isEditing = false
                 editTeamInfo()
                 disableEditTexts()
-                showSnackBar("Informações editadas com sucesso!", "FECHAR", R.color.greenDark)
-                btnEdit.icon =
-                    ContextCompat.getDrawable(requireContext(), R.drawable.baseline_edit_24)
+                LoginActivity().showSnackBar("Informações editadas com sucesso!", "FECHAR", R.color.greenDark)
+                btnEdit.icon = ContextCompat.getDrawable(requireContext(), R.drawable.baseline_edit_24)
                 btnEdit.text = "Editar dados"
             }
         }
@@ -235,7 +240,7 @@ class TeamOverviewFragment : Fragment(R.layout.fragment_team_overview) {
                 teamName = teamInfo.name
                 members = membersInfo
 
-                val userMember = members.find { it.id == userId }
+                val userMember = members.find { it.userId == userId }
                 val userRole = userMember?.role
 
                 if (userRole == "ADMINISTRATOR") {
@@ -249,12 +254,13 @@ class TeamOverviewFragment : Fragment(R.layout.fragment_team_overview) {
                 shimmerImg.visibility = View.VISIBLE
                 teamPicture.visibility = View.GONE
 
-                val drawableId = HomeActivity().getDrawableForLetter(teamName!!.first())
+                val drawableId = HomeActivity().getDrawableForLetter(teamName.first())
                 teamPicture.setImageResource(drawableId)
                 txtTeamName.setText(teamName)
                 txtHandle.setText(teamInfo.handle)
                 txtDescription.setText(teamInfo.description)
-                txtTimezone.setText(teamInfo.timeZone)
+
+                txtTimezone.setText(utcToTextMap[teamInfo.timeZone])
 
                 shimmerImg.animate().alpha(0f).setDuration(300).withEndAction {
                     shimmerImg.stopShimmer()
@@ -264,20 +270,6 @@ class TeamOverviewFragment : Fragment(R.layout.fragment_team_overview) {
                 }
             }
         }
-    }
-
-    private fun showSnackBar(message: String, action: String, bgTint: Int) {
-        val rootView = requireView()
-        val snackBar = Snackbar.make(rootView, message, Snackbar.LENGTH_SHORT)
-            .setAction(action) {}
-        snackBar.setBackgroundTint(ContextCompat.getColor(requireContext(), bgTint))
-        snackBar.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
-        snackBar.setActionTextColor(ContextCompat.getColor(requireContext(), R.color.white))
-        snackBar.show()
-    }
-
-    private fun showToast(message: String) {
-        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 
     private fun loadTimezones(): List<Timezone> {

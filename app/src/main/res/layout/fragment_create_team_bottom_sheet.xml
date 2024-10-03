@@ -6,6 +6,7 @@
     tools:context=".teams.CreateTeamBottomSheet"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
 <ScrollView
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -38,40 +39,11 @@
         android:layout_marginStart="15dp"
         android:layout_marginEnd="15dp">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="20dp"
-            android:layout_gravity="center">
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/imgTeam"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:src="@drawable/default_image"
-            tools:src="@drawable/e"
-            android:visibility="gone"/>
-
-        <com.facebook.shimmer.ShimmerFrameLayout
-            android:id="@+id/shimmerImg"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            app:shimmer_auto_start="true"
-            android:visibility="visible">
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/image_shape"
-                android:visibility="visible"
-                android:backgroundTint="?attr/shimmerColor"/>
-        </com.facebook.shimmer.ShimmerFrameLayout>
-
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Nome da Equipe"
-                android:layout_marginStart="10dp">
+                android:layout_marginBottom="20dp">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/txtTeamName"
@@ -79,7 +51,6 @@
                     android:layout_height="match_parent"
                     android:inputType="text"/>
             </com.google.android.material.textfield.TextInputLayout>
-    </LinearLayout>
 
 
         <com.google.android.material.textfield.TextInputLayout
@@ -126,6 +97,22 @@
                 android:paddingStart="15dp"/>
         </com.google.android.material.textfield.TextInputLayout>
 
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:hint="Meta de Emissões"
+            android:layout_marginBottom="20dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/txtGoal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:inputType="numberDecimal"
+                android:enabled="true"
+                android:clickable="true"
+                android:textSize="16sp"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
         <TextView
             android:text="Atividade/Setor"
             android:layout_gravity="start"
@@ -143,18 +130,7 @@
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:spinnerMode="dialog"
-            android:background="@drawable/spinner_background"/>
-
-        <TextView
-            android:text="Não disponível no momento!"
-            android:layout_gravity="start"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/disabled"
-            android:textSize="12sp"
-            android:textStyle="bold"
-            android:visibility="visible"
-            android:layout_marginStart="10dp"
+            android:background="@drawable/spinner_background"
             android:layout_marginBottom="20dp"/>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -182,12 +158,6 @@
     </LinearLayout>
 
 </ScrollView>
-    <View
-        android:id="@+id/overlayView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#80000000"
-        android:visibility="gone" />
 
     <ProgressBar
         android:id="@+id/loadingProgressBar"
@@ -195,4 +165,13 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:visibility="gone" />
+
+
+    <View
+        android:layout_width="40dp"
+        android:layout_height="5dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/image_shape"
+        android:backgroundTint="?attr/shimmerColor"
+        android:layout_centerHorizontal="true"/>
 </RelativeLayout>

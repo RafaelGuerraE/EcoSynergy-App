@@ -23,30 +23,24 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:layout_marginBottom="10dp">
-
                     <de.hdodenhof.circleimageview.CircleImageView
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
                         android:src="@drawable/default_image"
                         tools:src="@drawable/e"
                         android:id="@+id/teamPicture"
                         android:visibility="gone"
-                        android:layout_marginEnd="10dp"/>
+                        android:layout_marginEnd="10dp"
+                        android:layout_gravity="center"/>
 
                     <com.facebook.shimmer.ShimmerFrameLayout
                         android:id="@+id/shimmerImg"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
                         app:shimmer_auto_start="true"
                         android:visibility="visible"
-                        android:layout_marginEnd="10dp">
+                        android:layout_marginEnd="10dp"
+                        android:layout_gravity="center">
 
                         <View
                             android:layout_width="match_parent"
@@ -57,9 +51,8 @@
                     </com.facebook.shimmer.ShimmerFrameLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
                         android:hint="Nome da Equipe"
                         android:layout_marginTop="8dp"
                         android:layout_marginBottom="10dp">
@@ -73,7 +66,6 @@
                             android:enabled="false"
                             android:clickable="true"/>
                     </com.google.android.material.textfield.TextInputLayout>
-                </LinearLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
@@ -128,7 +120,6 @@
 
 
                 <TextView
-                    android:id="@+id/spinnerError"
                     android:text="Atividade/Setor"
                     android:layout_gravity="start"
                     android:layout_width="wrap_content"
@@ -147,17 +138,7 @@
                             android:spinnerMode="dialog"
                             android:background="@drawable/spinner_background"/>
 
-                <TextView
-                    android:text="Não disponível no momento!"
-                    android:layout_gravity="start"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/disabled"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
-                    android:visibility="visible"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginBottom="20dp"/>
+
                     <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -180,6 +161,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Editar dados"
+                    android:visibility="gone"
                     app:icon="@drawable/baseline_edit_24"
                     app:iconSize="20dp"
                     app:iconTint="@color/greenDark"
@@ -195,6 +177,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Excluir..."
+                    android:visibility="gone"
                     tools:text="Excluir ecosynergyofc"
                     app:icon="@drawable/baseline_delete_24"
                     app:iconSize="20dp"

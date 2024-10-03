@@ -1,7 +1,11 @@
 package br.ecosynergy_app.room
 
-import androidx.lifecycle.LiveData
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Update
 
 @Dao
 interface MembersDao {
@@ -18,8 +22,8 @@ interface MembersDao {
     @Query("DELETE FROM members")
     suspend fun deleteAllMembers()
 
-    @Query("SELECT * FROM members WHERE id = :id")
-    suspend fun getMemberById(id: Int): Members
+    @Query("SELECT * FROM members WHERE userId = :userId AND teamId = :teamId")
+    suspend fun getMember(userId: Int, teamId: Int): Members
 
     @Query("SELECT * FROM members WHERE teamId = :teamId")
     suspend fun getMembersByTeamId(teamId: Int): List<Members>
@@ -27,3 +31,4 @@ interface MembersDao {
     @Query("SELECT * FROM members")
     suspend fun getAllMembers(): List<Members>
 }
+

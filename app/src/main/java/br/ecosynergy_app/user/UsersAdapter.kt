@@ -89,6 +89,15 @@ class UsersAdapter(
 
             imgUser.setOnClickListener{
                 val i = Intent(activity, UserInfoActivity::class.java)
+                i.apply {
+                    putExtra("USERNAME", user.username)
+                    putExtra("FULLNAME", user.fullName)
+                    putExtra("EMAIL", user.email)
+                    putExtra("GENDER", user.gender)
+                    putExtra("NATIONALITY", user.nationality)
+                    putExtra("FULLNAME", user.fullName)
+                    putExtra("CREATED", user.createdAt)
+                }
                 activity.startActivity(i)
             }
 

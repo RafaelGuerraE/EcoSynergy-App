@@ -2,26 +2,27 @@ package br.ecosynergy_app.room
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
-import androidx.room.PrimaryKey
-import br.ecosynergy_app.room.Teams
 
 @Entity(
     tableName = "members",
-    foreignKeys = [ForeignKey(
-        entity = Teams::class,
-        parentColumns = ["id"],
-        childColumns = ["teamId"],
-        onDelete = ForeignKey.CASCADE
-    )]
+    foreignKeys = [
+        ForeignKey(
+            entity = Teams::class,
+            parentColumns = ["id"],
+            childColumns = ["teamId"],
+            onDelete = ForeignKey.CASCADE
+        )
+    ],
+    primaryKeys = ["userId", "teamId"]
 )
 data class Members(
-    @PrimaryKey(autoGenerate = false)
-    val id: Int,
-    val role: String,
+    val userId: Int,
     val teamId: Int,
+    val role: String,
     val username: String,
     val fullName: String,
     val email: String,
     val gender: String,
     val nationality: String,
+    val createdAt: String
 )
