@@ -29,8 +29,62 @@
     </string-array>
 
     <string-array name="activities_array">
-        <item>Tecelagem/Têxtil</item>
+        <!-- Agricultural Sector -->
+        <item>Agricultura/Cultivo de Plantas</item>
+        <item>Agricultura/Criação de Gado</item>
+        <item>Agricultura/Produção de Laticínios</item>
+
+        <!-- Automotive Sector -->
+        <item>Automotivo/Montagem de Veículos</item>
+        <item>Automotivo/Fabricação de Peças</item>
+        <item>Automotivo/Pintura e Acabamento</item>
+
+        <!-- Basic Sector -->
+        <item>Básico/Produção de Produtos Químicos Básicos</item>
+        <item>Básico/Produção de Gases Industriais</item>
+        <item>Básico/Fabricação de Fertilizantes</item>
+
+        <!-- Electroelectronic Sector -->
+        <item>Eletroeletrônico/Montagem de Circuitos</item>
+        <item>Eletroeletrônico/Fabricação de Dispositivos</item>
+        <item>Eletroeletrônico/Teste de Qualidade</item>
+
+        <!-- Food Sector -->
+        <item>Alimentício/Processamento de Alimentos</item>
+        <item>Alimentício/Produção de Bebidas</item>
+        <item>Alimentício/Agricultura</item>
+
+        <!-- Metallurgical Sector -->
+        <item>Metalúrgico/Mineração de Metais</item>
+        <item>Metalúrgico/Processamento de Minérios</item>
+        <item>Metalúrgico/Fundição de Metais</item>
+
+        <!-- Naval Sector -->
+        <item>Naval/Construção Naval</item>
+        <item>Naval/Reparação de Navios</item>
+        <item>Naval/Engenharia Marinha</item>
+
+        <!-- Petrochemical Sector -->
+        <item>Petroquímico/Produção de Elastômeros</item>
+        <item>Petroquímico/Produção de Plásticos</item>
+        <item>Petroquímico/Produção de Produtos Químicos</item>
+
+        <!-- Pharmaceutical Sector -->
+        <item>Farmacêutico/Fabricação de Medicamentos</item>
+        <item>Farmacêutico/Embalagem</item>
+        <item>Farmacêutico/Controle de Qualidade</item>
+
+        <!-- Steel Sector -->
+        <item>Siderúrgico/Produção de Aço</item>
+        <item>Siderúrgico/Tratamento Térmico</item>
+        <item>Siderúrgico/Laminação de Aço</item>
+
+        <!-- Textile Sector -->
+        <item>Têxtil/Tecelagem</item>
+        <item>Têxtil/Tingimento</item>
+        <item>Têxtil/Acabamento</item>
     </string-array>
+
 
     <string-array name="period_array">
         <item>Diário</item>

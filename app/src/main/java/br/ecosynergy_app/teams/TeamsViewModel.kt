@@ -6,11 +6,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import br.ecosynergy_app.ApiError
-import br.ecosynergy_app.room.Members
-import br.ecosynergy_app.room.MembersRepository
-import br.ecosynergy_app.room.Teams
-import br.ecosynergy_app.room.TeamsRepository
-import br.ecosynergy_app.room.toTeam
+import br.ecosynergy_app.room.teams.Members
+import br.ecosynergy_app.room.teams.MembersRepository
+import br.ecosynergy_app.room.teams.Teams
+import br.ecosynergy_app.room.teams.TeamsRepository
+import br.ecosynergy_app.room.teams.toTeam
 import br.ecosynergy_app.user.UserResponse
 import com.google.gson.Gson
 import kotlinx.coroutines.launch
@@ -100,22 +100,6 @@ class TeamsViewModel(
         )
         Log.d("TeamsViewModel", "Team ID: $teamId, MemberID: $userId, Request: $request")
     }
-
-//    fun findAllTeams(token: String?) {
-//        viewModelScope.launch {
-//            try {
-//                val response = service.findAllTeams("Bearer $token")
-//                Log.d("TeamsViewModel", "Response: $response")
-//                _allTeams.value = Result.success(response)
-//            } catch (e: HttpException) {
-//                Log.e("TeamsViewModel", "HTTP error during Find All Teams", e)
-//                _allTeams.value = Result.failure(e)
-//            } catch (e: Exception) {
-//                Log.e("TeamsViewModel", "Error during Find All Teams", e)
-//                _allTeams.value = Result.failure(e)
-//            }
-//        }
-//    }
 
     fun findTeamById(token: String?, id: String) {
         makeRequest(
@@ -287,7 +271,7 @@ class TeamsViewModel(
                 Log.d("TeamsViewModel", "Delete Teams from DB: $deleteTeamsState")
                 Log.d("TeamsViewModel", "Delete Members from DB: $deleteMembersState")
             } catch (e: Exception) {
-                Log.e("TeamsViewModel", "Unexpected error during deleteUserTeams", e)
+                Log.e("TeamsViewModel", "Unexpected error during deleteTeamsFromDB", e)
             }
         }
     }

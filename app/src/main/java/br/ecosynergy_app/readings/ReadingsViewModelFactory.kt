@@ -2,7 +2,7 @@ package br.ecosynergy_app.readings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import br.ecosynergy_app.room.ReadingsRepository
+import br.ecosynergy_app.room.readings.ReadingsRepository
 
 class ReadingsViewModelFactory(
     private val service: ReadingsService,

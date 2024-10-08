@@ -4,9 +4,23 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import br.ecosynergy_app.room.notifications.Notifications
+import br.ecosynergy_app.room.notifications.NotificationsDao
+import br.ecosynergy_app.room.readings.Readings
+import br.ecosynergy_app.room.readings.ReadingsDao
+import br.ecosynergy_app.room.sectors.Activity
+import br.ecosynergy_app.room.sectors.Sector
+import br.ecosynergy_app.room.sectors.SectorDao
+import br.ecosynergy_app.room.sectors.SectorWithActivities
+import br.ecosynergy_app.room.teams.Members
+import br.ecosynergy_app.room.teams.MembersDao
+import br.ecosynergy_app.room.teams.Teams
+import br.ecosynergy_app.room.teams.TeamsDao
+import br.ecosynergy_app.room.user.User
+import br.ecosynergy_app.room.user.UserDao
 
 @Database(
-    entities = [Members::class, User::class, Teams::class, Readings::class, Notifications::class],
+    entities = [Members::class, User::class, Teams::class, Readings::class, Notifications::class, Sector::class, Activity::class,],
     version= 1,
     exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
@@ -16,6 +30,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun teamsDao(): TeamsDao
     abstract fun readingsDao(): ReadingsDao
     abstract fun notificationsDao(): NotificationsDao
+    abstract fun sectorsDao(): SectorDao
 
     companion object {
         @Volatile

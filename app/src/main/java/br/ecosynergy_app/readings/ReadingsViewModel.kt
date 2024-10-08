@@ -5,9 +5,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import br.ecosynergy_app.room.Readings
-import br.ecosynergy_app.room.ReadingsRepository
-import br.ecosynergy_app.room.UserRepository
+import br.ecosynergy_app.room.readings.Readings
+import br.ecosynergy_app.room.readings.ReadingsRepository
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 

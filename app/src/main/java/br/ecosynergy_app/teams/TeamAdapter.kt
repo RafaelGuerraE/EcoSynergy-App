@@ -13,7 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import br.ecosynergy_app.R
 import br.ecosynergy_app.home.HomeActivity
-import br.ecosynergy_app.room.Teams
+import br.ecosynergy_app.room.teams.Teams
 
 class TeamAdapter(private var teamsList: List<Teams>) :
     RecyclerView.Adapter<TeamAdapter.ViewHolder>() {

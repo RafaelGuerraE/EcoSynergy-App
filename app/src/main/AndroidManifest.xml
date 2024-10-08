@@ -41,7 +41,7 @@
         </activity>
 
         <activity
-            android:name=".login.ResetActivity"
+            android:name=".login.RecoverPasswordActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
@@ -71,7 +71,7 @@
             android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:name=".signup.ConfirmationActivity"
+            android:name=".signup.EmailConfirmationActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustResize" />
 

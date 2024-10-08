@@ -11,9 +11,12 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.Spinner
 import android.widget.TextView
+import androidx.lifecycle.ViewModelProvider
 import br.ecosynergy_app.R
+import br.ecosynergy_app.RetrofitClient
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import com.google.android.material.textfield.TextInputLayout
 import com.google.gson.Gson
@@ -29,7 +32,7 @@ class SignUpActivity : AppCompatActivity() {
     private var username: String = ""
     private var email: String = ""
 
-    private var gender: String =""
+    private var gender: String = ""
 
     private var password: String = ""
 
@@ -39,13 +42,25 @@ class SignUpActivity : AppCompatActivity() {
 
     private var nationalityMap: Map<String?, String> = mapOf()
 
+    private lateinit var signUpViewModel: SignUpViewModel
+
+
+    private lateinit var btnAction: Button
+    private lateinit var progressBarAction: ProgressBar
+
+    private lateinit var btnSignUp: Button
+    private lateinit var progressBarSignUp: ProgressBar
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_signup)
 
-        val btnBack: ImageButton = findViewById(R.id.btnBack)
+        signUpViewModel = ViewModelProvider(
+            this,
+            SignUpViewModelFactory(RetrofitClient.signUpService)
+        )[SignUpViewModel::class.java]
 
-        val btnAction: Button = findViewById(R.id.btnAction)
+        val btnBack: ImageButton = findViewById(R.id.btnBack)
 
         val txtEmail: EditText = findViewById(R.id.txtEmail)
 
@@ -58,7 +73,9 @@ class SignUpActivity : AppCompatActivity() {
         val txtUsername: EditText = findViewById(R.id.txtUsername)
         val txtFullname: EditText = findViewById(R.id.txtFullname)
 
-        val btnSignUp: Button = findViewById(R.id.btnSignUp)
+
+        val txtErrorUsername: TextView = findViewById(R.id.txtErrorUsername)
+
 
         val txtNationality: MaterialAutoCompleteTextView = findViewById(R.id.txtNationality)
         val autoError: TextView = findViewById(R.id.autoError)
@@ -70,13 +87,19 @@ class SignUpActivity : AppCompatActivity() {
         val linearNationalityGender: LinearLayout = findViewById(R.id.linearNationalityGender)
         val linearPasswords: LinearLayout = findViewById(R.id.linearPasswords)
 
+        btnAction = findViewById(R.id.btnAction)
+        progressBarAction = findViewById(R.id.progressBarAction)
+
+        btnSignUp = findViewById(R.id.btnSignUp)
+        progressBarSignUp = findViewById(R.id.progressBarSignUp)
 
         val nationalities = loadNationalities()
         nationalityMap = nationalities.associate { it.nationality_br to it.nationality }
 
         val nationalityBr = nationalities.map { it.nationality_br }
 
-        val nationalityAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, nationalityBr)
+        val nationalityAdapter =
+            ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, nationalityBr)
         txtNationality.setAdapter(nationalityAdapter)
 
         txtNationality.setOnItemClickListener { parent, _, position, _ ->
@@ -88,16 +111,40 @@ class SignUpActivity : AppCompatActivity() {
 
         btnAction.setOnClickListener {
 
-            when (steps){
+            when (steps) {
                 0 -> {
-                    fullname = txtFullname.text.toString()
-                    username = txtUsername.text.toString()
-                    email = txtEmail.text.toString()
-                    linearInformation.visibility = View.GONE
-                    linearNationalityGender.visibility = View.VISIBLE
-                    steps++
+                    showButtonLoading(true, btnAction, progressBarAction)
+                    signUpViewModel.usernameExists.removeObservers(this)
+                    signUpViewModel.checkUsernameExists(txtUsername.text.toString())
+                    signUpViewModel.usernameExists.observe(this) { result ->
+                        if (result == true) {
+                            txtErrorUsername.apply {
+                                alpha = 0f
+                                visibility = View.VISIBLE
+                                animate()
+                                    .alpha(1f)
+                                    .setDuration(300)
+                                    .setListener(null)
+                            }
+                        } else {
+                            txtErrorUsername.visibility = View.GONE
+
+                            fullname = txtFullname.text.toString()
+                            username = txtUsername.text.toString()
+                            email = txtEmail.text.toString()
+
+                            linearInformation.animate().alpha(0f).setDuration(300).withEndAction {
+                                linearInformation.visibility = View.GONE
+                                linearNationalityGender.visibility = View.VISIBLE
+                            }
+                            steps++
+                        }
+                        showButtonLoading(false, btnAction, progressBarAction)
+                    }
                 }
+
                 1 -> {
+                    showButtonLoading(true, btnAction, progressBarSignUp)
                     val genderSelected = spinnerGender.selectedItem.toString()
                     val nationalitySelected: String = txtNationality.text.toString()
 
@@ -130,12 +177,16 @@ class SignUpActivity : AppCompatActivity() {
                         else -> "PNS"
                     }
 
-                    linearNationalityGender.visibility = View.GONE
-                    linearPasswords.visibility = View.VISIBLE
+                    linearNationalityGender.animate().alpha(0f).setDuration(300).withEndAction {
+                        linearNationalityGender.visibility = View.GONE
+                        linearPasswords.visibility = View.VISIBLE
+                    }
 
-                    btnAction.visibility = View.GONE
-                    btnSignUp.visibility = View.VISIBLE
-
+                    btnAction.animate().alpha(0f).setDuration(300).withEndAction {
+                        btnAction.visibility = View.GONE
+                        btnSignUp.visibility = View.VISIBLE
+                        showButtonLoading(false, btnAction, progressBarAction)
+                    }
                 }
             }
 
@@ -179,6 +230,7 @@ class SignUpActivity : AppCompatActivity() {
         })
 
         btnSignUp.setOnClickListener {
+            showButtonLoading(true, btnSignUp, progressBarSignUp)
             val passwordText = txtPassword.text.toString()
             val confirmPasswordText = txtConfirmPassword.text.toString()
 
@@ -208,7 +260,7 @@ class SignUpActivity : AppCompatActivity() {
 
             password = passwordText
 
-            val i = Intent(this, ConfirmationActivity::class.java).apply {
+            val i = Intent(this, EmailConfirmationActivity::class.java).apply {
                 putExtra("EMAIL", email)
                 putExtra("PASSWORD", password)
                 putExtra("FULLNAME", fullname)
@@ -216,6 +268,7 @@ class SignUpActivity : AppCompatActivity() {
                 putExtra("NATIONALITY", nationality)
                 putExtra("GENDER", gender)
             }
+            showButtonLoading(false, btnSignUp, progressBarSignUp)
             startActivity(i)
         }
     }
@@ -238,6 +291,22 @@ class SignUpActivity : AppCompatActivity() {
         } catch (ex: IOException) {
             ex.printStackTrace()
             null
+        }
+    }
+
+    private fun showButtonLoading(isLoading: Boolean, button: Button, progressBar: ProgressBar) {
+        if (isLoading) {
+            button.text = ""
+            progressBar.visibility = View.VISIBLE
+            button.isClickable = false
+        } else {
+            button.text = when(button.id) {
+                R.id.btnAction -> "CONTINUAR"
+                R.id.btnSignUp -> "CADASTRAR"
+                else -> button.text.toString()
+            }
+            progressBar.visibility = View.GONE
+            button.isClickable = true
         }
     }
 }

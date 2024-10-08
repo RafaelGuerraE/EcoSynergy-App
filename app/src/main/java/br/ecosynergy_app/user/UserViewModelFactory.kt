@@ -2,7 +2,7 @@ package br.ecosynergy_app.user
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import br.ecosynergy_app.room.UserRepository
+import br.ecosynergy_app.room.user.UserRepository
 
 class UserViewModelFactory(
     private val service: UserService,

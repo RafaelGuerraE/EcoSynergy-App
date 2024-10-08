@@ -7,7 +7,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.ProgressBar
+import android.widget.AutoCompleteTextView
+import android.widget.EditText
 import android.widget.Spinner
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -17,16 +18,14 @@ import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.home.HomeActivity
 import br.ecosynergy_app.login.LoginActivity
 import br.ecosynergy_app.room.AppDatabase
-import br.ecosynergy_app.room.Members
-import br.ecosynergy_app.room.MembersRepository
-import br.ecosynergy_app.room.TeamsRepository
-import br.ecosynergy_app.room.UserRepository
+import br.ecosynergy_app.room.teams.Members
+import br.ecosynergy_app.room.teams.MembersRepository
+import br.ecosynergy_app.room.teams.TeamsRepository
+import br.ecosynergy_app.room.user.UserRepository
 import br.ecosynergy_app.user.UserViewModel
 import br.ecosynergy_app.user.UserViewModelFactory
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.android.material.button.MaterialButton
-import com.google.android.material.textfield.MaterialAutoCompleteTextView
-import com.google.android.material.textfield.TextInputEditText
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import de.hdodenhof.circleimageview.CircleImageView
@@ -39,12 +38,15 @@ class TeamOverviewFragment : Fragment(R.layout.fragment_team_overview) {
 
     private lateinit var teamPicture: CircleImageView
 
-    private lateinit var txtTeamName: TextInputEditText
-    private lateinit var txtHandle: TextInputEditText
-    private lateinit var txtDescription: TextInputEditText
-    private lateinit var txtTimezone: MaterialAutoCompleteTextView
+    private lateinit var txtTeamName: EditText
+    private lateinit var txtHandle: EditText
+    private lateinit var txtDescription: EditText
+    private lateinit var txtTimezone: AutoCompleteTextView
     private lateinit var spinnerActivities: Spinner
-    private lateinit var txtPlan: TextInputEditText
+    private lateinit var txtDailyGoal: EditText
+    private lateinit var txtWeeklyGoal: EditText
+    private lateinit var txtMonthlyGoal: EditText
+    private lateinit var txtAnnualGoal: EditText
 
     private lateinit var btnEdit: MaterialButton
 
@@ -107,7 +109,11 @@ class TeamOverviewFragment : Fragment(R.layout.fragment_team_overview) {
         txtTimezone = view.findViewById(R.id.txtTimezone)
         txtDescription = view.findViewById(R.id.txtDescription)
         spinnerActivities = view.findViewById(R.id.spinnerActivities)
-        txtPlan = view.findViewById(R.id.txtPlan)
+
+        txtDailyGoal = view.findViewById(R.id.txtDailyGoal)
+        txtWeeklyGoal = view.findViewById(R.id.txtWeeklyGoal)
+        txtMonthlyGoal = view.findViewById(R.id.txtMonthlyGoal)
+        txtAnnualGoal = view.findViewById(R.id.txtAnnualGoal)
 
         btnEdit = view.findViewById(R.id.btnEdit)
 
@@ -116,7 +122,15 @@ class TeamOverviewFragment : Fragment(R.layout.fragment_team_overview) {
         shimmerImg = view.findViewById(R.id.shimmerImg)
 
         txtTimezone.isEnabled = false
+
         txtTimezone.setTextColor(ContextCompat.getColor(requireContext(), R.color.disabled))
+        txtHandle.setTextColor(ContextCompat.getColor(requireContext(), R.color.disabled))
+        txtDescription.setTextColor(ContextCompat.getColor(requireContext(), R.color.disabled))
+        txtTeamName.setTextColor(ContextCompat.getColor(requireContext(), R.color.disabled))
+        txtDailyGoal.setTextColor(ContextCompat.getColor(requireContext(), R.color.disabled))
+        txtMonthlyGoal.setTextColor(ContextCompat.getColor(requireContext(), R.color.disabled))
+        txtWeeklyGoal.setTextColor(ContextCompat.getColor(requireContext(), R.color.disabled))
+        txtAnnualGoal.setTextColor(ContextCompat.getColor(requireContext(), R.color.disabled))
 
 
         val timezones = loadTimezones()
@@ -205,9 +219,15 @@ class TeamOverviewFragment : Fragment(R.layout.fragment_team_overview) {
         txtDescription.isEnabled = true
         txtTeamName.isEnabled = true
         spinnerActivities.isEnabled = true
-        txtPlan.isEnabled = true
 
         txtTimezone.setTextColor(getThemeColor(android.R.attr.textColorPrimary))
+        txtHandle.setTextColor(getThemeColor(android.R.attr.textColorPrimary))
+        txtDescription.setTextColor(getThemeColor(android.R.attr.textColorPrimary))
+        txtTeamName.setTextColor(getThemeColor(android.R.attr.textColorPrimary))
+        txtDailyGoal.setTextColor(getThemeColor(android.R.attr.textColorPrimary))
+        txtMonthlyGoal.setTextColor(getThemeColor(android.R.attr.textColorPrimary))
+        txtWeeklyGoal.setTextColor(getThemeColor(android.R.attr.textColorPrimary))
+        txtAnnualGoal.setTextColor(getThemeColor(android.R.attr.textColorPrimary))
 
     }
 
@@ -217,9 +237,21 @@ class TeamOverviewFragment : Fragment(R.layout.fragment_team_overview) {
         txtDescription.isEnabled = false
         txtTeamName.isEnabled = false
         spinnerActivities.isEnabled = false
-        txtPlan.isEnabled = false
+        txtDailyGoal.isEnabled = false
+        txtMonthlyGoal.isEnabled = false
+        txtWeeklyGoal.isEnabled = false
+        txtAnnualGoal.isEnabled = false
+
 
         txtTimezone.setTextColor(ContextCompat.getColor(requireContext(), R.color.disabled))
+        txtHandle.setTextColor(ContextCompat.getColor(requireContext(), R.color.disabled))
+        txtDescription.setTextColor(ContextCompat.getColor(requireContext(), R.color.disabled))
+        txtTeamName.setTextColor(ContextCompat.getColor(requireContext(), R.color.disabled))
+        txtDailyGoal.setTextColor(ContextCompat.getColor(requireContext(), R.color.disabled))
+        txtMonthlyGoal.setTextColor(ContextCompat.getColor(requireContext(), R.color.disabled))
+        txtWeeklyGoal.setTextColor(ContextCompat.getColor(requireContext(), R.color.disabled))
+        txtAnnualGoal.setTextColor(ContextCompat.getColor(requireContext(), R.color.disabled))
+
     }
 
     private fun deleteTeam() {
@@ -255,6 +287,11 @@ class TeamOverviewFragment : Fragment(R.layout.fragment_team_overview) {
                 txtTeamName.setText(teamName)
                 txtHandle.setText(teamInfo.handle)
                 txtDescription.setText(teamInfo.description)
+
+                txtDailyGoal.setText(teamInfo.dailyGoal.toString())
+                txtWeeklyGoal.setText(teamInfo.weeklyGoal.toString())
+                txtMonthlyGoal.setText(teamInfo.monthlyGoal.toString())
+                txtAnnualGoal.setText(teamInfo.annualGoal.toString())
 
                 txtTimezone.setText(utcToTextMap[teamInfo.timeZone])
 

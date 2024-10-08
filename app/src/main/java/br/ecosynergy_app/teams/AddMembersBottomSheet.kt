@@ -1,15 +1,11 @@
 package br.ecosynergy_app.teams
 
-import android.content.Context
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -18,17 +14,15 @@ import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.login.LoginActivity
 import br.ecosynergy_app.room.AppDatabase
-import br.ecosynergy_app.room.MembersRepository
-import br.ecosynergy_app.room.TeamsRepository
-import br.ecosynergy_app.room.UserRepository
-import br.ecosynergy_app.user.MembersAdapter
+import br.ecosynergy_app.room.teams.MembersRepository
+import br.ecosynergy_app.room.teams.TeamsRepository
+import br.ecosynergy_app.room.user.UserRepository
 import br.ecosynergy_app.user.UserViewModel
 import br.ecosynergy_app.user.UserViewModelFactory
 import br.ecosynergy_app.user.UsersAdapter
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 
 class AddMembersBottomSheet : BottomSheetDialogFragment() {

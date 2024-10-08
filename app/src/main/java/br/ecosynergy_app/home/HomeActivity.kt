@@ -30,13 +30,16 @@ import br.ecosynergy_app.login.LoginActivity
 import br.ecosynergy_app.readings.ReadingsViewModel
 import br.ecosynergy_app.readings.ReadingsViewModelFactory
 import br.ecosynergy_app.room.AppDatabase
-import br.ecosynergy_app.room.MembersRepository
-import br.ecosynergy_app.room.ReadingsRepository
-import br.ecosynergy_app.room.TeamsRepository
-import br.ecosynergy_app.room.User
-import br.ecosynergy_app.room.UserRepository
+import br.ecosynergy_app.room.teams.MembersRepository
+import br.ecosynergy_app.room.readings.ReadingsRepository
+import br.ecosynergy_app.room.sectors.SectorRepository
+import br.ecosynergy_app.room.teams.TeamsRepository
+import br.ecosynergy_app.room.user.User
+import br.ecosynergy_app.room.user.UserRepository
 import br.ecosynergy_app.teams.TeamsViewModel
 import br.ecosynergy_app.teams.TeamsViewModelFactory
+import br.ecosynergy_app.teams.sectors.SectorsViewModel
+import br.ecosynergy_app.teams.sectors.SectorsViewModelFactory
 import br.ecosynergy_app.user.UserSettingsActivity
 import br.ecosynergy_app.user.UserViewModel
 import br.ecosynergy_app.user.UserViewModelFactory
@@ -50,6 +53,7 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var userViewModel: UserViewModel
     private lateinit var readingsViewModel: ReadingsViewModel
     private lateinit var teamsViewModel: TeamsViewModel
+    private lateinit var sectorsViewModel: SectorsViewModel
 
     private lateinit var bottomNavView: BottomNavigationView
     private lateinit var drawerLayout: DrawerLayout
@@ -60,8 +64,6 @@ class HomeActivity : AppCompatActivity() {
     private var accessToken: String = ""
 
     private lateinit var progressBar: ProgressBar
-
-    var teamHandles: List<String> =  emptyList()
 
     private lateinit var loginSp: SharedPreferences
     private lateinit var themeSp: SharedPreferences
@@ -97,14 +99,25 @@ class HomeActivity : AppCompatActivity() {
         val membersDao = AppDatabase.getDatabase(applicationContext).membersDao()
         val membersRepository = MembersRepository(membersDao)
 
+        val sectorsDao = AppDatabase.getDatabase(applicationContext).sectorsDao()
+        val sectorsRepository = SectorRepository(sectorsDao)
+
         userViewModel = ViewModelProvider(this, UserViewModelFactory(RetrofitClient.userService, userRepository))[UserViewModel::class.java]
         readingsViewModel = ViewModelProvider(this, ReadingsViewModelFactory(RetrofitClient.readingsService, readingsRepository))[ReadingsViewModel::class.java]
         teamsViewModel = ViewModelProvider(this, TeamsViewModelFactory(RetrofitClient.teamsService, teamsRepository, membersRepository))[TeamsViewModel::class.java]
+        sectorsViewModel = ViewModelProvider(this, SectorsViewModelFactory(RetrofitClient.sectorsService, sectorsRepository))[SectorsViewModel::class.java]
+
 
         loginSp = getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
-        var isLoggedIn = loginSp.getBoolean("isLoggedIn", false)
-        var justLoggedIn = loginSp.getBoolean("just_logged_in", false)
-        var open = loginSp.getBoolean("open", false)
+        val isLoggedIn = loginSp.getBoolean("isLoggedIn", false)
+        val justLoggedIn = loginSp.getBoolean("just_logged_in", false)
+        val open = loginSp.getBoolean("open", false)
+
+//        sectorsViewModel.getAllSectorsWithActivities().observe(this) { sectorsWithActivities ->
+//            sectorsWithActivities?.let {
+//                Log.d("Sectors", "Sectors with activities: $it")
+//            }
+//        }
 
         if(isLoggedIn && !open){
             updateUserInfo()
@@ -373,6 +386,7 @@ class HomeActivity : AppCompatActivity() {
         userViewModel.deleteUserInfoFromDB()
         teamsViewModel.deleteTeamsFromDB()
         readingsViewModel.deleteAllReadingsFromDB()
+        sectorsViewModel.deleteSectorsFromDB()
 
         val i = Intent(this, LoginActivity::class.java)
         i.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK

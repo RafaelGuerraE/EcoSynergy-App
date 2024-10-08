@@ -10,9 +10,9 @@ import br.ecosynergy_app.home.PasswordRequest
 import br.ecosynergy_app.home.UpdateRequest
 import br.ecosynergy_app.login.LoginRequest
 import br.ecosynergy_app.login.LoginResponse
-import br.ecosynergy_app.room.User
-import br.ecosynergy_app.room.UserRepository
-import br.ecosynergy_app.room.toUser
+import br.ecosynergy_app.room.user.User
+import br.ecosynergy_app.room.user.UserRepository
+import br.ecosynergy_app.room.user.toUser
 import com.google.gson.Gson
 import kotlinx.coroutines.launch
 import retrofit2.HttpException

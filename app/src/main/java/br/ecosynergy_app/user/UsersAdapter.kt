@@ -74,6 +74,7 @@ class UsersAdapter(
 
         private val txtUsername: TextView = itemView.findViewById(R.id.txtUsername)
         private val txtFullname: TextView = itemView.findViewById(R.id.txtFullname)
+        private val txtEmail: TextView = itemView.findViewById(R.id.txtEmail)
         private val imgUser: ImageView = itemView.findViewById(R.id.imgUser)
         private val btnInvite: ImageButton = itemView.findViewById(R.id.btnInvite)
         private var memberId: Int = 0
@@ -83,6 +84,8 @@ class UsersAdapter(
 
             txtFullname.text = user.fullName
             txtUsername.text = "@$username"
+            txtEmail.text = user.email
+
             memberId = user.id
 
             imgUser.setImageResource(HomeActivity().getDrawableForLetter(user.fullName.first()))

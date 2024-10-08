@@ -17,9 +17,8 @@ import androidx.fragment.app.activityViewModels
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import br.ecosynergy_app.R
 import br.ecosynergy_app.user.UserViewModel
-import br.ecosynergy_app.readings.ReadingVO
 import br.ecosynergy_app.readings.ReadingsViewModel
-import br.ecosynergy_app.room.Readings
+import br.ecosynergy_app.room.readings.Readings
 import br.ecosynergy_app.teams.TeamsViewModel
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.github.mikephil.charting.charts.LineChart
@@ -134,7 +133,7 @@ class Home : Fragment() {
         teamsViewModel.allTeamsDB.observe(viewLifecycleOwner) { teamData ->
             teamHandles = listOf("Todas") + teamData.map { it.handle }
 
-            val teamsArrayAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, teamHandles)
+            val teamsArrayAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, teamHandles)
             spinnerTeam.adapter = teamsArrayAdapter
 
             fetchMQ7ReadingsByTeamHandle()

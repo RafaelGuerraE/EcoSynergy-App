@@ -1,7 +1,5 @@
 package br.ecosynergy_app.teams
 
-import android.content.Context
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -20,12 +18,11 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.room.AppDatabase
-import br.ecosynergy_app.room.Members
-import br.ecosynergy_app.room.MembersRepository
-import br.ecosynergy_app.room.TeamsRepository
-import br.ecosynergy_app.room.UserRepository
+import br.ecosynergy_app.room.teams.Members
+import br.ecosynergy_app.room.teams.MembersRepository
+import br.ecosynergy_app.room.teams.TeamsRepository
+import br.ecosynergy_app.room.user.UserRepository
 import br.ecosynergy_app.user.MembersAdapter
-import br.ecosynergy_app.user.UserResponse
 import br.ecosynergy_app.user.UserViewModel
 import br.ecosynergy_app.user.UserViewModelFactory
 import com.facebook.shimmer.ShimmerFrameLayout
@@ -155,11 +152,14 @@ class TeamMembersFragment : Fragment(R.layout.fragment_team_members) {
     }
 
     private fun observeMembersInfo() {
-        userRole = TeamOverviewFragment().userRole
-        if (userRole == "ADMINISTRATOR") {
-            btnAddMember.visibility = View.VISIBLE
-        } else {
-            btnAddMember.visibility = View.GONE
+        teamsViewModel.allMembersDB.observe(viewLifecycleOwner) { membersInfo ->
+            val userMember = membersInfo.find { it.userId == userId }
+            userRole = userMember?.role.toString()
+            if (userRole == "ADMINISTRATOR") {
+                btnAddMember.visibility = View.VISIBLE
+            } else {
+                btnAddMember.visibility = View.GONE
+            }
         }
 
         teamsViewModel.getMembersByTeamId(teamId)

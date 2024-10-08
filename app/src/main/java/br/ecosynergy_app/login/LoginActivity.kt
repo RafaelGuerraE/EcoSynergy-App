@@ -22,14 +22,17 @@ import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.home.HomeActivity
 import br.ecosynergy_app.signup.SignUpActivity
 import br.ecosynergy_app.room.AppDatabase
-import br.ecosynergy_app.room.TeamsRepository
-import br.ecosynergy_app.room.UserRepository
+import br.ecosynergy_app.room.teams.TeamsRepository
+import br.ecosynergy_app.room.user.UserRepository
 import br.ecosynergy_app.readings.ReadingsViewModel
 import br.ecosynergy_app.readings.ReadingsViewModelFactory
-import br.ecosynergy_app.room.MembersRepository
-import br.ecosynergy_app.room.ReadingsRepository
+import br.ecosynergy_app.room.teams.MembersRepository
+import br.ecosynergy_app.room.readings.ReadingsRepository
+import br.ecosynergy_app.room.sectors.SectorRepository
 import br.ecosynergy_app.teams.TeamsViewModel
 import br.ecosynergy_app.teams.TeamsViewModelFactory
+import br.ecosynergy_app.teams.sectors.SectorsViewModel
+import br.ecosynergy_app.teams.sectors.SectorsViewModelFactory
 import br.ecosynergy_app.user.UserViewModel
 import br.ecosynergy_app.user.UserViewModelFactory
 import com.google.android.material.snackbar.Snackbar
@@ -49,6 +52,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var userViewModel: UserViewModel
     private lateinit var teamsViewModel: TeamsViewModel
     private lateinit var readingsViewModel: ReadingsViewModel
+    private lateinit var sectorsViewModel: SectorsViewModel
 
     private lateinit var loginSp: SharedPreferences
 
@@ -80,9 +84,13 @@ class LoginActivity : AppCompatActivity() {
         val membersDao = AppDatabase.getDatabase(applicationContext).membersDao()
         val membersRepository = MembersRepository(membersDao)
 
+        val sectorsDao = AppDatabase.getDatabase(applicationContext).sectorsDao()
+        val sectorsRepository = SectorRepository(sectorsDao)
+
         userViewModel = ViewModelProvider(this, UserViewModelFactory(RetrofitClient.userService, userRepository))[UserViewModel::class.java]
         teamsViewModel = ViewModelProvider(this, TeamsViewModelFactory(RetrofitClient.teamsService, teamsRepository, membersRepository))[TeamsViewModel::class.java]
         readingsViewModel = ViewModelProvider(this, ReadingsViewModelFactory(RetrofitClient.readingsService, readingsRepository))[ReadingsViewModel::class.java]
+        sectorsViewModel = ViewModelProvider(this, SectorsViewModelFactory(RetrofitClient.sectorsService, sectorsRepository))[SectorsViewModel::class.java]
 
 
         txtEntry = findViewById(R.id.txtEntry)
@@ -99,9 +107,6 @@ class LoginActivity : AppCompatActivity() {
 
             loginUser(view, username, password, passwordLayout)
         }
-
-//        val notificationServiceIntent = Intent(this, NotificationService::class.java)
-//        startService(notificationServiceIntent)
 
         txtEntry.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
@@ -142,7 +147,7 @@ class LoginActivity : AppCompatActivity() {
         lblReset = findViewById(R.id.lblReset)
 
         lblReset.setOnClickListener(){
-            val i = Intent(this, ResetActivity::class.java)
+            val i = Intent(this, RecoverPasswordActivity::class.java)
             startActivity(i)
         }
     }
@@ -182,6 +187,7 @@ class LoginActivity : AppCompatActivity() {
                 Log.d("LoginActivity", "Login success")
                 userViewModel.user.observe(this) { result ->
                     result.onSuccess { userData ->
+                        sectorsViewModel.fetchAndStoreSectorsAndActivities(loginResponse.accessToken)
                         userViewModel.insertUserInfoDB(userData, loginResponse.accessToken, loginResponse.refreshToken)
                         teamsViewModel.getTeamsByUserId(userData.id, loginResponse.accessToken) {
                             setLoggedIn(true)
@@ -210,7 +216,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
 
-    private fun showToast(message: String) {
+    fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 

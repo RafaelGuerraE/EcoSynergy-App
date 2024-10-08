@@ -1,12 +1,13 @@
 package br.ecosynergy_app.teams
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ProgressBar
 import android.widget.Spinner
@@ -14,12 +15,12 @@ import androidx.lifecycle.ViewModelProvider
 import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.room.AppDatabase
-import br.ecosynergy_app.room.MembersRepository
-import br.ecosynergy_app.room.TeamsRepository
+import br.ecosynergy_app.room.teams.MembersRepository
+import br.ecosynergy_app.room.teams.TeamsRepository
+import br.ecosynergy_app.teams.sectors.ActivitiesRequest
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
-import com.google.android.material.textfield.TextInputEditText
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.io.IOException
@@ -31,14 +32,16 @@ class CreateTeamBottomSheet : BottomSheetDialogFragment() {
     private var timezone: String = ""
 
     private lateinit var btnClose: ImageButton
-    private lateinit var txtHandle: TextInputEditText
-    private lateinit var txtTeamName: TextInputEditText
-    private lateinit var txtDescription: TextInputEditText
+    private lateinit var txtHandle: EditText
+    private lateinit var txtTeamName: EditText
+    private lateinit var txtDescription: EditText
     private lateinit var spinnerActivities: Spinner
-    private lateinit var txtPlan: TextInputEditText
     private lateinit var btnCreateTeam: Button
-    private lateinit var txtTimezone: MaterialAutoCompleteTextView
-    private lateinit var txtGoal: TextInputEditText
+    private lateinit var txtTimezone: AutoCompleteTextView
+    private lateinit var txtDailyGoal: EditText
+    private lateinit var txtWeeklyGoal: EditText
+    private lateinit var txtMonthlyGoal: EditText
+    private lateinit var txtAnnualGoal: EditText
 
     private lateinit var loadingProgressBar: ProgressBar
 
@@ -67,10 +70,12 @@ class CreateTeamBottomSheet : BottomSheetDialogFragment() {
         txtTeamName = view.findViewById(R.id.txtTeamName)
         txtDescription = view.findViewById(R.id.txtDescription)
         spinnerActivities = view.findViewById(R.id.spinnerActivities)
-        txtPlan = view.findViewById(R.id.txtPlan)
         btnCreateTeam = view.findViewById(R.id.btnCreateTeam)
         txtTimezone = view.findViewById(R.id.txtTimezone)
-        txtGoal = view.findViewById(R.id.txtGoal)
+        txtDailyGoal = view.findViewById(R.id.txtDailyGoal)
+        txtWeeklyGoal = view.findViewById(R.id.txtWeeklyGoal)
+        txtMonthlyGoal = view.findViewById(R.id.txtMonthlyGoal)
+        txtAnnualGoal = view.findViewById(R.id.txtAnnualGoal)
 
         userId = requireArguments().getInt("USER_ID")
         accessToken = requireArguments().getString("ACCESS_TOKEN").toString()
@@ -107,13 +112,21 @@ class CreateTeamBottomSheet : BottomSheetDialogFragment() {
 
     }
 
-    private fun createTeam(){
+    private fun createTeam() {
         loadingProgressBar.visibility = View.VISIBLE
-        val handle: String = txtHandle.text.toString()
-        val name: String = txtTeamName.text.toString()
-        val description: String = txtDescription.text.toString()
         val members: List<Member> = listOf(Member(userId, "ADMINISTRATOR"))
-        val teamsRequest = TeamsRequest(handle, name, description, ActivitiesRequest(1), 100.0,timezone, members)
+        val teamsRequest = TeamsRequest(
+            txtHandle.text.toString(),
+            txtTeamName.text.toString(),
+            txtDescription.text.toString(),
+            ActivitiesRequest(1),
+            txtDailyGoal.text.toString().toDouble(),
+            txtWeeklyGoal.text.toString().toDouble(),
+            txtMonthlyGoal.text.toString().toDouble(),
+            txtAnnualGoal.text.toString().toDouble(),
+            timezone,
+            members
+        )
         teamsViewModel.createTeam(accessToken, teamsRequest)
         dismiss()
     }

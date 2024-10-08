@@ -26,7 +26,7 @@ import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.home.HomeActivity
 import br.ecosynergy_app.signup.Nationality
 import br.ecosynergy_app.room.AppDatabase
-import br.ecosynergy_app.room.UserRepository
+import br.ecosynergy_app.room.user.UserRepository
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar

@@ -2,9 +2,8 @@ package br.ecosynergy_app.teams
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import br.ecosynergy_app.room.MembersRepository
-import br.ecosynergy_app.room.TeamsRepository
-import br.ecosynergy_app.room.UserRepository
+import br.ecosynergy_app.room.teams.MembersRepository
+import br.ecosynergy_app.room.teams.TeamsRepository
 
 class TeamsViewModelFactory(private val service: TeamsService,
                             private val teamsRepository: TeamsRepository,

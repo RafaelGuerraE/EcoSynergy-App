@@ -89,11 +89,10 @@
                     android:id="@+id/spinnerTeam"
                     android:entries="@array/period_array"
                     android:layout_width="150dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="40dp"
                     android:layout_marginEnd="5dp"
                     android:background="@drawable/spinner_home"
                     android:spinnerMode="dropdown"
-
                     />
 
                 <Spinner
@@ -101,7 +100,7 @@
                     android:entries="@array/period_array"
                     android:layout_width="150dp"
                     android:spinnerMode="dropdown"
-                    android:layout_height="wrap_content"
+                    android:layout_height="40dp"
                     android:background="@drawable/spinner_home"
                     android:layout_marginStart="5dp"
                     />

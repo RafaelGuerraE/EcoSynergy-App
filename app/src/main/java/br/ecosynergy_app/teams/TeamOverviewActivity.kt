@@ -1,7 +1,6 @@
 package br.ecosynergy_app.teams
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.ImageButton
 import android.widget.LinearLayout
@@ -13,9 +12,9 @@ import androidx.viewpager2.widget.ViewPager2
 import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.room.AppDatabase
-import br.ecosynergy_app.room.MembersRepository
-import br.ecosynergy_app.room.TeamsRepository
-import br.ecosynergy_app.room.UserRepository
+import br.ecosynergy_app.room.teams.MembersRepository
+import br.ecosynergy_app.room.teams.TeamsRepository
+import br.ecosynergy_app.room.user.UserRepository
 import br.ecosynergy_app.user.UserViewModel
 import br.ecosynergy_app.user.UserViewModelFactory
 import com.google.android.material.tabs.TabLayout
@@ -86,10 +85,10 @@ class TeamOverviewActivity : AppCompatActivity() {
 
                     val newHeight = selectedPageView.measuredHeight
                     if (viewPager.layoutParams.height != newHeight) {
-                        viewPager.layoutParams =
-                            (viewPager.layoutParams as LinearLayout.LayoutParams).also { lp ->
-                                lp.height = newHeight
-                            }
+                        viewPager.layoutParams = viewPager.layoutParams.apply {
+                            height = newHeight
+                        }
+
                     }
                 }
             }
