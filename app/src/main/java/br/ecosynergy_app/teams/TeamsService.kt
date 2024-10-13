@@ -23,7 +23,7 @@ interface TeamsService {
     @PUT("api/team/v1/{id}")
     suspend fun updateTeam(@Header("Authorization") token: String?,
                            @Path("id") id:Int,
-                           @Body request: UpdateRequest) : TeamsResponse
+                           @Body request: UpdateRequest) : Result<TeamsResponse>
 
     //Finding Teams
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -9,55 +9,110 @@
     android:orientation="vertical"
     android:gravity="top">
 
-    <ImageButton
-        android:id="@+id/btnBack"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:background="@null"
-        android:contentDescription="BackButton"
-        android:src="@drawable/baseline_arrow_back_24"
-        android:scaleType="fitXY"
-        android:gravity="top"
-        android:layout_margin="15dp"
-        app:tint="?android:attr/iconTint"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        android:layout_gravity="top"
+        android:background="?android:attr/colorBackground">
+
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="BackButton"
+            android:src="@drawable/baseline_arrow_back_24"
+            android:scaleType="fitXY"
+            app:tint="?android:attr/iconTint"
+            android:layout_margin="15dp"
+            android:layout_gravity="center_vertical"
+            android:clickable="true"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:text="Preferência de Notificão"
+            android:textAlignment="center"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginEnd="60dp"
+            />
+
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_gravity="center"
-        android:gravity="center"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="50dp"
         android:layout_marginStart="15dp"
         android:layout_marginEnd="15dp">
 
-        <com.google.android.material.switchmaterial.SwitchMaterial
-            android:id="@+id/swReport"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Receber notificações de relatórios novos"
-            android:checked="false"
-            android:textSize="16sp"
-            android:layout_marginBottom="15dp"/>
+            android:orientation="horizontal">
 
-        <com.google.android.material.switchmaterial.SwitchMaterial
-            android:id="@+id/swLogin"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Receber notificações de Login"
-            android:checked="false"
-            android:textSize="16sp"
-            android:layout_marginBottom="15dp"/>
 
-        <com.google.android.material.switchmaterial.SwitchMaterial
-            android:id="@+id/swTeam"
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="10dp"
+                android:text=""
+                android:textSize="16sp"/>
+
+            <TextView
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:text="SIM"
+                android:textStyle="bold"
+                android:textSize="14sp"
+                android:textAlignment="center"/>
+            <TextView
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:text="NÃO"
+                android:textStyle="bold"
+                android:textSize="14sp"
+                android:textAlignment="center"/>
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Receber notificações de atualizações de Equipe"
-            android:checked="false"
-            android:textSize="16sp"
-            android:layout_marginBottom="15dp"/>
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="10dp"
+                android:text="Notificações de detecção de Fogo"
+                android:textSize="16sp"/>
+
+            <CheckBox
+                android:id="@+id/fireYes"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:checked="false"
+                android:background="?android:attr/selectableItemBackgroundBorderless"/>
+
+
+            <CheckBox
+                android:id="@+id/fireNo"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:checked="false"
+                android:background="?android:attr/selectableItemBackgroundBorderless"/>
+        </LinearLayout>
+
 
     </LinearLayout>
 
-</LinearLayout>
+</RelativeLayout>

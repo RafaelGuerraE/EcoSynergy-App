@@ -4,7 +4,6 @@ import br.ecosynergy_app.user.UserService
 import br.ecosynergy_app.signup.SignUpService
 import br.ecosynergy_app.readings.ReadingsService
 import br.ecosynergy_app.teams.TeamsService
-import br.ecosynergy_app.teams.sectors.SectorsService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -33,10 +32,6 @@ object RetrofitClient {
 
     val readingsService: ReadingsService by lazy {
         retrofit.create(ReadingsService::class.java)
-    }
-
-    val sectorsService: SectorsService by lazy {
-        retrofit.create(SectorsService::class.java)
     }
 
 }

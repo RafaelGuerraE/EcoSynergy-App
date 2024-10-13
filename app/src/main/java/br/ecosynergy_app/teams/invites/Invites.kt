@@ -1,4 +1,4 @@
-package br.ecosynergy_app.invites
+package br.ecosynergy_app.teams.invites
 
 data class InviteRequest(
     val senderId: Int,

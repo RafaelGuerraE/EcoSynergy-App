@@ -76,8 +76,8 @@
   },
   {
     "country": "Azerbaijan",
-    "nationality": "Azerbaijani, Azeri",
-    "nationality_br": "Azerbaijano, Azeri"
+    "nationality": "Azerbaijani",
+    "nationality_br": "Azerbaijano"
   },
   {
     "country": "Bahamas",
@@ -116,13 +116,13 @@
   },
   {
     "country": "Benin",
-    "nationality": "Beninese, Beninois",
-    "nationality_br": "Beninense, Benino"
+    "nationality": "Beninese",
+    "nationality_br": "Beninense"
   },
   {
     "country": "Bermuda",
-    "nationality": "Bermudian, Bermudan",
-    "nationality_br": "Bermudense, Bermudiano"
+    "nationality": "Bermudian",
+    "nationality_br": "Bermudense"
   },
   {
     "country": "Bhutan",
@@ -135,7 +135,7 @@
     "nationality_br": "Boliviano"
   },
   {
-    "country": "Bonaire, Sint Eustatius and Saba",
+    "country": "Bonaire",
     "nationality": "Bonaire",
     "nationality_br": "Bonairiano"
   },
@@ -146,8 +146,8 @@
   },
   {
     "country": "Botswana",
-    "nationality": "Motswana, Botswanan",
-    "nationality_br": "Botsuano, Botswano"
+    "nationality": "Motswana",
+    "nationality_br": "Botsuano"
   },
   {
     "country": "Bouvet Island",
@@ -246,8 +246,8 @@
   },
   {
     "country": "Comoros",
-    "nationality": "Comoran, Comorian",
-    "nationality_br": "Comoriano, Comorense"
+    "nationality": "Comoran",
+    "nationality_br": "Comoriano"
   },
   {
     "country": "Congo (Republic of the)",
@@ -336,8 +336,8 @@
   },
   {
     "country": "Equatorial Guinea",
-    "nationality": "Equatorial Guinean, Equatoguinean",
-    "nationality_br": "Guinéu-Equatoriano, Equato-Guineano"
+    "nationality": "Equatorial Guinean",
+    "nationality_br": "Guinéu-Equatoriano"
   },
   {
     "country": "Eritrea",
@@ -426,8 +426,8 @@
   },
   {
     "country": "Greece",
-    "nationality": "Greek, Hellenic",
-    "nationality_br": "Grego, Helênico"
+    "nationality": "Greek",
+    "nationality_br": "Grego"
   },
   {
     "country": "Greenland",
@@ -446,8 +446,8 @@
   },
   {
     "country": "Guam",
-    "nationality": "Guamanian, Guambat",
-    "nationality_br": "Guamês, Guambat"
+    "nationality": "Guamanian",
+    "nationality_br": "Guamês"
   },
   {
     "country": "Guatemala",
@@ -496,13 +496,13 @@
   },
   {
     "country": "Hong Kong",
-    "nationality": "Hong Kong, Hong Kongese",
-    "nationality_br": "Hong Kong, Hong Kongês"
+    "nationality": "Hong Kong",
+    "nationality_br": "Hong Kong"
   },
   {
     "country": "Hungary",
-    "nationality": "Hungarian, Magyar",
-    "nationality_br": "Húngaro, Magiar"
+    "nationality": "Hungarian",
+    "nationality_br": "Húngaro"
   },
   {
     "country": "Iceland",
@@ -521,8 +521,8 @@
   },
   {
     "country": "Iran",
-    "nationality": "Iranian, Persian",
-    "nationality_br": "Iraniano, Persa"
+    "nationality": "Iranian",
+    "nationality_br": "Iraniano"
   },
   {
     "country": "Iraq",
@@ -571,8 +571,8 @@
   },
   {
     "country": "Kazakhstan",
-    "nationality": "Kazakhstani, Kazakh",
-    "nationality_br": "Cazaque, Cazaquistão"
+    "nationality": "Kazakhstani",
+    "nationality_br": "Cazaque"
   },
   {
     "country": "Kenya",
@@ -601,13 +601,13 @@
   },
   {
     "country": "Kyrgyzstan",
-    "nationality": "Kyrgyzstani, Kyrgyz, Kirgiz, Kirghiz",
-    "nationality_br": "Quirguistanês, Quirguiz, Quirguizistão"
+    "nationality": "Kyrgyzstani",
+    "nationality_br": "Quirguistanês"
   },
   {
     "country": "Lao People's Democratic Republic",
-    "nationality": "Lao, Laotian",
-    "nationality_br": "Laosiano, Laotiano"
+    "nationality": "Lao",
+    "nationality_br": "Laosiano"
   },
   {
     "country": "Latvia",
@@ -646,13 +646,13 @@
   },
   {
     "country": "Luxembourg",
-    "nationality": "Luxembourg, Luxembourgish",
-    "nationality_br": "Luxemburguês, Luxemburguês"
+    "nationality": "Luxembourg",
+    "nationality_br": "Luxemburguês"
   },
   {
     "country": "Macao",
-    "nationality": "Macanese, Chinese",
-    "nationality_br": "Macauense, Chinês"
+    "nationality": "Macanese",
+    "nationality_br": "Macauense"
   },
   {
     "country": "Macedonia (the former Yugoslav Republic of)",
@@ -681,8 +681,8 @@
   },
   {
     "country": "Mali",
-    "nationality": "Malian, Malinese",
-    "nationality_br": "Maliense, Malinês"
+    "nationality": "Malian",
+    "nationality_br": "Maliense"
   },
   {
     "country": "Malta",
@@ -696,8 +696,8 @@
   },
   {
     "country": "Martinique",
-    "nationality": "Martiniquais, Martinican",
-    "nationality_br": "Martinicano, Martiniquense"
+    "nationality": "Martiniquais",
+    "nationality_br": "Martinicano"
   },
   {
     "country": "Mauritania",
@@ -731,8 +731,8 @@
   },
   {
     "country": "Monaco",
-    "nationality": "Monégasque, Monacan",
-    "nationality_br": "Monegasco, Monacense"
+    "nationality": "Monégasque",
+    "nationality_br": "Monegasco"
   },
   {
     "country": "Mongolia",
@@ -776,13 +776,13 @@
   },
   {
     "country": "Nepal",
-    "nationality": "Nepali, Nepalese",
-    "nationality_br": "Nepalês, Nepales"
+    "nationality": "Nepali",
+    "nationality_br": "Nepalês"
   },
   {
     "country": "Netherlands",
-    "nationality": "Dutch, Netherlandic",
-    "nationality_br": "Holandês, Neerlandês"
+    "nationality": "Dutch",
+    "nationality_br": "Holandês"
   },
   {
     "country": "New Caledonia",
@@ -791,8 +791,8 @@
   },
   {
     "country": "New Zealand",
-    "nationality": "New Zealand, NZ",
-    "nationality_br": "Neozelandês, NZ"
+    "nationality": "New Zealand",
+    "nationality_br": "Neozelandês"
   },
   {
     "country": "Nicaragua",
@@ -845,7 +845,7 @@
     "nationality_br": "Palauense"
   },
   {
-    "country": "Palestine, State of",
+    "country": "Palestine",
     "nationality": "Palestinian",
     "nationality_br": "Palestino"
   },
@@ -856,8 +856,8 @@
   },
   {
     "country": "Papua New Guinea",
-    "nationality": "Papua New Guinean, Papuan",
-    "nationality_br": "Papua-Nova Guiné, Papuano"
+    "nationality": "Papua New Guinean",
+    "nationality_br": "Papua-Nova Guiné"
   },
   {
     "country": "Paraguay",
@@ -871,8 +871,8 @@
   },
   {
     "country": "Philippines",
-    "nationality": "Philippine, Filipino",
-    "nationality_br": "Filipino, Filipina"
+    "nationality": "Philippine",
+    "nationality_br": "Filipino"
   },
   {
     "country": "Pitcairn",
@@ -901,8 +901,8 @@
   },
   {
     "country": "Réunion",
-    "nationality": "Réunionese, Réunionnais",
-    "nationality_br": "Reunense, Reuniano"
+    "nationality": "Réunionese",
+    "nationality_br": "Reunense"
   },
   {
     "country": "Romania",
@@ -925,7 +925,7 @@
     "nationality_br": "São Bartolomeu"
   },
   {
-    "country": "Saint Helena, Ascension and Tristan da Cunha",
+    "country": "Saint Helena",
     "nationality": "Saint Helenian",
     "nationality_br": "São Helenense"
   },
@@ -951,8 +951,8 @@
   },
   {
     "country": "Saint Vincent and the Grenadines",
-    "nationality": "Saint Vincentian, Vincentian",
-    "nationality_br": "São Vicentense, Vicentense"
+    "nationality": "Saint Vincentian",
+    "nationality_br": "São Vicentense"
   },
   {
     "country": "Samoa",
@@ -971,8 +971,8 @@
   },
   {
     "country": "Saudi Arabia",
-    "nationality": "Saudi, Saudi Arabian",
-    "nationality_br": "Saudita, Árabe Saudita"
+    "nationality": "Saudi",
+    "nationality_br": "Saudita"
   },
   {
     "country": "Senegal",
@@ -1011,8 +1011,8 @@
   },
   {
     "country": "Slovenia",
-    "nationality": "Slovenian, Slovene",
-    "nationality_br": "Esloveno, Eslovenês"
+    "nationality": "Slovenian",
+    "nationality_br": "Esloveno"
   },
   {
     "country": "Solomon Islands",
@@ -1021,8 +1021,8 @@
   },
   {
     "country": "Somalia",
-    "nationality": "Somali, Somalian",
-    "nationality_br": "Somali, Somalês"
+    "nationality": "Somalian",
+    "nationality_br": "Somalês"
   },
   {
     "country": "South Africa",
@@ -1085,9 +1085,9 @@
     "nationality_br": "Sírio"
   },
   {
-    "country": "Taiwan, Province of China",
-    "nationality": "Chinese, Taiwanese",
-    "nationality_br": "Chinês, Taiwanês"
+    "country": "Taiwan",
+    "nationality": "Taiwanese",
+    "nationality_br": "Taiwanês"
   },
   {
     "country": "Tajikistan",
@@ -1095,7 +1095,7 @@
     "nationality_br": "Tadjique"
   },
   {
-    "country": "Tanzania, United Republic of",
+    "country": "Tanzania",
     "nationality": "Tanzanian",
     "nationality_br": "Tanzaniano"
   },
@@ -1166,13 +1166,13 @@
   },
   {
     "country": "United Arab Emirates",
-    "nationality": "Emirati, Emirian, Emiri",
-    "nationality_br": "Emiratense, Emiriano, Emiriano"
+    "nationality": "Emirati",
+    "nationality_br": "Emiriano"
   },
   {
     "country": "United Kingdom of Great Britain and Northern Ireland",
-    "nationality": "British, UK",
-    "nationality_br": "Britânico, Reino Unido"
+    "nationality": "British",
+    "nationality_br": "Britânico"
   },
   {
     "country": "United States of America",
@@ -1186,13 +1186,13 @@
   },
   {
     "country": "Uzbekistan",
-    "nationality": "Uzbekistani, Uzbek",
-    "nationality_br": "Uzbeque, Uzbequistanês"
+    "nationality": "Uzbekistani",
+    "nationality_br": "Uzbequistanês"
   },
   {
     "country": "Vanuatu",
-    "nationality": "Ni-Vanuatu, Vanuatuan",
-    "nationality_br": "Vanuatuense, Ni-Vanuatu"
+    "nationality": "Vanuatuan",
+    "nationality_br": "Vanuatuense"
   },
   {
     "country": "Venezuela (Bolivarian Republic of)",
@@ -1216,13 +1216,13 @@
   },
   {
     "country": "Wallis and Futuna",
-    "nationality": "Wallis and Futuna, Wallisian or Futunan",
-    "nationality_br": "Wallis e Futuna, Wallisiano ou Futunense"
+    "nationality": "Wallisian or Futunan",
+    "nationality_br": "Wallisiano ou Futunense"
   },
   {
     "country": "Western Sahara",
-    "nationality": "Sahrawi, Sahrawian, Sahraouian",
-    "nationality_br": "Saharauí, Saariano, Saarauiano"
+    "nationality": "Sahrawian",
+    "nationality_br": "Saariano"
   },
   {
     "country": "Yemen",

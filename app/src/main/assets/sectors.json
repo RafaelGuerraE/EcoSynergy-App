@@ -1,0 +1,211 @@
+[
+  {
+    "sector": "Agricultural",
+    "sector_id": 9,
+    "sector_br": "Agricultura",
+    "activities": [
+      {
+        "activities_id": 25,
+        "activities_br": "Cultivo de Plantas"
+      },
+      {
+        "activities_id": 26,
+        "activities_br": "Criação de Gado"
+      },
+      {
+        "activities_id": 27,
+        "activities_br": "Produção de Laticínios"
+      }
+    ]
+  },
+  {
+    "sector": "Automotive",
+    "sector_id": 2,
+    "sector_br": "Automotivo",
+    "activities": [
+      {
+        "activities_id": 4,
+        "activities_br": "Montagem de Veículos"
+      },
+      {
+        "activities_id": 5,
+        "activities_br": "Fabricação de Peças"
+      },
+      {
+        "activities_id": 6,
+        "activities_br": "Pintura e Acabamento"
+      }
+    ]
+  },
+  {
+    "sector": "Basic",
+    "sector_id": 6,
+    "sector_br": "Básico",
+    "activities": [
+      {
+        "activities_id": 16,
+        "activities_br": "Produção de Produtos Químicos Básicos"
+      },
+      {
+        "activities_id": 17,
+        "activities_br": "Produção de Gases Industriais"
+      },
+      {
+        "activities_id": 18,
+        "activities_br": "Fabricação de Fertilizantes"
+      }
+    ]
+  },
+  {
+    "sector": "Electroelectronic",
+    "sector_id": 11,
+    "sector_br": "Eletroeletrônico",
+    "activities": [
+      {
+        "activities_id": 31,
+        "activities_br": "Montagem de Circuitos"
+      },
+      {
+        "activities_id": 32,
+        "activities_br": "Fabricação de Dispositivos"
+      },
+      {
+        "activities_id": 33,
+        "activities_br": "Teste de Qualidade"
+      }
+    ]
+  },
+  {
+    "sector": "Food",
+    "sector_id": 5,
+    "sector_br": "Alimentício",
+    "activities": [
+      {
+        "activities_id": 13,
+        "activities_br": "Processamento de Alimentos"
+      },
+      {
+        "activities_id": 14,
+        "activities_br": "Produção de Bebidas"
+      },
+      {
+        "activities_id": 15,
+        "activities_br": "Agricultura"
+      }
+    ]
+  },
+  {
+    "sector": "Metallurgical",
+    "sector_id": 8,
+    "sector_br": "Metalúrgico",
+    "activities": [
+      {
+        "activities_id": 22,
+        "activities_br": "Mineração de Metais"
+      },
+      {
+        "activities_id": 23,
+        "activities_br": "Processamento de Minérios"
+      },
+      {
+        "activities_id": 24,
+        "activities_br": "Fundição de Metais"
+      }
+    ]
+  },
+  {
+    "sector": "Naval",
+    "sector_id": 10,
+    "sector_br": "Naval",
+    "activities": [
+      {
+        "activities_id": 28,
+        "activities_br": "Construção Naval"
+      },
+      {
+        "activities_id": 29,
+        "activities_br": "Reparação de Navios"
+      },
+      {
+        "activities_id": 30,
+        "activities_br": "Engenharia Marinha"
+      }
+    ]
+  },
+  {
+    "sector": "Petrochemical",
+    "sector_id": 3,
+    "sector_br": "Petroquímico",
+    "activities": [
+      {
+        "activities_id": 7,
+        "activities_br": "Produção de Elastômeros"
+      },
+      {
+        "activities_id": 8,
+        "activities_br": "Produção de Plásticos"
+      },
+      {
+        "activities_id": 9,
+        "activities_br": "Produção de Produtos Químicos"
+      }
+    ]
+  },
+  {
+    "sector": "Pharmaceutical",
+    "sector_id": 4,
+    "sector_br": "Farmacêutico",
+    "activities": [
+      {
+        "activities_id": 10,
+        "activities_br": "Fabricação de Medicamentos"
+      },
+      {
+        "activities_id": 11,
+        "activities_br": "Embalagem"
+      },
+      {
+        "activities_id": 12,
+        "activities_br": "Controle de Qualidade"
+      }
+    ]
+  },
+  {
+    "sector": "Steel",
+    "sector_id": 7,
+    "sector_br": "Siderúrgico",
+    "activities": [
+      {
+        "activities_id": 19,
+        "activities_br": "Produção de Aço"
+      },
+      {
+        "activities_id": 20,
+        "activities_br": "Tratamento Térmico"
+      },
+      {
+        "activities_id": 21,
+        "activities_br": "Laminação de Aço"
+      }
+    ]
+  },
+  {
+    "sector": "Textile",
+    "sector_id": 1,
+    "sector_br": "Têxtil",
+    "activities": [
+      {
+        "activities_id": 1,
+        "activities_br": "Tecelagem"
+      },
+      {
+        "activities_id": 2,
+        "activities_br": "Tingimento"
+      },
+      {
+        "activities_id": 3,
+        "activities_br": "Acabamento"
+      }
+    ]
+  }
+]

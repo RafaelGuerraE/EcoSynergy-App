@@ -11,7 +11,7 @@
         android:id="@+id/btnBack"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:background="@null"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
         android:contentDescription="backButton"
         android:src="@drawable/baseline_arrow_back_24"
         android:scaleType="fitXY"
@@ -201,12 +201,13 @@
                     android:textSize="15sp"/>
             </LinearLayout>
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnCheck"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="60dp"
                 android:layout_marginTop="10dp"
-                style="@style/CustomButtonStyle"
+                app:rippleColor="?attr/colorControlHighlight"
+                android:textSize="16sp"
                 android:textStyle="bold"
                 android:text="@string/verificar" />
 

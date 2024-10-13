@@ -1,4 +1,4 @@
-package br.ecosynergy_app.invites
+package br.ecosynergy_app.teams.invites
 
 import br.ecosynergy_app.login.LoginRequest
 import br.ecosynergy_app.login.LoginResponse

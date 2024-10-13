@@ -1,6 +1,6 @@
 plugins {
     id("com.android.application")
-    id("org.jetbrains.kotlin.android")
+    id("org.jetbrains.kotlin.android") version "1.9.10"
     id("com.google.gms.google-services")
     id("com.google.devtools.ksp")version "1.9.10-1.0.13"
 }
@@ -60,6 +60,7 @@ dependencies {
     implementation("androidx.activity:activity-ktx:1.9.2")
     implementation("androidx.room:room-common:2.6.1")
     implementation("androidx.activity:activity-ktx:1.9.2")
+    implementation("androidx.activity:activity:1.9.1")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")

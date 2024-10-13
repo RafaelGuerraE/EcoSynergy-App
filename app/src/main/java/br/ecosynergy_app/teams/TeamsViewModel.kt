@@ -116,15 +116,27 @@ class TeamsViewModel(
     }
 
     fun updateTeam(token: String?, id: Int, request: UpdateRequest) {
-        makeRequest(
-            request = { service.updateTeam("Bearer $token", id, request) },
-            onResult = { _teamResult.value = it }
-        )
+        viewModelScope.launch {
+            try {
+                val response = service.updateTeam("Bearer $token", id, request)
+                Log.d("TeamsViewModel", "UpdateTeam Successful")
+                _teamResult.value = response
+            }catch (e: HttpException) {
+                Log.e("TeamsViewModel", "HTTP error while UpdateTeam", e)
+                _teamsResult.value = Result.failure(e)
+
+            } catch (e: IOException) {
+                Log.e("UserViewModel", "Network error during UpdateTeam", e)
+                _teamResult.value = Result.failure(e)
+            } catch (e: Exception) {
+                Log.e("TeamsViewModel", "Error while UpdateTeam", e)
+                _teamsResult.value = Result.failure(e)
+            }
+        }
     }
 
     fun addMember(token: String?, teamId: Int, userId: Int, request: RoleRequest) {
         viewModelScope.launch {
-            Log.d("TeamsViewModel", "Token: $token, MemberID: $userId, TeamID: $teamId")
             try {
                 val response = service.addMember("Bearer $token", teamId, userId, request)
                 Log.d("TeamsViewModel", "AddMember Successful")
@@ -170,14 +182,14 @@ class TeamsViewModel(
                 onComplete()
 
             } catch (e: HttpException) {
-                Log.e("TeamsViewModel", "HTTP error while findTeamsByUserId", e)
+                Log.e("TeamsViewModel", "HTTP error while getTeamsByUserId", e)
                 _teamsResult.value = Result.failure(e)
 
             } catch (e: IOException) {
-                Log.e("UserViewModel", "Network error during addMember", e)
+                Log.e("UserViewModel", "Network error during getTeamsByUserId", e)
                 _teamResult.value = Result.failure(e)
             } catch (e: Exception) {
-                Log.e("TeamsViewModel", "Error while findTeamsByUserId", e)
+                Log.e("TeamsViewModel", "Error while getTeamsByUserId", e)
                 _teamsResult.value = Result.failure(e)
             }
         }

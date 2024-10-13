@@ -24,6 +24,7 @@ import androidx.lifecycle.ViewModelProvider
 import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.home.HomeActivity
+import br.ecosynergy_app.login.LoginActivity
 import br.ecosynergy_app.signup.Nationality
 import br.ecosynergy_app.room.AppDatabase
 import br.ecosynergy_app.room.user.UserRepository
@@ -50,6 +51,8 @@ class UserSettingsActivity : AppCompatActivity() {
     private var refreshToken: String = ""
     private var gender: Int = 0
 
+    private var nationality: String =""
+
     private var nationalityMap: Map<String?, String> = mapOf()
 
     private lateinit var btnBack: ImageButton
@@ -58,7 +61,6 @@ class UserSettingsActivity : AppCompatActivity() {
     private lateinit var txtEmail: TextInputEditText
     private lateinit var txtGender: Spinner
     private lateinit var txtNationality: AutoCompleteTextView
-    private lateinit var btnPassword: MaterialButton
     private lateinit var btnDelete: MaterialButton
 
     private lateinit var shimmerEffect: ShimmerFrameLayout
@@ -90,7 +92,6 @@ class UserSettingsActivity : AppCompatActivity() {
         txtEmail = findViewById(R.id.txtEmail)
         txtGender = findViewById(R.id.txtGender)
         txtNationality = findViewById(R.id.txtNationality)
-        btnPassword = findViewById(R.id.btnPassword)
         btnDelete = findViewById(R.id.btnDelete)
 
         shimmerEffect = findViewById(R.id.shimmerImage)
@@ -109,11 +110,15 @@ class UserSettingsActivity : AppCompatActivity() {
 
         val nationalities = loadNationalities()
         nationalityMap = nationalities.associate { it.nationality_br to it.nationality }
-
-        val nationalityBr = nationalities.map { it.nationality_br }
-
+        val nationalityBr = nationalities.mapNotNull{ it.nationality_br }
         val nationalityAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, nationalityBr)
         txtNationality.setAdapter(nationalityAdapter)
+
+        txtNationality.setOnItemClickListener { parent, _, position, _ ->
+            val selectedNationalityBr = parent.getItemAtPosition(position) as String
+            nationality = nationalityMap[selectedNationalityBr] ?: "Unknown"
+            Log.d("SignUpActivity", nationality)
+        }
 
         btnEdit.visibility = View.VISIBLE
         btnEdit.isEnabled = true
@@ -151,12 +156,15 @@ class UserSettingsActivity : AppCompatActivity() {
 
                 builder.setPositiveButton("Sim") { dialog, _ ->
                     val lastUsername = userUsername
+                    if(nationality == ""){
+                        nationality = txtNationality.text.toString()
+                    }
 
                     userUsername = txtUsername.text.toString()
                     userFullname = txtFullname.text.toString()
                     userEmail = txtEmail.text.toString()
                     userGender = txtGender.selectedItem.toString()
-                    userNationality = txtNationality.text.toString()
+                    userNationality = nationality
 
                     updateUserData()
 
@@ -206,10 +214,6 @@ class UserSettingsActivity : AppCompatActivity() {
 
             val dialog: AlertDialog = builder.create()
             dialog.show()
-        }
-
-        btnPassword.setOnClickListener {
-            resetPassword()
         }
 
         btnBack.setOnClickListener {
@@ -316,71 +320,6 @@ class UserSettingsActivity : AppCompatActivity() {
         )
     }
 
-    private fun resetPassword() {
-        val inflater = LayoutInflater.from(this)
-        val view = inflater.inflate(R.layout.dialog_reset_password, null)
-
-        val etNewPassword = view.findViewById<TextInputEditText>(R.id.etNewPassword)
-        val etConfirmNewPassword = view.findViewById<TextInputEditText>(R.id.etConfirmNewPassword)
-        val errorMessage = view.findViewById<LinearLayout>(R.id.errorMessage)
-        val txtError = view.findViewById<TextView>(R.id.txtError)
-
-
-        etNewPassword.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                validatePasswords(etNewPassword, etConfirmNewPassword, txtError, errorMessage)
-            }
-
-            override fun afterTextChanged(s: Editable?) {}
-        })
-
-        etConfirmNewPassword.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                validatePasswords(etNewPassword, etConfirmNewPassword, txtError, errorMessage)
-            }
-
-            override fun afterTextChanged(s: Editable?) {}
-        })
-        val builder = AlertDialog.Builder(this)
-        builder.setView(view)
-            .setTitle("Alterar minha senha")
-            .setPositiveButton("Confirmar") { dialog, _ ->
-                val newPassword = etNewPassword.text.toString()
-                val confirmNewPassword = etConfirmNewPassword.text.toString()
-
-                if (newPassword.isBlank() || confirmNewPassword.isBlank()) {
-                    showSnackBar("Erro: os campos não podem estar vazios", "FECHAR", R.color.red)
-                } else if (newPassword != confirmNewPassword) {
-                    showSnackBar("Erro: as senhas devem se corresponder", "FECHAR", R.color.red)
-                } else {
-                    val username = userUsername
-                    userViewModel.resetPassword(username, newPassword, accessToken!!)
-                    showSnackBar("Senha alterada com sucesso", "FECHAR", R.color.greenDark)
-                    dialog.dismiss()
-                }
-            }
-            .setNegativeButton("Cancelar") { dialog, _ ->
-                dialog.dismiss()
-            }
-
-        val dialog = builder.create()
-        dialog.show()
-    }
-
-    private fun showSnackBar(message: String, action: String, bgTint: Int) {
-        val rootView = findViewById<View>(android.R.id.content)
-        val snackBar = Snackbar.make(rootView, message, Snackbar.LENGTH_SHORT)
-            .setAction(action) {}
-        snackBar.setBackgroundTint(ContextCompat.getColor(this, bgTint))
-        snackBar.setTextColor(ContextCompat.getColor(this, R.color.white))
-        snackBar.setActionTextColor(ContextCompat.getColor(this, R.color.white))
-        snackBar.show()
-    }
-
     private fun loadNationalities(): List<Nationality> {
         val jsonFileString = getNationality("nationalities.json")
         val gson = Gson()
@@ -418,11 +357,11 @@ class UserSettingsActivity : AppCompatActivity() {
                         imgProfile.setImageResource(drawableId)
                     } else {
                         Log.e("UserSettingsActivity", "First name is empty")
-                        showSnackBar("ERRO: Imagem de Perfil", "FECHAR", R.color.red)
+                        LoginActivity().showSnackBar("ERRO: Imagem de Perfil", "FECHAR", R.color.red, this)
                     }
                 } else {
                     Log.e("UserSettingsActivity", "Full name is empty")
-                    showSnackBar("ERRO: Imagem de Perfil", "FECHAR", R.color.red)
+                    LoginActivity().showSnackBar("ERRO: Imagem de Perfil", "FECHAR", R.color.red,this)
                 }
 
                 shimmerEffect.animate().alpha(0f).setDuration(300).withEndAction {
@@ -431,32 +370,6 @@ class UserSettingsActivity : AppCompatActivity() {
                     shimmerEffect.visibility = View.GONE
                     imgProfile.visibility = View.VISIBLE
                 }
-        }
-    }
-
-    private fun validatePasswords(
-        etNewPassword: TextInputEditText,
-        etConfirmNewPassword: TextInputEditText,
-        txtError: TextView,
-        errorMessage:LinearLayout
-    ) {
-        val newPassword = etNewPassword.text.toString()
-        val confirmNewPassword = etConfirmNewPassword.text.toString()
-
-        when {
-            newPassword.isBlank() -> {
-                errorMessage.visibility = View.VISIBLE
-                txtError.text = "As senhas não podem estar em branco"
-            }
-
-            newPassword != confirmNewPassword -> {
-                errorMessage.visibility = View.VISIBLE
-                txtError.text = "As senhas não correspondem"
-            }
-
-            else -> {
-                errorMessage.visibility = View.INVISIBLE
-            }
         }
     }
 }

@@ -139,7 +139,7 @@ class AddMembersBottomSheet : BottomSheetDialogFragment() {
                 Log.d("TeamOverviewFragment", "User Result Failed: ${error.message}")
                 shimmerUsers.visibility = View.GONE
                 recycleUsers.visibility = View.GONE
-                LoginActivity().showSnackBar("ERRO: Carregar usuários", "FECHAR", R.color.red)
+                LoginActivity().showSnackBar("ERRO: Carregar usuários", "FECHAR", R.color.red, requireContext())
             }
         }
     }

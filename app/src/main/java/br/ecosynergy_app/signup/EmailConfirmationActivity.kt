@@ -153,7 +153,7 @@ class EmailConfirmationActivity : AppCompatActivity() {
                     txtError.visibility = View.VISIBLE
                 }
             } else {
-                LoginActivity().showToast("ERRO NO ENVIO DO CÓDIGO")
+                LoginActivity().showToast("ERRO NO ENVIO DO CÓDIGO", this)
             }
         }
 

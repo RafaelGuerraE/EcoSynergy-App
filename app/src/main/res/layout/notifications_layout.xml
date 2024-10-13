@@ -6,7 +6,9 @@
     android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    android:layout_marginBottom="10dp">
+    android:layout_marginBottom="10dp"
+    android:id="@+id/linearNotification"
+    android:background="?android:attr/selectableItemBackground">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -19,7 +21,7 @@
             android:id="@+id/imgIcon"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@drawable/chart"
+            android:src="@drawable/fire"
             android:layout_gravity="center"/>
 
         <LinearLayout

@@ -1,4 +1,4 @@
-package br.ecosynergy_app.teams.sectors
+package br.ecosynergy_app.teams
 
 data class ActivitiesRequest(
     val id: Int
@@ -26,3 +26,16 @@ data class ActivitiesResponseItem(
 class SectorsResponse : ArrayList<SectorsResponseItem>()
 
 class ActivitiesResponse : ArrayList<ActivitiesResponseItem>()
+
+data class Activity(
+    val activities_id: Int,
+    val activities_br: String
+)
+
+data class Sector(
+    val sector: String,
+    val sector_id: Int,
+    val sector_br: String,
+    val activities: List<Activity>
+)
+

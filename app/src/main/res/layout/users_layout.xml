@@ -81,7 +81,7 @@
             android:layout_gravity="end|center"
             android:contentDescription="ButtonRemoveUser"
             android:src="@drawable/baseline_invite"
-            android:background="@color/transparent"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
             app:tint="?android:attr/iconTint"
             android:scaleType="fitXY"
             android:layout_marginEnd="10dp"

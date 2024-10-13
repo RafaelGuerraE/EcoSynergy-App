@@ -1,9 +1,5 @@
 package br.ecosynergy_app.teams
 
-import br.ecosynergy_app.teams.sectors.ActivitiesRequest
-import br.ecosynergy_app.teams.sectors.ActivitiesResponse
-import br.ecosynergy_app.teams.sectors.ActivitiesResponseItem
-
 data class AllTeamsResponse(
     val _embedded: Embedded,
     val _links: PaginationLinks,
@@ -57,6 +53,11 @@ data class UpdateRequest(
     val handle: String,
     val name: String,
     val description: String,
+    val activity: ActivitiesRequest,
+    val dailyGoal: Double,
+    val weeklyGoal: Double,
+    val monthlyGoal: Double,
+    val annualGoal: Double,
     val timeZone: String
 )
 

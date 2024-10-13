@@ -5,10 +5,13 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.EditText
+import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.ProgressBar
@@ -44,12 +47,15 @@ class SignUpActivity : AppCompatActivity() {
 
     private lateinit var signUpViewModel: SignUpViewModel
 
-
+    private lateinit var btnActionContainer: FrameLayout
     private lateinit var btnAction: Button
     private lateinit var progressBarAction: ProgressBar
 
+    private lateinit var btnSignUpContainer: FrameLayout
     private lateinit var btnSignUp: Button
     private lateinit var progressBarSignUp: ProgressBar
+
+    private lateinit var txtNationality: AutoCompleteTextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,11 +79,9 @@ class SignUpActivity : AppCompatActivity() {
         val txtUsername: EditText = findViewById(R.id.txtUsername)
         val txtFullname: EditText = findViewById(R.id.txtFullname)
 
-
         val txtErrorUsername: TextView = findViewById(R.id.txtErrorUsername)
 
-
-        val txtNationality: MaterialAutoCompleteTextView = findViewById(R.id.txtNationality)
+        txtNationality = findViewById(R.id.txtNationality)
         val autoError: TextView = findViewById(R.id.autoError)
 
         val spinnerGender: Spinner = findViewById(R.id.spinnerGender)
@@ -87,16 +91,18 @@ class SignUpActivity : AppCompatActivity() {
         val linearNationalityGender: LinearLayout = findViewById(R.id.linearNationalityGender)
         val linearPasswords: LinearLayout = findViewById(R.id.linearPasswords)
 
+        btnActionContainer = findViewById(R.id.btnActionContainer)
         btnAction = findViewById(R.id.btnAction)
         progressBarAction = findViewById(R.id.progressBarAction)
 
+        btnSignUpContainer = findViewById(R.id.btnSignUpContainer)
         btnSignUp = findViewById(R.id.btnSignUp)
         progressBarSignUp = findViewById(R.id.progressBarSignUp)
 
         val nationalities = loadNationalities()
         nationalityMap = nationalities.associate { it.nationality_br to it.nationality }
+        val nationalityBr = nationalities.mapNotNull{ it.nationality_br }
 
-        val nationalityBr = nationalities.map { it.nationality_br }
 
         val nationalityAdapter =
             ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, nationalityBr)
@@ -105,6 +111,7 @@ class SignUpActivity : AppCompatActivity() {
         txtNationality.setOnItemClickListener { parent, _, position, _ ->
             val selectedNationalityBr = parent.getItemAtPosition(position) as String
             nationality = nationalityMap[selectedNationalityBr] ?: "Unknown"
+            Log.d("SignUpActivity", nationality)
         }
 
         btnBack.setOnClickListener { finish() }
@@ -144,7 +151,7 @@ class SignUpActivity : AppCompatActivity() {
                 }
 
                 1 -> {
-                    showButtonLoading(true, btnAction, progressBarSignUp)
+                    showButtonLoading(true, btnAction, progressBarAction)
                     val genderSelected = spinnerGender.selectedItem.toString()
                     val nationalitySelected: String = txtNationality.text.toString()
 
@@ -183,9 +190,8 @@ class SignUpActivity : AppCompatActivity() {
                     }
 
                     btnAction.animate().alpha(0f).setDuration(300).withEndAction {
-                        btnAction.visibility = View.GONE
-                        btnSignUp.visibility = View.VISIBLE
-                        showButtonLoading(false, btnAction, progressBarAction)
+                        btnActionContainer.visibility = View.GONE
+                        btnSignUpContainer.visibility = View.VISIBLE
                     }
                 }
             }
@@ -268,7 +274,6 @@ class SignUpActivity : AppCompatActivity() {
                 putExtra("NATIONALITY", nationality)
                 putExtra("GENDER", gender)
             }
-            showButtonLoading(false, btnSignUp, progressBarSignUp)
             startActivity(i)
         }
     }

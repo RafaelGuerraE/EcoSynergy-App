@@ -9,7 +9,6 @@ import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
@@ -20,21 +19,19 @@ import androidx.lifecycle.ViewModelProvider
 import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.home.HomeActivity
-import br.ecosynergy_app.signup.SignUpActivity
-import br.ecosynergy_app.room.AppDatabase
-import br.ecosynergy_app.room.teams.TeamsRepository
-import br.ecosynergy_app.room.user.UserRepository
 import br.ecosynergy_app.readings.ReadingsViewModel
 import br.ecosynergy_app.readings.ReadingsViewModelFactory
-import br.ecosynergy_app.room.teams.MembersRepository
+import br.ecosynergy_app.room.AppDatabase
 import br.ecosynergy_app.room.readings.ReadingsRepository
-import br.ecosynergy_app.room.sectors.SectorRepository
+import br.ecosynergy_app.room.teams.MembersRepository
+import br.ecosynergy_app.room.teams.TeamsRepository
+import br.ecosynergy_app.room.user.UserRepository
+import br.ecosynergy_app.signup.SignUpActivity
 import br.ecosynergy_app.teams.TeamsViewModel
 import br.ecosynergy_app.teams.TeamsViewModelFactory
-import br.ecosynergy_app.teams.sectors.SectorsViewModel
-import br.ecosynergy_app.teams.sectors.SectorsViewModelFactory
 import br.ecosynergy_app.user.UserViewModel
 import br.ecosynergy_app.user.UserViewModelFactory
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -52,7 +49,6 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var userViewModel: UserViewModel
     private lateinit var teamsViewModel: TeamsViewModel
     private lateinit var readingsViewModel: ReadingsViewModel
-    private lateinit var sectorsViewModel: SectorsViewModel
 
     private lateinit var loginSp: SharedPreferences
 
@@ -64,7 +60,7 @@ class LoginActivity : AppCompatActivity() {
 
         val logoutMessage = intent.getStringExtra("LOGOUT_MESSAGE")
         if (logoutMessage != null) {
-            showSnackBar("Você foi desconectado", "FECHAR", R.color.grayDark)
+            showSnackBar("Você foi desconectado", "FECHAR", R.color.grayDark, this)
         }
 
         if (isLoggedIn()) {
@@ -84,20 +80,16 @@ class LoginActivity : AppCompatActivity() {
         val membersDao = AppDatabase.getDatabase(applicationContext).membersDao()
         val membersRepository = MembersRepository(membersDao)
 
-        val sectorsDao = AppDatabase.getDatabase(applicationContext).sectorsDao()
-        val sectorsRepository = SectorRepository(sectorsDao)
-
         userViewModel = ViewModelProvider(this, UserViewModelFactory(RetrofitClient.userService, userRepository))[UserViewModel::class.java]
         teamsViewModel = ViewModelProvider(this, TeamsViewModelFactory(RetrofitClient.teamsService, teamsRepository, membersRepository))[TeamsViewModel::class.java]
         readingsViewModel = ViewModelProvider(this, ReadingsViewModelFactory(RetrofitClient.readingsService, readingsRepository))[ReadingsViewModel::class.java]
-        sectorsViewModel = ViewModelProvider(this, SectorsViewModelFactory(RetrofitClient.sectorsService, sectorsRepository))[SectorsViewModel::class.java]
 
 
         txtEntry = findViewById(R.id.txtEntry)
         txtPassword = findViewById(R.id.txtPassword)
         val passwordLayout: TextInputLayout = findViewById(R.id.passwordLayout)
-        val btnLogin: Button = findViewById(R.id.btnLogin)
-        val btnRegister: Button = findViewById(R.id.btnRegister)
+        val btnLogin: MaterialButton = findViewById(R.id.btnLogin)
+        val btnRegister: MaterialButton = findViewById(R.id.btnRegister)
         loadingProgressBar = findViewById(R.id.loadingProgressBar)
         overlayView = findViewById(R.id.overlayView)
 
@@ -187,7 +179,6 @@ class LoginActivity : AppCompatActivity() {
                 Log.d("LoginActivity", "Login success")
                 userViewModel.user.observe(this) { result ->
                     result.onSuccess { userData ->
-                        sectorsViewModel.fetchAndStoreSectorsAndActivities(loginResponse.accessToken)
                         userViewModel.insertUserInfoDB(userData, loginResponse.accessToken, loginResponse.refreshToken)
                         teamsViewModel.getTeamsByUserId(userData.id, loginResponse.accessToken) {
                             setLoggedIn(true)
@@ -216,8 +207,8 @@ class LoginActivity : AppCompatActivity() {
     }
 
 
-    fun showToast(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    fun showToast(message: String, context: Context) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
 
     private fun setLoggedIn(isLoggedIn: Boolean) {
@@ -230,13 +221,13 @@ class LoginActivity : AppCompatActivity() {
         return loginSp.getBoolean("isLoggedIn", false)
     }
 
-    fun showSnackBar(message: String, action: String, bgTint: Int) {
+    fun showSnackBar(message: String, action: String, bgTint: Int, context: Context) {
         val rootView = findViewById<View>(android.R.id.content)
         val snackBar = Snackbar.make(rootView, message, Snackbar.LENGTH_SHORT)
             .setAction(action) {}
-        snackBar.setBackgroundTint(ContextCompat.getColor(this, bgTint))
-        snackBar.setTextColor(ContextCompat.getColor(this, R.color.white))
-        snackBar.setActionTextColor(ContextCompat.getColor(this, R.color.white))
+        snackBar.setBackgroundTint(ContextCompat.getColor(context, bgTint))
+        snackBar.setTextColor(ContextCompat.getColor(context, R.color.white))
+        snackBar.setActionTextColor(ContextCompat.getColor(context, R.color.white))
         snackBar.show()
     }
 }

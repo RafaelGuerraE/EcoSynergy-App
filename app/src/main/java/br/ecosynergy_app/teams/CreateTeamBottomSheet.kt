@@ -17,10 +17,8 @@ import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.room.AppDatabase
 import br.ecosynergy_app.room.teams.MembersRepository
 import br.ecosynergy_app.room.teams.TeamsRepository
-import br.ecosynergy_app.teams.sectors.ActivitiesRequest
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.io.IOException

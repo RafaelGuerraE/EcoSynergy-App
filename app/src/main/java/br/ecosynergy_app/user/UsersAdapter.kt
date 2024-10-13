@@ -101,7 +101,7 @@ class UsersAdapter(
                     putExtra("FULLNAME", user.fullName)
                     putExtra("CREATED", user.createdAt)
                 }
-                activity.startActivity(i)
+                //activity.startActivity(i)
             }
 
             Log.d("UsersAdapter", "MemberIDS: $memberIds")
@@ -118,9 +118,25 @@ class UsersAdapter(
         }
 
         private fun inviteUser(){
-            teamsViewModel.addMember(accessToken, teamId, memberId, RoleRequest("COMMON_USER"))
-            btnInvite.visibility = View.GONE
-            LoginActivity().showSnackBar("Usuário adicionado com sucesso!", "FECHAR", R.color.greenDark)
+            val builder = AlertDialog.Builder(itemView.context)
+            builder.setTitle("Você deseja convidar este  usuário para a equipe atual?")
+            builder.setMessage("O convite será enviado para este usuário.")
+
+            builder.setPositiveButton("Sim") { dialog, _ ->
+                teamsViewModel.addMember(accessToken, teamId, memberId, RoleRequest("COMMON_USER"))
+                btnInvite.visibility = View.GONE
+
+                LoginActivity().showSnackBar("Usuário convidado com sucesso!", "FECHAR", R.color.greenDark, activity)
+            }
+
+            builder.setNegativeButton("Cancelar") { dialog, _ ->
+                dialog.dismiss()
+            }
+
+            val dialog: AlertDialog = builder.create()
+            dialog.show()
+
+
         }
     }
 }

@@ -5,21 +5,15 @@
 
     <group
         android:checkableBehavior="single">
-
-        <item android:id="@+id/notifications"
-            android:icon="@drawable/baseline_notifications_24"
-            android:title="Notificações"/>
-        <item android:id="@+id/account_config"
-            android:icon="@drawable/baseline_settings_24"
-            android:title="Configurações da Conta"/>
         <item android:id="@+id/app_config"
-            android:icon="@drawable/baseline_app_settings_alt_24"
-            android:title="Configurações do App"/>
-        <item android:id="@+id/terms"
-            android:icon="@drawable/baseline_format_terms_24"
-            android:title="Termos de Uso e Privacidade"/>
-
-
+            android:icon="@drawable/rounded_settings_24"
+            android:title="Configurações"/>
+        <item android:id="@+id/account_config"
+            android:icon="@drawable/profile"
+            android:title="Informações do Usuário"/>
+        <item android:id="@+id/about"
+            android:icon="@drawable/baseline_info_24"
+            android:title="Sobre"/>
     </group>
 
 </menu>

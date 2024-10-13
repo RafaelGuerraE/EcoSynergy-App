@@ -44,9 +44,9 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_gravity="center"
-            android:background="@drawable/round_button"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
             android:src="@drawable/baseline_member_add"
-            app:tint="@color/white"
+            app:tint="?android:attr/iconTint"
             android:layout_marginStart="5dp"
             android:visibility="gone"/>
 
@@ -56,7 +56,9 @@
         android:id="@+id/recycleMembers"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"/>
+        android:visibility="gone"
+        android:clickable="true"
+        android:focusable="true"/>
 
     <com.facebook.shimmer.ShimmerFrameLayout
         android:id="@+id/shimmerMembers"

@@ -25,7 +25,7 @@
             android:layout_marginEnd="15dp"
             android:layout_marginTop="30dp"
             android:layout_marginBottom="15dp"
-            android:background="@null"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
             android:gravity="top"
             android:scaleType="fitXY"
             android:src="@drawable/baseline_close_24"
@@ -218,7 +218,6 @@
             android:layout_marginBottom="2dp"/>
 
         <Spinner
-            android:entries="@array/activities_array"
             android:id="@+id/spinnerActivities"
             android:layout_width="match_parent"
             android:layout_height="60dp"

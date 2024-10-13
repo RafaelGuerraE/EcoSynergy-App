@@ -2,41 +2,43 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
-    android:layout_marginBottom="10dp">
+    android:layout_width="match_parent"
+    android:layout_height="70dp"
+    android:orientation="vertical">
 
     <LinearLayout
+        android:id="@+id/linearClick"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="65dp"
         android:orientation="horizontal"
-        android:layout_marginBottom="5dp">
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?android:attr/selectableItemBackground">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/imgTeam"
         android:layout_width="50dp"
         android:layout_height="50dp"
+        android:layout_gravity="center"
         android:src="@drawable/default_image"
         tools:src="@drawable/e"
         android:layout_marginStart="10dp"/>
 
     <LinearLayout
-        android:id="@+id/linearClick"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
+        android:layout_gravity="center"
         android:orientation="vertical"
         android:layout_marginEnd="10dp"
-        android:layout_marginStart="10dp"
-        android:clickable="true">
+        android:layout_marginStart="10dp">
 
             <TextView
                 android:id="@+id/txtName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:text="EcoSynergy - Sistema de Gerenciamento de Emissão de Gases em Industrias"
+                tools:text="Ecosynergy "
                 android:textSize="14sp"
                 android:textColor="?android:attr/textColorPrimary"
                 android:textStyle="bold"
@@ -57,12 +59,14 @@
         <TextView
             android:id="@+id/txtDescription"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="20dp"
             android:textSize="13sp"
             android:textColor="?android:attr/textColorPrimary"
             android:text="Descrição: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
             android:ellipsize="end"
             android:maxLines="1"/>
+
+
 
     </LinearLayout>
     <ImageButton
@@ -71,11 +75,12 @@
         android:layout_height="30dp"
         android:layout_gravity="end|center"
         android:src="@drawable/baseline_info_24"
-        android:background="@color/transparent"
+        android:background="?attr/selectableItemBackgroundBorderless"
         app:tint="?android:attr/iconTint"
         android:scaleType="fitXY"
         android:layout_marginEnd="10dp"/>
     </LinearLayout>
+
     <View
         android:layout_width="match_parent"
         android:layout_height="2dp"

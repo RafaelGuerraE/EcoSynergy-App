@@ -30,16 +30,13 @@ import br.ecosynergy_app.login.LoginActivity
 import br.ecosynergy_app.readings.ReadingsViewModel
 import br.ecosynergy_app.readings.ReadingsViewModelFactory
 import br.ecosynergy_app.room.AppDatabase
-import br.ecosynergy_app.room.teams.MembersRepository
 import br.ecosynergy_app.room.readings.ReadingsRepository
-import br.ecosynergy_app.room.sectors.SectorRepository
+import br.ecosynergy_app.room.teams.MembersRepository
 import br.ecosynergy_app.room.teams.TeamsRepository
 import br.ecosynergy_app.room.user.User
 import br.ecosynergy_app.room.user.UserRepository
 import br.ecosynergy_app.teams.TeamsViewModel
 import br.ecosynergy_app.teams.TeamsViewModelFactory
-import br.ecosynergy_app.teams.sectors.SectorsViewModel
-import br.ecosynergy_app.teams.sectors.SectorsViewModelFactory
 import br.ecosynergy_app.user.UserSettingsActivity
 import br.ecosynergy_app.user.UserViewModel
 import br.ecosynergy_app.user.UserViewModelFactory
@@ -53,13 +50,13 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var userViewModel: UserViewModel
     private lateinit var readingsViewModel: ReadingsViewModel
     private lateinit var teamsViewModel: TeamsViewModel
-    private lateinit var sectorsViewModel: SectorsViewModel
 
     private lateinit var bottomNavView: BottomNavigationView
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var navDrawerButton: CircleImageView
     private lateinit var navView: NavigationView
     private lateinit var btnTheme: ImageButton
+    private lateinit var txtTerms: TextView
 
     private var accessToken: String = ""
 
@@ -99,13 +96,10 @@ class HomeActivity : AppCompatActivity() {
         val membersDao = AppDatabase.getDatabase(applicationContext).membersDao()
         val membersRepository = MembersRepository(membersDao)
 
-        val sectorsDao = AppDatabase.getDatabase(applicationContext).sectorsDao()
-        val sectorsRepository = SectorRepository(sectorsDao)
-
         userViewModel = ViewModelProvider(this, UserViewModelFactory(RetrofitClient.userService, userRepository))[UserViewModel::class.java]
         readingsViewModel = ViewModelProvider(this, ReadingsViewModelFactory(RetrofitClient.readingsService, readingsRepository))[ReadingsViewModel::class.java]
         teamsViewModel = ViewModelProvider(this, TeamsViewModelFactory(RetrofitClient.teamsService, teamsRepository, membersRepository))[TeamsViewModel::class.java]
-        sectorsViewModel = ViewModelProvider(this, SectorsViewModelFactory(RetrofitClient.sectorsService, sectorsRepository))[SectorsViewModel::class.java]
+
 
 
         loginSp = getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
@@ -137,6 +131,7 @@ class HomeActivity : AppCompatActivity() {
         navDrawerButton = findViewById(R.id.navDrawerButton)
         navView = findViewById(R.id.nav_view)
         btnTheme = findViewById(R.id.btnTheme)
+        txtTerms = findViewById(R.id.txtTerms)
 
         progressBar = findViewById(R.id.progressBar)
 
@@ -219,23 +214,18 @@ class HomeActivity : AppCompatActivity() {
 
         navView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
-                R.id.account_config -> {
-                    val i = Intent(this, UserSettingsActivity::class.java)
-                    startActivity(i)
-                    true
-                }
                 R.id.app_config -> {
                     val i = Intent(this, AppSettingsActivity::class.java)
                     startActivity(i)
                     true
                 }
-                R.id.terms -> {
-                    val i = Intent(this, TermsActivity::class.java)
+                R.id.account_config -> {
+                    val i = Intent(this, UserSettingsActivity::class.java)
                     startActivity(i)
                     true
                 }
-                R.id.notifications -> {
-                    val i = Intent(this, NotificationsActivity::class.java)
+                R.id.about -> {
+                    val i = Intent(this, HelpActivity::class.java)
                     startActivity(i)
                     true
                 }
@@ -245,8 +235,11 @@ class HomeActivity : AppCompatActivity() {
             }
         }
 
-        btnTheme.setOnClickListener{
-            manageThemes()
+        btnTheme.setOnClickListener{ manageThemes()}
+
+        txtTerms.setOnClickListener{
+            val i = Intent(this, TermsActivity::class.java)
+            startActivity(i)
         }
     }
 
@@ -263,7 +256,7 @@ class HomeActivity : AppCompatActivity() {
         builder.setTitle("Selecione o tema desejado")
 
         builder.setItems(items) { dialog, which ->
-            val editor = themeSp.edit()
+            val editor = getSharedPreferences("theme_prefs", Context.MODE_PRIVATE).edit()
 
             when (which) {
                 0 -> {
@@ -290,8 +283,7 @@ class HomeActivity : AppCompatActivity() {
     private fun clearNavigationViewSelection(navView: NavigationView) {
         navView.menu.findItem(R.id.account_config)?.isChecked = false
         navView.menu.findItem(R.id.app_config)?.isChecked = false
-        navView.menu.findItem(R.id.terms)?.isChecked = false
-        navView.menu.findItem(R.id.notifications)?.isChecked = false
+        navView.menu.findItem(R.id.about)?.isChecked = false
     }
 
     private fun replaceFragment(fragment: Fragment) {
@@ -369,10 +361,6 @@ class HomeActivity : AppCompatActivity() {
         teamsViewModel.getTeamsByUserId(userId, accessToken) {}
     }
 
-    private fun getTeamsByUserId(userId: Int, token: String){
-        teamsViewModel.getTeamsByUserId(userId, token){}
-    }
-
     private fun logout() {
         val editTheme = themeSp.edit()
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
@@ -386,7 +374,6 @@ class HomeActivity : AppCompatActivity() {
         userViewModel.deleteUserInfoFromDB()
         teamsViewModel.deleteTeamsFromDB()
         readingsViewModel.deleteAllReadingsFromDB()
-        sectorsViewModel.deleteSectorsFromDB()
 
         val i = Intent(this, LoginActivity::class.java)
         i.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK

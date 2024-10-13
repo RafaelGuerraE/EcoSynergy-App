@@ -142,21 +142,6 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnPassword"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Alterar minha senha"
-                app:icon="@drawable/baseline_edit_24"
-                app:iconSize="20dp"
-                app:iconTint="@color/greenDark"
-                app:iconPadding="5dp"
-                app:iconGravity="textStart"
-                android:backgroundTint="?android:attr/colorBackground"
-                android:textColor="@color/greenDark"
-                android:textStyle="bold"
-                android:textSize="16sp"/>
-
-            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnDelete"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

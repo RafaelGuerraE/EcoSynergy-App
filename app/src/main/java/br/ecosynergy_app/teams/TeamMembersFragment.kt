@@ -217,20 +217,6 @@ class TeamMembersFragment : Fragment(R.layout.fragment_team_members) {
         membersAdapter.updateList(filteredList, memberRoles)
     }
 
-    private fun showSnackBar(message: String, action: String, bgTint: Int) {
-        val rootView = requireView()
-        val snackBar = Snackbar.make(rootView, message, Snackbar.LENGTH_SHORT)
-            .setAction(action) {}
-        snackBar.setBackgroundTint(ContextCompat.getColor(requireContext(), bgTint))
-        snackBar.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
-        snackBar.setActionTextColor(ContextCompat.getColor(requireContext(), R.color.white))
-        snackBar.show()
-    }
-
-    private fun showToast(message: String) {
-        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
-    }
-
     private fun setupSwipeRefresh() {
         swipeRefresh.setOnRefreshListener {
             observeMembersInfo()

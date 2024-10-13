@@ -166,7 +166,7 @@ class MembersAdapter(
                 teamsViewModel.removeMember(accessToken, teamId, memberId)
                 dialog.dismiss()
                 fragment.membersAdapter.removeMember(memberId)
-                LoginActivity().showSnackBar("Usuário removido com sucesso", "FECHAR", R.color.greenDark)
+                LoginActivity().showSnackBar("Usuário removido com sucesso", "FECHAR", R.color.greenDark, activity)
             }
 
             builder.setNegativeButton("Cancelar") { dialog, _ ->
@@ -196,7 +196,7 @@ class MembersAdapter(
                 }
                 dialog.dismiss()
                 fragment.membersAdapter.updateList(membersList, memberRoles)
-                LoginActivity().showSnackBar("Cargo alterado com sucesso", "FECHAR", R.color.greenDark)
+                LoginActivity().showSnackBar("Cargo alterado com sucesso", "FECHAR", R.color.greenDark, activity)
             }
 
             val dialog: AlertDialog = builder.create()

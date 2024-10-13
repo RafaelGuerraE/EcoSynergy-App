@@ -57,14 +57,13 @@ class TeamAdapter(private var teamsList: List<Teams>) :
             }
 
             linearClick.setOnClickListener {
-                val fragmentManager = (itemView.context as AppCompatActivity).supportFragmentManager
-                val teamBottomSheet = TeamBottomSheet().apply {
-                    arguments = Bundle().apply {
-                        putString("TEAM_HANDLE", team.handle)
-                        putInt("TEAM_INITIAL", drawableLetter)
-                    }
+                val context = itemView.context
+                val i = Intent(context, DashboardActivity::class.java)
+                i.apply {
+                    putExtra("TEAM_INITIAL", drawableLetter)
+                    putExtra("TEAM_HANDLE", team.handle)
                 }
-                teamBottomSheet.show(fragmentManager, "TeamBottomSheet")
+                context.startActivity(i)
             }
         }
     }

@@ -1,22 +1,20 @@
 package br.ecosynergy_app.teams
 
 import android.app.AlertDialog
+import android.content.Intent
 import android.os.Bundle
-import android.util.TypedValue
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
-import android.widget.EditText
-import android.widget.Spinner
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.home.HomeActivity
-import br.ecosynergy_app.login.LoginActivity
 import br.ecosynergy_app.room.AppDatabase
 import br.ecosynergy_app.room.teams.Members
 import br.ecosynergy_app.room.teams.MembersRepository
@@ -38,40 +36,33 @@ class TeamOverviewFragment : Fragment(R.layout.fragment_team_overview) {
 
     private lateinit var teamPicture: CircleImageView
 
-    private lateinit var txtTeamName: EditText
-    private lateinit var txtHandle: EditText
-    private lateinit var txtDescription: EditText
-    private lateinit var txtTimezone: AutoCompleteTextView
-    private lateinit var spinnerActivities: Spinner
-    private lateinit var txtDailyGoal: EditText
-    private lateinit var txtWeeklyGoal: EditText
-    private lateinit var txtMonthlyGoal: EditText
-    private lateinit var txtAnnualGoal: EditText
+    private lateinit var txtTeamName: TextView
+    private lateinit var txtHandle: TextView
+    private lateinit var txtDescription: TextView
+    private lateinit var txtTimezone: TextView
+    private lateinit var txtActivities: TextView
+    private lateinit var txtDailyGoal: TextView
+    private lateinit var txtWeeklyGoal: TextView
+    private lateinit var txtMonthlyGoal: TextView
+    private lateinit var txtAnnualGoal: TextView
 
-    private lateinit var btnEdit: MaterialButton
+    private lateinit var btnEdit: LinearLayout
 
     private lateinit var btnDelete: MaterialButton
 
     private lateinit var shimmerImg: ShimmerFrameLayout
 
-    private var accessToken: String = ""
-
-    private var timezone : String = ""
-
     private var utcToTextMap: Map<String?, String> = mapOf()
+
+    private var userId: Int = 0
+    private var userRole : String = ""
+    private var accessToken: String = ""
 
     private var teamName: String = ""
     private var teamId: Int = 0
-    private var teamDescription: String = ""
-    private var teamTimezone: String = ""
-
-    private var userId: Int = 0
     private var teamHandle: String = ""
     private var members: List<Members> = emptyList()
 
-    private var isEditing: Boolean = false
-
-    var userRole : String = ""
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -108,7 +99,7 @@ class TeamOverviewFragment : Fragment(R.layout.fragment_team_overview) {
         txtHandle = view.findViewById(R.id.txtHandle)
         txtTimezone = view.findViewById(R.id.txtTimezone)
         txtDescription = view.findViewById(R.id.txtDescription)
-        spinnerActivities = view.findViewById(R.id.spinnerActivities)
+        txtActivities = view.findViewById(R.id.txtActivities)
 
         txtDailyGoal = view.findViewById(R.id.txtDailyGoal)
         txtWeeklyGoal = view.findViewById(R.id.txtWeeklyGoal)
@@ -121,8 +112,6 @@ class TeamOverviewFragment : Fragment(R.layout.fragment_team_overview) {
 
         shimmerImg = view.findViewById(R.id.shimmerImg)
 
-        txtTimezone.isEnabled = false
-
         txtTimezone.setTextColor(ContextCompat.getColor(requireContext(), R.color.disabled))
         txtHandle.setTextColor(ContextCompat.getColor(requireContext(), R.color.disabled))
         txtDescription.setTextColor(ContextCompat.getColor(requireContext(), R.color.disabled))
@@ -134,17 +123,7 @@ class TeamOverviewFragment : Fragment(R.layout.fragment_team_overview) {
 
 
         val timezones = loadTimezones()
-        val timezonesMap = timezones.associate { it.text to it.utc.firstOrNull() }
         utcToTextMap = timezones.associate { it.utc.firstOrNull() to it.text }
-        val timezoneText = timezones.map { it.text }
-        val timezoneAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, timezoneText)
-        txtTimezone.setAdapter(timezoneAdapter)
-
-        txtTimezone.setOnItemClickListener { parent, _, position, _ ->
-            val selectedTimezoneText = parent.getItemAtPosition(position) as String
-            val selectedTimezoneUtc = timezonesMap[selectedTimezoneText]
-            timezone = selectedTimezoneUtc.toString()
-        }
 
         return view
     }
@@ -153,8 +132,6 @@ class TeamOverviewFragment : Fragment(R.layout.fragment_team_overview) {
         super.onViewCreated(view, savedInstanceState)
 
         observeTeamInfo()
-
-        spinnerActivities.isEnabled = false
 
         btnDelete.text = "Excluir $teamHandle"
         btnDelete.setOnClickListener {
@@ -177,81 +154,22 @@ class TeamOverviewFragment : Fragment(R.layout.fragment_team_overview) {
         }
 
         btnEdit.setOnClickListener {
-            if (!isEditing) {
-                isEditing = true
-                enableEditTexts()
-                btnEdit.icon =
-                    ContextCompat.getDrawable(requireContext(), R.drawable.baseline_check_24)
-                btnEdit.text = "Confirmar edição"
-            } else {
-                teamDescription = txtDescription.text.toString()
-                teamTimezone = timezone
-                teamName = txtTeamName.text.toString()
-
-                isEditing = false
-                editTeamInfo()
-                disableEditTexts()
-                LoginActivity().showSnackBar("Informações editadas com sucesso!", "FECHAR", R.color.greenDark)
-                btnEdit.icon = ContextCompat.getDrawable(requireContext(), R.drawable.baseline_edit_24)
-                btnEdit.text = "Editar dados"
+            val i = Intent(requireContext(), EditTeamActivity::class.java)
+            i.apply {
+                putExtra("accessToken", accessToken)
+                putExtra("teamid", teamId)
+                putExtra("teamName", txtTeamName.text.toString())
+                putExtra("teamHandle", txtHandle.text.toString())
+                putExtra("teamDescription", txtDescription.text.toString())
+                putExtra("teamTimezone", txtTimezone.text.toString())
+                putExtra("teamSector", txtActivities.text.toString())
+                putExtra("dailyGoal", txtDailyGoal.text.toString())
+                putExtra("weeklyGoal", txtWeeklyGoal.text.toString())
+                putExtra("monthlyGoal", txtMonthlyGoal.text.toString())
+                putExtra("annualGoal", txtAnnualGoal.text.toString())
             }
+            startActivity(i)
         }
-    }
-
-    private fun editTeamInfo() {
-        teamsViewModel.updateTeam(
-            accessToken,
-            teamId,
-            UpdateRequest(teamHandle, teamName, teamDescription, teamTimezone)
-        )
-    }
-
-    private fun getThemeColor(attrResId: Int): Int {
-        val typedValue = TypedValue()
-        val theme = requireContext().theme
-        theme.resolveAttribute(attrResId, typedValue, true)
-        return typedValue.data
-    }
-
-    private fun enableEditTexts() {
-        txtTimezone.isEnabled = true
-        txtHandle.isEnabled = true
-        txtDescription.isEnabled = true
-        txtTeamName.isEnabled = true
-        spinnerActivities.isEnabled = true
-
-        txtTimezone.setTextColor(getThemeColor(android.R.attr.textColorPrimary))
-        txtHandle.setTextColor(getThemeColor(android.R.attr.textColorPrimary))
-        txtDescription.setTextColor(getThemeColor(android.R.attr.textColorPrimary))
-        txtTeamName.setTextColor(getThemeColor(android.R.attr.textColorPrimary))
-        txtDailyGoal.setTextColor(getThemeColor(android.R.attr.textColorPrimary))
-        txtMonthlyGoal.setTextColor(getThemeColor(android.R.attr.textColorPrimary))
-        txtWeeklyGoal.setTextColor(getThemeColor(android.R.attr.textColorPrimary))
-        txtAnnualGoal.setTextColor(getThemeColor(android.R.attr.textColorPrimary))
-
-    }
-
-    private fun disableEditTexts() {
-        txtTimezone.isEnabled = false
-        txtHandle.isEnabled = false
-        txtDescription.isEnabled = false
-        txtTeamName.isEnabled = false
-        spinnerActivities.isEnabled = false
-        txtDailyGoal.isEnabled = false
-        txtMonthlyGoal.isEnabled = false
-        txtWeeklyGoal.isEnabled = false
-        txtAnnualGoal.isEnabled = false
-
-
-        txtTimezone.setTextColor(ContextCompat.getColor(requireContext(), R.color.disabled))
-        txtHandle.setTextColor(ContextCompat.getColor(requireContext(), R.color.disabled))
-        txtDescription.setTextColor(ContextCompat.getColor(requireContext(), R.color.disabled))
-        txtTeamName.setTextColor(ContextCompat.getColor(requireContext(), R.color.disabled))
-        txtDailyGoal.setTextColor(ContextCompat.getColor(requireContext(), R.color.disabled))
-        txtMonthlyGoal.setTextColor(ContextCompat.getColor(requireContext(), R.color.disabled))
-        txtWeeklyGoal.setTextColor(ContextCompat.getColor(requireContext(), R.color.disabled))
-        txtAnnualGoal.setTextColor(ContextCompat.getColor(requireContext(), R.color.disabled))
-
     }
 
     private fun deleteTeam() {
@@ -271,29 +189,38 @@ class TeamOverviewFragment : Fragment(R.layout.fragment_team_overview) {
                 val userMember = members.find { it.userId == userId }
                 userRole = userMember?.role.toString()
 
-                if (userRole == "ADMINISTRATOR") {
-                    btnEdit.visibility = View.VISIBLE
-                    btnDelete.visibility = View.VISIBLE
-                } else {
-                    btnEdit.visibility = View.GONE
-                    btnDelete.visibility = View.GONE
-                }
+                btnEdit.visibility = if (userRole == "ADMINISTRATOR") View.VISIBLE else View.GONE
+                btnDelete.visibility = if (userRole == "ADMINISTRATOR") View.VISIBLE else View.GONE
 
                 shimmerImg.visibility = View.VISIBLE
                 teamPicture.visibility = View.GONE
 
                 val drawableId = HomeActivity().getDrawableForLetter(teamName.first())
                 teamPicture.setImageResource(drawableId)
-                txtTeamName.setText(teamName)
-                txtHandle.setText(teamInfo.handle)
-                txtDescription.setText(teamInfo.description)
+                txtTeamName.text = teamName
+                txtHandle.text = teamInfo.handle
+                txtDescription.text = teamInfo.description
 
-                txtDailyGoal.setText(teamInfo.dailyGoal.toString())
-                txtWeeklyGoal.setText(teamInfo.weeklyGoal.toString())
-                txtMonthlyGoal.setText(teamInfo.monthlyGoal.toString())
-                txtAnnualGoal.setText(teamInfo.annualGoal.toString())
+                txtDailyGoal.text = teamInfo.dailyGoal.toString()
+                txtWeeklyGoal.text = teamInfo.weeklyGoal.toString()
+                txtMonthlyGoal.text = teamInfo.monthlyGoal.toString()
+                txtAnnualGoal.text = teamInfo.annualGoal.toString()
 
-                txtTimezone.setText(utcToTextMap[teamInfo.timeZone])
+                txtTimezone.text = utcToTextMap[teamInfo.timeZone]
+
+                val sectors = loadSectorsAndActivities()
+
+                val activityId = teamInfo.activityId
+
+                val activity = sectors.flatMap { it.activities }.find { it.activities_id == activityId }
+                val sector = sectors.find { it.sector == teamInfo.activitySector }
+
+                val activityNameBr = activity?.activities_br ?: "Atividade Desconhecida"
+                val sectorNameBr = sector?.sector_br ?: "Setor Desconhecido"
+
+                Log.d("TeamOverviewFragment", "Setor: $sectorNameBr Atividade: $activityNameBr")
+
+                txtActivities.text = "$sectorNameBr/$activityNameBr"
 
                 shimmerImg.animate().alpha(0f).setDuration(300).withEndAction {
                     shimmerImg.stopShimmer()
@@ -306,13 +233,20 @@ class TeamOverviewFragment : Fragment(R.layout.fragment_team_overview) {
     }
 
     private fun loadTimezones(): List<Timezone> {
-        val jsonString = getTimezone("timezones.json")
+        val jsonString = getJson("timezones.json")
         val gson = Gson()
         val listType = object : TypeToken<List<Timezone>>() {}.type
         return gson.fromJson(jsonString, listType)
     }
 
-    private fun getTimezone(fileName: String): String? {
+    private fun loadSectorsAndActivities(): List<Sector> {
+        val jsonFileString = getJson("sectors.json")
+        val gson = Gson()
+        val listSectorType = object : TypeToken<List<Sector>>() {}.type
+        return gson.fromJson(jsonFileString, listSectorType)
+    }
+
+    private fun getJson(fileName: String): String? {
         return try {
             val inputStream = requireContext().assets.open(fileName)
             val size = inputStream.available()
