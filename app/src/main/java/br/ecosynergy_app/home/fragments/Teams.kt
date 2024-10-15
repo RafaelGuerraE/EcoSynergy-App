@@ -23,16 +23,14 @@ import br.ecosynergy_app.user.UserViewModel
 
 class Teams : Fragment() {
 
+    private val teamsViewModel: TeamsViewModel by activityViewModels()
+    private val userViewModel: UserViewModel by activityViewModels()
+
     private lateinit var recyclerView: RecyclerView
     private lateinit var teamsAdapter: TeamAdapter
-    private val teamsViewModel: TeamsViewModel by activityViewModels()
-
     private lateinit var btnAddTeam: ImageButton
     private lateinit var linearAlert: LinearLayout
-
-    private val userViewModel: UserViewModel by activityViewModels()
     private lateinit var progressBar: ProgressBar
-
     private lateinit var swipeRefresh: SwipeRefreshLayout
 
     private var userId: Int = 0

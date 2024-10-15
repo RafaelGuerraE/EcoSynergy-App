@@ -67,7 +67,6 @@ class HomeActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
-
         themeSp = getSharedPreferences("theme_prefs", Context.MODE_PRIVATE)
         when (themeSp.getString("theme", "system")) {
             "light" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
@@ -75,9 +74,8 @@ class HomeActivity : AppCompatActivity() {
             "system" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
         }
 
-
-        val notificationServiceIntent = Intent(this, NotificationService::class.java)
-        startService(notificationServiceIntent)
+//        val notificationServiceIntent = Intent(this, NotificationService::class.java)
+//        startService(notificationServiceIntent)
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
@@ -100,18 +98,10 @@ class HomeActivity : AppCompatActivity() {
         readingsViewModel = ViewModelProvider(this, ReadingsViewModelFactory(RetrofitClient.readingsService, readingsRepository))[ReadingsViewModel::class.java]
         teamsViewModel = ViewModelProvider(this, TeamsViewModelFactory(RetrofitClient.teamsService, teamsRepository, membersRepository))[TeamsViewModel::class.java]
 
-
-
         loginSp = getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
         val isLoggedIn = loginSp.getBoolean("isLoggedIn", false)
         val justLoggedIn = loginSp.getBoolean("just_logged_in", false)
         val open = loginSp.getBoolean("open", false)
-
-//        sectorsViewModel.getAllSectorsWithActivities().observe(this) { sectorsWithActivities ->
-//            sectorsWithActivities?.let {
-//                Log.d("Sectors", "Sectors with activities: $it")
-//            }
-//        }
 
         if(isLoggedIn && !open){
             updateUserInfo()
@@ -206,7 +196,7 @@ class HomeActivity : AppCompatActivity() {
                     drawerLayout.closeDrawer(navView)
                 } else {
                     isEnabled = false
-                    onBackPressed()
+                    onBackPressedDispatcher.onBackPressed()
                 }
             }
         }
@@ -334,8 +324,8 @@ class HomeActivity : AppCompatActivity() {
 
                                     readingsViewModel.deleteAllReadingsFromDB()
                                     readingsViewModel.fetchMQ7ReadingsByTeamHandle("ecosynergyofc", refreshResponse.accessToken)
-                                    readingsViewModel.fetchMQ135ReadingsByTeamHandle("ecosynergyofc", accessToken)
-                                    readingsViewModel.fetchFireReadingsByTeamHandle("ecosynergyofc", accessToken)
+                                    readingsViewModel.fetchMQ135ReadingsByTeamHandle("ecosynergyofc", refreshResponse.accessToken)
+                                    readingsViewModel.fetchFireReadingsByTeamHandle("ecosynergyofc", refreshResponse.accessToken)
                                 }
 
                                 userViewModel.user.removeObservers(this)

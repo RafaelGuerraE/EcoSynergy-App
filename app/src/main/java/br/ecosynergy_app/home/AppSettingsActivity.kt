@@ -14,14 +14,15 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
-import br.ecosynergy_app.login.LoginActivity
 import br.ecosynergy_app.room.AppDatabase
 import br.ecosynergy_app.room.user.UserRepository
 import br.ecosynergy_app.user.UserViewModel
 import br.ecosynergy_app.user.UserViewModelFactory
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import java.util.Locale
 
@@ -231,12 +232,12 @@ class AppSettingsActivity : AppCompatActivity() {
                 val confirmNewPassword = etConfirmNewPassword.text.toString()
 
                 if (newPassword.isBlank() || confirmNewPassword.isBlank()) {
-                    LoginActivity().showSnackBar("Erro: os campos não podem estar vazios", "FECHAR", R.color.red, this)
+                    showSnackBar("Erro: os campos não podem estar vazios", "FECHAR", R.color.red, this)
                 } else if (newPassword != confirmNewPassword) {
-                    LoginActivity().showSnackBar("Erro: as senhas devem se corresponder", "FECHAR", R.color.red, this)
+                    showSnackBar("Erro: as senhas devem se corresponder", "FECHAR", R.color.red, this)
                 } else {
                     userViewModel.resetPassword(userUsername, newPassword, accessToken)
-                    LoginActivity().showSnackBar("Senha alterada com sucesso", "FECHAR", R.color.greenDark, this)
+                    showSnackBar("Senha alterada com sucesso", "FECHAR", R.color.greenDark, this)
                     dialog.dismiss()
                 }
             }
@@ -272,5 +273,17 @@ class AppSettingsActivity : AppCompatActivity() {
                 errorMessage.visibility = View.INVISIBLE
             }
         }
+
+
+    }
+
+    private fun showSnackBar(message: String, action: String, bgTint: Int, context: Context) {
+        val rootView = findViewById<View>(android.R.id.content)
+        val snackBar = Snackbar.make(rootView, message, Snackbar.LENGTH_SHORT)
+            .setAction(action) {}
+        snackBar.setBackgroundTint(ContextCompat.getColor(context, bgTint))
+        snackBar.setTextColor(ContextCompat.getColor(context, R.color.white))
+        snackBar.setActionTextColor(ContextCompat.getColor(context, R.color.white))
+        snackBar.show()
     }
 }

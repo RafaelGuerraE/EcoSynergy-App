@@ -12,7 +12,8 @@ interface SignUpService {
     suspend fun createUser(@Body createUserRequest: CreateUserRequest): CreateUserResponse
 
     @POST("auth/signup/send-confirmation-code")
-    suspend fun confirmationCode(@Query("email") userEmail: String): ResponseBody
+    suspend fun confirmationCode(@Query("email") userEmail: String,
+                                 @Query("name") userFullname: String): ResponseBody
 
     @POST("auth/forgot-password/send-confirmation-code")
     suspend fun forgotPasswordCode(@Query("email") userEmail: String): ResponseBody

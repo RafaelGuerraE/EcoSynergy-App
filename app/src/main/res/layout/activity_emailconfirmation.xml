@@ -52,7 +52,7 @@
                 android:layout_marginBottom="20dp"/>
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:orientation="horizontal"
@@ -60,8 +60,9 @@
 
                 <EditText
                     android:id="@+id/digit1"
-                    android:layout_width="50dp"
+                    android:layout_width="0dp"
                     android:layout_height="50dp"
+                    android:layout_weight="1"
                     android:gravity="center"
                     android:imeOptions="actionNext"
                     android:importantForAutofill="no"
@@ -75,8 +76,9 @@
 
                 <EditText
                     android:id="@+id/digit2"
-                    android:layout_width="50dp"
+                    android:layout_width="0dp"
                     android:layout_height="50dp"
+                    android:layout_weight="1"
                     android:layout_marginStart="10dp"
                     android:gravity="center"
                     android:imeOptions="actionNext"
@@ -91,8 +93,9 @@
 
                 <EditText
                     android:id="@+id/digit3"
-                    android:layout_width="50dp"
+                    android:layout_width="0dp"
                     android:layout_height="50dp"
+                    android:layout_weight="1"
                     android:layout_marginStart="10dp"
                     android:gravity="center"
                     android:imeOptions="actionNext"
@@ -107,8 +110,9 @@
 
                 <EditText
                     android:id="@+id/digit4"
-                    android:layout_width="50dp"
+                    android:layout_width="0dp"
                     android:layout_height="50dp"
+                    android:layout_weight="1"
                     android:layout_marginStart="10dp"
                     android:gravity="center"
                     android:imeOptions="actionNext"
@@ -123,8 +127,9 @@
 
                 <EditText
                     android:id="@+id/digit5"
-                    android:layout_width="50dp"
+                    android:layout_width="0dp"
                     android:layout_height="50dp"
+                    android:layout_weight="1"
                     android:layout_marginStart="10dp"
                     android:gravity="center"
                     android:imeOptions="actionNext"
@@ -139,8 +144,9 @@
 
                 <EditText
                     android:id="@+id/digit6"
-                    android:layout_width="50dp"
+                    android:layout_width="0dp"
                     android:layout_height="50dp"
+                    android:layout_weight="1"
                     android:layout_marginStart="10dp"
                     android:gravity="center"
                     android:imeOptions="actionNext"

@@ -34,10 +34,10 @@ class SignUpViewModel(private val service: SignUpService): ViewModel() {
         }
     }
 
-    fun confirmationCode(userEmail: String){
+    fun confirmationCode(userEmail: String, userFullname: String){
         viewModelScope.launch {
             try {
-                val response = service.confirmationCode(userEmail)
+                val response = service.confirmationCode(userEmail, userFullname)
                 val code = response.string()
                 _verificationCode.value = code
             }

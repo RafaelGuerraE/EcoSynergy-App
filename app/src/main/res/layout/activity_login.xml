@@ -82,6 +82,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Redefinir senha"
+                        android:background="?android:attr/selectableItemBackground"
                         android:textStyle="bold"
                         android:textSize="15sp"
                         android:textColor="@color/greenDark"

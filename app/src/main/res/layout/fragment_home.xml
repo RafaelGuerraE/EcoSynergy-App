@@ -2,9 +2,9 @@
 <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".home.fragments.Home"
     android:id="@+id/swipeRefresh"
     android:focusable="false">
@@ -26,7 +26,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="36dp"
                 android:layout_marginTop="15dp"
-                android:layout_marginBottom="20dp"
+                android:layout_marginBottom="10dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
@@ -62,182 +62,66 @@
                         android:visibility="visible" />
                 </com.facebook.shimmer.ShimmerFrameLayout>
 
-                <ImageButton
-                    android:id="@+id/btnShare"
-                    android:layout_width="match_parent"
-                    android:layout_height="30dp"
-                    android:background="@color/transparent"
-                    android:contentDescription="ButtonShare"
-                    android:scaleType="fitEnd"
-                    android:layout_gravity="end"
-                    android:src="@drawable/share_24"
-                    app:tint="?android:attr/iconTint" />
-
             </LinearLayout>
 
             <HorizontalScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:scrollbarStyle="insideOverlay">
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:scrollbarStyle="insideOverlay"
                 android:layout_marginBottom="10dp">
 
-                <Spinner
-                    android:id="@+id/spinnerTeam"
-                    android:entries="@array/period_array"
-                    android:layout_width="150dp"
-                    android:layout_height="40dp"
-                    android:layout_marginEnd="5dp"
-                    android:background="@drawable/spinner_home"
-                    android:spinnerMode="dropdown"
-                    />
-
-                <Spinner
-                    android:id="@+id/spinnerPeriod"
-                    android:entries="@array/period_array"
-                    android:layout_width="150dp"
-                    android:spinnerMode="dropdown"
-                    android:layout_height="40dp"
-                    android:background="@drawable/spinner_home"
-                    android:layout_marginStart="5dp"
-                    />
-
-                <Spinner
-                    android:entries="@array/period_array"
-                    android:layout_width="150dp"
-                    android:spinnerMode="dropdown"
+                <LinearLayout
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/spinner_home"
-                    android:layout_marginStart="5dp"
-                    android:visibility="gone"
-                    />
-            </LinearLayout>
+                    android:orientation="horizontal">
+
+                    <Spinner
+                        android:id="@+id/spinnerTeam"
+                        android:layout_width="150dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="@drawable/spinner_home"
+                        android:spinnerMode="dropdown" />
+
+                    <Spinner
+                        android:entries="@array/period_array"
+                        android:id="@+id/spinnerPeriod"
+                        android:layout_width="150dp"
+                        android:layout_height="40dp"
+                        android:background="@drawable/spinner_home"
+                        android:layout_marginStart="5dp"
+                        android:spinnerMode="dropdown" />
+
+                    <Spinner
+                        android:layout_width="150dp"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/spinner_home"
+                        android:layout_marginStart="5dp"
+                        android:visibility="gone" />
+                </LinearLayout>
 
             </HorizontalScrollView>
 
-            <LinearLayout
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Dashboards"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="5dp"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerDashboards"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:gravity="start">
+                android:layout_marginBottom="10dp"/>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="MQ7"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="10dp"/>
-
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="300dp"
-                    android:layout_marginBottom="20dp"
-                    android:orientation="vertical"
-                    android:layout_gravity="center">
-
-                    <com.github.mikephil.charting.charts.LineChart
-                        android:id="@+id/mq7Chart"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:visibility="gone"/>
-
-                    <com.facebook.shimmer.ShimmerFrameLayout
-                        android:id="@+id/shimmerMQ7"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="start"
-                        app:shimmer_auto_start="true"
-                        android:visibility="visible">
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:background="@drawable/chart_shape"
-                            android:visibility="visible"
-                            android:backgroundTint="?attr/shimmerColor"/>
-                    </com.facebook.shimmer.ShimmerFrameLayout>
-                </LinearLayout>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="MQ135"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="10dp"/>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="300dp"
-                    android:layout_marginBottom="20dp"
-                    android:orientation="vertical"
-                    android:layout_gravity="center">
-
-                    <com.github.mikephil.charting.charts.LineChart
-                        android:id="@+id/mq135Chart"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:visibility="gone"/>
-
-                    <com.facebook.shimmer.ShimmerFrameLayout
-                        android:id="@+id/shimmerMQ135"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="start"
-                        app:shimmer_auto_start="true"
-                        android:visibility="visible">
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:background="@drawable/chart_shape"
-                            android:visibility="visible"
-                            android:backgroundTint="?attr/shimmerColor"/>
-                    </com.facebook.shimmer.ShimmerFrameLayout>
-                </LinearLayout>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Sensor de Fogo"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="10dp"/>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="300dp"
-                    android:layout_marginBottom="20dp"
-                    android:orientation="vertical"
-                    android:layout_gravity="center">
-
-                    <com.github.mikephil.charting.charts.LineChart
-                        android:id="@+id/fireChart"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:visibility="gone"/>
-
-                    <com.facebook.shimmer.ShimmerFrameLayout
-                        android:id="@+id/shimmerFire"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="start"
-                        app:shimmer_auto_start="true"
-                        android:visibility="visible">
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:background="@drawable/chart_shape"
-                            android:visibility="visible"
-                            android:backgroundTint="?attr/shimmerColor"/>
-                    </com.facebook.shimmer.ShimmerFrameLayout>
-                </LinearLayout>
-
-
-            </LinearLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Revisão de Metas"
+                android:textSize="16sp"
+                android:textStyle="bold" />
         </LinearLayout>
     </ScrollView>
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

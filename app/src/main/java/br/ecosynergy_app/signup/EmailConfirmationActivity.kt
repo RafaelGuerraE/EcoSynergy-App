@@ -123,7 +123,7 @@ class EmailConfirmationActivity : AppCompatActivity() {
 
         btnBack.setOnClickListener { finish() }
 
-        confirmationCode(email)
+        confirmationCode(email, fullName)
 
         btnCheck.setOnClickListener {
             digit1Text = digit1.text.toString()
@@ -161,7 +161,7 @@ class EmailConfirmationActivity : AppCompatActivity() {
             txtResend.isClickable = false
             txtResend.setTextColor(Color.GRAY)
             startCountDown(txtResend)
-            confirmationCode(email)
+            confirmationCode(email, fullName)
         }
 
         setEditTextFocusChange(digit1, digit2, null)
@@ -297,13 +297,13 @@ class EmailConfirmationActivity : AppCompatActivity() {
         editor.apply()
     }
 
-    private fun confirmationCode(userEmail: String) {
+    private fun confirmationCode(userEmail: String, userFullname: String) {
         signUpViewModel.verificationCode.removeObservers(this)
-        signUpViewModel.confirmationCode(userEmail)
+        signUpViewModel.confirmationCode(userEmail, userFullname)
         signUpViewModel.verificationCode.observe(this) { code ->
-            Log.d("ConfirmationActivity", "Confirmation code: $code")
             if (code != null) {
                 verificationCode = code
+                Log.d("ConfirmationActivity", "Confirmation code: $code")
             }
 
             showProgressBar(false)
