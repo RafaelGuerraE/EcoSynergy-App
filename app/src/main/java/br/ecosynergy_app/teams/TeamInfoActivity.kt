@@ -1,0 +1,123 @@
+package br.ecosynergy_app.teams
+
+import android.content.Intent
+import android.os.Bundle
+import android.util.Log
+import android.widget.ImageButton
+import android.widget.LinearLayout
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
+import br.ecosynergy_app.R
+import br.ecosynergy_app.RetrofitClient
+import br.ecosynergy_app.room.AppDatabase
+import br.ecosynergy_app.room.teams.MembersRepository
+import br.ecosynergy_app.room.teams.TeamsRepository
+import br.ecosynergy_app.room.user.UserRepository
+import br.ecosynergy_app.teams.viewmodel.TeamsViewModel
+import br.ecosynergy_app.teams.viewmodel.TeamsViewModelFactory
+import br.ecosynergy_app.user.UserViewModel
+import br.ecosynergy_app.user.UserViewModelFactory
+import de.hdodenhof.circleimageview.CircleImageView
+
+class TeamInfoActivity : AppCompatActivity() {
+
+    private lateinit var userViewModel: UserViewModel
+    private lateinit var teamsViewModel: TeamsViewModel
+
+    private var userId: Int = 0
+    private var accessToken: String = ""
+    private var teamId: Int = 0
+    private var teamHandle: String = ""
+    private var userRole: String = ""
+    private var teamInitial: Int = 0
+
+    private val userRepository = UserRepository(AppDatabase.getDatabase(this).userDao())
+
+    private val teamsRepository = TeamsRepository(AppDatabase.getDatabase(this).teamsDao())
+
+    private val membersRepository = MembersRepository(AppDatabase.getDatabase(this).membersDao())
+
+    private lateinit var btnClose: ImageButton
+    private lateinit var imgTeam : CircleImageView
+    private lateinit var areaOverview: LinearLayout
+    private lateinit var areaGoals: LinearLayout
+    private lateinit var areaMembers: LinearLayout
+    private lateinit var areaInvites: LinearLayout
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_teaminfo)
+
+        teamsViewModel = ViewModelProvider(
+            this,
+            TeamsViewModelFactory(RetrofitClient.teamsService, teamsRepository, membersRepository)
+        )[TeamsViewModel::class.java]
+        userViewModel = ViewModelProvider(
+            this,
+            UserViewModelFactory(RetrofitClient.userService, userRepository)
+        )[UserViewModel::class.java]
+
+        teamId = intent.getIntExtra("TEAM_ID", 0)
+        teamHandle = intent.getStringExtra("TEAM_HANDLE").toString()
+        teamInitial = intent.getIntExtra("TEAM_INITIAL", 0)
+
+        btnClose = findViewById(R.id.btnClose)
+        imgTeam = findViewById(R.id.imgTeam)
+        areaOverview = findViewById(R.id.areaOverview)
+        areaGoals = findViewById(R.id.areaGoals)
+        areaMembers = findViewById(R.id.areaMembers)
+        areaInvites = findViewById(R.id.areaInvites)
+
+        btnClose.setOnClickListener { finish() }
+
+        imgTeam.setImageResource(teamInitial)
+
+        areaOverview.setOnClickListener {
+            val i = Intent(this, TeamOverviewActivity::class.java).apply {
+                putExtra("TEAM_ID", teamId)
+                putExtra("TEAM_HANDLE", teamHandle)
+                putExtra("ACCESS_TOKEN", accessToken)
+            }
+            startActivity(i)
+        }
+
+        areaGoals.setOnClickListener {
+            val i = Intent(this, GoalsActivity::class.java).apply {
+                putExtra("TEAM_ID", teamId)
+                putExtra("TEAM_HANDLE", teamHandle)
+                putExtra("ACCESS_TOKEN", accessToken)
+            }
+            startActivity(i)
+        }
+
+        areaMembers.setOnClickListener {
+            val i = Intent(this, TeamMembersActivity::class.java).apply {
+                putExtra("TEAM_ID", teamId)
+                putExtra("TEAM_HANDLE", teamHandle)
+                putExtra("ACCESS_TOKEN", accessToken)
+            }
+            startActivity(i)
+        }
+
+        areaInvites.setOnClickListener {
+            val i = Intent(this, InvitesActivity::class.java).apply {
+                putExtra("TEAM_ID", teamId)
+                putExtra("TEAM_HANDLE", teamHandle)
+                putExtra("ACCESS_TOKEN", accessToken)
+            }
+            startActivity(i)
+        }
+
+
+        observeUserData {}
+    }
+
+    private fun observeUserData(onComplete: () -> Unit) {
+        userViewModel.getUserInfoFromDB{}
+        userViewModel.userInfo.observe(this) { userInfo ->
+            userId = userInfo.id
+            accessToken = userInfo.accessToken
+            onComplete()
+        }
+    }
+}

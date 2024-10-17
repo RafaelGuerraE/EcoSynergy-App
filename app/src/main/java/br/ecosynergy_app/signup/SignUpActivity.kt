@@ -20,7 +20,8 @@ import android.widget.TextView
 import androidx.lifecycle.ViewModelProvider
 import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
-import com.google.android.material.textfield.MaterialAutoCompleteTextView
+import br.ecosynergy_app.signup.viewmodel.SignUpViewModel
+import br.ecosynergy_app.signup.viewmodel.SignUpViewModelFactory
 import com.google.android.material.textfield.TextInputLayout
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken

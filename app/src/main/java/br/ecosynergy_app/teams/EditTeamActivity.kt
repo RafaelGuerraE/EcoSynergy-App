@@ -21,6 +21,12 @@ import br.ecosynergy_app.room.AppDatabase
 import br.ecosynergy_app.room.teams.MembersRepository
 import br.ecosynergy_app.room.teams.TeamsRepository
 import br.ecosynergy_app.room.user.UserRepository
+import br.ecosynergy_app.teams.viewmodel.ActivitiesRequest
+import br.ecosynergy_app.teams.viewmodel.Sector
+import br.ecosynergy_app.teams.viewmodel.TeamsViewModel
+import br.ecosynergy_app.teams.viewmodel.TeamsViewModelFactory
+import br.ecosynergy_app.teams.viewmodel.Timezone
+import br.ecosynergy_app.teams.viewmodel.UpdateRequest
 import br.ecosynergy_app.user.UserViewModel
 import br.ecosynergy_app.user.UserViewModelFactory
 import com.google.gson.Gson

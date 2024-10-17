@@ -19,6 +19,8 @@ import br.ecosynergy_app.room.readings.ReadingsRepository
 import br.ecosynergy_app.room.teams.MembersRepository
 import br.ecosynergy_app.room.teams.TeamsRepository
 import br.ecosynergy_app.room.user.UserRepository
+import br.ecosynergy_app.teams.viewmodel.TeamsViewModel
+import br.ecosynergy_app.teams.viewmodel.TeamsViewModelFactory
 import br.ecosynergy_app.user.UserViewModel
 import br.ecosynergy_app.user.UserViewModelFactory
 import com.facebook.shimmer.ShimmerFrameLayout
@@ -42,10 +44,12 @@ class DashboardActivity : AppCompatActivity() {
 
     private lateinit var btnClose : ImageButton
     private lateinit var lblTeamName: TextView
+    private lateinit var lblTeamHandle: TextView
     private lateinit var imgTeam: CircleImageView
 
     private var teamHandle: String? = null
     private var teamInitial: Int = 0
+    private var teamName: String = ""
     private var accessToken: String =""
 
     private lateinit var mq7Chart: LineChart
@@ -80,6 +84,7 @@ class DashboardActivity : AppCompatActivity() {
 
         btnClose = findViewById(R.id.btnClose)
         lblTeamName = findViewById(R.id.lblTeamName)
+        lblTeamHandle = findViewById(R.id.lblTeamHandle)
         imgTeam = findViewById(R.id.imgTeam)
 
         shimmerMQ7 = findViewById(R.id.shimmerMQ7)
@@ -94,34 +99,44 @@ class DashboardActivity : AppCompatActivity() {
         teamInitial = intent.getIntExtra("TEAM_INITIAL", 0)
         teamHandle = intent.getStringExtra("TEAM_HANDLE").toString()
         accessToken = intent.getStringExtra("ACCESS_TOKEN").toString()
+        teamName = intent.getStringExtra("TEAM_NAME").toString()
 
         imgTeam.setImageResource(teamInitial)
-        lblTeamName.text = teamHandle
+        lblTeamName.text = teamName
+        lblTeamHandle.text = teamHandle
 
         btnClose.setOnClickListener{ finish() }
+
+
+        fetchMQ7ReadingsByTeamHandle()
+        //fetchMQ135ReadingsByTeamHandle()
+        //fetchFireReadingsByTeamHandle()
     }
 
     private fun fetchMQ7ReadingsByTeamHandle() {
+        readingsViewModel.mq7ReadingsDB.removeObservers(this)
+        readingsViewModel.getReadingsBySensorFromDB("MQ7")
         readingsViewModel.mq7ReadingsDB.observe(this) { response ->
             handleMQ7Readings(response)
             Log.d("HomeFragment", "Sensors MQ7 OK")
-            readingsViewModel.mq7ReadingsDB.removeObservers(this)
         }
     }
 
     private fun fetchMQ135ReadingsByTeamHandle() {
+        readingsViewModel.mq135ReadingsDB.removeObservers(this)
+        readingsViewModel.getReadingsBySensorFromDB("MQ135")
         readingsViewModel.mq135ReadingsDB.observe(this) { response ->
             handleMQ135Readings(response)
             Log.d("HomeFragment", "Sensors MQ135 OK")
-            readingsViewModel.mq135ReadingsDB.removeObservers(this)
         }
     }
 
     private fun fetchFireReadingsByTeamHandle() {
+        readingsViewModel.mq7ReadingsDB.removeObservers(this)
+        readingsViewModel.getReadingsBySensorFromDB("FIRE")
         readingsViewModel.fireReadingsDB.observe(this) { response ->
             handleFireReadings(response)
             Log.d("HomeFragment", "FireSensors OK")
-            readingsViewModel.mq7ReadingsDB.removeObservers(this)
         }
     }
 
@@ -129,7 +144,7 @@ class DashboardActivity : AppCompatActivity() {
         mq7Chart.visibility = View.GONE
         shimmerMQ7.visibility = View.VISIBLE
 
-        Log.d("HomeFragment", "Readings: $mq7Readings")
+        //Log.d("HomeFragment", "Readings: $mq7Readings")
 
         val dateFormatIn = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault())
         val dateFormatOut = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
@@ -141,7 +156,7 @@ class DashboardActivity : AppCompatActivity() {
             aggregatedData[date] = aggregatedData.getOrDefault(date, 0) + 1
         }
 
-        //Log.d("HomeFragment", "Aggregated Data: $aggregatedData")
+        Log.d("HomeFragment", "MQ7 Aggregated Data: $aggregatedData")
 
         val sortedData = aggregatedData.entries.sortedBy { it.key }
 

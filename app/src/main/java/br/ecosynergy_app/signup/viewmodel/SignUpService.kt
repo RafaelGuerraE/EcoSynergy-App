@@ -1,4 +1,4 @@
-package br.ecosynergy_app.signup
+package br.ecosynergy_app.signup.viewmodel
 
 import okhttp3.ResponseBody
 import retrofit2.http.Body

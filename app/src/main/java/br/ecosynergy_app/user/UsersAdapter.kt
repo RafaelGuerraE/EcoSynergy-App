@@ -1,9 +1,7 @@
 package br.ecosynergy_app.user
 
 import android.app.AlertDialog
-import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -11,25 +9,12 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.content.ContentProviderCompat.requireContext
-import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelStore
 import androidx.recyclerview.widget.RecyclerView
 import br.ecosynergy_app.R
-import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.home.HomeActivity
-import br.ecosynergy_app.login.LoginActivity
-import br.ecosynergy_app.teams.AddMembersBottomSheet
-import br.ecosynergy_app.teams.RoleRequest
-import br.ecosynergy_app.teams.TeamMembersFragment
-import br.ecosynergy_app.teams.TeamsViewModel
-import br.ecosynergy_app.teams.TeamsViewModelFactory
-import com.google.android.material.snackbar.Snackbar
+import br.ecosynergy_app.teams.viewmodel.RoleRequest
+import br.ecosynergy_app.teams.viewmodel.TeamsViewModel
 
 class UsersAdapter(
     private var usersList: MutableList<UserResponse>,
@@ -126,7 +111,7 @@ class UsersAdapter(
                 teamsViewModel.addMember(accessToken, teamId, memberId, RoleRequest("COMMON_USER"))
                 btnInvite.visibility = View.GONE
 
-                LoginActivity().showSnackBar("Usuário convidado com sucesso!", "FECHAR", R.color.greenDark, activity)
+              //  LoginActivity().showSnackBar("Usuário convidado com sucesso!", "FECHAR", R.color.greenDark, activity)
             }
 
             builder.setNegativeButton("Cancelar") { dialog, _ ->

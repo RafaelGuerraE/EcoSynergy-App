@@ -2,6 +2,7 @@
 <resources>
     <declare-styleable name="CustomTheme">
         <attr name="fragmentsBackground" format="color"/>
+        <attr name="homeBackground" format="color"/>
         <attr name="shimmerColor" format="color"/>
         <attr name="spinnerColor" format="color"/>
         <attr name="buttonText" format="color"/>

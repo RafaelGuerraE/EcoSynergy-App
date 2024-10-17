@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".teams.TeamMembersActivity"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    android:id="@+id/swipeRefresh"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".teams.TeamMembersFragment"
-    android:id="@+id/swipeRefresh"
-    android:focusable="false">
+    android:focusable="false"
+    android:layout_marginTop="60dp">
 
 <LinearLayout
     android:orientation="vertical"
@@ -20,7 +24,9 @@
         android:orientation="horizontal"
         android:layout_gravity="center"
         android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp">
+        android:layout_marginBottom="10dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginStart="15dp">
 
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="0dp"
@@ -48,7 +54,7 @@
             android:src="@drawable/baseline_member_add"
             app:tint="?android:attr/iconTint"
             android:layout_marginStart="5dp"
-            android:visibility="gone"/>
+            android:visibility="visible"/>
 
     </LinearLayout>
 
@@ -58,14 +64,18 @@
         android:layout_height="match_parent"
         android:visibility="gone"
         android:clickable="true"
-        android:focusable="true"/>
+        android:focusable="true"
+        android:layout_marginEnd="15dp"
+        android:layout_marginStart="15dp"/>
 
     <com.facebook.shimmer.ShimmerFrameLayout
         android:id="@+id/shimmerMembers"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:shimmer_auto_start="true"
-        android:visibility="visible">
+        android:visibility="visible"
+        android:layout_marginEnd="15dp"
+        android:layout_marginStart="15dp">
         <View
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -76,3 +86,37 @@
 
 </LinearLayout>
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        android:layout_gravity="top"
+        android:background="?android:attr/colorBackground">
+
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="BackButton"
+            android:src="@drawable/baseline_arrow_back_24"
+            android:scaleType="fitXY"
+            app:tint="?android:attr/iconTint"
+            android:layout_margin="15dp"
+            android:layout_gravity="center_vertical"
+            android:clickable="true"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:text="Membros da Equipe"
+            android:textAlignment="center"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginEnd="60dp"/>
+
+    </LinearLayout>
+</RelativeLayout>

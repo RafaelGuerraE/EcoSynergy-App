@@ -20,7 +20,6 @@ import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import br.ecosynergy_app.NotificationService
 import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.home.fragments.Home
@@ -35,8 +34,8 @@ import br.ecosynergy_app.room.teams.MembersRepository
 import br.ecosynergy_app.room.teams.TeamsRepository
 import br.ecosynergy_app.room.user.User
 import br.ecosynergy_app.room.user.UserRepository
-import br.ecosynergy_app.teams.TeamsViewModel
-import br.ecosynergy_app.teams.TeamsViewModelFactory
+import br.ecosynergy_app.teams.viewmodel.TeamsViewModel
+import br.ecosynergy_app.teams.viewmodel.TeamsViewModelFactory
 import br.ecosynergy_app.user.UserSettingsActivity
 import br.ecosynergy_app.user.UserViewModel
 import br.ecosynergy_app.user.UserViewModelFactory
@@ -110,8 +109,8 @@ class HomeActivity : AppCompatActivity() {
             displayUserInfoFromDB{
                 readingsViewModel.deleteAllReadingsFromDB()
                 readingsViewModel.fetchMQ7ReadingsByTeamHandle("ecosynergyofc", accessToken)
-                readingsViewModel.fetchMQ135ReadingsByTeamHandle("ecosynergyofc", accessToken)
-                readingsViewModel.fetchFireReadingsByTeamHandle("ecosynergyofc", accessToken)
+                //readingsViewModel.fetchMQ135ReadingsByTeamHandle("ecosynergyofc", accessToken)
+                //readingsViewModel.fetchFireReadingsByTeamHandle("ecosynergyofc", accessToken)
             }
             loginSp.edit().putBoolean("open", false).apply()
         }
@@ -324,8 +323,8 @@ class HomeActivity : AppCompatActivity() {
 
                                     readingsViewModel.deleteAllReadingsFromDB()
                                     readingsViewModel.fetchMQ7ReadingsByTeamHandle("ecosynergyofc", refreshResponse.accessToken)
-                                    readingsViewModel.fetchMQ135ReadingsByTeamHandle("ecosynergyofc", refreshResponse.accessToken)
-                                    readingsViewModel.fetchFireReadingsByTeamHandle("ecosynergyofc", refreshResponse.accessToken)
+                                    //readingsViewModel.fetchMQ135ReadingsByTeamHandle("ecosynergyofc", refreshResponse.accessToken)
+                                    //readingsViewModel.fetchFireReadingsByTeamHandle("ecosynergyofc", refreshResponse.accessToken)
                                 }
 
                                 userViewModel.user.removeObservers(this)

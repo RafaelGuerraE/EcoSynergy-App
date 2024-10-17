@@ -28,9 +28,12 @@ import br.ecosynergy_app.room.AppDatabase
 import br.ecosynergy_app.room.teams.MembersRepository
 import br.ecosynergy_app.room.teams.TeamsRepository
 import br.ecosynergy_app.room.user.UserRepository
-import br.ecosynergy_app.teams.RoleRequest
-import br.ecosynergy_app.teams.TeamsViewModel
-import br.ecosynergy_app.teams.TeamsViewModelFactory
+import br.ecosynergy_app.signup.viewmodel.CreateUserRequest
+import br.ecosynergy_app.signup.viewmodel.SignUpViewModel
+import br.ecosynergy_app.signup.viewmodel.SignUpViewModelFactory
+import br.ecosynergy_app.teams.viewmodel.RoleRequest
+import br.ecosynergy_app.teams.viewmodel.TeamsViewModel
+import br.ecosynergy_app.teams.viewmodel.TeamsViewModelFactory
 import br.ecosynergy_app.user.UserViewModel
 import br.ecosynergy_app.user.UserViewModelFactory
 

@@ -3,7 +3,7 @@ package br.ecosynergy_app.room.teams
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import br.ecosynergy_app.teams.TeamsResponse
+import br.ecosynergy_app.teams.viewmodel.TeamsResponse
 
 @Entity(tableName = "teams",
     indices = [Index(value = ["handle"], unique = true)])

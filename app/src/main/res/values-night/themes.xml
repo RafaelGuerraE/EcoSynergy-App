@@ -15,6 +15,9 @@
         <item name="shimmerColor">@color/shimmer</item>
         <item name="spinnerColor">@color/spinnerDark</item>
         <item name="fragmentsBackground">@color/grayDark</item>
+
+        <item name="homeBackground">#424242</item>
+
         <item name="buttonIconTint">@color/white</item>
 
         <item name="fontFamily">@font/red_hat_display</item>

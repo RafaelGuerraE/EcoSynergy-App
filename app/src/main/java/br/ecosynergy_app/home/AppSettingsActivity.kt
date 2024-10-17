@@ -119,7 +119,7 @@ class AppSettingsActivity : AppCompatActivity() {
         val options = arrayOf("ppm (Partes por Milhão)", "Toneladas", "ppb (Partes por Bilhão)")
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Selecione a unidade de medida")
-        builder.setSingleChoiceItems(options, -1) { dialog, which ->
+        builder.setSingleChoiceItems(options, 1) { dialog, which ->
             val selectedMeasure = options[which]
             txtMeasure.text = selectedMeasure
             // Save the selected measure if needed
@@ -136,7 +136,7 @@ class AppSettingsActivity : AppCompatActivity() {
         val languageCodes = arrayOf("pt", "en")
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Selecione o idioma")
-        builder.setSingleChoiceItems(options, -1) { dialog, which ->
+        builder.setSingleChoiceItems(options, 0) { dialog, which ->
             val selectedLanguage = options[which]
             txtLanguage.text = selectedLanguage
             // Save the selected language

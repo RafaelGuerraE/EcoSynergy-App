@@ -1,9 +1,9 @@
 package br.ecosynergy_app
 
 import br.ecosynergy_app.user.UserService
-import br.ecosynergy_app.signup.SignUpService
+import br.ecosynergy_app.signup.viewmodel.SignUpService
 import br.ecosynergy_app.readings.ReadingsService
-import br.ecosynergy_app.teams.TeamsService
+import br.ecosynergy_app.teams.viewmodel.TeamsService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 

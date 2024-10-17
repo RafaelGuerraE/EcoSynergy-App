@@ -10,8 +10,8 @@ import androidx.lifecycle.ViewModelProvider
 import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.signup.EmailConfirmationActivity
-import br.ecosynergy_app.signup.SignUpViewModel
-import br.ecosynergy_app.signup.SignUpViewModelFactory
+import br.ecosynergy_app.signup.viewmodel.SignUpViewModel
+import br.ecosynergy_app.signup.viewmodel.SignUpViewModelFactory
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 

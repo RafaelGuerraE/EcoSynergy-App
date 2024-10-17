@@ -17,6 +17,12 @@ import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.room.AppDatabase
 import br.ecosynergy_app.room.teams.MembersRepository
 import br.ecosynergy_app.room.teams.TeamsRepository
+import br.ecosynergy_app.teams.viewmodel.ActivitiesRequest
+import br.ecosynergy_app.teams.viewmodel.Member
+import br.ecosynergy_app.teams.viewmodel.TeamsRequest
+import br.ecosynergy_app.teams.viewmodel.TeamsViewModel
+import br.ecosynergy_app.teams.viewmodel.TeamsViewModelFactory
+import br.ecosynergy_app.teams.viewmodel.Timezone
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.gson.Gson

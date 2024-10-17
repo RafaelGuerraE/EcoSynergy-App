@@ -34,18 +34,6 @@ class ReadingsViewModel(
     private val _mq7ReadingsDB = MutableLiveData<List<Readings>>()
     val mq7ReadingsDB: LiveData<List<Readings>> get() = _mq7ReadingsDB
 
-    fun fetchMQ7Readings(token: String) {
-        viewModelScope.launch {
-            try {
-                val response = service.fetchMq7Readings("Bearer $token")
-                _mq7ReadingResult.value = Result.success(response)
-            } catch (e: HttpException) {
-                _mq7ReadingResult.value = Result.failure(e)
-            } catch (e: Exception) {
-                _mq7ReadingResult.value = Result.failure(e)
-            }
-        }
-    }
 
     fun fetchMQ7ReadingsByTeamHandle(teamHandle: String, token: String) {
         viewModelScope.launch {
@@ -63,11 +51,10 @@ class ReadingsViewModel(
                     )
                 }
                 readingsRepository.insertReadings(readings)
-                //Log.d("ReadingsViewModel", "$readings")
+                Log.d("ReadingsViewModel", "$readings")
                 Log.d("ReadingsViewModel", "MQ7Readings successfully stored in the database.")
 
-                val readingsResponse = readingsRepository.getReadingsBySensor("MQ7")
-                _mq7ReadingsDB.value = readingsResponse
+                //getReadingsBySensorFromDB("MQ7")
 
             } catch (e: HttpException) {
                 Log.e("ReadingsViewModel", "HTTP error while fetching MQ7 readings", e)
@@ -79,14 +66,26 @@ class ReadingsViewModel(
         }
     }
 
-    fun fetchMQ7ReadingsById(token: String, id: String) {
+    fun getReadingsBySensorFromDB(sensor: String) {
         viewModelScope.launch {
             try {
-                val response = service.fetchMq7ReadingById("Bearer $token", id)
-                _mq7ReadingResult.value = Result.success(response)
+
+                val readingsResponse = readingsRepository.getReadingsBySensor(sensor)
+
+                when (sensor) {
+                    "MQ7" -> _mq7ReadingsDB.value = readingsResponse
+                    "MQ135" -> _mq135ReadingsDB.value = readingsResponse
+                    "FIRE" -> _fireReadingsDB.value = readingsResponse
+                    else -> Log.e("ReadingsViewModel", "Unknown sensor type: $sensor")
+                }
+
+                Log.d("ReadingsViewModel", "$sensor Readings Successfully got from DB.")
+
             } catch (e: HttpException) {
+                Log.e("ReadingsViewModel", "HTTP error while fetching MQ7 readings", e)
                 _mq7ReadingResult.value = Result.failure(e)
             } catch (e: Exception) {
+                Log.e("ReadingsViewModel", "Error while fetching MQ7 readings", e)
                 _mq7ReadingResult.value = Result.failure(e)
             }
         }
@@ -98,19 +97,6 @@ class ReadingsViewModel(
 
     private val _mq135ReadingsDB = MutableLiveData<List<Readings>>()
     val mq135ReadingsDB: LiveData<List<Readings>> get() = _mq135ReadingsDB
-
-    fun fetchMQ135Readings(token: String) {
-        viewModelScope.launch {
-            try {
-                val response = service.fetchMq135Reading("Bearer $token")
-                _mq135ReadingResult.value = Result.success(response)
-            } catch (e: HttpException) {
-                _mq135ReadingResult.value = Result.failure(e)
-            } catch (e: Exception) {
-                _mq135ReadingResult.value = Result.failure(e)
-            }
-        }
-    }
 
     fun fetchMQ135ReadingsByTeamHandle(teamHandle: String, token: String) {
         viewModelScope.launch {
@@ -128,11 +114,10 @@ class ReadingsViewModel(
                     )
                 }
                 readingsRepository.insertReadings(readings)
-                //Log.d("ReadingsViewModel", "$readings")
+                Log.d("ReadingsViewModel", "$readings")
                 Log.d("ReadingsViewModel", "MQ135Readings successfully stored in the database.")
 
-                val readingsResponse = readingsRepository.getReadingsBySensor("MQ135")
-                _mq135ReadingsDB.value = readingsResponse
+               // getReadingsBySensorFromDB("MQ135")
 
             } catch (e: HttpException) {
                 Log.e("ReadingsViewModel", "HTTP error while fetching MQ135 readings", e)
@@ -144,38 +129,12 @@ class ReadingsViewModel(
         }
     }
 
-    fun fetchMQ135ReadingsById(token: String?, id: String) {
-        viewModelScope.launch {
-            try {
-                val response = service.fetchMq135ReadingById("Bearer $token", id)
-                _mq135ReadingResult.value = Result.success(response)
-            } catch (e: HttpException) {
-                _mq135ReadingResult.value = Result.failure(e)
-            } catch (e: Exception) {
-                _mq135ReadingResult.value = Result.failure(e)
-            }
-        }
-    }
-
     // Fire Readings
     private val _fireReadingResult = MutableLiveData<Result<FireReadingsResponse>>()
     val fireReadingResult: LiveData<Result<FireReadingsResponse>> get() = _fireReadingResult
 
     private val _fireReadingsDB = MutableLiveData<List<Readings>>()
     val fireReadingsDB: LiveData<List<Readings>> get() = _fireReadingsDB
-
-    fun fetchFireReadings(token: String) {
-        viewModelScope.launch {
-            try {
-                val response = service.fetchFireReading("Bearer $token")
-                _fireReadingResult.value = Result.success(response)
-            } catch (e: HttpException) {
-                _fireReadingResult.value = Result.failure(e)
-            } catch (e: Exception) {
-                _fireReadingResult.value = Result.failure(e)
-            }
-        }
-    }
 
     fun fetchFireReadingsByTeamHandle(teamHandle: String, token: String) {
         viewModelScope.launch {
@@ -193,30 +152,16 @@ class ReadingsViewModel(
                     )
                 }
                 readingsRepository.insertReadings(readings)
-                //Log.d("ReadingsViewModel", "$readings")
+                Log.d("ReadingsViewModel", "$readings")
                 Log.d("ReadingsViewModel", "FireReadings successfully stored in the database.")
 
-                val readingsResponse = readingsRepository.getReadingsBySensor("FIRE")
-                _fireReadingsDB.value = readingsResponse
+              //  getReadingsBySensorFromDB("FIRE")
 
             } catch (e: HttpException) {
                 Log.e("ReadingsViewModel", "HTTP error while fetching Fire readings", e)
                 _fireReadingResult.value = Result.failure(e)
             } catch (e: Exception) {
                 Log.e("ReadingsViewModel", "Error while fetching Fire readings", e)
-                _fireReadingResult.value = Result.failure(e)
-            }
-        }
-    }
-
-    fun fetchFireReadingsById(token: String, id: String) {
-        viewModelScope.launch {
-            try {
-                val response = service.fetchFireReadingById("Bearer $token", id)
-                _fireReadingResult.value = Result.success(response)
-            } catch (e: HttpException) {
-                _fireReadingResult.value = Result.failure(e)
-            } catch (e: Exception) {
                 _fireReadingResult.value = Result.failure(e)
             }
         }

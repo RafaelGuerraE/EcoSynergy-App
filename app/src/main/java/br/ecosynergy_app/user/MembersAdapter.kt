@@ -12,11 +12,10 @@ import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import br.ecosynergy_app.R
 import br.ecosynergy_app.home.HomeActivity
-import br.ecosynergy_app.login.LoginActivity
 import br.ecosynergy_app.room.teams.Members
-import br.ecosynergy_app.teams.RoleRequest
-import br.ecosynergy_app.teams.TeamMembersFragment
-import br.ecosynergy_app.teams.TeamsViewModel
+import br.ecosynergy_app.teams.viewmodel.RoleRequest
+import br.ecosynergy_app.teams.TeamMembersActivity
+import br.ecosynergy_app.teams.viewmodel.TeamsViewModel
 
 class MembersAdapter(
     private var membersList: List<Members>,
@@ -27,7 +26,7 @@ class MembersAdapter(
     private var accessToken: String,
     private val teamsViewModel: TeamsViewModel,
     private val activity: FragmentActivity,
-    private val fragment: TeamMembersFragment,
+    private val fragment: TeamMembersActivity,
     private val memberIds: MutableList<Int>
 ) : RecyclerView.Adapter<MembersAdapter.ViewHolder>() {
 
@@ -66,7 +65,7 @@ class MembersAdapter(
         private var accessToken: String,
         private val teamsViewModel: TeamsViewModel,
         private val activity: FragmentActivity,
-        private val fragment: TeamMembersFragment
+        private val fragment: TeamMembersActivity
     ) : RecyclerView.ViewHolder(itemView) {
 
         private val txtUsername: TextView = itemView.findViewById(R.id.txtUsername)
@@ -166,7 +165,7 @@ class MembersAdapter(
                 teamsViewModel.removeMember(accessToken, teamId, memberId)
                 dialog.dismiss()
                 fragment.membersAdapter.removeMember(memberId)
-                LoginActivity().showSnackBar("Usuário removido com sucesso", "FECHAR", R.color.greenDark, activity)
+              //  LoginActivity().showSnackBar("Usuário removido com sucesso", "FECHAR", R.color.greenDark, activity)
             }
 
             builder.setNegativeButton("Cancelar") { dialog, _ ->
@@ -196,11 +195,15 @@ class MembersAdapter(
                 }
                 dialog.dismiss()
                 fragment.membersAdapter.updateList(membersList, memberRoles)
-                LoginActivity().showSnackBar("Cargo alterado com sucesso", "FECHAR", R.color.greenDark, activity)
             }
 
             val dialog: AlertDialog = builder.create()
             dialog.show()
         }
     }
+
+
+}
+
+fun showToast(message: String) {
 }

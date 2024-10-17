@@ -1,9 +1,6 @@
 package br.ecosynergy_app.home.fragments
 
-import android.content.Context
-import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,7 +15,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import br.ecosynergy_app.R
 import br.ecosynergy_app.teams.CreateTeamBottomSheet
 import br.ecosynergy_app.teams.TeamAdapter
-import br.ecosynergy_app.teams.TeamsViewModel
+import br.ecosynergy_app.teams.viewmodel.TeamsViewModel
 import br.ecosynergy_app.user.UserViewModel
 
 class Teams : Fragment() {

@@ -11,9 +11,9 @@ import androidx.recyclerview.widget.RecyclerView
 import br.ecosynergy_app.R
 
 class DashboardsAdapter(
-    private var dashboardList: List<DashboardItem>, // Assuming you have a list of DashboardItem
+    private var dashboardList: List<DashboardItem>,
     private val activity: FragmentActivity,
-    private val onItemClick: (DashboardItem) -> Unit // Callback for item click
+    private val onItemClick: (DashboardItem) -> Unit
 ) : RecyclerView.Adapter<DashboardsAdapter.ViewHolder>() {
 
     // Update the list of dashboard items

@@ -1,4 +1,4 @@
-package br.ecosynergy_app.teams
+package br.ecosynergy_app.teams.viewmodel
 
 import br.ecosynergy_app.user.UserResponse
 import retrofit2.Response
@@ -14,7 +14,8 @@ interface TeamsService {
     //Basic Team Functions
     @POST("api/team/v1")
     suspend fun createTeam(@Header("Authorization") token: String?,
-                           @Body request: TeamsRequest) : TeamsResponse
+                           @Body request: TeamsRequest
+    ) : TeamsResponse
 
     @DELETE("api/team/v1/{id}")
     suspend fun deleteTeam(@Header("Authorization") token: String?,
@@ -23,7 +24,8 @@ interface TeamsService {
     @PUT("api/team/v1/{id}")
     suspend fun updateTeam(@Header("Authorization") token: String?,
                            @Path("id") id:Int,
-                           @Body request: UpdateRequest) : Result<TeamsResponse>
+                           @Body request: UpdateRequest
+    ) : Result<TeamsResponse>
 
     //Finding Teams
 
@@ -58,7 +60,8 @@ interface TeamsService {
     suspend fun addMember(@Header("Authorization") token: String?,
                           @Path("teamId") teamId: Int,
                           @Path("userId") userId: Int,
-                          @Body request: RoleRequest) : TeamsResponse
+                          @Body request: RoleRequest
+    ) : TeamsResponse
 
     @DELETE("api/team/v1/{teamId}/user/{userId}")
     suspend fun removeMember(@Header("Authorization") token: String?,
@@ -69,5 +72,6 @@ interface TeamsService {
     suspend fun editMemberRole(@Header("Authorization") token: String?,
                              @Path("teamId") teamId: Int,
                              @Path("userId") userId: Int,
-                             @Body request: RoleRequest): TeamsResponse
+                             @Body request: RoleRequest
+    ): TeamsResponse
 }

@@ -27,6 +27,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="?android:attr/textColorPrimary"
                 android:textSize="12sp"
+                android:textStyle="bold"
                 android:layout_marginStart="12dp"
                 android:layout_marginBottom="2dp"/>
 
@@ -47,6 +48,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="?android:attr/textColorPrimary"
                 android:textSize="12sp"
+                android:textStyle="bold"
                 android:layout_marginStart="12dp"
                 android:layout_marginBottom="2dp"/>
 
@@ -67,6 +69,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="?android:attr/textColorPrimary"
                 android:textSize="12sp"
+                android:textStyle="bold"
                 android:layout_marginStart="12dp"
                 android:layout_marginBottom="2dp"/>
 
@@ -86,6 +89,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="?android:attr/textColorPrimary"
+                android:textStyle="bold"
                 android:textSize="12sp"
                 android:layout_marginStart="12dp"
                 android:layout_marginBottom="2dp"/>
@@ -101,88 +105,13 @@
                 android:layout_marginBottom="10dp"/>
 
             <TextView
-                android:text="Metas de Emissões"
-                android:layout_gravity="start"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="?android:attr/textColorPrimary"
-                android:textSize="12sp"
-                android:layout_marginStart="12dp"
-                android:layout_marginBottom="2dp"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <EditText
-                    android:id="@+id/txtDailyGoal"
-                    android:layout_width="0dp"
-                    android:layout_height="60dp"
-                    android:layout_weight="1"
-                    android:inputType="numberDecimal"
-                    android:hint="Diária"
-                    android:background="@drawable/spinner_background"
-                    android:textSize="16sp"
-                    android:paddingStart="15dp"
-                    android:layout_marginBottom="10dp"
-                    android:layout_marginEnd="10dp"/>
-                <EditText
-                    android:id="@+id/txtWeeklyGoal"
-                    android:layout_width="0dp"
-                    android:layout_height="60dp"
-                    android:layout_weight="1"
-                    android:inputType="numberDecimal"
-                    android:hint="Semanal"
-                    android:background="@drawable/spinner_background"
-                    android:textSize="16sp"
-                    android:paddingStart="15dp"
-                    android:layout_marginBottom="10dp"
-                    android:layout_marginEnd="10dp"/>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <EditText
-                    android:id="@+id/txtMonthlyGoal"
-                    android:layout_width="0dp"
-                    android:layout_height="60dp"
-                    android:layout_weight="1"
-                    android:inputType="numberDecimal"
-                    android:hint="Mensal"
-                    android:background="@drawable/spinner_background"
-                    android:textSize="16sp"
-                    android:paddingStart="15dp"
-                    android:layout_marginBottom="10dp"
-                    android:layout_marginEnd="10dp"/>
-
-                <EditText
-                    android:id="@+id/txtAnnualGoal"
-                    android:layout_width="0dp"
-                    android:layout_height="60dp"
-                    android:layout_weight="1"
-                    android:inputType="numberDecimal"
-                    android:hint="Anual"
-                    android:background="@drawable/spinner_background"
-                    android:textSize="16sp"
-                    android:paddingStart="15dp"
-                    android:layout_marginBottom="10dp"
-                    android:layout_marginEnd="10dp"/>
-
-            </LinearLayout>
-
-            <TextView
                 android:text="Atividade/Setor"
                 android:layout_gravity="start"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="?android:attr/textColorPrimary"
                 android:textSize="12sp"
-                android:visibility="visible"
+                android:textStyle="bold"
                 android:layout_marginStart="12dp"
                 android:layout_marginBottom="2dp"/>
 

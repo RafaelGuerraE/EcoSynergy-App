@@ -1,4 +1,4 @@
-package br.ecosynergy_app.teams
+package br.ecosynergy_app.teams.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

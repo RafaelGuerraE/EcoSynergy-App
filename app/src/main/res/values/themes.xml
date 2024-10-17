@@ -16,6 +16,9 @@
         <item name="android:buttonStyle">@style/CustomButtonStyle</item>
 
         <item name="fragmentsBackground">@color/pastel</item>
+
+        <item name="homeBackground">@color/home</item>
+
         <item name="shimmerColor">@color/shimmer</item>
         <item name="spinnerColor">@color/spinnerLight</item>
         <item name="buttonText">@color/white</item>

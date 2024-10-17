@@ -1,7 +1,6 @@
 package br.ecosynergy_app.teams
 
 import android.content.Intent
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,7 +8,6 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import br.ecosynergy_app.R
 import br.ecosynergy_app.home.HomeActivity
@@ -48,8 +46,9 @@ class TeamAdapter(private var teamsList: List<Teams>) :
 
             btnInfo.setOnClickListener {
                 val context = itemView.context
-                val i = Intent(context, TeamOverviewActivity::class.java)
+                val i = Intent(context, TeamInfoActivity::class.java)
                 i.apply {
+                    putExtra("TEAM_INITIAL", drawableLetter)
                     putExtra("TEAM_ID", team.id)
                     putExtra("TEAM_HANDLE", team.handle)
                 }
@@ -60,6 +59,7 @@ class TeamAdapter(private var teamsList: List<Teams>) :
                 val context = itemView.context
                 val i = Intent(context, DashboardActivity::class.java)
                 i.apply {
+                    putExtra("TEAM_NAME", team.name)
                     putExtra("TEAM_INITIAL", drawableLetter)
                     putExtra("TEAM_HANDLE", team.handle)
                 }
