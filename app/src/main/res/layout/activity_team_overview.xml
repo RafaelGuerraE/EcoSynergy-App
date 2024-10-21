@@ -47,19 +47,18 @@
         </com.facebook.shimmer.ShimmerFrameLayout>
 
 
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp">
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp">
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Informações da Equipe"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:textColor="?android:attr/textColorPrimary"
             android:textStyle="bold"/>
 
@@ -108,7 +107,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             tools:text="Ecosynergy"
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:layout_marginStart="5dp"
             android:layout_marginEnd="5dp"
             android:layout_marginBottom="15dp"/>
@@ -128,7 +127,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             tools:text="\@ecosynergy"
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:layout_marginStart="5dp"
             android:layout_marginEnd="5dp"
             android:layout_marginBottom="15dp"/>
@@ -148,7 +147,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             tools:text="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:layout_marginStart="5dp"
             android:layout_marginEnd="5dp"
             android:layout_marginBottom="15dp"/>
@@ -169,7 +168,7 @@
             android:layout_height="wrap_content"
             android:inputType="textNoSuggestions"
             tools:text="(UTC-03:00) Brasilia"
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:layout_marginStart="5dp"
             android:layout_marginEnd="5dp"
             android:layout_marginBottom="15dp"/>
@@ -189,121 +188,13 @@
             android:id="@+id/txtActivities"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:layout_marginStart="5dp"
             android:layout_marginEnd="5dp"
             android:layout_marginBottom="15dp"
             tools:text="Agricultura/Cultivo de Plantas"/>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="10dp">
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Metas de Emissões"
-                android:textSize="20sp"
-                android:textColor="?android:attr/textColorPrimary"
-                android:textStyle="bold"/>
 
-            <LinearLayout
-                android:id="@+id/btnGoals"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_gravity="bottom"
-                android:background="?android:attr/selectableItemBackground"
-                android:focusable="true"
-                android:clickable="true"
-                android:visibility="visible">
-
-                <ImageView
-                    android:layout_width="14dp"
-                    android:layout_height="14dp"
-                    android:layout_gravity="center"
-                    android:src="@drawable/baseline_edit_24"
-                    app:tint="?android:attr/iconTint"
-                    android:layout_marginEnd="2dp"/>
-
-                <TextView
-                    android:layout_gravity="center"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="?android:attr/textColorPrimary"
-                    android:text="Editar Metas"
-                    android:textSize="14sp"
-                    android:layout_marginEnd="10dp"/>
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <TextView
-            android:text="Diária"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:textColor="?android:attr/textColorPrimary"
-            android:textSize="14sp"/>
-
-
-            <TextView
-                android:id="@+id/txtDailyGoal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:text="1000ton"
-                android:textSize="18sp"
-                android:layout_marginStart="2dp"/>
-
-        <TextView
-            android:text="Semanal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:textColor="?android:attr/textColorPrimary"
-            android:textSize="14sp"/>
-
-            <TextView
-                android:id="@+id/txtWeeklyGoal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:text="7000ton"
-                android:textSize="18sp"
-                android:layout_marginStart="2dp"/>
-
-            <TextView
-                android:text="Mensal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:textColor="?android:attr/textColorPrimary"
-                android:textSize="14sp"/>
-
-            <TextView
-                android:id="@+id/txtMonthlyGoal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:text="30000ton"
-                android:textSize="18sp"
-                android:layout_marginStart="2dp"/>
-
-        <TextView
-            android:text="Anual"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:textColor="?android:attr/textColorPrimary"
-            android:textSize="14sp"/>
-
-            <TextView
-                android:id="@+id/txtAnnualGoal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:text="365000ton"
-                android:textSize="18sp"
-                android:layout_marginStart="2dp"/>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnDelete"
@@ -336,8 +227,8 @@
 
         <ImageButton
             android:id="@+id/btnBack"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:contentDescription="BackButton"
             android:src="@drawable/baseline_arrow_back_24"
@@ -352,7 +243,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_gravity="center"
-            android:text="Informações da Equipe"
+            android:text="Visão Geral"
             android:textAlignment="center"
             android:textColor="?android:attr/textColorPrimary"
             android:textSize="16sp"

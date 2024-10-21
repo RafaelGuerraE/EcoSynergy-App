@@ -25,4 +25,8 @@ class TeamsRepository(private val teamsDao: TeamsDao) {
     suspend fun deleteTeamById(teamId: Int) {
         teamsDao.deleteTeamById(teamId)
     }
+
+    suspend fun updateTeamInfo(updatedTeam: Teams) {
+        teamsDao.updateTeam(updatedTeam)
+    }
 }

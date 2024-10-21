@@ -17,6 +17,7 @@ import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import br.ecosynergy_app.R
@@ -156,7 +157,7 @@ class EmailConfirmationActivity : AppCompatActivity() {
                     txtError.visibility = View.VISIBLE
                 }
             } else {
-                LoginActivity().showToast("ERRO NO ENVIO DO CÓDIGO", this)
+                showToast("ERRO NO ENVIO DO CÓDIGO")
             }
         }
 
@@ -311,5 +312,9 @@ class EmailConfirmationActivity : AppCompatActivity() {
 
             showProgressBar(false)
         }
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 }

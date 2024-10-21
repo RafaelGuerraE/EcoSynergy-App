@@ -17,6 +17,7 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.Spinner
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
@@ -42,7 +43,7 @@ class SignUpActivity : AppCompatActivity() {
 
     private var nationality: String = ""
 
-    private var steps: Int = 0
+    private var step: Int = 0
 
     private var nationalityMap: Map<String?, String> = mapOf()
 
@@ -56,7 +57,15 @@ class SignUpActivity : AppCompatActivity() {
     private lateinit var btnSignUp: Button
     private lateinit var progressBarSignUp: ProgressBar
 
+    private lateinit var btnStepBack: TextView
+
     private lateinit var txtNationality: AutoCompleteTextView
+
+    private lateinit var step2: TextView
+    private lateinit var step3: TextView
+    private lateinit var midStep1: View
+    private lateinit var midStep2: View
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -100,10 +109,16 @@ class SignUpActivity : AppCompatActivity() {
         btnSignUp = findViewById(R.id.btnSignUp)
         progressBarSignUp = findViewById(R.id.progressBarSignUp)
 
+        btnStepBack = findViewById(R.id.btnStepBack)
+
+        step2 = findViewById(R.id.step2)
+        step3 = findViewById(R.id.step3)
+        midStep1 = findViewById(R.id.midStep1)
+        midStep2 = findViewById(R.id.midStep2)
+
         val nationalities = loadNationalities()
         nationalityMap = nationalities.associate { it.nationality_br to it.nationality }
         val nationalityBr = nationalities.mapNotNull{ it.nationality_br }
-
 
         val nationalityAdapter =
             ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, nationalityBr)
@@ -119,7 +134,7 @@ class SignUpActivity : AppCompatActivity() {
 
         btnAction.setOnClickListener {
 
-            when (steps) {
+            when (step) {
                 0 -> {
                     showButtonLoading(true, btnAction, progressBarAction)
                     signUpViewModel.usernameExists.removeObservers(this)
@@ -143,9 +158,16 @@ class SignUpActivity : AppCompatActivity() {
 
                             linearInformation.animate().alpha(0f).setDuration(300).withEndAction {
                                 linearInformation.visibility = View.GONE
+                                linearNationalityGender.alpha = 1f
                                 linearNationalityGender.visibility = View.VISIBLE
                             }
-                            steps++
+                            step++
+                            step2.setBackgroundResource(R.drawable.step_circle_active)
+                            step2.setTextColor((ContextCompat.getColor(this, R.color.white)))
+                            midStep1.setBackgroundColor(ContextCompat.getColor(this, R.color.green))
+
+
+                            btnStepBack.visibility = View.VISIBLE
                         }
                         showButtonLoading(false, btnAction, progressBarAction)
                     }
@@ -156,6 +178,7 @@ class SignUpActivity : AppCompatActivity() {
                     val genderSelected = spinnerGender.selectedItem.toString()
                     val nationalitySelected: String = txtNationality.text.toString()
 
+                    showButtonLoading(false, btnAction, progressBarAction)
                     if (nationalitySelected.isEmpty() && genderSelected == "Selecione uma opção") {
                         autoError.visibility = TextView.VISIBLE
                         autoError.text = "Selecione uma nacionalidade"
@@ -185,15 +208,24 @@ class SignUpActivity : AppCompatActivity() {
                         else -> "PNS"
                     }
 
+
+                    step3.setBackgroundResource(R.drawable.step_circle_active)
+                    step3.setTextColor((ContextCompat.getColor(this, R.color.white)))
+                    midStep2.setBackgroundColor(ContextCompat.getColor(this, R.color.green))
+
                     linearNationalityGender.animate().alpha(0f).setDuration(300).withEndAction {
                         linearNationalityGender.visibility = View.GONE
+                        linearPasswords.alpha = 1f
                         linearPasswords.visibility = View.VISIBLE
                     }
 
                     btnAction.animate().alpha(0f).setDuration(300).withEndAction {
                         btnActionContainer.visibility = View.GONE
+                        btnSignUpContainer.alpha = 1f
                         btnSignUpContainer.visibility = View.VISIBLE
                     }
+
+                    step++
                 }
             }
 
@@ -276,6 +308,44 @@ class SignUpActivity : AppCompatActivity() {
                 putExtra("GENDER", gender)
             }
             startActivity(i)
+        }
+
+        btnStepBack.setOnClickListener{
+            when(step){
+                1->{
+                    btnStepBack.visibility = View.GONE
+                    linearNationalityGender.animate().alpha(0f).setDuration(300).withEndAction {
+                        linearInformation.visibility = View.VISIBLE
+                        linearInformation.alpha = 1f
+                        linearNationalityGender.visibility = View.GONE
+                    }
+                    step2.setBackgroundResource(R.drawable.step_circle_inactive)
+                    step2.setTextColor((ContextCompat.getColor(this, R.color.black)))
+                    midStep1.setBackgroundColor(ContextCompat.getColor(this, R.color.gray))
+
+
+                    step--
+                }
+                2->{
+                    step3.setBackgroundResource(R.drawable.step_circle_inactive)
+                    step3.setTextColor((ContextCompat.getColor(this, R.color.black)))
+                    midStep2.setBackgroundColor(ContextCompat.getColor(this, R.color.gray))
+
+                    linearNationalityGender.animate().alpha(0f).setDuration(300).withEndAction {
+                        linearNationalityGender.visibility = View.VISIBLE
+                        linearNationalityGender.alpha = 1f
+                        linearPasswords.visibility = View.GONE
+                    }
+
+                    btnSignUp.animate().alpha(0f).setDuration(300).withEndAction {
+                        btnSignUpContainer.visibility = View.GONE
+                        btnActionContainer.alpha = 1f
+                        btnActionContainer.visibility = View.VISIBLE
+                    }
+
+                    step--
+                }
+            }
         }
     }
 

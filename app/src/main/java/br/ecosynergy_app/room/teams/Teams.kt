@@ -43,7 +43,7 @@ fun TeamsResponse.toTeam(): Teams {
         timeZone = this.timeZone,
         createdAt = this.createdAt,
         updatedAt = this.updatedAt,
-        linksRel = this.links.first().rel,
-        linksHref = this.links.first().href
+        linksRel = this.links?.self?.href ?: "Unknown", // Default value in case of null
+        linksHref = this.links?.self?.href ?: "Unknown"
     )
 }

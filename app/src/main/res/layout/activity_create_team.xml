@@ -3,41 +3,99 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".teams.CreateTeamBottomSheet"
+    tools:context=".teams.CreateTeamActivity"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
 <ScrollView
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:layout_marginTop="60dp">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_gravity="start"
-        android:gravity="end">
-
-        <ImageButton
-            android:id="@+id/btnClose"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginEnd="15dp"
-            android:layout_marginTop="30dp"
-            android:layout_marginBottom="15dp"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:gravity="top"
-            android:scaleType="fitXY"
-            android:src="@drawable/baseline_close_24"
-            app:tint="?android:attr/iconTint" />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_gravity="center"
-        android:gravity="center"
-        android:layout_marginStart="15dp"
-        android:layout_marginEnd="15dp">
+        android:gravity="center">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:padding="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_gravity="center"
+                android:gravity="center">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/step_circle_active"
+                    android:gravity="center"
+                    android:text="1"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp"/>
+
+                <View
+                    android:id="@+id/midStep1"
+                    android:layout_width="70dp"
+                    android:layout_height="4dp"
+                    android:background="@color/gray"/>
+
+                <TextView
+                    android:id="@+id/step2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/step_circle_inactive"
+                    android:gravity="center"
+                    android:text="2"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"/>
+            </LinearLayout>
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="center"
+            android:gravity="center">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Dados"/>
+
+            <View
+                android:layout_width="70dp"
+                android:layout_height="4dp"
+                android:background="@color/transparent"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Metas"/>
+
+        </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity=""
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            android:visibility="visible">
 
         <TextView
             android:text="Nome da Equipe"
@@ -46,6 +104,7 @@
             android:layout_height="wrap_content"
             android:textColor="?android:attr/textColorPrimary"
             android:textSize="12sp"
+            android:textStyle="bold"
             android:layout_marginStart="12dp"
             android:layout_marginBottom="2dp"/>
 
@@ -68,6 +127,7 @@
             android:layout_height="wrap_content"
             android:textColor="?android:attr/textColorPrimary"
             android:textSize="12sp"
+            android:textStyle="bold"
             android:layout_marginStart="12dp"
             android:layout_marginBottom="2dp"/>
 
@@ -90,6 +150,7 @@
             android:layout_height="wrap_content"
             android:textColor="?android:attr/textColorPrimary"
             android:textSize="12sp"
+            android:textStyle="bold"
             android:layout_marginStart="12dp"
             android:layout_marginBottom="2dp"/>
 
@@ -112,6 +173,7 @@
             android:layout_height="wrap_content"
             android:textColor="?android:attr/textColorPrimary"
             android:textSize="12sp"
+            android:textStyle="bold"
             android:layout_marginStart="12dp"
             android:layout_marginBottom="2dp"/>
 
@@ -134,6 +196,7 @@
             android:layout_height="wrap_content"
             android:textColor="?android:attr/textColorPrimary"
             android:textSize="12sp"
+            android:textStyle="bold"
             android:visibility="visible"
             android:layout_marginStart="12dp"
             android:layout_marginBottom="2dp"/>
@@ -146,6 +209,17 @@
             android:background="@drawable/spinner_background"
             android:layout_marginBottom="20dp"/>
 
+    </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearGoals"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            android:visibility="gone">
+
         <TextView
             android:text="Metas de Emissões"
             android:layout_gravity="start"
@@ -155,8 +229,6 @@
             android:textSize="16sp"
             android:textStyle="bold"
             android:layout_marginBottom="10dp"/>
-
-
 
         <EditText
             android:id="@+id/txtDailyGoal"
@@ -201,19 +273,72 @@
             android:textSize="16sp"
             android:paddingStart="15dp"
             android:layout_marginBottom="10dp"/>
+</LinearLayout>
 
-        <Button
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnCreateTeam"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:text="CRIAR EQUIPE"
-            style="@style/CustomButtonStyle"
-            android:textStyle="bold"/>
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:text="Próximo Passo"
+            app:rippleColor="?attr/colorControlHighlight"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            />
 
-    </LinearLayout>
+        <TextView
+            android:id="@+id/btnStepBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Voltar passo"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?android:attr/selectableItemBackground"
+            android:layout_marginTop="10dp"
+            android:visibility="gone"/>
+
+
     </LinearLayout>
 
 </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        android:layout_gravity="top"
+        android:background="?android:attr/colorBackground">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:text="Criação de Equipe"
+            android:textAlignment="center"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginStart="60dp"/>
+
+
+
+        <ImageButton
+            android:id="@+id/btnClose"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="CloseButton"
+            android:src="@drawable/baseline_close_24"
+            android:scaleType="fitXY"
+            app:tint="?android:attr/iconTint"
+            android:layout_margin="15dp"
+            android:layout_gravity="center_vertical"
+            android:clickable="true"/>
+
+    </LinearLayout>
 
     <ProgressBar
         android:id="@+id/loadingProgressBar"
@@ -222,12 +347,4 @@
         android:layout_centerInParent="true"
         android:visibility="gone" />
 
-
-    <View
-        android:layout_width="40dp"
-        android:layout_height="5dp"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/image_shape"
-        android:backgroundTint="?attr/shimmerColor"
-        android:layout_centerHorizontal="true"/>
 </RelativeLayout>

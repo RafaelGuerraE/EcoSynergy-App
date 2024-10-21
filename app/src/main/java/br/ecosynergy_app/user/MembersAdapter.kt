@@ -2,6 +2,7 @@ package br.ecosynergy_app.user
 
 import android.app.AlertDialog
 import android.content.Intent
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import br.ecosynergy_app.R
 import br.ecosynergy_app.home.HomeActivity
 import br.ecosynergy_app.room.teams.Members
+import br.ecosynergy_app.room.teams.TeamsRepository
 import br.ecosynergy_app.teams.viewmodel.RoleRequest
 import br.ecosynergy_app.teams.TeamMembersActivity
 import br.ecosynergy_app.teams.viewmodel.TeamsViewModel
@@ -26,7 +28,6 @@ class MembersAdapter(
     private var accessToken: String,
     private val teamsViewModel: TeamsViewModel,
     private val activity: FragmentActivity,
-    private val fragment: TeamMembersActivity,
     private val memberIds: MutableList<Int>
 ) : RecyclerView.Adapter<MembersAdapter.ViewHolder>() {
 
@@ -40,17 +41,17 @@ class MembersAdapter(
 
     fun removeMember(memberId: Int) {
         memberIds.remove(memberId)
-        membersList = membersList.filter { it.userId != memberId}
+        membersList = membersList.filter { it.userId != memberId }
         notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.members_layout, parent, false)
-        return ViewHolder(view, membersList, memberRoles, currentUserRole, teamId, userId, accessToken, teamsViewModel, activity,fragment)
+        return ViewHolder(view, membersList, memberRoles, currentUserRole, teamId, userId, accessToken, teamsViewModel, activity)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(membersList[position], memberRoles[position])
+        holder.bind(membersList[position], memberRoles[position], position)
     }
 
     override fun getItemCount(): Int = membersList.size
@@ -64,8 +65,7 @@ class MembersAdapter(
         private var userId: Int,
         private var accessToken: String,
         private val teamsViewModel: TeamsViewModel,
-        private val activity: FragmentActivity,
-        private val fragment: TeamMembersActivity
+        private val activity: FragmentActivity
     ) : RecyclerView.ViewHolder(itemView) {
 
         private val txtUsername: TextView = itemView.findViewById(R.id.txtUsername)
@@ -79,33 +79,32 @@ class MembersAdapter(
         private var username: String = ""
         private var memberId: Int = 0
 
-        fun bind(user: Members, role: String) {
+        fun bind(user: Members, role: String, position: Int) {
             username = user.username
             memberId = user.userId
 
             txtUsername.text = "@$username"
-
             txtRole.text = when (role) {
+                "FOUNDER" -> "Fundador"
                 "ADMINISTRATOR" -> "Administrador"
                 "COMMON_USER" -> "Membro"
                 else -> "Outro Cargo"
             }
 
-            if (userId == memberId){
-                txtFullname.text = user.fullName + " (Você)"
+            if (userId == memberId) {
+                txtFullname.text = "${user.fullName} (Você)"
                 btnExitTeam.visibility = View.VISIBLE
-            }else{
+            } else {
                 txtFullname.text = user.fullName
                 btnExitTeam.visibility = View.GONE
             }
 
-            imgUser.setImageResource(HomeActivity().getDrawableForLetter(user.fullName.first()))
+            imgUser .setImageResource(HomeActivity().getDrawableForLetter(user.fullName.first()))
 
-            if (currentUserRole == "ADMINISTRATOR" && userId != memberId) {
+            if ((currentUserRole == "ADMINISTRATOR" || currentUserRole == "FOUNDER") && userId != memberId) {
                 btnEditRole.visibility = View.VISIBLE
                 btnRemove.visibility = View.VISIBLE
-            }
-            else {
+            } else {
                 btnEditRole.visibility = View.GONE
                 btnRemove.visibility = View.GONE
             }
@@ -115,14 +114,14 @@ class MembersAdapter(
             }
 
             btnEditRole.setOnClickListener {
-                editUserRole()
+                editUserRole(txtRole, position)
             }
 
-            btnExitTeam.setOnClickListener{
+            btnExitTeam.setOnClickListener {
                 exitTeam()
             }
 
-            imgUser.setOnClickListener{
+            imgUser.setOnClickListener {
                 val i = Intent(activity, UserInfoActivity::class.java)
                 i.apply {
                     putExtra("USERNAME", user.username)
@@ -130,21 +129,24 @@ class MembersAdapter(
                     putExtra("EMAIL", user.email)
                     putExtra("GENDER", user.gender)
                     putExtra("NATIONALITY", user.nationality)
-                    putExtra("FULLNAME", user.fullName)
                     putExtra("CREATED", user.createdAt)
                 }
                 activity.startActivity(i)
             }
         }
 
-        private fun exitTeam(){
+        private fun exitTeam() {
             val builder = AlertDialog.Builder(itemView.context)
             builder.setTitle("Você deseja sair da equipe atual?")
             builder.setMessage("Você será removido da equipe atual.")
 
             builder.setPositiveButton("Sim") { dialog, _ ->
                 teamsViewModel.removeMember(accessToken, teamId, userId)
+                teamsViewModel.deleteTeamFromDB(teamId)
                 dialog.dismiss()
+                activity.setResult(FragmentActivity.RESULT_OK, Intent().apply {
+                    putExtra("TEAM_ID", teamId)
+                })
                 activity.finish()
             }
 
@@ -156,7 +158,7 @@ class MembersAdapter(
             dialog.show()
         }
 
-        private fun removeUser(){
+        private fun removeUser() {
             val builder = AlertDialog.Builder(itemView.context)
             builder.setTitle("Você deseja remover @$username?")
             builder.setMessage("Este membro será removido da equipe atual.")
@@ -164,8 +166,7 @@ class MembersAdapter(
             builder.setPositiveButton("Sim") { dialog, _ ->
                 teamsViewModel.removeMember(accessToken, teamId, memberId)
                 dialog.dismiss()
-                fragment.membersAdapter.removeMember(memberId)
-              //  LoginActivity().showSnackBar("Usuário removido com sucesso", "FECHAR", R.color.greenDark, activity)
+                (activity as TeamMembersActivity).membersAdapter.removeMember(memberId)
             }
 
             builder.setNegativeButton("Cancelar") { dialog, _ ->
@@ -176,34 +177,34 @@ class MembersAdapter(
             dialog.show()
         }
 
-        private fun editUserRole() {
+        private fun editUserRole(textView: TextView, position: Int) {
             val items = arrayOf("Administrador", "Membro")
 
             val builder = AlertDialog.Builder(itemView.context)
             builder.setTitle("Alterar o cargo do membro @$username")
 
             builder.setItems(items) { dialog, which ->
-
-                when (which) {
-                    0 -> {
-                        teamsViewModel.editMemberRole(accessToken, teamId, memberId, RoleRequest("ADMINISTRATOR"))
-                    }
-
-                    1 -> {
-                        teamsViewModel.editMemberRole(accessToken, teamId, memberId, RoleRequest("COMMON_USER"))
-                    }
+                val newRole = when (which) {
+                    0 -> "ADMINISTRATOR"
+                    1 -> "COMMON_USER"
+                    else -> memberRoles[position]
                 }
+
+                memberRoles = memberRoles.toMutableList().apply {
+                    set(position, newRole)
+                }
+
+                teamsViewModel.editMemberRole(accessToken, teamId, memberId, RoleRequest(newRole))
+
+                textView.text = newRole
+
+                (activity as TeamMembersActivity).membersAdapter.updateList(membersList, memberRoles)
+
                 dialog.dismiss()
-                fragment.membersAdapter.updateList(membersList, memberRoles)
             }
 
             val dialog: AlertDialog = builder.create()
             dialog.show()
         }
     }
-
-
-}
-
-fun showToast(message: String) {
 }

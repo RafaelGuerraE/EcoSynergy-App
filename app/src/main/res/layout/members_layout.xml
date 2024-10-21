@@ -69,13 +69,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text=""
-                tools:text="Administrador"
+                tools:text="Fundador"
                 android:textStyle="bold"
                 android:textSize="14sp"
                 android:textColor="?android:attr/textColorSecondary"
                 android:layout_gravity="bottom"/>
-
-
 
 
         </LinearLayout>

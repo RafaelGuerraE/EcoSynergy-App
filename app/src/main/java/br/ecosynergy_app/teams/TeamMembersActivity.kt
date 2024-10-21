@@ -42,9 +42,9 @@ class TeamMembersActivity : AppCompatActivity() {
 
     private lateinit var btnBack : ImageButton
 
-    private var membersList: List<Members> = listOf()
+    private var membersList: MutableList<Members> = mutableListOf()
     private var memberIds: MutableList<Int> = mutableListOf()
-    private var memberRoles: List<String> = listOf()
+    private var memberRoles: MutableList<String> = mutableListOf()
     private var currentUserRole: String? = ""
 
     private var userId: Int = 0
@@ -80,6 +80,7 @@ class TeamMembersActivity : AppCompatActivity() {
         teamHandle = intent.getStringExtra("TEAM_HANDLE").toString()
         userId = intent.getIntExtra("USER_ID", 0)
         accessToken = intent.getStringExtra("ACCESS_TOKEN").toString()
+        userRole = intent.getStringExtra("USER_ROLE").toString()
 
         shimmerMembers = findViewById(R.id.shimmerMembers)
         recycleMembers = findViewById(R.id.recycleMembers)
@@ -88,20 +89,7 @@ class TeamMembersActivity : AppCompatActivity() {
         swipeRefresh = findViewById(R.id.swipeRefresh)
         btnBack = findViewById(R.id.btnBack)
 
-        recycleMembers.layoutManager = LinearLayoutManager(this)
-        membersAdapter = MembersAdapter(
-            emptyList(),
-            emptyList(),
-            currentUserRole,
-            teamId,
-            userId,
-            accessToken,
-            teamsViewModel,
-            this,
-            this,
-            memberIds
-        )
-        recycleMembers.adapter = membersAdapter
+        btnAddMember.visibility = if (userRole == "ADMINISTRATOR") View.VISIBLE else View.GONE
 
         observeMembersInfo()
         setupSwipeRefresh()
@@ -136,60 +124,56 @@ class TeamMembersActivity : AppCompatActivity() {
     }
 
     private fun observeMembersInfo() {
-        teamsViewModel.allMembersDB.observe(this) { membersInfo ->
-            val userMember = membersInfo.find { it.userId == userId }
-            userRole = userMember?.role.toString()
-            if (userRole == "ADMINISTRATOR") {
-                btnAddMember.visibility = View.VISIBLE
-            } else {
-                btnAddMember.visibility = View.GONE
-            }
-        }
+        shimmerMembers.visibility = View.VISIBLE
+        recycleMembers.visibility = View.GONE
 
         teamsViewModel.getMembersByTeamId(teamId)
         teamsViewModel.allMembersDB.observe(this) { membersResponse ->
+
+            // Update lists with the new data
             memberIds = membersResponse.map { it.userId }.toMutableList()
-            memberRoles = membersResponse.map { it.role }
-            membersList = membersResponse
+            memberRoles = membersResponse.map { it.role }.toMutableList()
+            membersList = membersResponse.toMutableList()
 
             val userMember = membersResponse.find { it.userId == userId }
             currentUserRole = userMember?.role
 
-            shimmerMembers.visibility = View.VISIBLE
-            recycleMembers.visibility = View.GONE
 
-            val pairedMembers = membersResponse.map { member ->
-                val role = membersResponse.find { it.userId.toString() == member.userId.toString() }?.role
-                    ?: "Unknown"
-                Pair(member, role)
-            }.sortedBy { it.first.fullName }
+            if (membersList.isNotEmpty()) {
+                initializeAdapter()
+            }
 
-            val sortedUsers = pairedMembers.map { it.first }
-            val sortedRoles = pairedMembers.map { it.second }
-
-            membersAdapter = MembersAdapter(
-                sortedUsers,
-                sortedRoles,
-                currentUserRole,
-                teamId,
-                userId,
-                accessToken,
-                teamsViewModel,
-                this,
-                this,
-                memberIds
-            )
-            recycleMembers.adapter = membersAdapter
+            membersAdapter.updateList(membersList, memberRoles)
 
             shimmerMembers.animate().alpha(0f).setDuration(300).withEndAction {
                 shimmerMembers.stopShimmer()
-                shimmerMembers.animate().alpha(1f).setDuration(300)
                 shimmerMembers.visibility = View.GONE
                 recycleMembers.visibility = View.VISIBLE
             }
-
         }
     }
+
+    private fun initializeAdapter() {
+        recycleMembers.layoutManager = LinearLayoutManager(this)
+
+        Log.d("TeamMembersActivity", "MembersList: $membersList")
+        Log.d("TeamMembersActivity", "MemberRoles: $memberRoles")
+
+        membersAdapter = MembersAdapter(
+            membersList,
+            memberRoles,
+            currentUserRole,
+            teamId,
+            userId,
+            accessToken,
+            teamsViewModel,
+            this,
+            memberIds
+        )
+
+        recycleMembers.adapter = membersAdapter
+    }
+
 
     private fun filterMembers(query: String) {
         val filteredList = membersList.filter {

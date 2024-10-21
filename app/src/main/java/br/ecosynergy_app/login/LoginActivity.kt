@@ -207,8 +207,8 @@ class LoginActivity : AppCompatActivity() {
     }
 
 
-    fun showToast(message: String, context: Context) {
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
     private fun setLoggedIn(isLoggedIn: Boolean) {

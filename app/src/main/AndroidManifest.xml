@@ -92,7 +92,10 @@
             android:name=".teams.TeamInfoActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustResize" />
-
+        <activity
+            android:name=".teams.CreateTeamActivity"
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".teams.TeamOverviewActivity"
             android:exported="true"
@@ -104,7 +107,7 @@
             android:windowSoftInputMode="adjustResize" />
 
         <service
-            android:name=".NotificationService"
+            android:name=".room.NotificationService"
             android:exported="true" />
 
         <meta-data

@@ -1,5 +1,6 @@
 package br.ecosynergy_app.home.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,7 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import br.ecosynergy_app.R
-import br.ecosynergy_app.teams.CreateTeamBottomSheet
+import br.ecosynergy_app.teams.CreateTeamActivity
 import br.ecosynergy_app.teams.TeamAdapter
 import br.ecosynergy_app.teams.viewmodel.TeamsViewModel
 import br.ecosynergy_app.user.UserViewModel
@@ -61,17 +62,15 @@ class Teams : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         observeTeamsData()
+        observeUserData()
         btnAddTeam.setOnClickListener {
-            val createTeamBottomSheet = CreateTeamBottomSheet()
-
-            val bundle = Bundle().apply {
-                putInt("USER_ID", userId)
-                putString("USER_IDENTIFIER", userIdentifier)
-                putString("ACCESS_TOKEN", accessToken)
+            val i = Intent(requireContext(), CreateTeamActivity::class.java)
+            i.apply {
+                putExtra("USER_ID", userId)
+                putExtra("USER_IDENTIFIER", userIdentifier)
+                putExtra("ACCESS_TOKEN", accessToken)
             }
-
-            createTeamBottomSheet.arguments = bundle
-            createTeamBottomSheet.show(parentFragmentManager, "CreateTeamBottomSheet")
+            startActivity(i)
         }
         setupSwipeRefresh()
     }
@@ -85,7 +84,7 @@ class Teams : Fragment() {
     }
 
     private fun observeTeamsData() {
-        teamsViewModel.getAllTeamsFromDB()
+        //teamsViewModel.getAllTeamsFromDB()
         teamsViewModel.allTeamsDB.observe(viewLifecycleOwner) { teamData ->
             teamsAdapter = TeamAdapter(teamData)
             recyclerView.adapter = teamsAdapter
@@ -99,6 +98,7 @@ class Teams : Fragment() {
 
     private fun setupSwipeRefresh() {
         swipeRefresh.setOnRefreshListener {
+            observeTeamsData()
             swipeRefresh.isRefreshing = false
         }
     }

@@ -16,8 +16,8 @@ interface MembersDao {
     @Update
     suspend fun updateMember(member: Members)
 
-    @Delete
-    suspend fun deleteMember(member: Members)
+    @Query("DELETE FROM members WHERE userId = :userId AND teamId = :teamId")
+    suspend fun deleteMember(userId: Int, teamId: Int)
 
     @Query("DELETE FROM members")
     suspend fun deleteAllMembers()
@@ -30,5 +30,8 @@ interface MembersDao {
 
     @Query("SELECT * FROM members")
     suspend fun getAllMembers(): List<Members>
+
+    @Query("UPDATE members SET role = :newRole WHERE userId = :userId AND teamId = :teamId")
+    suspend fun updateUserRole(userId: Int, teamId: Int, newRole: String)
 }
 

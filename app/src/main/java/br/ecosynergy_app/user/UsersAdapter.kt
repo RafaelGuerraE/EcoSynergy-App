@@ -89,7 +89,7 @@ class UsersAdapter(
                 //activity.startActivity(i)
             }
 
-            Log.d("UsersAdapter", "MemberIDS: $memberIds")
+            //Log.d("UsersAdapter", "MemberIDS: $memberIds")
 
             if (memberIds.contains(memberId.toString())) {
                 btnInvite.visibility = View.GONE

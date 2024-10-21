@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 
 @Dao
 interface TeamsDao {
@@ -26,4 +27,6 @@ interface TeamsDao {
     @Query("DELETE FROM teams WHERE id = :teamId")
     suspend fun deleteTeamById(teamId: Int)
 
+    @Update
+    suspend fun updateTeam(team: Teams)
 }

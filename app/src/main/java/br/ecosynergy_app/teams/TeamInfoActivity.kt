@@ -3,8 +3,11 @@ package br.ecosynergy_app.teams
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.ImageButton
 import android.widget.LinearLayout
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import br.ecosynergy_app.R
@@ -30,6 +33,9 @@ class TeamInfoActivity : AppCompatActivity() {
     private var teamHandle: String = ""
     private var userRole: String = ""
     private var teamInitial: Int = 0
+
+    private lateinit var teamOverviewLauncher: ActivityResultLauncher<Intent>
+    private lateinit var teamMembersLauncher: ActivityResultLauncher<Intent>
 
     private val userRepository = UserRepository(AppDatabase.getDatabase(this).userDao())
 
@@ -61,6 +67,31 @@ class TeamInfoActivity : AppCompatActivity() {
         teamHandle = intent.getStringExtra("TEAM_HANDLE").toString()
         teamInitial = intent.getIntExtra("TEAM_INITIAL", 0)
 
+        teamOverviewLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                val deletedTeamId = result.data?.getIntExtra("TEAM_ID", -1) ?: -1
+                if (deletedTeamId != -1) {
+                    setResult(RESULT_OK, Intent().apply {
+                        putExtra("TEAM_ID", deletedTeamId)
+                    })
+                    finish()
+                }
+            }
+        }
+
+        teamMembersLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                val exitedTeamId = result.data?.getIntExtra("TEAM_ID", -1) ?: -1
+                if (exitedTeamId != -1) {
+                    setResult(RESULT_OK, Intent().apply {
+                        putExtra("TEAM_ID", exitedTeamId)
+                    })
+                    finish()
+                }
+            }
+        }
+
+
         btnClose = findViewById(R.id.btnClose)
         imgTeam = findViewById(R.id.imgTeam)
         areaOverview = findViewById(R.id.areaOverview)
@@ -77,15 +108,18 @@ class TeamInfoActivity : AppCompatActivity() {
                 putExtra("TEAM_ID", teamId)
                 putExtra("TEAM_HANDLE", teamHandle)
                 putExtra("ACCESS_TOKEN", accessToken)
+                putExtra("USER_ROLE", userRole)
             }
-            startActivity(i)
+            teamOverviewLauncher.launch(i)
         }
+
 
         areaGoals.setOnClickListener {
             val i = Intent(this, GoalsActivity::class.java).apply {
                 putExtra("TEAM_ID", teamId)
                 putExtra("TEAM_HANDLE", teamHandle)
                 putExtra("ACCESS_TOKEN", accessToken)
+                putExtra("USER_ROLE", userRole)
             }
             startActivity(i)
         }
@@ -94,9 +128,11 @@ class TeamInfoActivity : AppCompatActivity() {
             val i = Intent(this, TeamMembersActivity::class.java).apply {
                 putExtra("TEAM_ID", teamId)
                 putExtra("TEAM_HANDLE", teamHandle)
+                putExtra("USER_ID", userId)
                 putExtra("ACCESS_TOKEN", accessToken)
+                putExtra("USER_ROLE", userRole)
             }
-            startActivity(i)
+            teamMembersLauncher.launch(i)
         }
 
         areaInvites.setOnClickListener {
@@ -109,7 +145,18 @@ class TeamInfoActivity : AppCompatActivity() {
         }
 
 
-        observeUserData {}
+        observeUserData {
+            observeMembersInfo()
+        }
+    }
+
+    private fun observeMembersInfo() {
+        teamsViewModel.getMembersByTeamId(teamId)
+        teamsViewModel.allMembersDB.observe(this) { membersInfo ->
+            val userMember = membersInfo.find { it.userId == userId }
+            userRole = userMember?.role.toString()
+            Log.d("TeamInfoActivity", "UserRole: $userRole")
+        }
     }
 
     private fun observeUserData(onComplete: () -> Unit) {

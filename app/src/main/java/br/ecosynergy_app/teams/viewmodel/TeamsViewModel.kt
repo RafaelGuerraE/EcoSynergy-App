@@ -5,7 +5,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import br.ecosynergy_app.ApiError
 import br.ecosynergy_app.room.teams.Members
 import br.ecosynergy_app.room.teams.MembersRepository
 import br.ecosynergy_app.room.teams.Teams
@@ -15,6 +14,7 @@ import br.ecosynergy_app.user.UserResponse
 import com.google.gson.Gson
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
+import retrofit2.Response
 import java.io.IOException
 
 class TeamsViewModel(
@@ -28,6 +28,9 @@ class TeamsViewModel(
 
     private val _teamResult = MutableLiveData<Result<TeamsResponse>>()
     val teamResult: LiveData<Result<TeamsResponse>> get() = _teamResult
+
+    private val _updateResponse = MutableLiveData<Result<Response<TeamsResponse>>>()
+    val updateResponse: LiveData<Result<Response<TeamsResponse>>> get() = _updateResponse
 
     private val _deleteResult = MutableLiveData<Result<Unit>>()
     val deleteResult: LiveData<Result<Unit>> get() = _deleteResult
@@ -63,9 +66,9 @@ class TeamsViewModel(
         }
     }
 
-    fun findTeamByHandle(token: String?, handle: String?) {
+    fun findTeamByHandle(accessToken: String, handle: String) {
         makeRequest(
-            request = { service.findTeamByHandle("Bearer $token", handle) },
+            request = { service.findTeamByHandle("Bearer $accessToken", handle) },
             onResult = { _teamResult.value = it }
         )
     }
@@ -86,68 +89,154 @@ class TeamsViewModel(
         }
     }
 
-    fun searchTeamByPartialHandle(token: String?, handle: String) {
+    fun searchTeamByPartialHandle(accessToken: String, handle: String) {
         makeRequest(
-            request = { service.searchTeamByPartialHandle("Bearer $token", handle) },
+            request = { service.searchTeamByPartialHandle("Bearer $accessToken", handle) },
             onResult = { _teamResult.value = it }
         )
     }
 
-    fun editMemberRole(token: String?, teamId: Int, userId: Int, request: RoleRequest) {
-        makeRequest(
-            request = { service.editMemberRole("Bearer $token", teamId, userId, request) },
-            onResult = { _teamResult.value = it }
-        )
-        Log.d("TeamsViewModel", "Team ID: $teamId, MemberID: $userId, Request: $request")
-    }
-
-    fun findTeamById(token: String?, id: String) {
-        makeRequest(
-            request = { service.findTeamById("Bearer $token", id) },
-            onResult = { _teamResult.value = it }
-        )
-    }
-
-    fun createTeam(token: String?, request: TeamsRequest) {
-        makeRequest(
-            request = { service.createTeam("Bearer $token", request) },
-            onResult = { _teamResult.value = it }
-        )
-    }
-
-    fun updateTeam(token: String?, id: Int, request: UpdateRequest) {
+    fun editMemberRole(accessToken: String, teamId: Int, userId: Int, request: RoleRequest) {
         viewModelScope.launch {
             try {
-                val response = service.updateTeam("Bearer $token", id, request)
-                Log.d("TeamsViewModel", "UpdateTeam Successful")
-                _teamResult.value = response
-            }catch (e: HttpException) {
-                Log.e("TeamsViewModel", "HTTP error while UpdateTeam", e)
+                service.editMemberRole("Bearer $accessToken", teamId, userId, request)
+                Log.d("TeamsViewModel", "editMemberRole Successful")
+
+                membersRepository.updateUserRole(userId, teamId, request.role)
+
+            } catch (e: HttpException) {
+                Log.e("TeamsViewModel", "HTTP error while editMemberRole", e)
                 _teamsResult.value = Result.failure(e)
 
             } catch (e: IOException) {
-                Log.e("UserViewModel", "Network error during UpdateTeam", e)
+                Log.e("UserViewModel", "Network error during editMemberRole", e)
                 _teamResult.value = Result.failure(e)
             } catch (e: Exception) {
-                Log.e("TeamsViewModel", "Error while UpdateTeam", e)
+                Log.e("TeamsViewModel", "Error while editMemberRole", e)
                 _teamsResult.value = Result.failure(e)
             }
         }
     }
 
-    fun addMember(token: String?, teamId: Int, userId: Int, request: RoleRequest) {
+    fun findTeamById(accessToken: String, id: String) {
+        makeRequest(
+            request = { service.findTeamById("Bearer $accessToken", id) },
+            onResult = { _teamResult.value = it }
+        )
+    }
+
+    fun createTeam(accessToken: String, request: TeamsRequest) {
         viewModelScope.launch {
             try {
-                val response = service.addMember("Bearer $token", teamId, userId, request)
+                val response = service.createTeam("Bearer $accessToken", request)
+                Log.d("TeamsViewModel", "API - createTeam Successful")
+
+                insertTeamDB(
+                    Teams(
+                        id = response.id,
+                        handle = response.handle,
+                        name = response.name,
+                        description = response.description,
+                        activityId = response.activity.id,
+                        activityName = response.activity.name,
+                        activitySector = response.activity.sector,
+                        dailyGoal = response.dailyGoal,
+                        weeklyGoal = response.weeklyGoal,
+                        monthlyGoal = response.monthlyGoal,
+                        annualGoal = response.annualGoal,
+                        timeZone = response.timeZone,
+                        createdAt = response.createdAt,
+                        updatedAt = response.updatedAt,
+                        linksRel = response.links.self.href,
+                        linksHref = response.links.self.href
+                    )
+                )
+            } catch (e: HttpException) {
+                Log.e("TeamsViewModel", "HTTP error while createTeam", e)
+                _teamsResult.value = Result.failure(e)
+
+            } catch (e: IOException) {
+                Log.e("UserViewModel", "Network error during createTeam", e)
+                _teamResult.value = Result.failure(e)
+            } catch (e: Exception) {
+                Log.e("TeamsViewModel", "Error while createTeam", e)
+                _teamsResult.value = Result.failure(e)
+            }
+        }
+    }
+
+    private fun insertTeamDB(team: Teams){
+        viewModelScope.launch {
+            try {
+                val response = teamsRepository.insertTeam(team)
+
+                Log.d("TeamsViewModel", "DB - InsertTeam Successful")
+            }catch (e: Exception) {
+                Log.e("TeamsViewModel", "Error while InsertTeamDB", e)
+                _teamsResult.value = Result.failure(e)
+            }
+        }
+    }
+
+    fun updateTeam(accessToken: String, id: Int, request: UpdateRequest) {
+        viewModelScope.launch {
+            try {
+                val result = service.updateTeam("Bearer $accessToken", id, request)
+                _updateResponse.value = Result.success(result)
+                if (result.isSuccessful) {
+                    val response = result.body()
+                    if (response != null) {
+                        Log.d("TeamsViewModel", "API - UpdateTeam Successful: $response")
+
+                        val team = Teams(
+                            id = response.id,
+                            handle = response.handle,
+                            name = response.name,
+                            description = response.description,
+                            activityId = response.activity.id,
+                            activityName = response.activity.name,
+                            activitySector = response.activity.sector,
+                            dailyGoal = response.dailyGoal,
+                            weeklyGoal = response.weeklyGoal,
+                            monthlyGoal = response.monthlyGoal,
+                            annualGoal = response.annualGoal,
+                            timeZone = response.timeZone,
+                            createdAt = response.createdAt,
+                            updatedAt = response.updatedAt,
+                            linksRel = response.links.self.href,
+                            linksHref = response.links.self.href
+                        )
+
+                        teamsRepository.updateTeamInfo(team)
+
+                        Log.d("TeamsViewModel", "DB - UpdateTeam Successful")
+                    } else {
+                        Log.e("TeamsViewModel", "Null response from the API")
+                    }
+                } else {
+                    Log.e("TeamsViewModel", "Error response from API: ${result.errorBody()?.string()}")
+                }
+
+            } catch (e: HttpException) {
+                Log.e("TeamsViewModel", "HTTP error while UpdateTeam", e)
+            } catch (e: IOException) {
+                Log.e("TeamsViewModel", "Network error during UpdateTeam", e)
+            } catch (e: Exception) {
+                Log.e("TeamsViewModel", "Error while UpdateTeam", e)
+            }
+        }
+    }
+
+
+    fun addMember(accessToken: String, teamId: Int, userId: Int, request: RoleRequest) {
+        viewModelScope.launch {
+            try {
+                val response = service.addMember("Bearer $accessToken", teamId, userId, request)
                 Log.d("TeamsViewModel", "AddMember Successful")
                 _teamResult.value = Result.success(response)
+
             } catch (e: HttpException) {
-                val errorBody = e.response()?.errorBody()?.string()
-                val errorResponse = Gson().fromJson(errorBody, ApiError::class.java)
-                Log.e(
-                    "UserViewModel",
-                    "HTTP error during addMember: ${errorResponse.error} at ${errorResponse.path} $e"
-                )
+                Log.e("UserViewModel","HTTP error during addMember", e)
                 _teamResult.value = Result.failure(e)
             } catch (e: IOException) {
                 Log.e("UserViewModel", "Network error during addMember", e)
@@ -159,18 +248,32 @@ class TeamsViewModel(
         }
     }
 
-    fun getTeamsByUserId(userId: Int, token: String, onComplete: () -> Unit) {
+    private fun insertMemberDB(member: Members){
         viewModelScope.launch {
             try {
-                val response = service.getTeamsByUserId(userId, "Bearer $token")
+                membersRepository.insertMember(member)
+
+                val memberName = member.fullName
+                Log.e("UserViewModel", "DB - Member: $memberName added successfully")
+            }catch (e: Exception){
+
+                Log.e("UserViewModel", "Unexpected error during insertMemberDB", e)
+            }
+        }
+    }
+
+    fun getTeamsByUserId(userId: Int, accessToken: String, onComplete: () -> Unit) {
+        viewModelScope.launch {
+            try {
+                val response = service.getTeamsByUserId(userId, "Bearer $accessToken")
                 val teams = response.body() ?: emptyList()
 
                 teams.forEach { team ->
                     Log.d("TeamsViewModel", "$team")
                     val teamEntity = team.toTeam()
-                    teamsRepository.insertTeam(teamEntity)
+                    insertTeamDB(teamEntity)
 
-                    getMembersById(team.members, token, team.id)
+                    getMembersById(team.members, accessToken, team.id)
                     Log.d("TeamsViewModel", "MembersInsertion completed for TeamID: ${team.id}")
                 }
 
@@ -230,7 +333,11 @@ class TeamsViewModel(
     }
 
 
-    private suspend fun getMembersById(membersList: List<Member>, token: String, teamId: Int) {
+    private suspend fun getMembersById(
+        membersList: List<Member>,
+        accessToken: String,
+        teamId: Int
+    ) {
         val ids = membersList.map { it.id }
         val roles = membersList.map { it.role }
         val usersList = mutableListOf<UserResponse>()
@@ -239,7 +346,7 @@ class TeamsViewModel(
 
         ids.forEachIndexed { index, id ->
             try {
-                val response = service.getMembersById(id, "Bearer $token")
+                val response = service.getMembersById(id, "Bearer $accessToken")
                 usersList.add(response)
                 _members.value = Result.success(usersList)
                 val role = roles[index]
@@ -288,30 +395,48 @@ class TeamsViewModel(
         }
     }
 
-    fun deleteTeam(token: String?, teamId: Int) {
+    fun deleteTeam(accessToken: String, teamId: Int, onComplete: () -> Unit) {
         viewModelScope.launch {
             try {
-                service.deleteTeam("Bearer $token", teamId)
+                service.deleteTeam("Bearer $accessToken", teamId)
                 _deleteResult.value = Result.success(Unit)
 
-                val delete = teamsRepository.deleteTeamById(teamId)
-                val deleteState = if (delete == Unit) "OK" else "ERROR"
-                Log.d("TeamsViewModel", "Delete team ID($teamId): $deleteState")
+                deleteTeamFromDB(teamId)
+
+                onComplete()
+
             } catch (e: HttpException) {
                 Log.e("TeamsViewModel", "HTTP error during Delete Team", e)
                 _deleteResult.value = Result.failure(e)
             } catch (e: Exception) {
-                Log.e("TeamsViewModel", "Error during Delete Team", e)
+                Log.e("TeamsViewModel", "API - Error during Delete Team", e)
                 _deleteResult.value = Result.failure(e)
             }
         }
     }
 
-    fun removeMember(token: String?, teamId: Int, userId: Int) {
+    fun deleteTeamFromDB(teamId: Int){
         viewModelScope.launch {
             try {
-                service.removeMember("Bearer $token", teamId, userId)
+                val delete = teamsRepository.deleteTeamById(teamId)
+                val deleteState = if (delete == Unit) "OK" else "ERROR"
+
+                Log.d("TeamsViewModel", "Delete team ID($teamId): $deleteState")
+            }catch (e: Exception) {
+                Log.e("TeamsViewModel", "DB - Error during DeleteTeam", e)
+                _deleteResult.value = Result.failure(e)
+            }
+        }
+    }
+
+    fun removeMember(accessToken: String, teamId: Int, userId: Int) {
+        viewModelScope.launch {
+            try {
+                service.removeMember("Bearer $accessToken", teamId, userId)
                 _deleteResult.value = Result.success(Unit)
+
+                membersRepository.deleteMember(userId, teamId)
+
             } catch (e: HttpException) {
                 Log.e("TeamsViewModel", "HTTP error during Remove Member", e)
                 _deleteResult.value = Result.failure(e)

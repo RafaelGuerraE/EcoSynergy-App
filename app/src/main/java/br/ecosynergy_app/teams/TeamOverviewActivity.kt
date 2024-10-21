@@ -8,6 +8,8 @@ import android.view.View
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import br.ecosynergy_app.R
@@ -42,17 +44,12 @@ class TeamOverviewActivity : AppCompatActivity() {
     private lateinit var txtDescription: TextView
     private lateinit var txtTimezone: TextView
     private lateinit var txtActivities: TextView
-    private lateinit var txtDailyGoal: TextView
-    private lateinit var txtWeeklyGoal: TextView
-    private lateinit var txtMonthlyGoal: TextView
-    private lateinit var txtAnnualGoal: TextView
 
     private lateinit var btnEdit: LinearLayout
-    private lateinit var btnGoals: LinearLayout
     private lateinit var btnDelete: MaterialButton
     private lateinit var shimmerImg: ShimmerFrameLayout
 
-    private lateinit var btnBack : ImageButton
+    private lateinit var btnBack: ImageButton
 
     private var utcToTextMap: Map<String?, String> = mapOf()
 
@@ -62,9 +59,11 @@ class TeamOverviewActivity : AppCompatActivity() {
     private var teamName: String = ""
     private var teamId: Int = 0
     private var teamHandle: String = ""
-    private var members: List<Members> = emptyList()
 
-    private var measure: String = " ton"
+    private var dailyGoal: String = ""
+    private var weeklyGoal: String = ""
+    private var monthlyGoal: String = ""
+    private var annualGoal: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -93,6 +92,7 @@ class TeamOverviewActivity : AppCompatActivity() {
         teamHandle = intent.getStringExtra("TEAM_HANDLE").toString()
         userId = intent.getIntExtra("USER_ID", 0)
         accessToken = intent.getStringExtra("ACCESS_TOKEN").toString()
+        userRole = intent.getStringExtra("USER_ROLE").toString()
 
         teamPicture = findViewById(R.id.teamPicture)
         txtTeamName = findViewById(R.id.txtTeamName)
@@ -100,20 +100,19 @@ class TeamOverviewActivity : AppCompatActivity() {
         txtTimezone = findViewById(R.id.txtTimezone)
         txtDescription = findViewById(R.id.txtDescription)
         txtActivities = findViewById(R.id.txtActivities)
-        txtDailyGoal = findViewById(R.id.txtDailyGoal)
-        txtWeeklyGoal = findViewById(R.id.txtWeeklyGoal)
-        txtMonthlyGoal = findViewById(R.id.txtMonthlyGoal)
-        txtAnnualGoal = findViewById(R.id.txtAnnualGoal)
         btnEdit = findViewById(R.id.btnEdit)
-        btnGoals = findViewById(R.id.btnGoals)
         btnDelete = findViewById(R.id.btnDelete)
         shimmerImg = findViewById(R.id.shimmerImg)
         btnBack = findViewById(R.id.btnBack)
 
 
+        btnEdit.visibility = if (userRole == "ADMINISTRATOR" || userRole == "FOUNDER") View.VISIBLE else View.GONE
+        btnDelete.visibility = if (userRole == "ADMINISTRATOR" || userRole == "FOUNDER") View.VISIBLE else View.GONE
+
         val timezones = loadTimezones()
         utcToTextMap = timezones.associate { it.utc.firstOrNull() to it.text }
 
+        teamsViewModel.getTeamById(teamId)
         observeTeamInfo()
 
         btnDelete.text = "Excluir $teamHandle"
@@ -125,7 +124,6 @@ class TeamOverviewActivity : AppCompatActivity() {
             builder.setPositiveButton("Sim") { dialog, _ ->
                 deleteTeam()
                 dialog.dismiss()
-                finish()
             }
 
             builder.setNegativeButton("Cancelar") { dialog, _ ->
@@ -140,80 +138,79 @@ class TeamOverviewActivity : AppCompatActivity() {
             val i = Intent(this, EditTeamActivity::class.java)
             i.apply {
                 putExtra("accessToken", accessToken)
-                putExtra("teamid", teamId)
+                putExtra("teamId", teamId)
                 putExtra("teamName", txtTeamName.text.toString())
                 putExtra("teamHandle", txtHandle.text.toString())
                 putExtra("teamDescription", txtDescription.text.toString())
                 putExtra("teamTimezone", txtTimezone.text.toString())
                 putExtra("teamSector", txtActivities.text.toString())
-                putExtra("dailyGoal", txtDailyGoal.text.toString())
-                putExtra("weeklyGoal", txtWeeklyGoal.text.toString())
-                putExtra("monthlyGoal", txtMonthlyGoal.text.toString())
-                putExtra("annualGoal", txtAnnualGoal.text.toString())
+                putExtra("dailyGoal", dailyGoal)
+                putExtra("weeklyGoal", weeklyGoal)
+                putExtra("monthlyGoal", monthlyGoal)
+                putExtra("annualGoal", annualGoal)
+
             }
             startActivity(i)
         }
 
 
-        btnBack.setOnClickListener{ finish() }
+        btnBack.setOnClickListener { finish() }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        teamsViewModel.getTeamById(teamId)
     }
 
     private fun deleteTeam() {
-        teamsViewModel.deleteTeam(accessToken, teamId)
+        teamsViewModel.deleteTeam(accessToken, teamId){
+            setResult(RESULT_OK, Intent().putExtra("TEAM_ID", teamId))
+            finish()
+        }
     }
 
     private fun observeTeamInfo() {
-        teamsViewModel.getTeamById(teamId)
         teamsViewModel.teamDB.observe(this) { teamInfo ->
-            teamsViewModel.getMembersByTeamId(teamId)
-            teamsViewModel.allMembersDB.observe(this) { membersInfo ->
 
-                teamId = teamInfo.id
-                teamName = teamInfo.name
-                members = membersInfo
+            teamName = teamInfo.name
 
-                val userMember = members.find { it.userId == userId }
-                userRole = userMember?.role.toString()
+            shimmerImg.visibility = View.VISIBLE
+            teamPicture.visibility = View.GONE
 
-                btnEdit.visibility = if (userRole == "ADMINISTRATOR") View.VISIBLE else View.GONE
-                btnDelete.visibility = if (userRole == "ADMINISTRATOR") View.VISIBLE else View.GONE
+            val drawableId = HomeActivity().getDrawableForLetter(teamName.first())
+            teamPicture.setImageResource(drawableId)
+            txtTeamName.text = teamName
+            txtHandle.text = teamInfo.handle
+            txtDescription.text = teamInfo.description
 
-                shimmerImg.visibility = View.VISIBLE
-                teamPicture.visibility = View.GONE
+            dailyGoal = teamInfo.dailyGoal.toString()
+            weeklyGoal = teamInfo.weeklyGoal.toString()
+            monthlyGoal = teamInfo.monthlyGoal.toString()
+            annualGoal = teamInfo.annualGoal.toString()
 
-                val drawableId = HomeActivity().getDrawableForLetter(teamName.first())
-                teamPicture.setImageResource(drawableId)
-                txtTeamName.text = teamName
-                txtHandle.text = teamInfo.handle
-                txtDescription.text = teamInfo.description
+            txtTimezone.text = utcToTextMap[teamInfo.timeZone]
 
-                txtDailyGoal.text = teamInfo.dailyGoal.toInt().toString() + measure
-                txtWeeklyGoal.text = teamInfo.weeklyGoal.toInt().toString() + measure
-                txtMonthlyGoal.text = teamInfo.monthlyGoal.toInt().toString() + measure
-                txtAnnualGoal.text = teamInfo.annualGoal.toInt().toString() + measure
+            val sectors = loadSectorsAndActivities()
 
-                txtTimezone.text = utcToTextMap[teamInfo.timeZone]
+            val activityId = teamInfo.activityId
+            val activity = sectors.flatMap { it.activities }.find { it.activities_id == activityId }
+            val sector = sectors.find { it.sector == teamInfo.activitySector }
 
-                val sectors = loadSectorsAndActivities()
+            val activityNameBr = activity?.activities_br ?: "Atividade Desconhecida"
+            val sectorNameBr = sector?.sector_br ?: "Setor Desconhecido"
 
-                val activityId = teamInfo.activityId
-                val activity = sectors.flatMap { it.activities }.find { it.activities_id == activityId }
-                val sector = sectors.find { it.sector == teamInfo.activitySector }
+            Log.d("TeamOverviewFragment", "Setor: $sectorNameBr Atividade: $activityNameBr")
 
-                val activityNameBr = activity?.activities_br ?: "Atividade Desconhecida"
-                val sectorNameBr = sector?.sector_br ?: "Setor Desconhecido"
+            txtActivities.text = "$sectorNameBr/$activityNameBr"
 
-                Log.d("TeamOverviewFragment", "Setor: $sectorNameBr Atividade: $activityNameBr")
-
-                txtActivities.text = "$sectorNameBr/$activityNameBr"
-
-                shimmerImg.animate().alpha(0f).setDuration(300).withEndAction {
-                    shimmerImg.stopShimmer()
-                    shimmerImg.animate().alpha(1f).setDuration(300)
-                    shimmerImg.visibility = View.GONE
-                    teamPicture.visibility = View.VISIBLE
-                }
+            shimmerImg.animate().alpha(0f).setDuration(300).withEndAction {
+                shimmerImg.stopShimmer()
+                shimmerImg.animate().alpha(1f).setDuration(300)
+                shimmerImg.visibility = View.GONE
+                teamPicture.visibility = View.VISIBLE
             }
+
         }
     }
 

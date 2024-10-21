@@ -5,7 +5,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import br.ecosynergy_app.ApiError
 import br.ecosynergy_app.home.PasswordRequest
 import br.ecosynergy_app.home.UpdateRequest
 import br.ecosynergy_app.login.LoginRequest
@@ -259,9 +258,7 @@ class UserViewModel(
 
                 Log.d("UserViewModel", "Search users Successful")
             } catch (e: HttpException) {
-                val errorBody = e.response()?.errorBody()?.string()
-                val errorResponse = Gson().fromJson(errorBody, ApiError::class.java)
-                Log.e("UserViewModel", "HTTP error during searchUser: ${errorResponse.error} at ${errorResponse.path}")
+                Log.e("UserViewModel", "HTTP error during searchUser", e)
                 _user.value = Result.failure(e)
             } catch (e: IOException) {
                 Log.e("UserViewModel", "Network error during searchUser", e)

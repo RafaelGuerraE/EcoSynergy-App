@@ -109,6 +109,7 @@ class HomeActivity : AppCompatActivity() {
             displayUserInfoFromDB{
                 readingsViewModel.deleteAllReadingsFromDB()
                 readingsViewModel.fetchMQ7ReadingsByTeamHandle("ecosynergyofc", accessToken)
+                teamsViewModel.getAllTeamsFromDB()
                 //readingsViewModel.fetchMQ135ReadingsByTeamHandle("ecosynergyofc", accessToken)
                 //readingsViewModel.fetchFireReadingsByTeamHandle("ecosynergyofc", accessToken)
             }
@@ -235,7 +236,9 @@ class HomeActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         clearNavigationViewSelection(navView)
-        displayUserInfoFromDB{}
+        displayUserInfoFromDB{
+            teamsViewModel.getAllTeamsFromDB()
+        }
     }
 
     private fun manageThemes(){
@@ -347,7 +350,9 @@ class HomeActivity : AppCompatActivity() {
 
     private fun updateTeamInfo(userId: Int, accessToken: String){
         teamsViewModel.deleteTeamsFromDB()
-        teamsViewModel.getTeamsByUserId(userId, accessToken) {}
+        teamsViewModel.getTeamsByUserId(userId, accessToken) {
+            teamsViewModel.getAllTeamsFromDB()
+        }
     }
 
     private fun logout() {

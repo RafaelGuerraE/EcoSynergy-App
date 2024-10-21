@@ -19,13 +19,13 @@ interface TeamsService {
 
     @DELETE("api/team/v1/{id}")
     suspend fun deleteTeam(@Header("Authorization") token: String?,
-                           @Path("id") teamId:Int)
+                           @Path("id") teamId:Int): Response<Unit>
 
     @PUT("api/team/v1/{id}")
     suspend fun updateTeam(@Header("Authorization") token: String?,
                            @Path("id") id:Int,
                            @Body request: UpdateRequest
-    ) : Result<TeamsResponse>
+    ) : Response<TeamsResponse>
 
     //Finding Teams
 

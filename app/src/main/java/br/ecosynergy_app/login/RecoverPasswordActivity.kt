@@ -103,7 +103,7 @@ class RecoverPasswordActivity : AppCompatActivity() {
                 }
             }
             else{
-                LoginActivity().showToast("Insira o seu email", this)
+                showToast("Insira o seu email")
             }
         }
 
@@ -139,7 +139,7 @@ class RecoverPasswordActivity : AppCompatActivity() {
                     txtError.visibility = View.VISIBLE
                 }
             } else {
-                LoginActivity().showToast("ERRO NO ENVIO DO CÓDIGO", this)
+                showToast("ERRO NO ENVIO DO CÓDIGO")
             }
         }
 
@@ -218,5 +218,9 @@ class RecoverPasswordActivity : AppCompatActivity() {
             }
             showProgressBar(false)
         }
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 }

@@ -147,7 +147,7 @@ class AddMembersBottomSheet : BottomSheetDialogFragment() {
         }
     }
 
-    fun showSnackBar(message: String, action: String, bgTint: Int) {
+    private fun showSnackBar(message: String, action: String, bgTint: Int) {
         val rootView = requireActivity().findViewById<View>(android.R.id.content)
         val snackBar = Snackbar.make(rootView, message, Snackbar.LENGTH_SHORT)
             .setAction(action) {}

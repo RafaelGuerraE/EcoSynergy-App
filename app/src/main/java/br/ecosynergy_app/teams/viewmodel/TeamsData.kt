@@ -1,5 +1,7 @@
 package br.ecosynergy_app.teams.viewmodel
 
+import com.google.gson.annotations.SerializedName
+
 data class AllTeamsResponse(
     val _embedded: Embedded,
     val _links: PaginationLinks,
@@ -24,16 +26,17 @@ data class TeamsResponse(
     val createdAt: String,
     val updatedAt: String,
     val members: List<Member>,
-    val links: List<TeamLinks>
+    @SerializedName("_links")
+    val links: LinksResponse
 )
 
 data class Member(
-    val id: Int?,
+    val id: Int,
     val role: String
 )
 
 data class RoleRequest(
-    val role : String?
+    val role : String
 )
 
 data class TeamsRequest(
@@ -61,8 +64,11 @@ data class UpdateRequest(
     val timeZone: String
 )
 
-data class TeamLinks(
-    val rel: String,
+data class LinksResponse(
+    val self: Link
+)
+
+data class Link(
     val href: String
 )
 

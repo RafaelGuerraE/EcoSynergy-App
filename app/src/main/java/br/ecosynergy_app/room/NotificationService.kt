@@ -1,4 +1,4 @@
-package br.ecosynergy_app
+package br.ecosynergy_app.room
 
 import android.Manifest
 import android.app.NotificationChannel
@@ -12,6 +12,7 @@ import android.os.IBinder
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import br.ecosynergy_app.R
 import br.ecosynergy_app.home.HomeActivity
 
 class NotificationService : Service() {

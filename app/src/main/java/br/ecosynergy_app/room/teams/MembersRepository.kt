@@ -14,8 +14,8 @@ class MembersRepository(private val membersDao: MembersDao) {
         membersDao.updateMember(member)
     }
 
-    suspend fun deleteMember(member: Members) {
-        membersDao.deleteMember(member)
+    suspend fun deleteMember(userId: Int, teamId: Int) {
+        membersDao.deleteMember(userId, teamId)
     }
 
     suspend fun deleteAllMembers() {
@@ -28,5 +28,9 @@ class MembersRepository(private val membersDao: MembersDao) {
 
     suspend fun getMembersByTeamId(teamId: Int): List<Members> {
         return membersDao.getMembersByTeamId(teamId)
+    }
+
+    suspend fun updateUserRole(userId: Int, teamId: Int, newRole: String) {
+        membersDao.updateUserRole(userId, teamId, newRole)
     }
 }

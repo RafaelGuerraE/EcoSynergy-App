@@ -1,5 +1,6 @@
 package br.ecosynergy_app.teams
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
@@ -11,6 +12,7 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ProgressBar
 import android.widget.Spinner
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
@@ -43,10 +45,6 @@ class EditTeamActivity : AppCompatActivity() {
     private lateinit var txtDescription: EditText
     private lateinit var txtTimezone: AutoCompleteTextView
     private lateinit var spinnerActivities: Spinner
-    private lateinit var txtDailyGoal: EditText
-    private lateinit var txtWeeklyGoal: EditText
-    private lateinit var txtMonthlyGoal: EditText
-    private lateinit var txtAnnualGoal: EditText
 
     private lateinit var btnBack: ImageButton
 
@@ -56,6 +54,7 @@ class EditTeamActivity : AppCompatActivity() {
     private var accessToken: String = ""
 
     private var timezone: String = ""
+    private var selectedTimezoneText = ""
 
     private var utcToTextMap: Map<String?, String> = mapOf()
     private var timezonesMap: Map<String?, String?> = mapOf()
@@ -66,11 +65,11 @@ class EditTeamActivity : AppCompatActivity() {
     private var teamDescription: String = ""
     private var teamActivity: String = ""
     private var teamTimezone: String = ""
+
     private var dailyGoal: String = ""
     private var weeklyGoal: String = ""
     private var monthlyGoal: String = ""
     private var annualGoal: String = ""
-
 
     private var activitySelected: Int = 0
 
@@ -102,16 +101,10 @@ class EditTeamActivity : AppCompatActivity() {
         txtDescription = findViewById(R.id.txtDescription)
         spinnerActivities = findViewById(R.id.spinnerActivities)
 
-        txtDailyGoal = findViewById(R.id.txtDailyGoal)
-        txtWeeklyGoal = findViewById(R.id.txtWeeklyGoal)
-        txtMonthlyGoal = findViewById(R.id.txtMonthlyGoal)
-        txtAnnualGoal = findViewById(R.id.txtAnnualGoal)
-
         btnConfirm = findViewById(R.id.btnConfirm)
         checkProgress = findViewById(R.id.checkProgress)
 
         btnBack = findViewById(R.id.btnBack)
-
 
 
         val timezones = loadTimezones()
@@ -123,13 +116,14 @@ class EditTeamActivity : AppCompatActivity() {
         txtTimezone.setAdapter(timezoneAdapter)
 
         txtTimezone.setOnItemClickListener { parent, _, position, _ ->
-            val selectedTimezoneText = parent.getItemAtPosition(position) as String
+            selectedTimezoneText = parent.getItemAtPosition(position) as String
             val selectedTimezoneUtc = timezonesMap[selectedTimezoneText]
             timezone = selectedTimezoneUtc.toString()
         }
 
         accessToken = intent.getStringExtra("accessToken") ?: ""
         teamName = intent.getStringExtra("teamName") ?: ""
+        teamId = intent.getIntExtra("teamId", 0)
         teamHandle = intent.getStringExtra("teamHandle") ?: ""
         teamDescription = intent.getStringExtra("teamDescription") ?: ""
         teamActivity = intent.getStringExtra("teamSector") ?: ""
@@ -139,26 +133,26 @@ class EditTeamActivity : AppCompatActivity() {
         monthlyGoal = intent.getStringExtra("monthlyGoal") ?: ""
         annualGoal = intent.getStringExtra("annualGoal") ?: ""
 
-        Log.d("EditTeamActivity", "$teamActivity")
-
         txtTeamName.setText(teamName)
         txtHandle.setText(teamHandle)
         txtDescription.setText(teamDescription)
         txtTimezone.setText(teamTimezone)
-        txtDailyGoal.setText(dailyGoal)
-        txtWeeklyGoal.setText(weeklyGoal)
-        txtMonthlyGoal.setText(monthlyGoal)
-        txtAnnualGoal.setText(annualGoal)
 
         setupSpinner()
 
-        btnBack.setOnClickListener{
+        btnBack.setOnClickListener {
+            val resultIntent = Intent().apply {
+                putExtra("teamName", teamName)
+                putExtra("teamHandle", teamHandle)
+                putExtra("teamDescription", teamDescription)
+                putExtra("teamTimezone", txtTimezone.text.toString())
+            }
+            setResult(RESULT_OK, resultIntent)
             finish()
         }
 
 
         btnConfirm.setOnClickListener {
-            disableEditTexts()
 
             teamHandle = txtHandle.text.toString()
             teamName = txtTeamName.text.toString()
@@ -168,8 +162,6 @@ class EditTeamActivity : AppCompatActivity() {
             teamTimezone = timezone
             teamName = txtTeamName.text.toString()
 
-            btnConfirm.visibility = View.GONE
-            checkProgress.visibility = View.VISIBLE
 
             editTeamInfo()
         }
@@ -177,6 +169,10 @@ class EditTeamActivity : AppCompatActivity() {
     }
 
     private fun editTeamInfo() {
+        disableEditTexts()
+        btnConfirm.visibility = View.GONE
+        checkProgress.visibility = View.VISIBLE
+
         teamsViewModel.teamResult.removeObservers(this)
         teamsViewModel.updateTeam(
             accessToken,
@@ -194,13 +190,15 @@ class EditTeamActivity : AppCompatActivity() {
             )
         )
 
-        teamsViewModel.teamResult.observe(this){ result->
+        teamsViewModel.updateResponse.observe(this) { result ->
             result.onSuccess {
-                LoginActivity().showToast("Informações editadas com sucesso!", this)
-                finish()
+                showToast("Informações editadas com sucesso!")
+                btnConfirm.visibility = View.VISIBLE
+                checkProgress.visibility = View.GONE
+                enableEditTexts()
             }
             result.onFailure {
-                LoginActivity().showToast("Erro", this)
+                showToast("Erro")
                 btnConfirm.visibility = View.VISIBLE
                 checkProgress.visibility = View.GONE
                 enableEditTexts()
@@ -226,10 +224,6 @@ class EditTeamActivity : AppCompatActivity() {
         txtHandle.setTextColor(getThemeColor(android.R.attr.textColorPrimary))
         txtDescription.setTextColor(getThemeColor(android.R.attr.textColorPrimary))
         txtTeamName.setTextColor(getThemeColor(android.R.attr.textColorPrimary))
-        txtDailyGoal.setTextColor(getThemeColor(android.R.attr.textColorPrimary))
-        txtMonthlyGoal.setTextColor(getThemeColor(android.R.attr.textColorPrimary))
-        txtWeeklyGoal.setTextColor(getThemeColor(android.R.attr.textColorPrimary))
-        txtAnnualGoal.setTextColor(getThemeColor(android.R.attr.textColorPrimary))
     }
 
     private fun disableEditTexts() {
@@ -238,20 +232,12 @@ class EditTeamActivity : AppCompatActivity() {
         txtDescription.isEnabled = false
         txtTeamName.isEnabled = false
         spinnerActivities.isEnabled = false
-        txtDailyGoal.isEnabled = false
-        txtMonthlyGoal.isEnabled = false
-        txtWeeklyGoal.isEnabled = false
-        txtAnnualGoal.isEnabled = false
 
 
         txtTimezone.setTextColor(ContextCompat.getColor(this, R.color.disabled))
         txtHandle.setTextColor(ContextCompat.getColor(this, R.color.disabled))
         txtDescription.setTextColor(ContextCompat.getColor(this, R.color.disabled))
         txtTeamName.setTextColor(ContextCompat.getColor(this, R.color.disabled))
-        txtDailyGoal.setTextColor(ContextCompat.getColor(this, R.color.disabled))
-        txtMonthlyGoal.setTextColor(ContextCompat.getColor(this, R.color.disabled))
-        txtWeeklyGoal.setTextColor(ContextCompat.getColor(this, R.color.disabled))
-        txtAnnualGoal.setTextColor(ContextCompat.getColor(this, R.color.disabled))
     }
 
     private fun setupSpinner() {
@@ -274,7 +260,12 @@ class EditTeamActivity : AppCompatActivity() {
         setSpinnerSelection(teamActivity, spinnerItems)
 
         spinnerActivities.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+            override fun onItemSelected(
+                parent: AdapterView<*>,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
                 val selectedActivity = parent.getItemAtPosition(position) as String
                 activitySelected = activityMap.keys.first { activityMap[it] == selectedActivity }
                 Log.d("EditTeamActivity", "$activitySelected")
@@ -286,7 +277,6 @@ class EditTeamActivity : AppCompatActivity() {
 
     private fun setSpinnerSelection(teamActivity: String, spinnerItems: List<String>) {
         if (teamActivity.isNotEmpty()) {
-            // Find the exact match in the spinner items list
             val position = spinnerItems.indexOfFirst { it == teamActivity }
             Log.d("EditTeamActivity", "Position: $position")
             if (position >= 0) {
@@ -324,5 +314,9 @@ class EditTeamActivity : AppCompatActivity() {
             ex.printStackTrace()
             null
         }
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 }
