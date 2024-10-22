@@ -156,9 +156,6 @@ class TeamMembersActivity : AppCompatActivity() {
     private fun initializeAdapter() {
         recycleMembers.layoutManager = LinearLayoutManager(this)
 
-        Log.d("TeamMembersActivity", "MembersList: $membersList")
-        Log.d("TeamMembersActivity", "MemberRoles: $memberRoles")
-
         membersAdapter = MembersAdapter(
             membersList,
             memberRoles,

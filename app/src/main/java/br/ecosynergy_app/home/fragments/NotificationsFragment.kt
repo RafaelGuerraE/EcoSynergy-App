@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import br.ecosynergy_app.R
 
-class Notifications : Fragment() {
+class NotificationsFragment : Fragment() {
 
     private lateinit var swipeRefresh: SwipeRefreshLayout
 

@@ -95,9 +95,11 @@
                     android:id="@+id/btnLogin"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
-                    android:textSize="16sp"
+                    android:text="Entrar"
+                    android:padding="15dp"
+                    android:textColor="@color/white"
                     android:textStyle="bold"
-                    android:text="LOGIN"
+                    android:textSize="16sp"
                     app:rippleColor="?attr/colorControlHighlight"/>
 
                 <TextView
@@ -112,11 +114,12 @@
                     android:id="@+id/btnRegister"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
-                    android:textSize="16sp"
+                    android:text="Cadastrar-se"
+                    android:padding="15dp"
+                    android:textColor="@color/white"
                     android:textStyle="bold"
-                    android:text="CADASTRAR"
-                    app:rippleColor="?attr/colorControlHighlight"
-                    />
+                    android:textSize="16sp"
+                    app:rippleColor="?attr/colorControlHighlight"/>
 
             </LinearLayout>
         </LinearLayout>

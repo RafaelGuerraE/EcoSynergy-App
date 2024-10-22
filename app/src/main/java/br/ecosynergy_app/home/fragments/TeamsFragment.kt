@@ -2,6 +2,7 @@ package br.ecosynergy_app.home.fragments
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,7 +20,7 @@ import br.ecosynergy_app.teams.TeamAdapter
 import br.ecosynergy_app.teams.viewmodel.TeamsViewModel
 import br.ecosynergy_app.user.UserViewModel
 
-class Teams : Fragment() {
+class TeamsFragment : Fragment() {
 
     private val teamsViewModel: TeamsViewModel by activityViewModels()
     private val userViewModel: UserViewModel by activityViewModels()
@@ -57,6 +58,13 @@ class Teams : Fragment() {
         swipeRefresh = view.findViewById(R.id.swipeRefresh)
 
         return view
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d("TeamsFragment", "onResume OK")
+        teamsViewModel.getAllTeamsFromDB()
+        observeTeamsData()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -98,6 +106,7 @@ class Teams : Fragment() {
 
     private fun setupSwipeRefresh() {
         swipeRefresh.setOnRefreshListener {
+            teamsViewModel.getAllTeamsFromDB()
             observeTeamsData()
             swipeRefresh.isRefreshing = false
         }

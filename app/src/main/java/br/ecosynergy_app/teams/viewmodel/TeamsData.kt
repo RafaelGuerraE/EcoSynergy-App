@@ -53,15 +53,15 @@ data class TeamsRequest(
 )
 
 data class UpdateRequest(
-    val handle: String,
-    val name: String,
-    val description: String,
-    val activity: ActivitiesRequest,
-    val dailyGoal: Double,
-    val weeklyGoal: Double,
-    val monthlyGoal: Double,
-    val annualGoal: Double,
-    val timeZone: String
+    val handle: String? = null,
+    val name: String? = null,
+    val description: String? = null,
+    val activity: ActivitiesRequest? = null,
+    val dailyGoal: Double? = null,
+    val weeklyGoal: Double? = null,
+    val monthlyGoal: Double? = null,
+    val annualGoal: Double? = null,
+    val timeZone: String? = null
 )
 
 data class LinksResponse(

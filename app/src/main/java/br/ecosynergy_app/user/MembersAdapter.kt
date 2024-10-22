@@ -20,8 +20,8 @@ import br.ecosynergy_app.teams.TeamMembersActivity
 import br.ecosynergy_app.teams.viewmodel.TeamsViewModel
 
 class MembersAdapter(
-    private var membersList: List<Members>,
-    private var memberRoles: List<String>,
+    private var membersList: MutableList<Members>,
+    private var memberRoles: MutableList<String>,
     private var currentUserRole: String?,
     private var teamId: Int,
     private var userId: Int,
@@ -34,14 +34,14 @@ class MembersAdapter(
     fun updateList(newList: List<Members>, newRoles: List<String>) {
         val pairedList = newList.zip(newRoles)
             .sortedBy { it.first.fullName }
-        membersList = pairedList.map { it.first }
-        memberRoles = pairedList.map { it.second }
+        membersList = pairedList.map { it.first }.toMutableList()
+        memberRoles = pairedList.map { it.second }.toMutableList()
         notifyDataSetChanged()
     }
 
     fun removeMember(memberId: Int) {
         memberIds.remove(memberId)
-        membersList = membersList.filter { it.userId != memberId }
+        membersList = membersList.filter { it.userId != memberId }.toMutableList()
         notifyDataSetChanged()
     }
 
@@ -58,8 +58,8 @@ class MembersAdapter(
 
     class ViewHolder(
         itemView: View,
-        private var membersList: List<Members>,
-        private var memberRoles: List<String>,
+        private var membersList: MutableList<Members>,
+        private var memberRoles: MutableList<String>,
         private var currentUserRole: String?,
         private var teamId: Int,
         private var userId: Int,
@@ -101,13 +101,15 @@ class MembersAdapter(
 
             imgUser .setImageResource(HomeActivity().getDrawableForLetter(user.fullName.first()))
 
-            if ((currentUserRole == "ADMINISTRATOR" || currentUserRole == "FOUNDER") && userId != memberId) {
+            if ((currentUserRole == "ADMINISTRATOR" || currentUserRole == "FOUNDER") && userId != memberId && user.role != "FOUNDER") {
                 btnEditRole.visibility = View.VISIBLE
                 btnRemove.visibility = View.VISIBLE
-            } else {
+            }else {
                 btnEditRole.visibility = View.GONE
                 btnRemove.visibility = View.GONE
             }
+
+
 
             btnRemove.setOnClickListener {
                 removeUser()
@@ -190,14 +192,17 @@ class MembersAdapter(
                     else -> memberRoles[position]
                 }
 
-                memberRoles = memberRoles.toMutableList().apply {
-                    set(position, newRole)
-                }
+                memberRoles[position] = newRole
 
                 teamsViewModel.editMemberRole(accessToken, teamId, memberId, RoleRequest(newRole))
 
-                textView.text = newRole
+                textView.text = when (newRole) {
+                    "ADMINISTRATOR" -> "Administrador"
+                    "COMMON_USER" -> "Membro"
+                    else -> "Outro Cargo"
+                }
 
+                // Notify the adapter to refresh the list
                 (activity as TeamMembersActivity).membersAdapter.updateList(membersList, memberRoles)
 
                 dialog.dismiss()

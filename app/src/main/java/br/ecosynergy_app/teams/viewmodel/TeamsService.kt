@@ -15,7 +15,7 @@ interface TeamsService {
     @POST("api/team/v1")
     suspend fun createTeam(@Header("Authorization") token: String?,
                            @Body request: TeamsRequest
-    ) : TeamsResponse
+    ) : Response<TeamsResponse>
 
     @DELETE("api/team/v1/{id}")
     suspend fun deleteTeam(@Header("Authorization") token: String?,

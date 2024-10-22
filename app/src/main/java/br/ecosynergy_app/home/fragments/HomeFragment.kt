@@ -28,7 +28,7 @@ import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.formatter.ValueFormatter
 
-class Home : Fragment() {
+class HomeFragment : Fragment() {
 
     private val userViewModel: UserViewModel by activityViewModels()
     private val teamsViewModel: TeamsViewModel by activityViewModels()

@@ -79,8 +79,8 @@
         </LinearLayout>
         <ImageButton
             android:id="@+id/btnEditRole"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:layout_gravity="end|center"
             android:contentDescription="ButtonEditHole"
             android:src="@drawable/baseline_edit_24"
@@ -94,8 +94,8 @@
 
         <ImageButton
             android:id="@+id/btnRemove"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:layout_gravity="end|center"
             android:contentDescription="ButtonRemoveUser"
             android:src="@drawable/baseline_close_24"
@@ -109,8 +109,8 @@
 
         <ImageButton
             android:id="@+id/btnExitTeam"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:layout_gravity="end|center"
             android:contentDescription="ButtonRemoveUser"
             android:src="@drawable/baseline_logout_24"

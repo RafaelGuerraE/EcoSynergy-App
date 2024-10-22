@@ -10,7 +10,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:fillViewport="true"
-    android:layout_marginTop="60dp">
+    android:layout_marginTop="52dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -28,7 +28,8 @@
             tools:src="@drawable/e"
             android:id="@+id/teamPicture"
             android:visibility="gone"
-            android:layout_gravity="center"/>
+            android:layout_gravity="center"
+            android:layout_marginTop="5dp"/>
 
         <com.facebook.shimmer.ShimmerFrameLayout
             android:id="@+id/shimmerImg"
@@ -36,7 +37,8 @@
             android:layout_height="90dp"
             app:shimmer_auto_start="true"
             android:visibility="visible"
-            android:layout_gravity="center">
+            android:layout_gravity="center"
+            android:layout_marginTop="5dp">
 
             <View
                 android:layout_width="match_parent"
@@ -49,14 +51,16 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="30dp"
             android:orientation="horizontal"
             android:layout_marginTop="20dp"
+            android:layout_gravity="center_vertical"
             android:layout_marginBottom="20dp">
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:layout_gravity="center"
             android:text="Informações da Equipe"
             android:textSize="18sp"
             android:textColor="?android:attr/textColorPrimary"
@@ -65,13 +69,15 @@
         <LinearLayout
             android:id="@+id/btnEdit"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="horizontal"
             android:layout_gravity="bottom"
-            android:background="?android:attr/selectableItemBackground"
+            android:background="@drawable/rounded_background"
             android:focusable="true"
             android:clickable="true"
-            android:visibility="visible">
+            android:visibility="visible"
+            android:paddingStart="10dp"
+            android:paddingEnd="5dp">
 
             <ImageView
                 android:layout_width="14dp"
@@ -92,6 +98,14 @@
         </LinearLayout>
 
         </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="15dp"
+            android:background="@drawable/home_background"
+            android:layout_marginBottom="10dp">
             <TextView
                 android:text="Nome da Equipe"
                 android:layout_gravity="start"
@@ -191,65 +205,77 @@
             android:textSize="16sp"
             android:layout_marginStart="5dp"
             android:layout_marginEnd="5dp"
-            android:layout_marginBottom="15dp"
             tools:text="Agricultura/Cultivo de Plantas"/>
 
-
+        </LinearLayout>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnDelete"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Excluir..."
-            android:visibility="invisible"
-            tools:text="Excluir ecosynergyofc"
+            android:visibility="visible"
+            tools:text="Excluir @ecosynergyofc"
             app:icon="@drawable/baseline_delete_24"
             app:iconSize="20dp"
             app:iconTint="?android:attr/iconTint"
             app:iconPadding="5dp"
             app:iconGravity="textStart"
-            android:backgroundTint="?android:attr/colorBackground"
+            android:backgroundTint="?attr/homeBackground"
+            android:padding="15dp"
             android:textColor="?android:attr/textColorPrimary"
             android:textStyle="bold"
             android:textSize="16sp"
-            app:rippleColor="?attr/colorControlHighlight"
-            android:layout_marginTop="10dp"/>
+            app:rippleColor="?attr/colorControlHighlight"/>
 
     </LinearLayout>
 </ScrollView>
-
     <LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="60dp"
-    android:orientation="horizontal"
-    android:layout_gravity="top"
-    android:background="?android:attr/colorBackground">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="top">
 
-        <ImageButton
-            android:id="@+id/btnBack"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:contentDescription="BackButton"
-            android:src="@drawable/baseline_arrow_back_24"
-            android:scaleType="fitXY"
-            app:tint="?android:attr/iconTint"
-            android:layout_margin="15dp"
-            android:layout_gravity="center_vertical"
-            android:clickable="true"/>
+        <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:layout_gravity="top"
+        android:background="?android:attr/colorBackground">
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_gravity="center"
-            android:text="Visão Geral"
-            android:textAlignment="center"
-            android:textColor="?android:attr/textColorPrimary"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:layout_marginEnd="60dp"/>
+            <ImageButton
+                android:id="@+id/btnBack"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:contentDescription="BackButton"
+                android:src="@drawable/baseline_arrow_back_24"
+                android:scaleType="fitXY"
+                app:tint="?android:attr/iconTint"
+                android:layout_margin="15dp"
+                android:layout_gravity="center_vertical"
+                android:clickable="true"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                android:text="Visão Geral"
+                android:textAlignment="center"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginEnd="60dp"/>
+
+
+        </LinearLayout>
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="?android:attr/colorForeground"/>
 
     </LinearLayout>
-
 </RelativeLayout>

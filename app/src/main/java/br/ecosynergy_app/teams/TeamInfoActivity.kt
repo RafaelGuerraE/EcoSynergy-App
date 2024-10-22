@@ -3,7 +3,6 @@ package br.ecosynergy_app.teams
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import androidx.activity.result.ActivityResultLauncher
@@ -115,7 +114,7 @@ class TeamInfoActivity : AppCompatActivity() {
 
 
         areaGoals.setOnClickListener {
-            val i = Intent(this, GoalsActivity::class.java).apply {
+            val i = Intent(this, TeamGoalsActivity::class.java).apply {
                 putExtra("TEAM_ID", teamId)
                 putExtra("TEAM_HANDLE", teamHandle)
                 putExtra("ACCESS_TOKEN", accessToken)

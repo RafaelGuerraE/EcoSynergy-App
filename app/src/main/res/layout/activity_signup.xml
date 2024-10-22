@@ -344,7 +344,7 @@
                     android:id="@+id/btnAction"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="CONTINUAR"
+                    android:text="Próximo Passo"
                     style="@style/CustomButtonStyle"
                     android:textStyle="bold"/>
 

@@ -1,35 +1,42 @@
 package br.ecosynergy_app.teams
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
 import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
-import br.ecosynergy_app.home.HomeActivity
 import br.ecosynergy_app.room.AppDatabase
 import br.ecosynergy_app.room.teams.MembersRepository
 import br.ecosynergy_app.room.teams.TeamsRepository
 import br.ecosynergy_app.teams.viewmodel.TeamsViewModel
 import br.ecosynergy_app.teams.viewmodel.TeamsViewModelFactory
 
-class GoalsActivity : AppCompatActivity() {
+class TeamGoalsActivity : AppCompatActivity() {
 
     private lateinit var teamsViewModel: TeamsViewModel
 
     private lateinit var btnBack : ImageButton
+
     private lateinit var txtDailyGoal: TextView
     private lateinit var txtWeeklyGoal: TextView
     private lateinit var txtMonthlyGoal: TextView
     private lateinit var txtAnnualGoal: TextView
+
+    private var dailyGoal: Double = 0.0
+    private var weeklyGoal: Double = 0.0
+    private var monthlyGoal: Double = 0.0
+    private var annualGoal: Double = 0.0
+
+    private var dailyGoalText: String = ""
+    private var weeklyGoalText: String = ""
+    private var monthlyGoalText: String = ""
+    private var annualGoalText: String = ""
+
     private lateinit var btnGoals: LinearLayout
 
     private var userId: Int = 0
@@ -38,11 +45,11 @@ class GoalsActivity : AppCompatActivity() {
     private var teamName: String = ""
     private var teamId: Int = 0
     private var teamHandle: String = ""
-    private var measure: String = " toneladas"
+    private var measure: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_goals)
+        setContentView(R.layout.activity_team_goals)
 
         val teamsDao = AppDatabase.getDatabase(this).teamsDao()
         val teamsRepository = TeamsRepository(teamsDao)
@@ -74,20 +81,25 @@ class GoalsActivity : AppCompatActivity() {
         btnBack.setOnClickListener{ finish() }
 
         btnGoals.setOnClickListener {
-            val goalsBottomSheet = GoalsBottomSheet().apply {
+            val editTeamGoalsBottomSheet = EditTeamGoalsBottomSheet().apply {
                 arguments = Bundle().apply {
                     putString("TEAM_HANDLE", teamHandle)
                     putInt("TEAM_ID", teamId)
                     putInt("USER_ID", userId)
                     putString("ACCESS_TOKEN", accessToken)
-                    putString("dailyGoal", txtDailyGoal.text.toString())
-                    putString("weeklyGoal", txtWeeklyGoal.text.toString())
-                    putString("monthlyGoal", txtMonthlyGoal.text.toString())
-                    putString("annualGoal", txtAnnualGoal.text.toString())
+                    putDouble("dailyGoal", dailyGoal)
+                    putDouble("weeklyGoal", weeklyGoal)
+                    putDouble("monthlyGoal", monthlyGoal)
+                    putDouble("annualGoal", annualGoal)
                 }
             }
-            goalsBottomSheet.show(supportFragmentManager, "GoalsBottomSheet")
+            editTeamGoalsBottomSheet.show(supportFragmentManager, "GoalsBottomSheet")
         }
+
+    }
+
+    override fun onResume() {
+        super.onResume()
 
         observeTeamInfo()
     }
@@ -96,15 +108,36 @@ class GoalsActivity : AppCompatActivity() {
         teamsViewModel.getTeamById(teamId)
         teamsViewModel.teamDB.observe(this) { teamInfo ->
 
+            measure = " toneladas"
+
             teamId = teamInfo.id
             teamName = teamInfo.name
 
+            dailyGoal = teamInfo.dailyGoal
+            weeklyGoal = teamInfo.weeklyGoal
+            monthlyGoal = teamInfo.monthlyGoal
+            annualGoal = teamInfo.annualGoal
 
-            txtDailyGoal.text = teamInfo.dailyGoal.toInt().toString() + measure
-            txtWeeklyGoal.text = teamInfo.weeklyGoal.toInt().toString() + measure
-            txtMonthlyGoal.text = teamInfo.monthlyGoal.toInt().toString() + measure
-            txtAnnualGoal.text = teamInfo.annualGoal.toInt().toString() + measure
+            dailyGoalText = formatGoal(dailyGoal)
+            weeklyGoalText = formatGoal(weeklyGoal)
+            monthlyGoalText = formatGoal(monthlyGoal)
+            annualGoalText = formatGoal(annualGoal)
 
+            txtDailyGoal.text = dailyGoalText + measure
+            txtWeeklyGoal.text = weeklyGoalText + measure
+            txtMonthlyGoal.text = monthlyGoalText + measure
+            txtAnnualGoal.text = annualGoalText + measure
+
+            Log.d("TeamGoalActivity", "Passei no Observer")
+        }
+    }
+
+    private fun formatGoal(goal: Double): String {
+        return when {
+            goal < 1000 -> goal.toInt().toString()
+            goal < 1_000_000 -> "${(goal / 1000).toInt()} mil"
+            goal < 1_000_000_000 -> "${(goal / 1_000_000).toInt()} milhões"
+            else -> "${(goal / 1_000_000_000).toInt()} bilhões"
         }
     }
 }

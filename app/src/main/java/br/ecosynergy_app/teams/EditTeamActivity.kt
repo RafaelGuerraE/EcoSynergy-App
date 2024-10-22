@@ -198,7 +198,7 @@ class EditTeamActivity : AppCompatActivity() {
                 enableEditTexts()
             }
             result.onFailure {
-                showToast("Erro")
+                showToast("ERRO!")
                 btnConfirm.visibility = View.VISIBLE
                 checkProgress.visibility = View.GONE
                 enableEditTexts()

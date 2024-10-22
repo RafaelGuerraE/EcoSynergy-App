@@ -18,13 +18,13 @@
         android:theme="@style/Base.Theme.EcoSynergyApp"
         tools:targetApi="31">
         <activity
-            android:name=".teams.GoalsActivity"
+            android:name=".teams.TeamGoalsActivity"
             android:exported="false" />
         <activity
             android:name=".teams.InvitesActivity"
             android:exported="false" />
         <activity
-            android:name=".teams.GoalsBottomSheet"
+            android:name=".teams.EditTeamGoalsBottomSheet"
             android:exported="false" />
         <activity
             android:name=".teams.EditTeamActivity"

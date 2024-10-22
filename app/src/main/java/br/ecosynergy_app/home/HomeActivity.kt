@@ -22,9 +22,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
-import br.ecosynergy_app.home.fragments.Home
-import br.ecosynergy_app.home.fragments.Notifications
-import br.ecosynergy_app.home.fragments.Teams
+import br.ecosynergy_app.home.fragments.HomeFragment
+import br.ecosynergy_app.home.fragments.NotificationsFragment
+import br.ecosynergy_app.home.fragments.TeamsFragment
 import br.ecosynergy_app.login.LoginActivity
 import br.ecosynergy_app.readings.ReadingsViewModel
 import br.ecosynergy_app.readings.ReadingsViewModelFactory
@@ -151,12 +151,12 @@ class HomeActivity : AppCompatActivity() {
         }
 
         if (notificationClicked) {
-            replaceFragment(Notifications())
+            replaceFragment(NotificationsFragment())
             bottomNavView.menu.findItem(R.id.notifications)?.isChecked = true
             bottomNavView.selectedItemId = R.id.notifications
             bottomNavView.menu.findItem(R.id.notifications)?.setIcon(R.drawable.baseline_notifications_24)
         } else {
-            replaceFragment(Home())
+            replaceFragment(HomeFragment())
             bottomNavView.menu.findItem(R.id.home)?.isChecked = true
             bottomNavView.selectedItemId = R.id.home
             bottomNavView.menu.findItem(R.id.home)?.setIcon(R.drawable.baseline_home_24)
@@ -165,19 +165,19 @@ class HomeActivity : AppCompatActivity() {
         bottomNavView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.home -> {
-                    replaceFragment(Home())
+                    replaceFragment(HomeFragment())
                     item.setIcon(R.drawable.baseline_home_24)
                     bottomNavView.menu.findItem(R.id.teams)?.setIcon(R.drawable.outline_people_24)
                     bottomNavView.menu.findItem(R.id.notifications)?.setIcon(R.drawable.outline_notifications_24)
                 }
                 R.id.teams -> {
-                    replaceFragment(Teams())
+                    replaceFragment(TeamsFragment())
                     item.setIcon(R.drawable.baseline_people_24)
                     bottomNavView.menu.findItem(R.id.home)?.setIcon(R.drawable.outline_home_24)
                     bottomNavView.menu.findItem(R.id.notifications)?.setIcon(R.drawable.outline_notifications_24)
                 }
                 R.id.notifications-> {
-                    replaceFragment(Notifications())
+                    replaceFragment(NotificationsFragment())
                     item.setIcon(R.drawable.baseline_notifications_24)
                     bottomNavView.menu.findItem(R.id.home)?.setIcon(R.drawable.outline_home_24)
                     bottomNavView.menu.findItem(R.id.teams)?.setIcon(R.drawable.outline_people_24)
@@ -239,6 +239,7 @@ class HomeActivity : AppCompatActivity() {
         displayUserInfoFromDB{
             teamsViewModel.getAllTeamsFromDB()
         }
+
     }
 
     private fun manageThemes(){

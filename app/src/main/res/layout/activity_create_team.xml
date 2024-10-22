@@ -23,9 +23,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:gravity="center"
+            android:gravity="top"
             android:layout_gravity="center"
-            android:padding="16dp">
+            android:layout_marginBottom="20dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -40,7 +40,8 @@
                     android:gravity="center"
                     android:text="1"
                     android:textColor="@android:color/white"
-                    android:textSize="16sp"/>
+                    android:textSize="16sp"
+                    android:textStyle="bold"/>
 
                 <View
                     android:id="@+id/midStep1"
@@ -56,7 +57,8 @@
                     android:gravity="center"
                     android:text="2"
                     android:textColor="@android:color/black"
-                    android:textSize="16sp"/>
+                    android:textSize="16sp"
+                    android:textStyle="bold"/>
             </LinearLayout>
 
 
@@ -71,7 +73,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Dados"/>
+                android:text="Dados"
+                android:textColor="?android:attr/textColorPrimary"/>
 
             <View
                 android:layout_width="70dp"
@@ -81,7 +84,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Metas"/>
+                android:text="Metas"
+                android:textColor="?android:attr/textColorPrimary"/>
 
         </LinearLayout>
 
@@ -220,59 +224,146 @@
             android:layout_marginEnd="15dp"
             android:visibility="gone">
 
-        <TextView
-            android:text="Metas de Emissões"
-            android:layout_gravity="start"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="?android:attr/textColorPrimary"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="10dp"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:orientation="horizontal"
+                android:layout_gravity="center_vertical"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="10dp">
 
-        <EditText
-            android:id="@+id/txtDailyGoal"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:inputType="numberDecimal"
-            android:hint="Diária"
-            android:background="@drawable/spinner_background"
-            android:textSize="16sp"
-            android:paddingStart="15dp"
-            android:layout_marginBottom="10dp"/>
-        <EditText
-            android:id="@+id/txtWeeklyGoal"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:inputType="numberDecimal"
-            android:hint="Semanal"
-            android:background="@drawable/spinner_background"
-            android:textSize="16sp"
-            android:paddingStart="15dp"
-            android:layout_marginBottom="10dp"/>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_gravity="center"
+                    >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Metas de Emissões"
+                    android:textSize="18sp"
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:textStyle="bold"/>
+
+                    <ImageButton
+                        android:id="@+id/btnInfo"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/baseline_info_24"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:layout_marginStart="5dp"
+                        android:background="?android:attr/selectableItemBackgroundBorderless"
+                        app:tint="?android:attr/textColorPrimary"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/btnEditAll"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_gravity="center"
+                    android:background="@drawable/rounded_background"
+                    android:focusable="true"
+                    android:clickable="true"
+                    android:visibility="visible"
+                    android:paddingStart="15dp"
+                    android:paddingEnd="15dp">
+
+                    <TextView
+                        android:layout_gravity="center"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="?android:attr/textColorPrimary"
+                        android:text="Definir Todas"
+                        android:textSize="14sp"/>
+                </LinearLayout>
+
+            </LinearLayout>
 
 
-        <EditText
-            android:id="@+id/txtMonthlyGoal"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:inputType="numberDecimal"
-            android:hint="Mensal"
-            android:background="@drawable/spinner_background"
-            android:textSize="16sp"
-            android:paddingStart="15dp"
-            android:layout_marginBottom="10dp"/>
+            <TextView
+                android:text="Diária"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="16sp"/>
+            <EditText
+                android:id="@+id/txtDailyGoal"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:inputType="numberDecimal"
+                android:hint="ex.: 7000"
+                android:background="@drawable/spinner_background"
+                android:textSize="16sp"
+                android:paddingStart="15dp"
+                android:layout_marginBottom="10dp"/>
 
-        <EditText
-            android:id="@+id/txtAnnualGoal"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:inputType="numberDecimal"
-            android:hint="Anual"
-            android:background="@drawable/spinner_background"
-            android:textSize="16sp"
-            android:paddingStart="15dp"
-            android:layout_marginBottom="10dp"/>
+
+            <TextView
+                android:text="Semanal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="16sp"/>
+            <EditText
+                android:id="@+id/txtWeeklyGoal"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:inputType="numberDecimal"
+                android:hint="ex.: 49000"
+                android:background="@drawable/spinner_background"
+                android:textSize="16sp"
+                android:paddingStart="15dp"
+                android:layout_marginBottom="10dp"/>
+
+
+            <TextView
+                android:text="Mensal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="16sp"/>
+
+            <EditText
+                android:id="@+id/txtMonthlyGoal"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:inputType="numberDecimal"
+                android:hint="ex.: 210000"
+                android:background="@drawable/spinner_background"
+                android:textSize="16sp"
+                android:paddingStart="15dp"
+                android:layout_marginBottom="10dp"/>
+
+
+            <TextView
+                android:text="Anual"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="16sp"/>
+
+            <EditText
+                android:id="@+id/txtAnnualGoal"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:inputType="numberDecimal"
+                android:hint="ex.: 2520000"
+                android:background="@drawable/spinner_background"
+                android:textSize="16sp"
+                android:paddingStart="15dp"
+                android:layout_marginBottom="10dp"/>
 </LinearLayout>
 
 
@@ -286,6 +377,7 @@
             app:rippleColor="?attr/colorControlHighlight"
             android:layout_marginStart="15dp"
             android:layout_marginEnd="15dp"
+            android:visibility="visible"
             />
 
         <TextView
@@ -306,10 +398,16 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="top">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
         android:orientation="horizontal"
         android:layout_gravity="top"
         android:background="?android:attr/colorBackground">
+
 
         <TextView
             android:layout_width="0dp"
@@ -324,27 +422,42 @@
             android:layout_marginStart="60dp"/>
 
 
-
         <ImageButton
             android:id="@+id/btnClose"
             android:layout_width="25dp"
             android:layout_height="25dp"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:contentDescription="CloseButton"
             android:src="@drawable/baseline_close_24"
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_margin="15dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="BackButton"
             android:scaleType="fitXY"
             app:tint="?android:attr/iconTint"
-            android:layout_margin="15dp"
-            android:layout_gravity="center_vertical"
-            android:clickable="true"/>
+            android:layout_gravity="center_vertical"/>
 
     </LinearLayout>
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="?android:attr/colorForeground"/>
+
+    </LinearLayout>
+
+    <View
+        android:id="@+id/overlayView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#80000000"
+        android:visibility="gone" />
 
     <ProgressBar
         android:id="@+id/loadingProgressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:visibility="gone" />
+        android:visibility="gone"/>
 
 </RelativeLayout>

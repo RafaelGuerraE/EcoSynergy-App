@@ -112,10 +112,7 @@ class TeamOverviewActivity : AppCompatActivity() {
         val timezones = loadTimezones()
         utcToTextMap = timezones.associate { it.utc.firstOrNull() to it.text }
 
-        teamsViewModel.getTeamById(teamId)
-        observeTeamInfo()
-
-        btnDelete.text = "Excluir $teamHandle"
+        btnDelete.text = "Excluir @$teamHandle"
         btnDelete.setOnClickListener {
             val builder = AlertDialog.Builder(this)
             builder.setTitle("Você deseja excluir $teamHandle?")
@@ -161,6 +158,7 @@ class TeamOverviewActivity : AppCompatActivity() {
         super.onResume()
 
         teamsViewModel.getTeamById(teamId)
+        observeTeamInfo()
     }
 
     private fun deleteTeam() {
@@ -180,7 +178,7 @@ class TeamOverviewActivity : AppCompatActivity() {
 
             val drawableId = HomeActivity().getDrawableForLetter(teamName.first())
             teamPicture.setImageResource(drawableId)
-            txtTeamName.text = teamName
+            txtTeamName.text = "@$teamName"
             txtHandle.text = teamInfo.handle
             txtDescription.text = teamInfo.description
 

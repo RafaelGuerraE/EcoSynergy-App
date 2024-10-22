@@ -12,6 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
+import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.ProgressBar
@@ -56,9 +57,9 @@ class UserSettingsActivity : AppCompatActivity() {
     private var nationalityMap: Map<String?, String> = mapOf()
 
     private lateinit var btnBack: ImageButton
-    private lateinit var txtUsername: TextInputEditText
-    private lateinit var txtFullname: TextInputEditText
-    private lateinit var txtEmail: TextInputEditText
+    private lateinit var txtUsername: EditText
+    private lateinit var txtFullname: EditText
+    private lateinit var txtEmail: EditText
     private lateinit var txtGender: Spinner
     private lateinit var txtNationality: AutoCompleteTextView
     private lateinit var btnDelete: MaterialButton
@@ -104,7 +105,6 @@ class UserSettingsActivity : AppCompatActivity() {
 
         txtGender.isEnabled = false
 
-        txtNationality.setTextColor(ContextCompat.getColor(this, R.color.disabled))
 
         disableEditTexts()
 
@@ -233,6 +233,9 @@ class UserSettingsActivity : AppCompatActivity() {
         txtUsername.isEnabled = true
 
         txtNationality.setTextColor(getThemeColor(android.R.attr.textColorPrimary))
+        txtEmail.setTextColor(getThemeColor(android.R.attr.textColorPrimary))
+        txtFullname.setTextColor(getThemeColor(android.R.attr.textColorPrimary))
+        txtUsername.setTextColor(getThemeColor(android.R.attr.textColorPrimary))
     }
 
     private fun disableEditTexts(){
@@ -243,6 +246,9 @@ class UserSettingsActivity : AppCompatActivity() {
         txtUsername.isEnabled = false
 
         txtNationality.setTextColor(ContextCompat.getColor(this, R.color.disabled))
+        txtEmail.setTextColor(ContextCompat.getColor(this, R.color.disabled))
+        txtFullname.setTextColor(ContextCompat.getColor(this, R.color.disabled))
+        txtUsername.setTextColor(ContextCompat.getColor(this, R.color.disabled))
     }
 
     private fun getThemeColor(attrResId: Int): Int {
@@ -318,6 +324,8 @@ class UserSettingsActivity : AppCompatActivity() {
             userGender,
             userNationality
         )
+
+        showToast("Informações editadas com sucesso!")
     }
 
     private fun loadNationalities(): List<Nationality> {
@@ -357,11 +365,11 @@ class UserSettingsActivity : AppCompatActivity() {
                         imgProfile.setImageResource(drawableId)
                     } else {
                         Log.e("UserSettingsActivity", "First name is empty")
-                        LoginActivity().showSnackBar("ERRO: Imagem de Perfil", "FECHAR", R.color.red, this)
+                        showToast("ERRO: Imagem de Perfil")
                     }
                 } else {
                     Log.e("UserSettingsActivity", "Full name is empty")
-                    LoginActivity().showSnackBar("ERRO: Imagem de Perfil", "FECHAR", R.color.red,this)
+                    showToast("ERRO: Imagem de Perfil")
                 }
 
                 shimmerEffect.animate().alpha(0f).setDuration(300).withEndAction {

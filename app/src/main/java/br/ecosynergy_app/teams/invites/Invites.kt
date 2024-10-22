@@ -1,7 +1,6 @@
 package br.ecosynergy_app.teams.invites
 
 data class InviteRequest(
-    val senderId: Int,
     val recipientId: Int,
     val teamId: Int
 )

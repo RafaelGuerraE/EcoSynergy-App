@@ -125,32 +125,57 @@ class TeamsViewModel(
         )
     }
 
-    fun createTeam(accessToken: String, request: TeamsRequest) {
+    fun createTeam(accessToken: String, request: TeamsRequest, onComplete: () -> Unit) {
         viewModelScope.launch {
             try {
-                val response = service.createTeam("Bearer $accessToken", request)
+                val result = service.createTeam("Bearer $accessToken", request)
                 Log.d("TeamsViewModel", "API - createTeam Successful")
 
-                insertTeamDB(
-                    Teams(
-                        id = response.id,
-                        handle = response.handle,
-                        name = response.name,
-                        description = response.description,
-                        activityId = response.activity.id,
-                        activityName = response.activity.name,
-                        activitySector = response.activity.sector,
-                        dailyGoal = response.dailyGoal,
-                        weeklyGoal = response.weeklyGoal,
-                        monthlyGoal = response.monthlyGoal,
-                        annualGoal = response.annualGoal,
-                        timeZone = response.timeZone,
-                        createdAt = response.createdAt,
-                        updatedAt = response.updatedAt,
-                        linksRel = response.links.self.href,
-                        linksHref = response.links.self.href
+                val response = result.body()
+
+                if(response != null) {
+                    insertTeamDB(
+                        Teams(
+                            id = response.id,
+                            handle = response.handle,
+                            name = response.name,
+                            description = response.description,
+                            activityId = response.activity.id,
+                            activityName = response.activity.name,
+                            activitySector = response.activity.sector,
+                            dailyGoal = response.dailyGoal,
+                            weeklyGoal = response.weeklyGoal,
+                            monthlyGoal = response.monthlyGoal,
+                            annualGoal = response.annualGoal,
+                            timeZone = response.timeZone,
+                            createdAt = response.createdAt,
+                            updatedAt = response.updatedAt,
+                            linksRel = response.links.self.href,
+                            linksHref = response.links.self.href
+                        )
                     )
-                )
+
+                    val memberData = response.members.first()
+
+                    val memberResponse = service.getMembersById(memberData.id, "Bearer $accessToken")
+                    val role = memberData.role
+
+                    val member = Members(
+                        userId = memberResponse.id,
+                        role = role,
+                        teamId = response.id,
+                        username = memberResponse.username,
+                        fullName = memberResponse.fullName,
+                        email = memberResponse.email,
+                        gender = memberResponse.gender,
+                        nationality = memberResponse.nationality,
+                        createdAt = memberResponse.createdAt
+                    )
+
+                    membersRepository.insertMember(member)
+
+                    onComplete()
+                }
             } catch (e: HttpException) {
                 Log.e("TeamsViewModel", "HTTP error while createTeam", e)
                 _teamsResult.value = Result.failure(e)
@@ -168,9 +193,9 @@ class TeamsViewModel(
     private fun insertTeamDB(team: Teams){
         viewModelScope.launch {
             try {
-                val response = teamsRepository.insertTeam(team)
-
+                teamsRepository.insertTeam(team)
                 Log.d("TeamsViewModel", "DB - InsertTeam Successful")
+
             }catch (e: Exception) {
                 Log.e("TeamsViewModel", "Error while InsertTeamDB", e)
                 _teamsResult.value = Result.failure(e)
@@ -178,10 +203,10 @@ class TeamsViewModel(
         }
     }
 
-    fun updateTeam(accessToken: String, id: Int, request: UpdateRequest) {
+    fun updateTeam(accessToken: String, teamId: Int, request: UpdateRequest) {
         viewModelScope.launch {
             try {
-                val result = service.updateTeam("Bearer $accessToken", id, request)
+                val result = service.updateTeam("Bearer $accessToken", teamId, request)
                 _updateResponse.value = Result.success(result)
                 if (result.isSuccessful) {
                     val response = result.body()
@@ -217,6 +242,62 @@ class TeamsViewModel(
                     Log.e("TeamsViewModel", "Error response from API: ${result.errorBody()?.string()}")
                 }
 
+            } catch (e: HttpException) {
+                Log.e("TeamsViewModel", "HTTP error while UpdateTeam", e)
+            } catch (e: IOException) {
+                Log.e("TeamsViewModel", "Network error during UpdateTeam", e)
+            } catch (e: Exception) {
+                Log.e("TeamsViewModel", "Error while UpdateTeam", e)
+            }
+        }
+    }
+
+    fun updateTeamGoals(accessToken: String, teamId: Int, dailyGoal: Double, weeklyGoal: Double, monthlyGoal: Double, annualGoal: Double, onComplete: () -> Unit) {
+        val request = UpdateRequest(
+            dailyGoal = dailyGoal,
+            weeklyGoal = weeklyGoal,
+            monthlyGoal = monthlyGoal,
+            annualGoal = annualGoal
+        )
+
+        viewModelScope.launch {
+            try {
+                val result = service.updateTeam("Bearer $accessToken", teamId, request)
+                _updateResponse.value = Result.success(result)
+                if (result.isSuccessful) {
+                    val response = result.body()
+                    if (response != null) {
+                        Log.d("TeamsViewModel", "API - UpdateTeamGoals Successful: $response")
+
+                        val team = Teams(
+                            id = response.id,
+                            handle = response.handle,
+                            name = response.name,
+                            description = response.description,
+                            activityId = response.activity.id,
+                            activityName = response.activity.name,
+                            activitySector = response.activity.sector,
+                            dailyGoal = response.dailyGoal,
+                            weeklyGoal = response.weeklyGoal,
+                            monthlyGoal = response.monthlyGoal,
+                            annualGoal = response.annualGoal,
+                            timeZone = response.timeZone,
+                            createdAt = response.createdAt,
+                            updatedAt = response.updatedAt,
+                            linksRel = response.links.self.href,
+                            linksHref = response.links.self.href
+                        )
+
+                        teamsRepository.updateTeamInfo(team)
+
+                        Log.d("TeamsViewModel", "DB - UpdateTeam Successful")
+                        onComplete()
+                    } else {
+                        Log.e("TeamsViewModel", "Null response from the API")
+                    }
+                } else {
+                    Log.e("TeamsViewModel", "Error response from API: ${result.errorBody()?.string()}")
+                }
             } catch (e: HttpException) {
                 Log.e("TeamsViewModel", "HTTP error while UpdateTeam", e)
             } catch (e: IOException) {
@@ -342,8 +423,6 @@ class TeamsViewModel(
         val roles = membersList.map { it.role }
         val usersList = mutableListOf<UserResponse>()
 
-        //Log.d("TeamsViewModel", "Ids: $ids Roles: $roles")
-
         ids.forEachIndexed { index, id ->
             try {
                 val response = service.getMembersById(id, "Bearer $accessToken")
@@ -352,7 +431,7 @@ class TeamsViewModel(
                 val role = roles[index]
 
                 val member = Members(
-                    userId = id!!,
+                    userId = id,
                     role = role,
                     teamId = teamId,
                     username = response.username,

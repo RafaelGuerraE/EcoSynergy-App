@@ -11,8 +11,11 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.ProgressBar
+import android.widget.RadioGroup
 import android.widget.Spinner
 import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
@@ -31,6 +34,7 @@ import br.ecosynergy_app.teams.viewmodel.Timezone
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.io.IOException
+import kotlin.time.times
 
 class CreateTeamActivity : AppCompatActivity() {
 
@@ -50,6 +54,9 @@ class CreateTeamActivity : AppCompatActivity() {
     private lateinit var txtMonthlyGoal: EditText
     private lateinit var txtAnnualGoal: EditText
 
+    private lateinit var btnInfo: ImageButton
+    private lateinit var btnEditAll: LinearLayout
+
     private lateinit var btnStepBack: TextView
 
     private lateinit var step2: TextView
@@ -59,6 +66,7 @@ class CreateTeamActivity : AppCompatActivity() {
     private lateinit var linearGoals: LinearLayout
 
     private lateinit var loadingProgressBar: ProgressBar
+    private lateinit var overlayView: View
 
     private var accessToken: String = ""
     private var userId: Int = 0
@@ -75,6 +83,8 @@ class CreateTeamActivity : AppCompatActivity() {
         val teamsRepository = TeamsRepository(teamsDao)
 
         loadingProgressBar = findViewById(R.id.loadingProgressBar)
+        overlayView = findViewById(R.id.overlayView)
+
         btnClose = findViewById(R.id.btnClose)
 
         val membersDao = AppDatabase.getDatabase(this).membersDao()
@@ -95,6 +105,9 @@ class CreateTeamActivity : AppCompatActivity() {
         txtWeeklyGoal = findViewById(R.id.txtWeeklyGoal)
         txtMonthlyGoal = findViewById(R.id.txtMonthlyGoal)
         txtAnnualGoal = findViewById(R.id.txtAnnualGoal)
+
+        btnEditAll = findViewById(R.id.btnEditAll)
+        btnInfo = findViewById(R.id.btnInfo)
 
         step2 = findViewById(R.id.step2)
         midStep1 = findViewById(R.id.midStep1)
@@ -123,6 +136,78 @@ class CreateTeamActivity : AppCompatActivity() {
         setupSpinner()
 
         btnClose.setOnClickListener { finish() }
+
+        btnInfo.setOnClickListener{
+            AlertDialog.Builder(this)
+                .setTitle("Informação sobre as Unidades de Medida")
+                .setMessage("As unidades aqui inseridas estão por padrão em Toneladas, se desejar as altere nas configurações posteriormente")
+                .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+                .show()
+        }
+
+        btnEditAll.setOnClickListener {
+            val dialogView = layoutInflater.inflate(R.layout.dialog_edit_all, null)
+            val radioGroup = dialogView.findViewById<RadioGroup>(R.id.radioGroup)
+            val txtValue = dialogView.findViewById<EditText>(R.id.txtValue)
+
+            AlertDialog.Builder(this)
+                .setTitle("Edite todas as metas")
+                .setView(dialogView)
+                .setPositiveButton("Confirmar") { dialog, _ ->
+                    val selectedId = radioGroup.checkedRadioButtonId
+                    val selectedFrequency = when (selectedId) {
+                        R.id.radioDaily -> "Daily"
+                        R.id.radioWeekly -> "Weekly"
+                        R.id.radioMonthly -> "Monthly"
+                        R.id.radioAnnual -> "Annual"
+                        else -> "Not Selected"
+                    }
+
+                    val inputValueString = txtValue.text.toString()
+
+                    if (selectedFrequency == "Not Selected") {
+                        showToast("Selecione o Parâmetro")
+                    } else if (inputValueString.isEmpty()) {
+                        showToast("Preencha o campo de meta")
+                    } else {
+                        try {
+                            val inputValue = inputValueString.toInt()
+                            when (selectedFrequency) {
+                                "Daily" -> {
+                                    txtDailyGoal.setText(inputValue.toString())
+                                    txtWeeklyGoal.setText((inputValue * 7).toString())
+                                    txtMonthlyGoal.setText((inputValue * 30).toString())
+                                    txtAnnualGoal.setText((inputValue * 365).toString())
+                                }
+                                "Weekly" -> {
+                                    txtDailyGoal.setText((inputValue / 7).toString())
+                                    txtWeeklyGoal.setText(inputValue.toString())
+                                    txtMonthlyGoal.setText((inputValue * 4).toString())
+                                    txtAnnualGoal.setText((inputValue * 52).toString())
+                                }
+                                "Monthly" -> {
+                                    txtDailyGoal.setText((inputValue / 30).toString())
+                                    txtWeeklyGoal.setText((inputValue / 4).toString())
+                                    txtMonthlyGoal.setText(inputValue.toString())
+                                    txtAnnualGoal.setText((inputValue * 12).toString())
+                                }
+                                "Annual" -> {
+                                    txtDailyGoal.setText((inputValue / 365).toString())
+                                    txtWeeklyGoal.setText((inputValue / 52).toString())
+                                    txtMonthlyGoal.setText((inputValue / 12).toString())
+                                    txtAnnualGoal.setText(inputValue.toString())
+                                }
+                            }
+                            showToast("Metas definidas!")
+                        } catch (e: NumberFormatException) {
+                            showToast("Valor inválido. Insira um número.")
+                        }
+                    }
+                    dialog.dismiss()
+                }
+                .setNegativeButton("Cancelar") { dialog, _ -> dialog.dismiss() }
+                .show()
+        }
 
         btnCreateTeam.setOnClickListener {
             when (step) {
@@ -168,6 +253,7 @@ class CreateTeamActivity : AppCompatActivity() {
 
     private fun createTeam() {
         loadingProgressBar.visibility = View.VISIBLE
+        overlayView.visibility = View.VISIBLE
         val members: List<Member> = listOf(Member(userId, "ADMINISTRATOR"))
         val teamsRequest = TeamsRequest(
             txtHandle.text.toString(),
@@ -181,8 +267,9 @@ class CreateTeamActivity : AppCompatActivity() {
             timezone,
             members
         )
-        teamsViewModel.createTeam(accessToken, teamsRequest)
-        finish()
+        teamsViewModel.createTeam(accessToken, teamsRequest){
+            finish()
+        }
     }
 
     private fun loadTimezones(): List<Timezone> {
@@ -259,5 +346,9 @@ class CreateTeamActivity : AppCompatActivity() {
             ex.printStackTrace()
             null
         }
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 }

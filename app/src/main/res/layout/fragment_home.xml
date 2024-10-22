@@ -5,7 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".home.fragments.Home"
+    tools:context=".home.fragments.HomeFragment"
     android:id="@+id/swipeRefresh"
     android:focusable="false">
 
