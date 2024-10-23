@@ -1,44 +1,26 @@
 {
   "project_info": {
-    "project_number": "893772887713",
-    "project_id": "ecosynergy-app2024",
-    "storage_bucket": "ecosynergy-app2024.appspot.com"
+    "project_number": "688462017536",
+    "project_id": "ecosynergy-bf18f",
+    "storage_bucket": "ecosynergy-bf18f.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:893772887713:android:ca28510eddd0d555cd62e0",
+        "mobilesdk_app_id": "1:688462017536:android:10e1d33be48c5a01fa54e5",
         "android_client_info": {
           "package_name": "br.ecosynergy_app"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "893772887713-ignv9apofob62lje1bjq1ithtd5ib6sa.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "br.ecosynergy_app",
-            "certificate_hash": "c2c800fe193aeff6631e2c650b1695a1b732012f"
-          }
-        },
-        {
-          "client_id": "893772887713-q67ofla3b7qo9h05ghh4dnkoefaa7hil.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDHwK-HTKB4WLdjFQGicdW9klR--CwLbbw"
+          "current_key": "AIzaSyBXXa7Ick9PyviLuxQQR6kNIfYrcYSj3WU"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "893772887713-q67ofla3b7qo9h05ghh4dnkoefaa7hil.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }

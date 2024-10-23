@@ -85,4 +85,6 @@ dependencies {
     implementation("androidx.room:room-ktx:2.6.1")
 
     implementation("androidx.emoji2:emoji2:1.5.0")
+
+    implementation(platform("com.google.firebase:firebase-bom:33.5.0"))
 }
