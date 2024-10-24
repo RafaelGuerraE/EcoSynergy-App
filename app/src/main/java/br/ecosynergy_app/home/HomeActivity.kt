@@ -103,15 +103,23 @@ class HomeActivity : AppCompatActivity() {
         val open = loginSp.getBoolean("open", false)
 
         if(isLoggedIn && !open){
-            updateUserInfo()
+            updateUserInfo{
+                observeUserInfoFromDB {
+//                readingsViewModel.deleteAllReadingsFromDB()
+//                readingsViewModel.fetchMQ7ReadingsByTeamHandle("ecosynergyofc", accessToken)
+                    //readingsViewModel.fetchMQ135ReadingsByTeamHandle("ecosynergyofc", accessToken)
+                    //readingsViewModel.fetchFireReadingsByTeamHandle("ecosynergyofc", accessToken)
+                }
+            }
         }
         else{
-            displayUserInfoFromDB{
-                readingsViewModel.deleteAllReadingsFromDB()
-                readingsViewModel.fetchMQ7ReadingsByTeamHandle("ecosynergyofc", accessToken)
-                teamsViewModel.getAllTeamsFromDB()
-                //readingsViewModel.fetchMQ135ReadingsByTeamHandle("ecosynergyofc", accessToken)
-                //readingsViewModel.fetchFireReadingsByTeamHandle("ecosynergyofc", accessToken)
+            userViewModel.getUserInfoFromDB{
+                observeUserInfoFromDB {
+//                readingsViewModel.deleteAllReadingsFromDB()
+//                readingsViewModel.fetchMQ7ReadingsByTeamHandle("ecosynergyofc", accessToken)
+                    //readingsViewModel.fetchMQ135ReadingsByTeamHandle("ecosynergyofc", accessToken)
+                    //readingsViewModel.fetchFireReadingsByTeamHandle("ecosynergyofc", accessToken)
+                }
             }
             loginSp.edit().putBoolean("open", false).apply()
         }
@@ -231,15 +239,13 @@ class HomeActivity : AppCompatActivity() {
             val i = Intent(this, TermsActivity::class.java)
             startActivity(i)
         }
+
     }
 
     override fun onResume() {
         super.onResume()
         clearNavigationViewSelection(navView)
-        displayUserInfoFromDB{
-            teamsViewModel.getAllTeamsFromDB()
-        }
-
+        userViewModel.getUserInfoFromDB {}
     }
 
     private fun manageThemes(){
@@ -285,24 +291,21 @@ class HomeActivity : AppCompatActivity() {
             .commit()
     }
 
-    private fun displayUserInfoFromDB(onComplete: () -> Unit) {
-        userViewModel.getUserInfoFromDB(){
-            userViewModel.userInfo.observe(this) { user ->
-                if (user != null) {
-                    Log.i("HomeActivity", "UserData displayed: $user")
-                    updateNavigationHeader(navView, user)
-                    accessToken = user.accessToken
-                } else {
-                    logout()
-                }
-                userViewModel.userInfo.removeObservers(this)
-                onComplete()
+    private fun observeUserInfoFromDB(onComplete: () -> Unit) {
+        userViewModel.userInfo.observe(this) { user ->
+            if (user != null) {
+                Log.i("HomeActivity", "UserData displayed: $user")
+                updateNavigationHeader(navView, user)
+                accessToken = user.accessToken
+            } else {
+                logout()
             }
+            onComplete()
         }
     }
 
 
-    private fun updateUserInfo() {
+    private fun updateUserInfo(onComplete: () -> Unit) {
         userViewModel.getUserInfoFromDB{}
 
         userViewModel.userInfo.observe(this) { userInfo ->
@@ -323,10 +326,10 @@ class HomeActivity : AppCompatActivity() {
                                     refreshResponse.refreshToken
                                 ){
                                     updateTeamInfo(userData.id, refreshResponse.accessToken)
-                                    displayUserInfoFromDB{}
+                                    userViewModel.getUserInfoFromDB(){}
 
-                                    readingsViewModel.deleteAllReadingsFromDB()
-                                    readingsViewModel.fetchMQ7ReadingsByTeamHandle("ecosynergyofc", refreshResponse.accessToken)
+                                    //readingsViewModel.deleteAllReadingsFromDB()
+                                    //readingsViewModel.fetchMQ7ReadingsByTeamHandle("ecosynergyofc", refreshResponse.accessToken)
                                     //readingsViewModel.fetchMQ135ReadingsByTeamHandle("ecosynergyofc", refreshResponse.accessToken)
                                     //readingsViewModel.fetchFireReadingsByTeamHandle("ecosynergyofc", refreshResponse.accessToken)
                                 }
@@ -338,10 +341,15 @@ class HomeActivity : AppCompatActivity() {
 
                     refreshResult.onFailure {
                         Log.e("HomeActivity", "Failed to refresh token")
-                        displayUserInfoFromDB {  }
+                        userViewModel.getUserInfoFromDB(){}
                     }
+
+                    userViewModel.refreshResult.removeObservers(this)
                 }
+
                 userViewModel.userInfo.removeObservers(this)
+
+                onComplete()
             } else {
                 Log.d("HomeActivity", "User info is null, cannot refresh token.")
                 logout()
@@ -349,12 +357,12 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateTeamInfo(userId: Int, accessToken: String){
-        teamsViewModel.deleteTeamsFromDB()
+    private fun updateTeamInfo(userId: Int, accessToken: String) {
         teamsViewModel.getTeamsByUserId(userId, accessToken) {
             teamsViewModel.getAllTeamsFromDB()
         }
     }
+
 
     private fun logout() {
         val editTheme = themeSp.edit()

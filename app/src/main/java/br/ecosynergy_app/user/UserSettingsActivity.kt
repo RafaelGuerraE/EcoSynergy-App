@@ -144,7 +144,6 @@ class UserSettingsActivity : AppCompatActivity() {
         })
 
         btnEdit.setOnClickListener {
-            Log.d("UserSettingsActivity", "btnEdit clicked")
             if (!isEditing) {
                 isEditing = true
                 enableEditTexts()

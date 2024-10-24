@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TeamsDao {
@@ -16,7 +17,7 @@ interface TeamsDao {
     suspend fun deleteAllTeams()
 
     @Query("SELECT * FROM teams")
-    suspend fun getAllTeams(): List<Teams>
+    fun getAllTeams(): Flow<List<Teams>>
 
     @Query("SELECT * FROM teams WHERE id = :id")
     suspend fun getTeamById(id: Int): Teams

@@ -178,8 +178,8 @@ class TeamOverviewActivity : AppCompatActivity() {
 
             val drawableId = HomeActivity().getDrawableForLetter(teamName.first())
             teamPicture.setImageResource(drawableId)
-            txtTeamName.text = "@$teamName"
-            txtHandle.text = teamInfo.handle
+            txtTeamName.text = teamName
+            txtHandle.text = "@" + teamInfo.handle
             txtDescription.text = teamInfo.description
 
             dailyGoal = teamInfo.dailyGoal.toString()

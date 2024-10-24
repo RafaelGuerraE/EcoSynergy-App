@@ -11,6 +11,7 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -19,6 +20,7 @@ import br.ecosynergy_app.teams.CreateTeamActivity
 import br.ecosynergy_app.teams.TeamAdapter
 import br.ecosynergy_app.teams.viewmodel.TeamsViewModel
 import br.ecosynergy_app.user.UserViewModel
+import kotlinx.coroutines.launch
 
 class TeamsFragment : Fragment() {
 
@@ -92,15 +94,24 @@ class TeamsFragment : Fragment() {
     }
 
     private fun observeTeamsData() {
-        //teamsViewModel.getAllTeamsFromDB()
-        teamsViewModel.allTeamsDB.observe(viewLifecycleOwner) { teamData ->
-            teamsAdapter = TeamAdapter(teamData)
-            recyclerView.adapter = teamsAdapter
-            if (teamData.isEmpty()) {
-                linearAlert.visibility = View.VISIBLE
-                recyclerView.visibility = View.GONE
+        // Start collecting the Flow of team data
+        viewLifecycleOwner.lifecycleScope.launch {
+            teamsViewModel.getAllTeamsFromDB().collect { teamData ->
+                // Initialize the adapter with the collected team data
+                teamsAdapter = TeamAdapter(teamData)
+                recyclerView.adapter = teamsAdapter
+
+                // Check if the team data is empty
+                if (teamData.isEmpty()) {
+                    linearAlert.visibility = View.VISIBLE
+                    recyclerView.visibility = View.GONE
+                } else {
+                    linearAlert.visibility = View.GONE
+                    recyclerView.visibility = View.VISIBLE
+                }
+                // Hide the progress bar after data is loaded
+                progressBar.visibility = View.GONE
             }
-            progressBar.visibility = View.GONE
         }
     }
 

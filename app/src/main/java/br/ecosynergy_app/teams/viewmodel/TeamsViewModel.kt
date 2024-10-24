@@ -12,6 +12,8 @@ import br.ecosynergy_app.room.teams.TeamsRepository
 import br.ecosynergy_app.room.teams.toTeam
 import br.ecosynergy_app.user.UserResponse
 import com.google.gson.Gson
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import retrofit2.Response
@@ -35,8 +37,8 @@ class TeamsViewModel(
     private val _deleteResult = MutableLiveData<Result<Unit>>()
     val deleteResult: LiveData<Result<Unit>> get() = _deleteResult
 
-    private val _allTeamsDB = MutableLiveData<List<Teams>>()
-    val allTeamsDB: LiveData<List<Teams>> get() = _allTeamsDB
+    private val _allTeamsDB = MutableLiveData<Flow<List<Teams>>>()
+    val allTeamsDB: LiveData<Flow<List<Teams>>> get() = _allTeamsDB
 
     private val _teamDB = MutableLiveData<Teams>()
     val teamDB: LiveData<Teams> get() = _teamDB
@@ -267,7 +269,7 @@ class TeamsViewModel(
                 if (result.isSuccessful) {
                     val response = result.body()
                     if (response != null) {
-                        Log.d("TeamsViewModel", "API - UpdateTeamGoals Successful: $response")
+                        Log.d("TeamsViewModel", "API - UpdateTeamGoals Successful")
 
                         val team = Teams(
                             id = response.id,
@@ -347,31 +349,46 @@ class TeamsViewModel(
         viewModelScope.launch {
             try {
                 val response = service.getTeamsByUserId(userId, "Bearer $accessToken")
-                val teams = response.body() ?: emptyList()
+                val fetchedTeams = response.body() ?: emptyList()
 
-                teams.forEach { team ->
-                    Log.d("TeamsViewModel", "$team")
-                    val teamEntity = team.toTeam()
-                    insertTeamDB(teamEntity)
+                val dbTeams = teamsRepository.getAllTeams().first()
 
-                    getMembersById(team.members, accessToken, team.id)
-                    Log.d("TeamsViewModel", "MembersInsertion completed for TeamID: ${team.id}")
-                }
+                    val updatedTeams = fetchedTeams.filter { fetchedTeam ->
+                        dbTeams.none { dbTeam ->
+                            dbTeam.id == fetchedTeam.id && dbTeam.updatedAt == fetchedTeam.updatedAt
+                        }
+                    }
 
-                _teamsResult.value = Result.success(teams)
-                Log.d("TeamsViewModel", "Added Teams to DB Successfully")
+                    updatedTeams.forEach { team ->
+                        val teamEntity = team.toTeam()
+                        teamsRepository.insertOrUpdateTeam(teamEntity)
+                        getMembersById(team.members, accessToken, team.id)
+                        Log.d("TeamsViewModel", "Members insertion completed for Team: ${team.id}")
+                    }
 
-                //getAllTeamsFromDB()
+                    val teamsToDelete = dbTeams.filter { dbTeam ->
+                        fetchedTeams.none { fetchedTeam -> fetchedTeam.id == dbTeam.id }
+                    }
+
+                    teamsToDelete.forEach { team ->
+                        teamsRepository.deleteTeamById(team.id)
+                        Log.d("TeamsViewModel", "Deleted TeamID: ${team.id}")
+                    }
+
+                    _teamsResult.value = Result.success(fetchedTeams)
+                    Log.d("TeamsViewModel", "Teams updated in the DB successfully")
 
                 onComplete()
+
 
             } catch (e: HttpException) {
                 Log.e("TeamsViewModel", "HTTP error while getTeamsByUserId", e)
                 _teamsResult.value = Result.failure(e)
 
             } catch (e: IOException) {
-                Log.e("UserViewModel", "Network error during getTeamsByUserId", e)
-                _teamResult.value = Result.failure(e)
+                Log.e("TeamsViewModel", "Network error during getTeamsByUserId", e)
+                _teamsResult.value = Result.failure(e)
+
             } catch (e: Exception) {
                 Log.e("TeamsViewModel", "Error while getTeamsByUserId", e)
                 _teamsResult.value = Result.failure(e)
@@ -395,23 +412,11 @@ class TeamsViewModel(
         }
     }
 
-    fun getAllTeamsFromDB() {
-        viewModelScope.launch {
-            try {
-                val teams = teamsRepository.getAllTeams()
-                val members = membersRepository.getAllMembers()
-
-                _allTeamsDB.value = teams
-                _allMembersDB.value = members
-
-                Log.d("TeamsViewModel", "Teams and Members: $teams $members")
-
-            } catch (e: Exception) {
-                Log.e("TeamsViewModel", "Error while getAllTeamsFromDB", e)
-                _teamsResult.value = Result.failure(e)
-            }
-        }
+    fun getAllTeamsFromDB(): Flow<List<Teams>> {
+        Log.d("TeamsViewModel", "GetAllTeamsCalled")
+        return teamsRepository.getAllTeams()
     }
+
 
 
     private suspend fun getMembersById(

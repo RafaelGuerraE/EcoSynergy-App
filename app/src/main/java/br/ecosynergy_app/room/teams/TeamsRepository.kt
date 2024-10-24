@@ -1,5 +1,7 @@
 package br.ecosynergy_app.room.teams
 
+import kotlinx.coroutines.flow.Flow
+
 class TeamsRepository(private val teamsDao: TeamsDao) {
 
     suspend fun insertTeam(team: Teams) {
@@ -10,7 +12,7 @@ class TeamsRepository(private val teamsDao: TeamsDao) {
         teamsDao.deleteAllTeams()
     }
 
-    suspend fun getAllTeams(): List<Teams> {
+    fun getAllTeams(): Flow<List<Teams>> {  // Return Flow now
         return teamsDao.getAllTeams()
     }
 
@@ -18,8 +20,12 @@ class TeamsRepository(private val teamsDao: TeamsDao) {
         return teamsDao.getTeamById(id)
     }
 
-    suspend fun getTeamByHandle(handle: String): Teams {
-        return teamsDao.getTeamByHandle(handle)
+    suspend fun insertOrUpdateTeam(team: Teams) {
+        if (getTeamById(team.id) == null) {
+            insertTeam(team)
+        } else {
+            updateTeamInfo(team)
+        }
     }
 
     suspend fun deleteTeamById(teamId: Int) {

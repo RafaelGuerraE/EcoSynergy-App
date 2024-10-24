@@ -127,8 +127,6 @@ class TeamGoalsActivity : AppCompatActivity() {
             txtWeeklyGoal.text = weeklyGoalText + measure
             txtMonthlyGoal.text = monthlyGoalText + measure
             txtAnnualGoal.text = annualGoalText + measure
-
-            Log.d("TeamGoalActivity", "Passei no Observer")
         }
     }
 

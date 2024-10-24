@@ -12,6 +12,7 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -27,6 +28,8 @@ import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.formatter.ValueFormatter
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment() {
 
@@ -166,28 +169,30 @@ class HomeFragment : Fragment() {
         }
     }
 
+
     private fun observeTeamsData() {
-        teamsViewModel.getAllTeamsFromDB()
-        teamsViewModel.allTeamsDB.observe(viewLifecycleOwner) { teamData ->
-            teamHandles = teamData.map { it.handle }
+        lifecycleScope.launch {
+            teamsViewModel.getAllTeamsFromDB().collectLatest { teamData ->
+                teamHandles = teamData.map { it.handle }
 
-            val teamsArrayAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, teamHandles)
-            spinnerTeam.adapter = teamsArrayAdapter
+                val teamsArrayAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, teamHandles)
+                spinnerTeam.adapter = teamsArrayAdapter
 
-            val dashboardList = teamData.map { team ->
-                DashboardItem(
-                    id = team.id,
-                    name = team.name,
-                    handle = "@" + team.handle,
-                    imageResourceId = HomeActivity().getDrawableForLetter(team.name.first())
-                )
+                val dashboardList = teamData.map { team ->
+                    DashboardItem(
+                        id = team.id,
+                        name = team.name,
+                        handle = "@" + team.handle,
+                        imageResourceId = HomeActivity().getDrawableForLetter(team.name.first())
+                    )
+                }
+
+                dashboardsAdapter.updateList(dashboardList)
+                recyclerDashboards.adapter = dashboardsAdapter
             }
-
-            dashboardsAdapter.updateList(dashboardList)
-            recyclerDashboards.adapter = dashboardsAdapter
         }
-        // teamsViewModel.allTeamsDB.removeObservers(viewLifecycleOwner)
     }
+
 
     private fun setupSwipeRefresh() {
         swipeRefresh.setOnRefreshListener {
