@@ -42,6 +42,7 @@ import br.ecosynergy_app.user.UserViewModelFactory
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.messaging.FirebaseMessaging
 import de.hdodenhof.circleimageview.CircleImageView
 
 class HomeActivity : AppCompatActivity() {
@@ -246,6 +247,20 @@ class HomeActivity : AppCompatActivity() {
         super.onResume()
         clearNavigationViewSelection(navView)
         userViewModel.getUserInfoFromDB {}
+
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.w("FCM", "Fetching FCM registration token failed", task.exception)
+                return@addOnCompleteListener
+            }
+
+            // Obtém o token atualizado
+            val token = task.result
+            Log.d("FCM", "Updated FCM Token: $token")
+
+            // Envia o token atualizado para o servidor
+            sendTokenToServer(token)
+        }
     }
 
     private fun manageThemes(){

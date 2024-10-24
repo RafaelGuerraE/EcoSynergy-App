@@ -54,13 +54,10 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
 
     implementation("com.google.mlkit:vision-internal-vkp:18.2.3")
-    implementation("androidx.activity:activity-ktx:1.9.2")
-    implementation("androidx.fragment:fragment-ktx:1.8.3")
+    implementation("androidx.fragment:fragment-ktx:1.8.4")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.6")
-    implementation("androidx.activity:activity-ktx:1.9.2")
     implementation("androidx.room:room-common:2.6.1")
-    implementation("androidx.activity:activity-ktx:1.9.2")
-    implementation("androidx.activity:activity:1.9.1")
+    implementation("androidx.activity:activity-ktx:1.9.3")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
@@ -71,9 +68,7 @@ dependencies {
     implementation("com.squareup.okhttp3:logging-interceptor:4.9.1")
 
     implementation("de.hdodenhof:circleimageview:3.1.0")
-
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
-
     implementation("com.facebook.shimmer:shimmer:0.5.0")
 
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
@@ -86,5 +81,6 @@ dependencies {
 
     implementation("androidx.emoji2:emoji2:1.5.0")
 
-    implementation(platform("com.google.firebase:firebase-bom:33.5.0"))
+    implementation(platform("com.google.firebase:firebase-bom:33.5.1"))
+    implementation("com.google.firebase:firebase-messaging")
 }

@@ -110,6 +110,12 @@
             android:name=".room.NotificationService"
             android:exported="true" />
 
+        <service android:name=".FirebaseMessagingService" android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
+
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
