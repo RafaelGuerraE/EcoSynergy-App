@@ -1,4 +1,4 @@
-package br.ecosynergy_app.user
+package br.ecosynergy_app.user.viewmodel
 
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -12,14 +12,14 @@ import br.ecosynergy_app.login.LoginResponse
 import br.ecosynergy_app.room.user.User
 import br.ecosynergy_app.room.user.UserRepository
 import br.ecosynergy_app.room.user.toUser
-import com.google.gson.Gson
+import br.ecosynergy_app.user.UserResponse
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
 
 class UserViewModel(
     private val service: UserService,
-    private val userRepository: UserRepository
+    val userRepository: UserRepository
 ) : ViewModel() {
 
     private val _user = MutableLiveData<Result<UserResponse>>()
@@ -266,6 +266,66 @@ class UserViewModel(
             } catch (e: Exception) {
                 Log.e("UserViewModel", "Unexpected error during searchUser", e)
                 _user.value = Result.failure(e)
+            }
+        }
+    }
+
+    fun saveOrUpdateFcmToken(accessToken:String, userId: Int, fcmToken: String, deviceType: String) {
+        viewModelScope.launch {
+            try {
+                val response = service.saveOrUpdateFcmToken("Bearer $accessToken", userId, fcmToken, deviceType ,"2024-12-31T12:20:20Z")
+                if (response.isSuccessful) {
+                    Log.d("UserViewModel", "FCM Token saved or updated successfully for userId: $userId")
+                } else {
+                    Log.e("UserViewModel", "Failed to save or update FCM Token: ${response.errorBody()?.string()}")
+                }
+            } catch (e: Exception) {
+                Log.e("UserViewModel", "Unexpected error during saveOrUpdateFcmToken", e)
+            }
+        }
+    }
+
+    fun getFCMTokenByUserIdAndDeviceType(userId: Int, deviceType: String) {
+        viewModelScope.launch {
+            try {
+                val response = service.getFCMTokenByUserIdAndDeviceType(userId, deviceType)
+                if (response.isSuccessful) {
+                    Log.d("UserViewModel", "FCM Token retrieved successfully for userId: $userId")
+                } else {
+                    Log.e("UserViewModel", "Failed to retrieve FCM Token: ${response.errorBody()?.string()}")
+                }
+            } catch (e: Exception) {
+                Log.e("UserViewModel", "Unexpected error during getFCMTokenByUserIdAndDeviceType", e)
+            }
+        }
+    }
+
+    fun removeFCMToken(userId: Int, deviceType: String) {
+        viewModelScope.launch {
+            try {
+                val response = service.removeFCMToken(userId, deviceType)
+                if (response.isSuccessful) {
+                    Log.d("UserViewModel", "FCM Token removed successfully for userId: $userId")
+                } else {
+                    Log.e("UserViewModel", "Failed to remove FCM Token: ${response.errorBody()?.string()}")
+                }
+            } catch (e: Exception) {
+                Log.e("UserViewModel", "Unexpected error during removeFCMToken", e)
+            }
+        }
+    }
+
+    fun removeAllFCMTokens(userId: Int) {
+        viewModelScope.launch {
+            try {
+                val response = service.removeAllFCMTokens(userId)
+                if (response.isSuccessful) {
+                    Log.d("UserViewModel", "All FCM Tokens removed successfully for userId: $userId")
+                } else {
+                    Log.e("UserViewModel", "Failed to remove all FCM Tokens: ${response.errorBody()?.string()}")
+                }
+            } catch (e: Exception) {
+                Log.e("UserViewModel", "Unexpected error during removeAllFCMTokens", e)
             }
         }
     }

@@ -41,5 +41,5 @@ interface UserDao {
     )
 
     @Query("SELECT id FROM User LIMIT 1")
-    suspend fun getUserId(): String?
+    suspend fun getUserId(): Int
 }

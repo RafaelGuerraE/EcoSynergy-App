@@ -19,7 +19,7 @@ import br.ecosynergy_app.R
 import br.ecosynergy_app.teams.CreateTeamActivity
 import br.ecosynergy_app.teams.TeamAdapter
 import br.ecosynergy_app.teams.viewmodel.TeamsViewModel
-import br.ecosynergy_app.user.UserViewModel
+import br.ecosynergy_app.user.viewmodel.UserViewModel
 import kotlinx.coroutines.launch
 
 class TeamsFragment : Fragment() {

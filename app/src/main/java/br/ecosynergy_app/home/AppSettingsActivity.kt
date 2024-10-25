@@ -20,8 +20,8 @@ import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.room.AppDatabase
 import br.ecosynergy_app.room.user.UserRepository
-import br.ecosynergy_app.user.UserViewModel
-import br.ecosynergy_app.user.UserViewModelFactory
+import br.ecosynergy_app.user.viewmodel.UserViewModel
+import br.ecosynergy_app.user.viewmodel.UserViewModelFactory
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import java.util.Locale

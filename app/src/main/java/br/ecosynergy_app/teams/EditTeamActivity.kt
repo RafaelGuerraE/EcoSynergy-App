@@ -18,7 +18,6 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
-import br.ecosynergy_app.login.LoginActivity
 import br.ecosynergy_app.room.AppDatabase
 import br.ecosynergy_app.room.teams.MembersRepository
 import br.ecosynergy_app.room.teams.TeamsRepository
@@ -29,8 +28,8 @@ import br.ecosynergy_app.teams.viewmodel.TeamsViewModel
 import br.ecosynergy_app.teams.viewmodel.TeamsViewModelFactory
 import br.ecosynergy_app.teams.viewmodel.Timezone
 import br.ecosynergy_app.teams.viewmodel.UpdateRequest
-import br.ecosynergy_app.user.UserViewModel
-import br.ecosynergy_app.user.UserViewModelFactory
+import br.ecosynergy_app.user.viewmodel.UserViewModel
+import br.ecosynergy_app.user.viewmodel.UserViewModelFactory
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.io.IOException

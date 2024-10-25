@@ -37,12 +37,16 @@ import br.ecosynergy_app.room.user.UserRepository
 import br.ecosynergy_app.teams.viewmodel.TeamsViewModel
 import br.ecosynergy_app.teams.viewmodel.TeamsViewModelFactory
 import br.ecosynergy_app.user.UserSettingsActivity
-import br.ecosynergy_app.user.UserViewModel
-import br.ecosynergy_app.user.UserViewModelFactory
+import br.ecosynergy_app.user.viewmodel.UserViewModel
+import br.ecosynergy_app.user.viewmodel.UserViewModelFactory
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.messaging.FirebaseMessaging
 import de.hdodenhof.circleimageview.CircleImageView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class HomeActivity : AppCompatActivity() {
 
@@ -105,6 +109,8 @@ class HomeActivity : AppCompatActivity() {
         if(isLoggedIn && !open){
             updateUserInfo{
                 observeUserInfoFromDB {
+
+                    retrieveAndSendFcmToken()
 //                readingsViewModel.deleteAllReadingsFromDB()
 //                readingsViewModel.fetchMQ7ReadingsByTeamHandle("ecosynergyofc", accessToken)
                     //readingsViewModel.fetchMQ135ReadingsByTeamHandle("ecosynergyofc", accessToken)
@@ -115,13 +121,14 @@ class HomeActivity : AppCompatActivity() {
         else{
             userViewModel.getUserInfoFromDB{
                 observeUserInfoFromDB {
+
+                    retrieveAndSendFcmToken()
 //                readingsViewModel.deleteAllReadingsFromDB()
 //                readingsViewModel.fetchMQ7ReadingsByTeamHandle("ecosynergyofc", accessToken)
                     //readingsViewModel.fetchMQ135ReadingsByTeamHandle("ecosynergyofc", accessToken)
                     //readingsViewModel.fetchFireReadingsByTeamHandle("ecosynergyofc", accessToken)
                 }
             }
-            loginSp.edit().putBoolean("open", false).apply()
         }
 
         bottomNavView = findViewById(R.id.bottomNavView)
@@ -239,6 +246,7 @@ class HomeActivity : AppCompatActivity() {
             val i = Intent(this, TermsActivity::class.java)
             startActivity(i)
         }
+
 
     }
 
@@ -465,4 +473,31 @@ class HomeActivity : AppCompatActivity() {
         })
         snackBar.show()
     }
+
+    private fun retrieveAndSendFcmToken() {
+        FirebaseMessaging.getInstance().token
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val fcmToken = task.result
+                    if (fcmToken != null) {
+                        sendFcmTokenToServer(fcmToken)
+                    }
+                } else {
+                    Log.e("HomeActivity", "Erro ao obter o token FCM: ${task.exception}")
+                }
+            }
+    }
+
+    private fun sendFcmTokenToServer(fcmToken: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val userId = userViewModel.userRepository.getUserId()
+                userViewModel.saveOrUpdateFcmToken(accessToken, userId, fcmToken, "android")
+                Log.d("HomeActivity", "UserID: $userId, FCMToken: $fcmToken, AccessToken: $accessToken")
+            } catch (e: Exception) {
+                Log.e("HomeActivity", "Erro ao enviar token FCM para o servidor", e)
+            }
+        }
+    }
+
 }

@@ -21,7 +21,7 @@ import br.ecosynergy_app.home.HomeActivity
 import br.ecosynergy_app.readings.ReadingsViewModel
 import br.ecosynergy_app.teams.DashboardActivity
 import br.ecosynergy_app.teams.viewmodel.TeamsViewModel
-import br.ecosynergy_app.user.UserViewModel
+import br.ecosynergy_app.user.viewmodel.UserViewModel
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData

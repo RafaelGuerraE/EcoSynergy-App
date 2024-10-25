@@ -29,13 +29,12 @@ import br.ecosynergy_app.room.user.UserRepository
 import br.ecosynergy_app.signup.SignUpActivity
 import br.ecosynergy_app.teams.viewmodel.TeamsViewModel
 import br.ecosynergy_app.teams.viewmodel.TeamsViewModelFactory
-import br.ecosynergy_app.user.UserViewModel
-import br.ecosynergy_app.user.UserViewModelFactory
+import br.ecosynergy_app.user.viewmodel.UserViewModel
+import br.ecosynergy_app.user.viewmodel.UserViewModelFactory
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
-import com.google.firebase.messaging.FirebaseMessaging
 
 class LoginActivity : AppCompatActivity() {
 

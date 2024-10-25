@@ -1,4 +1,4 @@
-package br.ecosynergy_app.user
+package br.ecosynergy_app.user.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

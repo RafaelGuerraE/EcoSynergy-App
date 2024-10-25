@@ -25,6 +25,8 @@ import br.ecosynergy_app.home.HomeActivity
 import br.ecosynergy_app.signup.Nationality
 import br.ecosynergy_app.room.AppDatabase
 import br.ecosynergy_app.room.user.UserRepository
+import br.ecosynergy_app.user.viewmodel.UserViewModel
+import br.ecosynergy_app.user.viewmodel.UserViewModelFactory
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.android.material.button.MaterialButton
 import com.google.gson.Gson

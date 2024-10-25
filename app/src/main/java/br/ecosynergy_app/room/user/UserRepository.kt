@@ -23,4 +23,8 @@ class UserRepository(private val userDao: UserDao) {
                            newRefreshToken: String){
         return userDao.updateUser(userId, newUsername, newFullName, newEmail, newGender, newNationality, newAccessToken, newRefreshToken)
     }
+
+    suspend fun getUserId(): Int {
+        return userDao.getUserId()
+    }
 }
