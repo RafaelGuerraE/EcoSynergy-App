@@ -31,7 +31,7 @@
                 android:id="@+id/imgTeam"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:src="@drawable/default_image"
+                android:src="@drawable/ic_default"
                 tools:src="@drawable/e"
                 android:layout_marginStart="15dp"/>
 
@@ -70,7 +70,7 @@
                 android:layout_width="25dp"
                 android:layout_height="25dp"
                 android:scaleType="fitXY"
-                android:src="@drawable/baseline_close_24"
+                android:src="@drawable/ic_close"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:layout_marginStart="20dp"
                 android:layout_gravity="end|center"

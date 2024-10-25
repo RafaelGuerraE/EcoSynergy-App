@@ -21,7 +21,7 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_gravity="center"
-        android:src="@drawable/default_image"
+        android:src="@drawable/ic_default"
         tools:src="@drawable/e"
         android:layout_marginStart="20dp"/>
 
@@ -74,7 +74,7 @@
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_gravity="end|center"
-        android:src="@drawable/baseline_info_24"
+        android:src="@drawable/ic_info"
         android:background="?attr/selectableItemBackgroundBorderless"
         app:tint="?android:attr/iconTint"
         android:scaleType="fitXY"

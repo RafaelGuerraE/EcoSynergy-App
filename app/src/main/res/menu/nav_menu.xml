@@ -9,10 +9,10 @@
             android:icon="@drawable/rounded_settings_24"
             android:title="Configurações"/>
         <item android:id="@+id/account_config"
-            android:icon="@drawable/profile"
+            android:icon="@drawable/ic_profile"
             android:title="Informações do Usuário"/>
         <item android:id="@+id/about"
-            android:icon="@drawable/baseline_info_24"
+            android:icon="@drawable/ic_info"
             android:title="Sobre"/>
     </group>
 

@@ -28,7 +28,7 @@
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:gravity="top"
                 android:scaleType="fitXY"
-                android:src="@drawable/baseline_close_24"
+                android:src="@drawable/ic_close"
                 app:tint="?android:attr/iconTint" />
 
             <LinearLayout
@@ -72,7 +72,7 @@
                         android:scaleType="fitXY"
                         android:layout_gravity="center"
                         android:background="?android:attr/selectableItemBackgroundBorderless"
-                        android:src="@drawable/baseline_search_24"
+                        android:src="@drawable/ic_search"
                         app:tint="?android:attr/iconTint"
                         android:layout_marginStart="5dp"
                         android:visibility="visible"/>

@@ -15,7 +15,7 @@
         android:background="?android:attr/selectableItemBackgroundBorderless"
         android:contentDescription="BackButton"
         app:tint="?android:attr/iconTint"
-        android:src="@drawable/baseline_arrow_back_24"
+        android:src="@drawable/ic_arrowback"
         android:scaleType="fitXY"
         android:gravity="top"
         android:layout_margin="15dp"/>
@@ -34,7 +34,7 @@
             android:id="@+id/imgAlert"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:src="@drawable/baseline_file_download_off_24"
+            android:src="@drawable/ic_downloadfail"
             android:layout_marginBottom="20dp"
             app:tint="?android:attr/iconTint"/>
 

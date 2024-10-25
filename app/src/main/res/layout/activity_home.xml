@@ -25,7 +25,7 @@
                 android:layout_height="35dp"
                 android:layout_gravity="start"
                 android:contentDescription="@string/logouser"
-                android:src="@drawable/default_image"
+                android:src="@drawable/ic_default"
                 android:background="?android:attr/selectableItemBackgroundBorderless"/>
 
             <ProgressBar

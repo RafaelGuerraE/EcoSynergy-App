@@ -192,22 +192,6 @@ class LoginActivity : AppCompatActivity() {
                         }
                     }
 
-                    FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
-                        if (!task.isSuccessful) {
-                            Log.w("FCM", "Fetching FCM registration token failed", task.exception)
-                            return@addOnCompleteListener
-                        }
-
-                        // Captura o token gerado
-                        val token = task.result
-                        Log.d("FCM", "FCM Token: $token")
-
-                        // Enviar o token para o backend
-                        sendTokenToServer(token)
-                    }
-
-
-
                     userViewModel.user.removeObservers(this)
                 }
             }.onFailure { error ->

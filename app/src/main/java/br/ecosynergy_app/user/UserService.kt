@@ -4,6 +4,8 @@ import br.ecosynergy_app.home.PasswordRequest
 import br.ecosynergy_app.home.UpdateRequest
 import br.ecosynergy_app.login.LoginRequest
 import br.ecosynergy_app.login.LoginResponse
+import br.ecosynergy_app.room.notifications.FcmTokenRequest
+import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -61,5 +63,7 @@ interface UserService {
     suspend fun searchUser(@Path("username") username: String,
                            @Header("Authorization") token: String): MutableList<UserResponse>
 
+    @POST("users/update-fcm-token")
+    fun updateFcmToken(@Body tokenRequest: FcmTokenRequest): Call<Void>
 
 }

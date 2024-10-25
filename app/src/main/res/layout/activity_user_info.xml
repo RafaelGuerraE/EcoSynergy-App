@@ -22,7 +22,7 @@
             android:layout_height="30dp"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:contentDescription="BackButton"
-            android:src="@drawable/baseline_close_24"
+            android:src="@drawable/ic_close"
             android:scaleType="fitXY"
             app:tint="?android:attr/iconTint"
             android:layout_margin="15dp"
@@ -66,7 +66,7 @@
                 android:id="@+id/imgUser"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
-                android:src="@drawable/default_image"
+                android:src="@drawable/ic_default"
                 tools:src="@drawable/r"
                 android:layout_gravity="center"
                 android:layout_marginBottom="10dp"/>

@@ -15,18 +15,6 @@ class ReadingsViewModel(
     private val readingsRepository: ReadingsRepository
 ): ViewModel() {
 
-    fun deleteAllReadingsFromDB(){
-        viewModelScope.launch {
-            try {
-                val delete = readingsRepository.deleteAllReadings()
-                val deleteState = if(delete == Unit) "OK" else "ERROR"
-                Log.d("ReadingsViewModel", "DeleteReadings: $deleteState")
-            }catch (e: Exception) {
-                Log.e("UserViewModel", "Unexpected error during deleteUserInfo", e)
-            }
-        }
-    }
-
     // MQ7 Readings
     private val _mq7ReadingResult = MutableLiveData<Result<MQ7ReadingsResponse>>()
     val mq7ReadingResult: LiveData<Result<MQ7ReadingsResponse>> get() = _mq7ReadingResult
@@ -55,31 +43,6 @@ class ReadingsViewModel(
                 Log.d("ReadingsViewModel", "MQ7Readings successfully stored in the database.")
 
                 //getReadingsBySensorFromDB("MQ7")
-
-            } catch (e: HttpException) {
-                Log.e("ReadingsViewModel", "HTTP error while fetching MQ7 readings", e)
-                _mq7ReadingResult.value = Result.failure(e)
-            } catch (e: Exception) {
-                Log.e("ReadingsViewModel", "Error while fetching MQ7 readings", e)
-                _mq7ReadingResult.value = Result.failure(e)
-            }
-        }
-    }
-
-    fun getReadingsBySensorFromDB(sensor: String) {
-        viewModelScope.launch {
-            try {
-
-                val readingsResponse = readingsRepository.getReadingsBySensor(sensor)
-
-                when (sensor) {
-                    "MQ7" -> _mq7ReadingsDB.value = readingsResponse
-                    "MQ135" -> _mq135ReadingsDB.value = readingsResponse
-                    "FIRE" -> _fireReadingsDB.value = readingsResponse
-                    else -> Log.e("ReadingsViewModel", "Unknown sensor type: $sensor")
-                }
-
-                Log.d("ReadingsViewModel", "$sensor Readings Successfully got from DB.")
 
             } catch (e: HttpException) {
                 Log.e("ReadingsViewModel", "HTTP error while fetching MQ7 readings", e)
@@ -163,6 +126,45 @@ class ReadingsViewModel(
             } catch (e: Exception) {
                 Log.e("ReadingsViewModel", "Error while fetching Fire readings", e)
                 _fireReadingResult.value = Result.failure(e)
+            }
+        }
+    }
+
+    //Database
+
+    fun getReadingsBySensorFromDB(sensor: String) {
+        viewModelScope.launch {
+            try {
+
+                val readingsResponse = readingsRepository.getReadingsBySensor(sensor)
+
+                when (sensor) {
+                    "MQ7" -> _mq7ReadingsDB.value = readingsResponse
+                    "MQ135" -> _mq135ReadingsDB.value = readingsResponse
+                    "FIRE" -> _fireReadingsDB.value = readingsResponse
+                    else -> Log.e("ReadingsViewModel", "Unknown sensor type: $sensor")
+                }
+
+                Log.d("ReadingsViewModel", "$sensor Readings Successfully got from DB.")
+
+            } catch (e: HttpException) {
+                Log.e("ReadingsViewModel", "HTTP error while fetching MQ7 readings", e)
+                _mq7ReadingResult.value = Result.failure(e)
+            } catch (e: Exception) {
+                Log.e("ReadingsViewModel", "Error while fetching MQ7 readings", e)
+                _mq7ReadingResult.value = Result.failure(e)
+            }
+        }
+    }
+
+    fun deleteAllReadingsFromDB(){
+        viewModelScope.launch {
+            try {
+                val delete = readingsRepository.deleteAllReadings()
+                val deleteState = if(delete == Unit) "OK" else "ERROR"
+                Log.d("ReadingsViewModel", "DeleteReadings: $deleteState")
+            }catch (e: Exception) {
+                Log.e("UserViewModel", "Unexpected error during deleteUserInfo", e)
             }
         }
     }

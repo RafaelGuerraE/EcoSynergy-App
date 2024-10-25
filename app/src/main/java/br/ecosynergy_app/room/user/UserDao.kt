@@ -39,4 +39,7 @@ interface UserDao {
         newAccessToken: String,
         newRefreshToken: String
     )
+
+    @Query("SELECT id FROM User LIMIT 1")
+    suspend fun getUserId(): String?
 }

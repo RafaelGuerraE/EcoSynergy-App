@@ -5,18 +5,18 @@
         android:layout_height="wrap_content"
         android:id="@+id/home"
         android:title="Home"
-        android:icon="@drawable/outline_home_24"/>
+        android:icon="@drawable/ic_home"/>
     <item
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/teams"
         android:title="Equipes"
-        android:icon="@drawable/outline_people_24"/>
+        android:icon="@drawable/ic_teams"/>
 
     <item
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/notifications"
         android:title="Notificações"
-        android:icon="@drawable/outline_notifications_24"/>
+        android:icon="@drawable/ic_notification"/>
 </menu>

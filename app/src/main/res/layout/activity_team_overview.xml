@@ -24,7 +24,7 @@
         <de.hdodenhof.circleimageview.CircleImageView
             android:layout_width="90dp"
             android:layout_height="90dp"
-            android:src="@drawable/default_image"
+            android:src="@drawable/ic_default"
             tools:src="@drawable/e"
             android:id="@+id/teamPicture"
             android:visibility="gone"
@@ -83,7 +83,7 @@
                 android:layout_width="14dp"
                 android:layout_height="14dp"
                 android:layout_gravity="center"
-                android:src="@drawable/baseline_edit_24"
+                android:src="@drawable/ic_edit"
                 app:tint="?android:attr/iconTint"
                 android:layout_marginEnd="2dp"/>
 
@@ -216,7 +216,7 @@
             android:text="Excluir..."
             android:visibility="visible"
             tools:text="Excluir @ecosynergyofc"
-            app:icon="@drawable/baseline_delete_24"
+            app:icon="@drawable/ic_delete"
             app:iconSize="20dp"
             app:iconTint="?android:attr/iconTint"
             app:iconPadding="5dp"
@@ -249,7 +249,7 @@
                 android:layout_height="25dp"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:contentDescription="BackButton"
-                android:src="@drawable/baseline_arrow_back_24"
+                android:src="@drawable/ic_arrowback"
                 android:scaleType="fitXY"
                 app:tint="?android:attr/iconTint"
                 android:layout_margin="15dp"

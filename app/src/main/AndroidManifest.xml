@@ -110,7 +110,7 @@
             android:name=".room.NotificationService"
             android:exported="true" />
 
-        <service android:name=".FirebaseMessagingService" android:exported="true">
+        <service android:name=".room.notifications.MyFirebaseMessagingService" android:exported="true">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>

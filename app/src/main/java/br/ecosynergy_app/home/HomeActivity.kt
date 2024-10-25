@@ -42,7 +42,6 @@ import br.ecosynergy_app.user.UserViewModelFactory
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.messaging.FirebaseMessaging
 import de.hdodenhof.circleimageview.CircleImageView
 
 class HomeActivity : AppCompatActivity() {
@@ -142,7 +141,7 @@ class HomeActivity : AppCompatActivity() {
 
         when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
             Configuration.UI_MODE_NIGHT_YES -> {
-                btnTheme.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.baseline_dark_mode_24))
+                btnTheme.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_dark))
             }
             Configuration.UI_MODE_NIGHT_NO -> {
                 btnTheme.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.baseline_sunny_24))
@@ -163,33 +162,33 @@ class HomeActivity : AppCompatActivity() {
             replaceFragment(NotificationsFragment())
             bottomNavView.menu.findItem(R.id.notifications)?.isChecked = true
             bottomNavView.selectedItemId = R.id.notifications
-            bottomNavView.menu.findItem(R.id.notifications)?.setIcon(R.drawable.baseline_notifications_24)
+            bottomNavView.menu.findItem(R.id.notifications)?.setIcon(R.drawable.ic_notificationfull)
         } else {
             replaceFragment(HomeFragment())
             bottomNavView.menu.findItem(R.id.home)?.isChecked = true
             bottomNavView.selectedItemId = R.id.home
-            bottomNavView.menu.findItem(R.id.home)?.setIcon(R.drawable.baseline_home_24)
+            bottomNavView.menu.findItem(R.id.home)?.setIcon(R.drawable.ic_homefull)
         }
 
         bottomNavView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.home -> {
                     replaceFragment(HomeFragment())
-                    item.setIcon(R.drawable.baseline_home_24)
-                    bottomNavView.menu.findItem(R.id.teams)?.setIcon(R.drawable.outline_people_24)
-                    bottomNavView.menu.findItem(R.id.notifications)?.setIcon(R.drawable.outline_notifications_24)
+                    item.setIcon(R.drawable.ic_homefull)
+                    bottomNavView.menu.findItem(R.id.teams)?.setIcon(R.drawable.ic_teams)
+                    bottomNavView.menu.findItem(R.id.notifications)?.setIcon(R.drawable.ic_notification)
                 }
                 R.id.teams -> {
                     replaceFragment(TeamsFragment())
-                    item.setIcon(R.drawable.baseline_people_24)
-                    bottomNavView.menu.findItem(R.id.home)?.setIcon(R.drawable.outline_home_24)
-                    bottomNavView.menu.findItem(R.id.notifications)?.setIcon(R.drawable.outline_notifications_24)
+                    item.setIcon(R.drawable.ic_teamsfull)
+                    bottomNavView.menu.findItem(R.id.home)?.setIcon(R.drawable.ic_home)
+                    bottomNavView.menu.findItem(R.id.notifications)?.setIcon(R.drawable.ic_notification)
                 }
                 R.id.notifications-> {
                     replaceFragment(NotificationsFragment())
-                    item.setIcon(R.drawable.baseline_notifications_24)
-                    bottomNavView.menu.findItem(R.id.home)?.setIcon(R.drawable.outline_home_24)
-                    bottomNavView.menu.findItem(R.id.teams)?.setIcon(R.drawable.outline_people_24)
+                    item.setIcon(R.drawable.ic_notificationfull)
+                    bottomNavView.menu.findItem(R.id.home)?.setIcon(R.drawable.ic_home)
+                    bottomNavView.menu.findItem(R.id.teams)?.setIcon(R.drawable.ic_teams)
                 }
             }
             true
@@ -247,20 +246,6 @@ class HomeActivity : AppCompatActivity() {
         super.onResume()
         clearNavigationViewSelection(navView)
         userViewModel.getUserInfoFromDB {}
-
-        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
-            if (!task.isSuccessful) {
-                Log.w("FCM", "Fetching FCM registration token failed", task.exception)
-                return@addOnCompleteListener
-            }
-
-            // Obtém o token atualizado
-            val token = task.result
-            Log.d("FCM", "Updated FCM Token: $token")
-
-            // Envia o token atualizado para o servidor
-            sendTokenToServer(token)
-        }
     }
 
     private fun manageThemes(){
@@ -428,7 +413,7 @@ class HomeActivity : AppCompatActivity() {
             'x' -> R.drawable.x
             'y' -> R.drawable.y
             'z' -> R.drawable.z
-            else -> R.drawable.default_image
+            else -> R.drawable.ic_default
         }
     }
 

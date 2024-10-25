@@ -8,16 +8,13 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.util.TypedValue
-import android.view.LayoutInflater
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.EditText
 import android.widget.ImageButton
-import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.Spinner
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -25,14 +22,11 @@ import androidx.lifecycle.ViewModelProvider
 import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.home.HomeActivity
-import br.ecosynergy_app.login.LoginActivity
 import br.ecosynergy_app.signup.Nationality
 import br.ecosynergy_app.room.AppDatabase
 import br.ecosynergy_app.room.user.UserRepository
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.android.material.button.MaterialButton
-import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.textfield.TextInputEditText
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import de.hdodenhof.circleimageview.CircleImageView
@@ -147,7 +141,7 @@ class UserSettingsActivity : AppCompatActivity() {
             if (!isEditing) {
                 isEditing = true
                 enableEditTexts()
-                btnEdit.setImageResource(R.drawable.baseline_check_24)
+                btnEdit.setImageResource(R.drawable.ic_check)
             } else {
                 val builder = AlertDialog.Builder(this)
                 builder.setTitle("Você deseja alterar suas informações?")
@@ -167,7 +161,7 @@ class UserSettingsActivity : AppCompatActivity() {
 
                     updateUserData()
 
-                    btnEdit.setImageResource(R.drawable.baseline_edit_24)
+                    btnEdit.setImageResource(R.drawable.ic_edit)
                     disableEditTexts()
                     isEditing = false
                     dialog.dismiss()

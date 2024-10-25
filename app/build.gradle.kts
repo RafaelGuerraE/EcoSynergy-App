@@ -82,5 +82,5 @@ dependencies {
     implementation("androidx.emoji2:emoji2:1.5.0")
 
     implementation(platform("com.google.firebase:firebase-bom:33.5.1"))
-    implementation("com.google.firebase:firebase-messaging")
+    implementation("com.google.firebase:firebase-messaging-ktx:24.0.3")
 }
