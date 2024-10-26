@@ -40,7 +40,7 @@
                 android:layout_height="match_parent"
                 android:orientation="horizontal"
                 android:layout_gravity="center"
-                android:background="@drawable/rounded_background"
+                android:background="@drawable/ripple_bg"
                 android:focusable="true"
                 android:clickable="true"
                 android:visibility="visible"
@@ -48,12 +48,12 @@
                 android:paddingEnd="5dp">
 
                 <ImageView
-                    android:layout_width="14dp"
-                    android:layout_height="14dp"
+                    android:layout_width="13dp"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center"
+                    android:layout_marginEnd="2dp"
                     android:src="@drawable/ic_edit"
-                    app:tint="?android:attr/iconTint"
-                    android:layout_marginEnd="2dp"/>
+                    app:tint="?android:attr/iconTint" />
 
                 <TextView
                     android:layout_gravity="center"
@@ -72,7 +72,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="15dp"
-        android:background="@drawable/home_background"
+        android:background="@drawable/no_ripple_bg"
         android:layout_marginBottom="10dp"
         android:layout_marginStart="15dp"
         android:layout_marginEnd="15dp">

@@ -413,7 +413,7 @@ class TeamsViewModel(
     }
 
     fun getAllTeamsFromDB(): Flow<List<Teams>> {
-        Log.d("TeamsViewModel", "GetAllTeamsCalled")
+        Log.i("TeamsViewModel", "GetAllTeamsCalled")
         return teamsRepository.getAllTeams()
     }
 
@@ -466,13 +466,10 @@ class TeamsViewModel(
         viewModelScope.launch {
             try {
                 val deleteTeams = teamsRepository.deleteAllTeams()
-                val deleteMembers = membersRepository.deleteAllMembers()
 
                 val deleteTeamsState = if (deleteTeams == Unit) "OK" else "ERROR"
-                val deleteMembersState = if (deleteMembers == Unit) "OK" else "ERROR"
 
                 Log.d("TeamsViewModel", "Delete Teams from DB: $deleteTeamsState")
-                Log.d("TeamsViewModel", "Delete Members from DB: $deleteMembersState")
             } catch (e: Exception) {
                 Log.e("TeamsViewModel", "Unexpected error during deleteTeamsFromDB", e)
             }

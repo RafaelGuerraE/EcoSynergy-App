@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 data class MQ7ReadingsResponse(
     @SerializedName("_embedded")
-    val embedded: MQ7ReadingEmbedded,
+    val embedded: MQ7ReadingEmbedded?,
 
     @SerializedName("_links")
     val links: PaginationLinks,
@@ -14,7 +14,7 @@ data class MQ7ReadingsResponse(
 
 data class MQ135ReadingsResponse(
     @SerializedName("_embedded")
-    val embedded: MQ135ReadingEmbedded,
+    val embedded: MQ135ReadingEmbedded?,
 
     @SerializedName("_links")
     val links: PaginationLinks,
@@ -24,7 +24,7 @@ data class MQ135ReadingsResponse(
 
 data class FireReadingsResponse(
     @SerializedName("_embedded")
-    val embedded: FireReadingEmbedded,
+    val embedded: FireReadingEmbedded?,
 
     @SerializedName("_links")
     val links: PaginationLinks,
@@ -33,21 +33,44 @@ data class FireReadingsResponse(
 )
 
 data class MQ7ReadingEmbedded(
-    val mQ7ReadingVOList: List<ReadingVO>
-)
-
-data class FireReadingEmbedded(
-    val fireReadingVOList: List<ReadingVO>
+    @SerializedName("mQ7ReadingVOList")
+    val readings: List<MQ7ReadingVO>
 )
 
 data class MQ135ReadingEmbedded(
-    val mQ135ReadingVOList: List<ReadingVO>
+    @SerializedName("mQ135ReadingVOList")
+    val readings: List<MQ135ReadingVO>
 )
 
-data class ReadingVO(
+data class FireReadingEmbedded(
+    @SerializedName("fireReadingVOList")
+    val readings: List<FireReadingVO>
+)
+
+data class MQ7ReadingVO(
     val id: Int,
     val teamHandle: String,
     val value: Double,
+    val timestamp: String,
+
+    @SerializedName("_links")
+    val links: ReadingLinks
+)
+
+data class MQ135ReadingVO(
+    val id: Int,
+    val teamHandle: String,
+    val value: Double,
+    val timestamp: String,
+
+    @SerializedName("_links")
+    val links: ReadingLinks
+)
+
+data class FireReadingVO(
+    val id: Int,
+    val fire: Boolean, // Only store records where fire is true
+    val teamHandle: String,
     val timestamp: String,
 
     @SerializedName("_links")
@@ -61,7 +84,7 @@ data class ReadingLinks(
 data class PaginationLinks(
     val first: HrefLink,
     val self: HrefLink,
-    val next: HrefLink,
+    val next: HrefLink?,
     val last: HrefLink
 )
 

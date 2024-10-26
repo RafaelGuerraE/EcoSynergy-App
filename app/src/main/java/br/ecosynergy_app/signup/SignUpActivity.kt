@@ -162,7 +162,7 @@ class SignUpActivity : AppCompatActivity() {
                                 linearNationalityGender.visibility = View.VISIBLE
                             }
                             step++
-                            step2.setBackgroundResource(R.drawable.step_circle_active)
+                            step2.setBackgroundResource(R.drawable.step_active)
                             step2.setTextColor((ContextCompat.getColor(this, R.color.white)))
                             midStep1.setBackgroundColor(ContextCompat.getColor(this, R.color.green))
 
@@ -209,7 +209,7 @@ class SignUpActivity : AppCompatActivity() {
                     }
 
 
-                    step3.setBackgroundResource(R.drawable.step_circle_active)
+                    step3.setBackgroundResource(R.drawable.step_active)
                     step3.setTextColor((ContextCompat.getColor(this, R.color.white)))
                     midStep2.setBackgroundColor(ContextCompat.getColor(this, R.color.green))
 
@@ -319,7 +319,7 @@ class SignUpActivity : AppCompatActivity() {
                         linearInformation.alpha = 1f
                         linearNationalityGender.visibility = View.GONE
                     }
-                    step2.setBackgroundResource(R.drawable.step_circle_inactive)
+                    step2.setBackgroundResource(R.drawable.step_inactive)
                     step2.setTextColor((ContextCompat.getColor(this, R.color.black)))
                     midStep1.setBackgroundColor(ContextCompat.getColor(this, R.color.gray))
 
@@ -327,7 +327,7 @@ class SignUpActivity : AppCompatActivity() {
                     step--
                 }
                 2->{
-                    step3.setBackgroundResource(R.drawable.step_circle_inactive)
+                    step3.setBackgroundResource(R.drawable.step_inactive)
                     step3.setTextColor((ContextCompat.getColor(this, R.color.black)))
                     midStep2.setBackgroundColor(ContextCompat.getColor(this, R.color.gray))
 

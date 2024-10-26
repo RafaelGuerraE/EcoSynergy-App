@@ -5,6 +5,9 @@ import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -14,7 +17,9 @@ import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.readings.ReadingsViewModel
 import br.ecosynergy_app.readings.ReadingsViewModelFactory
 import br.ecosynergy_app.room.AppDatabase
-import br.ecosynergy_app.room.readings.Readings
+import br.ecosynergy_app.room.readings.FireReading
+import br.ecosynergy_app.room.readings.MQ135Reading
+import br.ecosynergy_app.room.readings.MQ7Reading
 import br.ecosynergy_app.room.readings.ReadingsRepository
 import br.ecosynergy_app.room.teams.MembersRepository
 import br.ecosynergy_app.room.teams.TeamsRepository
@@ -47,10 +52,17 @@ class DashboardActivity : AppCompatActivity() {
     private lateinit var lblTeamHandle: TextView
     private lateinit var imgTeam: CircleImageView
 
+    private lateinit var btnRefresh: LinearLayout
+    private lateinit var progressRefresh: ProgressBar
+    private lateinit var imgRefresh: ImageView
+    private lateinit var txtRefresh: TextView
+
     private var teamHandle: String? = null
     private var teamInitial: Int = 0
     private var teamName: String = ""
     private var accessToken: String =""
+
+    private var refresh = false
 
     private lateinit var mq7Chart: LineChart
     private lateinit var shimmerMQ7: ShimmerFrameLayout
@@ -71,8 +83,7 @@ class DashboardActivity : AppCompatActivity() {
         val teamsDao = AppDatabase.getDatabase(applicationContext).teamsDao()
         val teamsRepository = TeamsRepository(teamsDao)
 
-        val readingsDao = AppDatabase.getDatabase(applicationContext).readingsDao()
-        val readingsRepository = ReadingsRepository(readingsDao)
+        val readingsRepository = ReadingsRepository(AppDatabase.getDatabase(applicationContext).mq7ReadingsDao(), AppDatabase.getDatabase(applicationContext).mq135ReadingsDao(), AppDatabase.getDatabase(applicationContext).fireReadingsDao())
 
         val membersDao = AppDatabase.getDatabase(applicationContext).membersDao()
         val membersRepository = MembersRepository(membersDao)
@@ -86,6 +97,11 @@ class DashboardActivity : AppCompatActivity() {
         lblTeamName = findViewById(R.id.lblTeamName)
         lblTeamHandle = findViewById(R.id.lblTeamHandle)
         imgTeam = findViewById(R.id.imgTeam)
+
+        btnRefresh = findViewById(R.id.btnRefresh)
+        progressRefresh = findViewById(R.id.progressRefresh)
+        imgRefresh = findViewById(R.id.imgRefresh)
+        txtRefresh = findViewById(R.id.txtRefresh)
 
         shimmerMQ7 = findViewById(R.id.shimmerMQ7)
         mq7Chart = findViewById(R.id.mq7Chart)
@@ -108,39 +124,54 @@ class DashboardActivity : AppCompatActivity() {
         btnClose.setOnClickListener{ finish() }
 
 
-        fetchMQ7ReadingsByTeamHandle()
+        btnRefresh.setOnClickListener{
+            if (!refresh) {
+                imgRefresh.visibility = View.GONE
+                progressRefresh.visibility = View.VISIBLE
+                txtRefresh.text = "Atualizando"
+                refresh = true
+            }
+            else{
+                imgRefresh.visibility = View.VISIBLE
+                progressRefresh.visibility = View.GONE
+                txtRefresh.text = "Atualizar dados"
+                refresh = false
+            }
+        }
+
+        //fetchMQ7ReadingsByTeamHandle()
         //fetchMQ135ReadingsByTeamHandle()
         //fetchFireReadingsByTeamHandle()
     }
 
     private fun fetchMQ7ReadingsByTeamHandle() {
-        readingsViewModel.mq7ReadingsDB.removeObservers(this)
-        readingsViewModel.getReadingsBySensorFromDB("MQ7")
-        readingsViewModel.mq7ReadingsDB.observe(this) { response ->
-            handleMQ7Readings(response)
-            Log.d("HomeFragment", "Sensors MQ7 OK")
-        }
+//        readingsViewModel.mq7ReadingsDB.removeObservers(this)
+//        readingsViewModel.getReadingsBySensorFromDB("MQ7")
+//        readingsViewModel.mq7ReadingsDB.observe(this) { response ->
+//            handleMQ7Readings(response)
+//            Log.d("HomeFragment", "Sensors MQ7 OK")
+//        }
     }
 
     private fun fetchMQ135ReadingsByTeamHandle() {
-        readingsViewModel.mq135ReadingsDB.removeObservers(this)
-        readingsViewModel.getReadingsBySensorFromDB("MQ135")
-        readingsViewModel.mq135ReadingsDB.observe(this) { response ->
-            handleMQ135Readings(response)
-            Log.d("HomeFragment", "Sensors MQ135 OK")
-        }
+//        readingsViewModel.mq135ReadingsDB.removeObservers(this)
+//        readingsViewModel.getReadingsBySensorFromDB("MQ135")
+//        readingsViewModel.mq135ReadingsDB.observe(this) { response ->
+//            handleMQ135Readings(response)
+//            Log.d("HomeFragment", "Sensors MQ135 OK")
+//        }
     }
 
     private fun fetchFireReadingsByTeamHandle() {
-        readingsViewModel.mq7ReadingsDB.removeObservers(this)
-        readingsViewModel.getReadingsBySensorFromDB("FIRE")
-        readingsViewModel.fireReadingsDB.observe(this) { response ->
-            handleFireReadings(response)
-            Log.d("HomeFragment", "FireSensors OK")
-        }
+//        readingsViewModel.mq7ReadingsDB.removeObservers(this)
+//        readingsViewModel.getReadingsBySensorFromDB("FIRE")
+//        readingsViewModel.fireReadingsDB.observe(this) { response ->
+//            handleFireReadings(response)
+//            Log.d("HomeFragment", "FireSensors OK")
+//        }
     }
 
-    private fun setupMQ7Chart(mq7Readings: List<Readings>) {
+    private fun setupMQ7Chart(mq7Readings: List<MQ7Reading>) {
         mq7Chart.visibility = View.GONE
         shimmerMQ7.visibility = View.VISIBLE
 
@@ -217,7 +248,7 @@ class DashboardActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupMQ135Chart(mq135Readings: List<Readings>) {
+    private fun setupMQ135Chart(mq135Readings: List<MQ135Reading>) {
         mq135Chart.visibility = View.GONE
         shimmerMQ135.visibility = View.VISIBLE
 
@@ -300,7 +331,7 @@ class DashboardActivity : AppCompatActivity() {
     }
 
 
-    private fun setupFireChart(fireReadings: List<Readings>) {
+    private fun setupFireChart(fireReadings: List<FireReading>) {
         fireChart.visibility = View.GONE
 
         shimmerFire.visibility = View.VISIBLE
@@ -378,15 +409,15 @@ class DashboardActivity : AppCompatActivity() {
         }
     }
 
-    private fun handleMQ7Readings(response: List<Readings>) {
+    private fun handleMQ7Readings(response: List<MQ7Reading>) {
         setupMQ7Chart(response)
     }
 
-    private fun handleMQ135Readings(response: List<Readings>) {
+    private fun handleMQ135Readings(response: List<MQ135Reading>) {
         setupMQ135Chart(response)
     }
 
-    private fun handleFireReadings(response: List<Readings>) {
+    private fun handleFireReadings(response: List<FireReading>) {
         setupFireChart(response)
     }
 

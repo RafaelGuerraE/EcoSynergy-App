@@ -107,7 +107,7 @@
             android:windowSoftInputMode="adjustResize" />
 
         <service
-            android:name=".room.NotificationService"
+            android:name=".room.notifications.NotificationService"
             android:exported="true" />
 
         <service android:name=".room.notifications.MyFirebaseMessagingService" android:exported="true">

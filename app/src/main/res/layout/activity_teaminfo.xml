@@ -46,7 +46,7 @@
         android:gravity="center"
         android:clickable="true"
         android:focusable="true"
-        android:background="@drawable/rounded_background"
+        android:background="@drawable/ripple_bg"
         android:layout_marginBottom="10dp">
 
         <ImageView
@@ -84,7 +84,7 @@
         android:gravity="center"
         android:clickable="true"
         android:focusable="true"
-        android:background="@drawable/rounded_background"
+        android:background="@drawable/ripple_bg"
         android:layout_marginBottom="10dp">
 
         <ImageView
@@ -129,7 +129,7 @@
         android:gravity="center"
         android:clickable="true"
         android:focusable="true"
-        android:background="@drawable/rounded_background"
+        android:background="@drawable/ripple_bg"
         android:layout_marginBottom="10dp">
 
         <ImageView
@@ -166,7 +166,7 @@
         android:gravity="center"
         android:clickable="true"
         android:focusable="true"
-        android:background="@drawable/rounded_background"
+        android:background="@drawable/ripple_bg"
         android:layout_marginBottom="10dp">
 
         <ImageView

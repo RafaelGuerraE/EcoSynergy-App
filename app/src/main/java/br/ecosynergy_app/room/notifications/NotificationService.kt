@@ -1,4 +1,4 @@
-package br.ecosynergy_app.room
+package br.ecosynergy_app.room.notifications
 
 import android.Manifest
 import android.app.NotificationChannel

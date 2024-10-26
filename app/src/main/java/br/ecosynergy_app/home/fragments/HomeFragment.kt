@@ -75,7 +75,6 @@ class HomeFragment : Fragment() {
         recyclerDashboards = view.findViewById(R.id.recyclerDashboards)
         recyclerDashboards.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         dashboardsAdapter = DashboardsAdapter(emptyList(), requireActivity()){ dashboardItem ->
-            // Handle item click here. For example, navigate to a detailed view
             val i = Intent(requireActivity(), DashboardActivity::class.java).apply {
                 putExtra("TEAM_ID", dashboardItem.id)
                 putExtra("TEAM_NAME", dashboardItem.name)

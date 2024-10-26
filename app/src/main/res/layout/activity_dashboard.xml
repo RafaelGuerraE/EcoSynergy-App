@@ -11,7 +11,8 @@
 
 <ScrollView
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:layout_marginTop="52dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -25,20 +26,22 @@
             android:gravity="center"
             android:orientation="horizontal"
             android:layout_marginTop="15dp"
-            android:layout_marginBottom="15dp">
+            android:layout_marginBottom="15dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp">
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/imgTeam"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:src="@drawable/ic_default"
-                tools:src="@drawable/e"
-                android:layout_marginStart="15dp"/>
+                tools:src="@drawable/e"/>
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:layout_marginStart="10dp"
                 android:orientation="vertical">
 
                 <TextView
@@ -47,7 +50,6 @@
                     android:layout_height="wrap_content"
                     android:text="..."
                     tools:text="Ecosynergy"
-                    android:textAlignment="center"
                     android:textColor="?android:attr/textColorPrimary"
                     android:textSize="17sp"
                     android:textStyle="bold" />
@@ -58,24 +60,54 @@
                 android:layout_height="wrap_content"
                 android:text="..."
                 tools:text="\@ecosynergyofc"
-                android:textAlignment="center"
                 android:textColor="@color/disabled"
                 android:textSize="12sp"
                 android:textStyle="bold" />
 
             </LinearLayout>
 
-            <ImageButton
-                android:id="@+id/btnClose"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:scaleType="fitXY"
-                android:src="@drawable/ic_close"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:layout_marginStart="20dp"
-                android:layout_gravity="end|center"
-                app:tint="?android:attr/iconTint"
-                android:layout_marginEnd="15dp"/>
+            <LinearLayout
+                android:id="@+id/btnRefresh"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.8"
+                android:orientation="horizontal"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:background="@drawable/ripple_bg"
+                android:clickable="true"
+                android:focusable="true"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp">
+                <ProgressBar
+                    android:id="@+id/progressRefresh"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:indeterminate="true"
+                    android:indeterminateTint="@android:color/black"
+                    android:visibility="gone"
+                    android:layout_marginEnd="4dp"
+                    />
+
+                <ImageView
+                    android:id="@+id/imgRefresh"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_refresh"
+                    app:tint="?android:attr/iconTint"
+                    android:layout_marginEnd="4dp"
+                    />
+                <TextView
+                    android:id="@+id/txtRefresh"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:text="Atualizar dados"
+                    android:textSize="14sp"
+                    android:textStyle="bold"/>
+            </LinearLayout>
 
         </LinearLayout>
         <LinearLayout
@@ -134,7 +166,7 @@
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
                 android:padding="10dp"
-                android:background="@drawable/home_background">
+                android:background="@drawable/no_ripple_bg">
 
 
                 <LinearLayout
@@ -214,6 +246,15 @@
                         android:textColor="?android:attr/textColorPrimary"/>
 
                 </LinearLayout>
+                <ProgressBar
+                    android:id="@+id/horizontalProgressBar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    android:indeterminate="false"
+                    android:max="100"
+                    android:progress="25"
+                    style="?android:attr/progressBarStyleHorizontal" />
             </LinearLayout>
 
             <TextView
@@ -299,5 +340,55 @@
     </LinearLayout>
 
 </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="top">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal"
+            android:layout_gravity="top"
+            android:background="?android:attr/colorBackground">
+
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                android:text="Dashboard"
+                android:textAlignment="center"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginStart="60dp"/>
+
+
+            <ImageButton
+                android:id="@+id/btnClose"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:contentDescription="CloseButton"
+                android:src="@drawable/ic_close"
+                android:scaleType="fitXY"
+                app:tint="?android:attr/iconTint"
+                android:layout_margin="15dp"
+                android:layout_gravity="center_vertical"
+                android:clickable="true"
+                />
+
+        </LinearLayout>
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="?android:attr/colorForeground"/>
+
+    </LinearLayout>
 
 </RelativeLayout>

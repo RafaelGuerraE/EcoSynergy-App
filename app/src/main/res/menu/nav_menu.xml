@@ -6,7 +6,7 @@
     <group
         android:checkableBehavior="single">
         <item android:id="@+id/app_config"
-            android:icon="@drawable/rounded_settings_24"
+            android:icon="@drawable/ic_settings"
             android:title="Configurações"/>
         <item android:id="@+id/account_config"
             android:icon="@drawable/ic_profile"

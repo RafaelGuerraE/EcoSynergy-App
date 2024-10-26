@@ -34,7 +34,6 @@ import br.ecosynergy_app.teams.viewmodel.Timezone
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.io.IOException
-import kotlin.time.times
 
 class CreateTeamActivity : AppCompatActivity() {
 
@@ -212,7 +211,7 @@ class CreateTeamActivity : AppCompatActivity() {
         btnCreateTeam.setOnClickListener {
             when (step) {
                 0 -> {
-                    step2.setBackgroundResource(R.drawable.step_circle_active)
+                    step2.setBackgroundResource(R.drawable.step_active)
                     step2.setTextColor((ContextCompat.getColor(this, R.color.white)))
                     midStep1.setBackgroundColor(ContextCompat.getColor(this, R.color.green))
                     linearInfo.animate().alpha(0f).setDuration(300).withEndAction {
@@ -233,7 +232,7 @@ class CreateTeamActivity : AppCompatActivity() {
         btnStepBack.setOnClickListener {
             when (step) {
                 1 -> {
-                    step2.setBackgroundResource(R.drawable.step_circle_inactive)
+                    step2.setBackgroundResource(R.drawable.step_inactive)
                     step2.setTextColor((ContextCompat.getColor(this, R.color.black)))
                     midStep1.setBackgroundColor(ContextCompat.getColor(this, R.color.gray))
 

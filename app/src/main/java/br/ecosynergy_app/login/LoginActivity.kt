@@ -74,8 +74,7 @@ class LoginActivity : AppCompatActivity() {
         val teamsDao = AppDatabase.getDatabase(applicationContext).teamsDao()
         val teamsRepository = TeamsRepository(teamsDao)
 
-        val readingsDao = AppDatabase.getDatabase(applicationContext).readingsDao()
-        val readingsRepository = ReadingsRepository(readingsDao)
+        val readingsRepository = ReadingsRepository(AppDatabase.getDatabase(applicationContext).mq7ReadingsDao(), AppDatabase.getDatabase(applicationContext).mq135ReadingsDao(), AppDatabase.getDatabase(applicationContext).fireReadingsDao())
 
         val membersDao = AppDatabase.getDatabase(applicationContext).membersDao()
         val membersRepository = MembersRepository(membersDao)

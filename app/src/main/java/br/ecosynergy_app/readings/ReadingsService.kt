@@ -7,18 +7,22 @@ import retrofit2.http.Path
 
 interface ReadingsService {
 
-    //MQ7 Readings
-    @GET("api/mq7Reading/v1/team/{teamHandle}")
-    suspend fun fetchMq7ReadingsByTeamHandle(@Path("teamHandle") teamHandle:String, @Header("Authorization") token: String) : MQ7ReadingsResponse
+    @GET("api/mq7Reading/v1/team/{teamHandle}?direction=desc")
+    suspend fun fetchMq7ReadingsByTeamHandle(
+        @Path("teamHandle") teamHandle: String,
+        @Header("Authorization") accessToken: String
+    ): MQ7ReadingsResponse
 
-    //MQ135 Readings
-    @GET("api/mq135Reading/v1/team/{teamHandle}")
-    suspend fun fetchMq135ReadingsByTeamHandle(@Path("teamHandle") teamHandle:String,
-                                               @Header("Authorization") token: String
-                                               ) : MQ135ReadingsResponse
+    @GET("api/mq135Reading/v1/team/{teamHandle}?direction=desc")
+    suspend fun fetchMq135ReadingsByTeamHandle(
+        @Path("teamHandle") teamHandle: String,
+        @Header("Authorization") accessToken: String
+    ): MQ135ReadingsResponse
 
-    //Fire Readings
-    @GET("api/fireReading/v1/team/{teamHandle}")
-    suspend fun fetchFireReadingsByTeamHandle(@Path("teamHandle") teamHandle:String,
-                                              @Header("Authorization") token: String): FireReadingsResponse
+    @GET("api/fireReading/v1/team/{teamHandle}?direction=desc")
+    suspend fun fetchFireReadingsByTeamHandle(
+        @Path("teamHandle") teamHandle: String,
+        @Header("Authorization") accessToken: String
+    ): FireReadingsResponse
+
 }

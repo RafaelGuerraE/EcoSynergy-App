@@ -9,9 +9,9 @@
               <option name="connection">
                 <ConnectionSetting>
                   <option name="appId" value="br.ecosynergy_app" />
-                  <option name="mobileSdkAppId" value="1:893772887713:android:ca28510eddd0d555cd62e0" />
-                  <option name="projectId" value="ecosynergy-app2024" />
-                  <option name="projectNumber" value="893772887713" />
+                  <option name="mobileSdkAppId" value="1:688462017536:android:10e1d33be48c5a01fa54e5" />
+                  <option name="projectId" value="ecosynergy-bf18f" />
+                  <option name="projectNumber" value="688462017536" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

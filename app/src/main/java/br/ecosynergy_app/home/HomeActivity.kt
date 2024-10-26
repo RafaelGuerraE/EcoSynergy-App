@@ -19,7 +19,9 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.home.fragments.HomeFragment
@@ -46,6 +48,8 @@ import com.google.firebase.messaging.FirebaseMessaging
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class HomeActivity : AppCompatActivity() {
@@ -62,6 +66,9 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var txtTerms: TextView
 
     private var accessToken: String = ""
+    private var listTeamHandles: List<String> = listOf()
+    private var teamHandlesJob: Job? = null
+    private var isTeamHandlesFetched = false
 
     private lateinit var progressBar: ProgressBar
 
@@ -91,48 +98,45 @@ class HomeActivity : AppCompatActivity() {
         val teamsDao = AppDatabase.getDatabase(applicationContext).teamsDao()
         val teamsRepository = TeamsRepository(teamsDao)
 
-        val readingsDao = AppDatabase.getDatabase(applicationContext).readingsDao()
-        val readingsRepository = ReadingsRepository(readingsDao)
+        val readingsRepository = ReadingsRepository(
+            AppDatabase.getDatabase(applicationContext).mq7ReadingsDao(),
+            AppDatabase.getDatabase(applicationContext).mq135ReadingsDao(),
+            AppDatabase.getDatabase(applicationContext).fireReadingsDao()
+        )
 
         val membersDao = AppDatabase.getDatabase(applicationContext).membersDao()
         val membersRepository = MembersRepository(membersDao)
 
-        userViewModel = ViewModelProvider(this, UserViewModelFactory(RetrofitClient.userService, userRepository))[UserViewModel::class.java]
-        readingsViewModel = ViewModelProvider(this, ReadingsViewModelFactory(RetrofitClient.readingsService, readingsRepository))[ReadingsViewModel::class.java]
-        teamsViewModel = ViewModelProvider(this, TeamsViewModelFactory(RetrofitClient.teamsService, teamsRepository, membersRepository))[TeamsViewModel::class.java]
+        userViewModel = ViewModelProvider(
+            this,
+            UserViewModelFactory(RetrofitClient.userService, userRepository)
+        )[UserViewModel::class.java]
+        readingsViewModel = ViewModelProvider(
+            this,
+            ReadingsViewModelFactory(RetrofitClient.readingsService, readingsRepository)
+        )[ReadingsViewModel::class.java]
+        teamsViewModel = ViewModelProvider(
+            this,
+            TeamsViewModelFactory(RetrofitClient.teamsService, teamsRepository, membersRepository)
+        )[TeamsViewModel::class.java]
 
         loginSp = getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
         val isLoggedIn = loginSp.getBoolean("isLoggedIn", false)
         val justLoggedIn = loginSp.getBoolean("just_logged_in", false)
         val open = loginSp.getBoolean("open", false)
 
-        if(isLoggedIn && !open){
-            updateUserInfo{
-                observeUserInfoFromDB {
+        Log.d("HomeActivity", "Open: $open")
 
-                    retrieveAndSendFcmToken()
-//                readingsViewModel.deleteAllReadingsFromDB()
-//                readingsViewModel.fetchMQ7ReadingsByTeamHandle("ecosynergyofc", accessToken)
-                    //readingsViewModel.fetchMQ135ReadingsByTeamHandle("ecosynergyofc", accessToken)
-                    //readingsViewModel.fetchFireReadingsByTeamHandle("ecosynergyofc", accessToken)
-                }
-            }
-        }
-        else{
-            userViewModel.getUserInfoFromDB{
-                observeUserInfoFromDB {
-
-                    retrieveAndSendFcmToken()
-//                readingsViewModel.deleteAllReadingsFromDB()
-//                readingsViewModel.fetchMQ7ReadingsByTeamHandle("ecosynergyofc", accessToken)
-                    //readingsViewModel.fetchMQ135ReadingsByTeamHandle("ecosynergyofc", accessToken)
-                    //readingsViewModel.fetchFireReadingsByTeamHandle("ecosynergyofc", accessToken)
-                }
-            }
+        if (isLoggedIn && !open) {
+            Log.d("HomeActivity", "Passei no UPDATE")
+            updateUserInfo {}
+        } else {
+            Log.d("HomeActivity", "Passei no DISPLAY")
+            loginSp.edit().putBoolean("open", false).apply()
         }
 
         bottomNavView = findViewById(R.id.bottomNavView)
-        drawerLayout  = findViewById(R.id.drawer_layout)
+        drawerLayout = findViewById(R.id.drawer_layout)
         navDrawerButton = findViewById(R.id.navDrawerButton)
         navView = findViewById(R.id.nav_view)
         btnTheme = findViewById(R.id.btnTheme)
@@ -141,7 +145,7 @@ class HomeActivity : AppCompatActivity() {
         progressBar = findViewById(R.id.progressBar)
 
 
-        if(justLoggedIn){
+        if (justLoggedIn) {
             showSnackBar("Conectado com sucesso", "FECHAR", R.color.greenDark)
             loginSp.edit().putBoolean("just_logged_in", false).apply()
         }
@@ -150,9 +154,14 @@ class HomeActivity : AppCompatActivity() {
             Configuration.UI_MODE_NIGHT_YES -> {
                 btnTheme.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_dark))
             }
+
             Configuration.UI_MODE_NIGHT_NO -> {
-                btnTheme.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.baseline_sunny_24))
+                btnTheme.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_light))
             }
+        }
+
+        userViewModel.getUserInfoFromDB {
+            accessToken = userViewModel.userInfo.value?.accessToken ?: ""
         }
 
         val headerView = navView.getHeaderView(0)
@@ -183,15 +192,19 @@ class HomeActivity : AppCompatActivity() {
                     replaceFragment(HomeFragment())
                     item.setIcon(R.drawable.ic_homefull)
                     bottomNavView.menu.findItem(R.id.teams)?.setIcon(R.drawable.ic_teams)
-                    bottomNavView.menu.findItem(R.id.notifications)?.setIcon(R.drawable.ic_notification)
+                    bottomNavView.menu.findItem(R.id.notifications)
+                        ?.setIcon(R.drawable.ic_notification)
                 }
+
                 R.id.teams -> {
                     replaceFragment(TeamsFragment())
                     item.setIcon(R.drawable.ic_teamsfull)
                     bottomNavView.menu.findItem(R.id.home)?.setIcon(R.drawable.ic_home)
-                    bottomNavView.menu.findItem(R.id.notifications)?.setIcon(R.drawable.ic_notification)
+                    bottomNavView.menu.findItem(R.id.notifications)
+                        ?.setIcon(R.drawable.ic_notification)
                 }
-                R.id.notifications-> {
+
+                R.id.notifications -> {
                     replaceFragment(NotificationsFragment())
                     item.setIcon(R.drawable.ic_notificationfull)
                     bottomNavView.menu.findItem(R.id.home)?.setIcon(R.drawable.ic_home)
@@ -224,30 +237,38 @@ class HomeActivity : AppCompatActivity() {
                     startActivity(i)
                     true
                 }
+
                 R.id.account_config -> {
                     val i = Intent(this, UserSettingsActivity::class.java)
                     startActivity(i)
                     true
                 }
+
                 R.id.about -> {
                     val i = Intent(this, HelpActivity::class.java)
                     startActivity(i)
                     true
                 }
+
                 else -> false
             }.also {
                 drawerLayout.closeDrawer(navView)
             }
         }
 
-        btnTheme.setOnClickListener{ manageThemes()}
+        btnTheme.setOnClickListener { manageThemes() }
 
-        txtTerms.setOnClickListener{
+        txtTerms.setOnClickListener {
             val i = Intent(this, TermsActivity::class.java)
             startActivity(i)
         }
 
-
+        observeUserInfoFromDB {
+            Log.i("HomeActivity", "OBSERVER")
+            getTeamHandles {
+                fetchReadingsData(listTeamHandles, accessToken)
+            }
+        }
     }
 
     override fun onResume() {
@@ -256,7 +277,7 @@ class HomeActivity : AppCompatActivity() {
         userViewModel.getUserInfoFromDB {}
     }
 
-    private fun manageThemes(){
+    private fun manageThemes() {
         val items = arrayOf("Padrão do Sistema", "Claro", "Escuro")
 
         val builder = AlertDialog.Builder(this)
@@ -270,10 +291,12 @@ class HomeActivity : AppCompatActivity() {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
                     editor.putString("theme", "system")
                 }
+
                 1 -> {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
                     editor.putString("theme", "light")
                 }
+
                 2 -> {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
                     editor.putString("theme", "dark")
@@ -308,62 +331,51 @@ class HomeActivity : AppCompatActivity() {
             } else {
                 logout()
             }
-            onComplete()
         }
+
+        onComplete()
     }
 
 
     private fun updateUserInfo(onComplete: () -> Unit) {
-        userViewModel.getUserInfoFromDB{}
+        userViewModel.getUserInfoFromDB {
 
-        userViewModel.userInfo.observe(this) { userInfo ->
-            if (userInfo != null) {
-                userViewModel.refreshToken(userInfo.username, userInfo.refreshToken)
-                userViewModel.refreshResult.observe(this) { refreshResult ->
-                    refreshResult.onSuccess { refreshResponse ->
-                        userViewModel.user.observe(this) { result ->
-                            result.onSuccess { userData ->
-                                userViewModel.updateUserInfoDB(
-                                    userData.id,
-                                    userData.username,
-                                    userData.fullName,
-                                    userData.email,
-                                    userData.gender,
-                                    userData.nationality,
-                                    refreshResponse.accessToken,
-                                    refreshResponse.refreshToken
-                                ){
-                                    updateTeamInfo(userData.id, refreshResponse.accessToken)
-                                    userViewModel.getUserInfoFromDB(){}
+            val userInfo: User = userViewModel.userInfo.value!!
 
-                                    //readingsViewModel.deleteAllReadingsFromDB()
-                                    //readingsViewModel.fetchMQ7ReadingsByTeamHandle("ecosynergyofc", refreshResponse.accessToken)
-                                    //readingsViewModel.fetchMQ135ReadingsByTeamHandle("ecosynergyofc", refreshResponse.accessToken)
-                                    //readingsViewModel.fetchFireReadingsByTeamHandle("ecosynergyofc", refreshResponse.accessToken)
-                                }
-
-                                userViewModel.user.removeObservers(this)
+            userViewModel.refreshToken(userInfo.username, userInfo.refreshToken)
+            userViewModel.refreshResult.observe(this) { refreshResult ->
+                refreshResult.onSuccess { refreshResponse ->
+                    userViewModel.user.observe(this) { result ->
+                        result.onSuccess { userData ->
+                            userViewModel.updateUserInfoDB(
+                                userData.id,
+                                userData.username,
+                                userData.fullName,
+                                userData.email,
+                                userData.gender,
+                                userData.nationality,
+                                refreshResponse.accessToken,
+                                refreshResponse.refreshToken
+                            ) {
+                                updateTeamInfo(userData.id, refreshResponse.accessToken)
                             }
+
+                            userViewModel.user.removeObservers(this)
                         }
                     }
-
-                    refreshResult.onFailure {
-                        Log.e("HomeActivity", "Failed to refresh token")
-                        userViewModel.getUserInfoFromDB(){}
-                    }
-
-                    userViewModel.refreshResult.removeObservers(this)
                 }
 
-                userViewModel.userInfo.removeObservers(this)
+                refreshResult.onFailure {
+                    Log.e("HomeActivity", "Failed to refresh token")
+                    userViewModel.getUserInfoFromDB {}
+                }
 
-                onComplete()
-            } else {
-                Log.d("HomeActivity", "User info is null, cannot refresh token.")
-                logout()
+                userViewModel.refreshResult.removeObservers(this)
             }
         }
+        onComplete()
     }
+
 
     private fun updateTeamInfo(userId: Int, accessToken: String) {
         teamsViewModel.getTeamsByUserId(userId, accessToken) {
@@ -371,6 +383,28 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
+    private fun getTeamHandles(onComplete: () -> Unit) {
+        if (isTeamHandlesFetched) {
+            onComplete()
+            return
+        }
+
+        teamHandlesJob = lifecycleScope.launch {
+            teamsViewModel.getAllTeamsFromDB().collectLatest { teamData ->
+                listTeamHandles = teamData.map { it.handle }
+                isTeamHandlesFetched = true
+                onComplete()
+            }
+        }
+    }
+
+    private fun fetchReadingsData(listTeamHandles: List<String>, accessToken: String) {
+        for (teamHandle in listTeamHandles) {
+            readingsViewModel.updateMQ7Readings(teamHandle, accessToken)
+            readingsViewModel.updateMQ135Readings(teamHandle, accessToken)
+            readingsViewModel.updateFireReadings(teamHandle, accessToken)
+        }
+    }
 
     private fun logout() {
         val editTheme = themeSp.edit()
@@ -384,7 +418,6 @@ class HomeActivity : AppCompatActivity() {
 
         userViewModel.deleteUserInfoFromDB()
         teamsViewModel.deleteTeamsFromDB()
-        readingsViewModel.deleteAllReadingsFromDB()
 
         val i = Intent(this, LoginActivity::class.java)
         i.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -467,7 +500,12 @@ class HomeActivity : AppCompatActivity() {
                 super.onShown(sb)
                 val snackbarView = snackBar.view
                 val params = snackbarView.layoutParams as FrameLayout.LayoutParams
-                params.setMargins(params.leftMargin, params.topMargin, params.rightMargin, findViewById<View>(R.id.bottomNavView).height)
+                params.setMargins(
+                    params.leftMargin,
+                    params.topMargin,
+                    params.rightMargin,
+                    findViewById<View>(R.id.bottomNavView).height
+                )
                 snackbarView.layoutParams = params
             }
         })
@@ -493,7 +531,10 @@ class HomeActivity : AppCompatActivity() {
             try {
                 val userId = userViewModel.userRepository.getUserId()
                 userViewModel.saveOrUpdateFcmToken(accessToken, userId, fcmToken, "android")
-                Log.d("HomeActivity", "UserID: $userId, FCMToken: $fcmToken, AccessToken: $accessToken")
+                Log.d(
+                    "HomeActivity",
+                    "UserID: $userId, FCMToken: $fcmToken, AccessToken: $accessToken"
+                )
             } catch (e: Exception) {
                 Log.e("HomeActivity", "Erro ao enviar token FCM para o servidor", e)
             }

@@ -72,7 +72,7 @@
             android:layout_height="match_parent"
             android:orientation="horizontal"
             android:layout_gravity="bottom"
-            android:background="@drawable/rounded_background"
+            android:background="@drawable/ripple_bg"
             android:focusable="true"
             android:clickable="true"
             android:visibility="visible"
@@ -104,7 +104,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="15dp"
-            android:background="@drawable/home_background"
+            android:background="@drawable/no_ripple_bg"
             android:layout_marginBottom="10dp">
             <TextView
                 android:text="Nome da Equipe"

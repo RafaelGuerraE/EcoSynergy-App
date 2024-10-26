@@ -22,7 +22,7 @@
         android:autofillHints="false"
         android:hint="Insira o aqui valor desejado"
         android:inputType="number"
-        android:background="@drawable/spinner_background"
+        android:background="@drawable/component_bg"
         android:layout_marginBottom="10dp"/>
 
     <RadioGroup
@@ -32,7 +32,7 @@
         android:orientation="horizontal"
         android:layout_gravity="center"
         android:gravity="center"
-        android:background="@drawable/home_background"
+        android:background="@drawable/no_ripple_bg"
         android:paddingStart="5dp"
         android:paddingEnd="5dp">
 

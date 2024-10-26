@@ -120,7 +120,7 @@
                 android:layout_marginEnd="10dp"
                 android:layout_marginBottom="20dp"
                 android:padding="10dp"
-                android:background="@drawable/home_background">
+                android:background="@drawable/no_ripple_bg">
 
 
                 <LinearLayout
