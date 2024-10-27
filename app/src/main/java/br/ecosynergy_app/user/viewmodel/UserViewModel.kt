@@ -15,6 +15,7 @@ import br.ecosynergy_app.room.user.toUser
 import br.ecosynergy_app.user.UserResponse
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
+import retrofit2.Response
 import java.io.IOException
 
 class UserViewModel(
@@ -24,6 +25,9 @@ class UserViewModel(
 
     private val _user = MutableLiveData<Result<UserResponse>>()
     val user: LiveData<Result<UserResponse>> = _user
+
+    private val _fcmRequest = MutableLiveData<Response<Void>>()
+    val fcmRequest: LiveData<Response<Void>> get() = _fcmRequest
 
     private val _users = MutableLiveData<Result<MutableList<UserResponse>>>()
     val users: LiveData<Result<MutableList<UserResponse>>> = _users
@@ -270,15 +274,18 @@ class UserViewModel(
         }
     }
 
-    fun saveOrUpdateFcmToken(accessToken:String, userId: Int, fcmToken: String, deviceType: String) {
+    fun saveOrUpdateFcmToken(accessToken:String, userId: Int, fcmToken: String, deviceType: String, onComplete: () -> Unit) {
         viewModelScope.launch {
             try {
                 val response = service.saveOrUpdateFcmToken("Bearer $accessToken", userId, fcmToken, deviceType ,"2024-12-31T12:20:20Z")
                 if (response.isSuccessful) {
+                    _fcmRequest.value = response
                     Log.d("UserViewModel", "FCM Token saved or updated successfully for userId: $userId")
                 } else {
+                    _fcmRequest.value = response
                     Log.e("UserViewModel", "Failed to save or update FCM Token: ${response.errorBody()?.string()}")
                 }
+                onComplete()
             } catch (e: Exception) {
                 Log.e("UserViewModel", "Unexpected error during saveOrUpdateFcmToken", e)
             }

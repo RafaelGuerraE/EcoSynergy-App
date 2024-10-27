@@ -269,6 +269,8 @@ class HomeActivity : AppCompatActivity() {
                 fetchReadingsData(listTeamHandles, accessToken)
             }
         }
+
+        retrieveAndSendFcmToken()
     }
 
     override fun onResume() {
@@ -530,11 +532,22 @@ class HomeActivity : AppCompatActivity() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val userId = userViewModel.userRepository.getUserId()
-                userViewModel.saveOrUpdateFcmToken(accessToken, userId, fcmToken, "android")
-                Log.d(
-                    "HomeActivity",
-                    "UserID: $userId, FCMToken: $fcmToken, AccessToken: $accessToken"
-                )
+                userViewModel.saveOrUpdateFcmToken(accessToken, userId, fcmToken, "android"){
+                    val fcmRequest = userViewModel.fcmRequest.value
+                    if (fcmRequest != null) {
+                        if (fcmRequest.isSuccessful){
+                            Log.d(
+                                "HomeActivity",
+                                "UserID: $userId, FCMToken: $fcmToken"
+                            )
+                            showToast("FCM Token enviado")
+                        }
+                        else{
+
+                            showToast("Erro ao Enviar ao Back")
+                        }
+                    }
+                }
             } catch (e: Exception) {
                 Log.e("HomeActivity", "Erro ao enviar token FCM para o servidor", e)
             }
