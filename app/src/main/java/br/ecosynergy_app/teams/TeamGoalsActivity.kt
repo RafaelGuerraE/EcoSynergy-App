@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.room.AppDatabase
+import br.ecosynergy_app.room.invites.InvitesRepository
 import br.ecosynergy_app.room.teams.MembersRepository
 import br.ecosynergy_app.room.teams.TeamsRepository
 import br.ecosynergy_app.teams.viewmodel.TeamsViewModel
@@ -51,15 +52,13 @@ class TeamGoalsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_team_goals)
 
-        val teamsDao = AppDatabase.getDatabase(this).teamsDao()
-        val teamsRepository = TeamsRepository(teamsDao)
-
-        val membersDao = AppDatabase.getDatabase(this).membersDao()
-        val membersRepository = MembersRepository(membersDao)
+        val teamsRepository = TeamsRepository(AppDatabase.getDatabase(this).teamsDao())
+        val membersRepository = MembersRepository(AppDatabase.getDatabase(this).membersDao())
+        val invitesRepository = InvitesRepository(AppDatabase.getDatabase(applicationContext).invitesDao())
 
         teamsViewModel = ViewModelProvider(
             this,
-            TeamsViewModelFactory(RetrofitClient.teamsService, teamsRepository, membersRepository)
+            TeamsViewModelFactory(RetrofitClient.teamsService, teamsRepository, RetrofitClient.invitesService, membersRepository, invitesRepository)
         )[TeamsViewModel::class.java]
 
         btnBack = findViewById(R.id.btnBack)

@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.room.AppDatabase
+import br.ecosynergy_app.room.invites.InvitesRepository
 import br.ecosynergy_app.room.teams.MembersRepository
 import br.ecosynergy_app.room.teams.TeamsRepository
 import br.ecosynergy_app.room.user.UserRepository
@@ -37,13 +38,12 @@ class TeamInfoActivity : AppCompatActivity() {
     private lateinit var teamMembersLauncher: ActivityResultLauncher<Intent>
 
     private val userRepository = UserRepository(AppDatabase.getDatabase(this).userDao())
-
     private val teamsRepository = TeamsRepository(AppDatabase.getDatabase(this).teamsDao())
-
     private val membersRepository = MembersRepository(AppDatabase.getDatabase(this).membersDao())
+    private val invitesRepository = InvitesRepository(AppDatabase.getDatabase(this).invitesDao())
 
     private lateinit var btnClose: ImageButton
-    private lateinit var imgTeam : CircleImageView
+    private lateinit var imgTeam: CircleImageView
     private lateinit var areaOverview: LinearLayout
     private lateinit var areaGoals: LinearLayout
     private lateinit var areaMembers: LinearLayout
@@ -55,7 +55,7 @@ class TeamInfoActivity : AppCompatActivity() {
 
         teamsViewModel = ViewModelProvider(
             this,
-            TeamsViewModelFactory(RetrofitClient.teamsService, teamsRepository, membersRepository)
+            TeamsViewModelFactory(RetrofitClient.teamsService, teamsRepository, RetrofitClient.invitesService, membersRepository, invitesRepository)
         )[TeamsViewModel::class.java]
         userViewModel = ViewModelProvider(
             this,
@@ -66,29 +66,31 @@ class TeamInfoActivity : AppCompatActivity() {
         teamHandle = intent.getStringExtra("TEAM_HANDLE").toString()
         teamInitial = intent.getIntExtra("TEAM_INITIAL", 0)
 
-        teamOverviewLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == RESULT_OK) {
-                val deletedTeamId = result.data?.getIntExtra("TEAM_ID", -1) ?: -1
-                if (deletedTeamId != -1) {
-                    setResult(RESULT_OK, Intent().apply {
-                        putExtra("TEAM_ID", deletedTeamId)
-                    })
-                    finish()
+        teamOverviewLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                if (result.resultCode == RESULT_OK) {
+                    val deletedTeamId = result.data?.getIntExtra("TEAM_ID", -1) ?: -1
+                    if (deletedTeamId != -1) {
+                        setResult(RESULT_OK, Intent().apply {
+                            putExtra("TEAM_ID", deletedTeamId)
+                        })
+                        finish()
+                    }
                 }
             }
-        }
 
-        teamMembersLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == RESULT_OK) {
-                val exitedTeamId = result.data?.getIntExtra("TEAM_ID", -1) ?: -1
-                if (exitedTeamId != -1) {
-                    setResult(RESULT_OK, Intent().apply {
-                        putExtra("TEAM_ID", exitedTeamId)
-                    })
-                    finish()
+        teamMembersLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                if (result.resultCode == RESULT_OK) {
+                    val exitedTeamId = result.data?.getIntExtra("TEAM_ID", -1) ?: -1
+                    if (exitedTeamId != -1) {
+                        setResult(RESULT_OK, Intent().apply {
+                            putExtra("TEAM_ID", exitedTeamId)
+                        })
+                        finish()
+                    }
                 }
             }
-        }
 
 
         btnClose = findViewById(R.id.btnClose)
@@ -135,7 +137,7 @@ class TeamInfoActivity : AppCompatActivity() {
         }
 
         areaInvites.setOnClickListener {
-            val i = Intent(this, InvitesActivity::class.java).apply {
+            val i = Intent(this, TeamInvitesActivity::class.java).apply {
                 putExtra("TEAM_ID", teamId)
                 putExtra("TEAM_HANDLE", teamHandle)
                 putExtra("ACCESS_TOKEN", accessToken)
@@ -159,7 +161,7 @@ class TeamInfoActivity : AppCompatActivity() {
     }
 
     private fun observeUserData(onComplete: () -> Unit) {
-        userViewModel.getUserInfoFromDB{}
+        userViewModel.getUserInfoFromDB {}
         userViewModel.userInfo.observe(this) { userInfo ->
             userId = userInfo.id
             accessToken = userInfo.accessToken

@@ -18,6 +18,7 @@ import androidx.lifecycle.ViewModelProvider
 import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.room.AppDatabase
+import br.ecosynergy_app.room.invites.InvitesRepository
 import br.ecosynergy_app.room.teams.MembersRepository
 import br.ecosynergy_app.room.teams.TeamsRepository
 import br.ecosynergy_app.teams.viewmodel.TeamsViewModel
@@ -56,12 +57,18 @@ class EditTeamGoalsBottomSheet : BottomSheetDialogFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_edit_team_goals_bottom_sheet, container, false)
+        val view =
+            inflater.inflate(R.layout.fragment_edit_team_goals_bottom_sheet, container, false)
 
         val teamsRepository = TeamsRepository(AppDatabase.getDatabase(requireContext()).teamsDao())
-        val membersRepository = MembersRepository(AppDatabase.getDatabase(requireContext()).membersDao())
+        val membersRepository =
+            MembersRepository(AppDatabase.getDatabase(requireContext()).membersDao())
+        val invitesRepository = InvitesRepository(AppDatabase.getDatabase(requireContext()).invitesDao())
 
-        teamsViewModel = ViewModelProvider(requireActivity(), TeamsViewModelFactory(RetrofitClient.teamsService, teamsRepository, membersRepository))[TeamsViewModel::class.java]
+        teamsViewModel = ViewModelProvider(
+            requireActivity(),
+            TeamsViewModelFactory(RetrofitClient.teamsService, teamsRepository, RetrofitClient.invitesService, membersRepository, invitesRepository)
+        )[TeamsViewModel::class.java]
 
         btnClose = view.findViewById(R.id.btnClose)
         txtDailyGoal = view.findViewById(R.id.txtDailyGoal)
@@ -106,7 +113,7 @@ class EditTeamGoalsBottomSheet : BottomSheetDialogFragment() {
 
         btnClose.setOnClickListener { dismiss() }
 
-        btnConfirm.setOnClickListener{
+        btnConfirm.setOnClickListener {
             dailyGoal = txtDailyGoal.text.toString().toDouble()
             weeklyGoal = txtWeeklyGoal.text.toString().toDouble()
             monthlyGoal = txtMonthlyGoal.text.toString().toDouble()
@@ -114,7 +121,7 @@ class EditTeamGoalsBottomSheet : BottomSheetDialogFragment() {
             updateTeamGoals(accessToken, teamId, dailyGoal, weeklyGoal, monthlyGoal, annualGoal)
         }
 
-        btnInfo.setOnClickListener{
+        btnInfo.setOnClickListener {
             AlertDialog.Builder(requireContext())
                 .setTitle("Informação sobre as Unidades de Medida")
                 .setMessage("As unidades aqui inseridas estão por padrão em Toneladas, se desejar as altere nas configurações posteriormente")
@@ -156,18 +163,21 @@ class EditTeamGoalsBottomSheet : BottomSheetDialogFragment() {
                                     txtMonthlyGoal.text = (inputValue * 30).toString()
                                     txtAnnualGoal.text = (inputValue * 365).toString()
                                 }
+
                                 "Weekly" -> {
                                     txtDailyGoal.text = (inputValue / 7).toString()
                                     txtWeeklyGoal.text = inputValue.toString()
                                     txtMonthlyGoal.text = (inputValue * 4).toString()
                                     txtAnnualGoal.text = (inputValue * 52).toString()
                                 }
+
                                 "Monthly" -> {
                                     txtDailyGoal.text = (inputValue / 30).toString()
                                     txtWeeklyGoal.text = (inputValue / 4).toString()
                                     txtMonthlyGoal.text = inputValue.toString()
                                     txtAnnualGoal.text = (inputValue * 12).toString()
                                 }
+
                                 "Annual" -> {
                                     txtDailyGoal.text = (inputValue / 365).toString()
                                     txtWeeklyGoal.text = (inputValue / 52).toString()
@@ -189,9 +199,23 @@ class EditTeamGoalsBottomSheet : BottomSheetDialogFragment() {
 
     }
 
-    private fun updateTeamGoals(accessToken: String, teamId: Int, dailyGoal: Double, weeklyGoal: Double, monthlyGoal: Double, annualGoal: Double){
+    private fun updateTeamGoals(
+        accessToken: String,
+        teamId: Int,
+        dailyGoal: Double,
+        weeklyGoal: Double,
+        monthlyGoal: Double,
+        annualGoal: Double
+    ) {
         showButtonLoading(true, btnConfirm, progressBarConfirm)
-        teamsViewModel.updateTeamGoals(accessToken,teamId,dailyGoal,weeklyGoal,monthlyGoal,annualGoal){
+        teamsViewModel.updateTeamGoals(
+            accessToken,
+            teamId,
+            dailyGoal,
+            weeklyGoal,
+            monthlyGoal,
+            annualGoal
+        ) {
             teamsViewModel.getTeamById(teamId)
         }
         teamsViewModel.updateResponse.observe(this) { result ->
@@ -213,7 +237,7 @@ class EditTeamGoalsBottomSheet : BottomSheetDialogFragment() {
             progressBar.visibility = View.VISIBLE
             button.isClickable = false
         } else {
-            button.text = when(button.id) {
+            button.text = when (button.id) {
                 R.id.btnAction -> "CONTINUAR"
                 R.id.btnSignUp -> "CADASTRAR"
                 else -> button.text.toString()

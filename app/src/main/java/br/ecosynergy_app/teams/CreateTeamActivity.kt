@@ -22,6 +22,7 @@ import androidx.lifecycle.ViewModelProvider
 import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.room.AppDatabase
+import br.ecosynergy_app.room.invites.InvitesRepository
 import br.ecosynergy_app.room.teams.MembersRepository
 import br.ecosynergy_app.room.teams.TeamsRepository
 import br.ecosynergy_app.teams.viewmodel.ActivitiesRequest
@@ -86,12 +87,12 @@ class CreateTeamActivity : AppCompatActivity() {
 
         btnClose = findViewById(R.id.btnClose)
 
-        val membersDao = AppDatabase.getDatabase(this).membersDao()
-        val membersRepository = MembersRepository(membersDao)
+        val membersRepository = MembersRepository(AppDatabase.getDatabase(this).membersDao())
+        val invitesRepository = InvitesRepository(AppDatabase.getDatabase(applicationContext).invitesDao())
 
         teamsViewModel = ViewModelProvider(
             this,
-            TeamsViewModelFactory(RetrofitClient.teamsService, teamsRepository, membersRepository)
+            TeamsViewModelFactory(RetrofitClient.teamsService, teamsRepository, RetrofitClient.invitesService, membersRepository, invitesRepository)
         )[TeamsViewModel::class.java]
 
         txtHandle = findViewById(R.id.txtHandle)

@@ -18,10 +18,13 @@
         android:theme="@style/Base.Theme.EcoSynergyApp"
         tools:targetApi="31">
         <activity
+            android:name=".user.NotificationActivity"
+            android:exported="false" />
+        <activity
             android:name=".teams.TeamGoalsActivity"
             android:exported="false" />
         <activity
-            android:name=".teams.InvitesActivity"
+            android:name=".teams.TeamInvitesActivity"
             android:exported="false" />
         <activity
             android:name=".teams.EditTeamGoalsBottomSheet"
@@ -69,7 +72,7 @@
             android:exported="true"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".home.NotificationsActivity"
+            android:name=".home.NotificationPreferencesActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustResize" />
         <activity
@@ -85,10 +88,6 @@
             android:exported="true"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".teams.TeamInviteActivity"
-            android:exported="true"
-            android:windowSoftInputMode="adjustResize" />
-        <activity
             android:name=".teams.TeamInfoActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustResize" />
@@ -100,7 +99,6 @@
             android:name=".teams.TeamOverviewActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustResize" />
-
         <activity
             android:name=".teams.TeamMembersActivity"
             android:exported="true"
@@ -109,10 +107,11 @@
         <service
             android:name=".room.notifications.NotificationService"
             android:exported="true" />
-
-        <service android:name=".room.notifications.MyFirebaseMessagingService" android:exported="true">
+        <service
+            android:name=".room.notifications.MyFirebaseMessagingService"
+            android:exported="true">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
 

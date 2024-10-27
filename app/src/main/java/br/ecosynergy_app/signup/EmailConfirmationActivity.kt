@@ -25,6 +25,7 @@ import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.home.HomeActivity
 import br.ecosynergy_app.login.LoginRequest
 import br.ecosynergy_app.room.AppDatabase
+import br.ecosynergy_app.room.invites.InvitesRepository
 import br.ecosynergy_app.room.teams.MembersRepository
 import br.ecosynergy_app.room.teams.TeamsRepository
 import br.ecosynergy_app.room.user.UserRepository
@@ -97,14 +98,10 @@ class EmailConfirmationActivity : AppCompatActivity() {
 
         txtEmailShow.text = "Digite o código que enviamos ao e-mail informado: $email"
 
-        val userDao = AppDatabase.getDatabase(applicationContext).userDao()
-        val userRepository = UserRepository(userDao)
-
-        val teamsDao = AppDatabase.getDatabase(applicationContext).teamsDao()
-        val teamsRepository = TeamsRepository(teamsDao)
-
-        val membersDao = AppDatabase.getDatabase(applicationContext).membersDao()
-        val membersRepository = MembersRepository(membersDao)
+        val userRepository = UserRepository(AppDatabase.getDatabase(applicationContext).userDao())
+        val teamsRepository = TeamsRepository(AppDatabase.getDatabase(applicationContext).teamsDao())
+        val membersRepository = MembersRepository(AppDatabase.getDatabase(applicationContext).membersDao())
+        val invitesRepository = InvitesRepository(AppDatabase.getDatabase(applicationContext).invitesDao())
 
         userViewModel = ViewModelProvider(
             this,
@@ -112,7 +109,7 @@ class EmailConfirmationActivity : AppCompatActivity() {
         )[UserViewModel::class.java]
         teamsViewModel = ViewModelProvider(
             this,
-            TeamsViewModelFactory(RetrofitClient.teamsService, teamsRepository, membersRepository)
+            TeamsViewModelFactory(RetrofitClient.teamsService, teamsRepository, RetrofitClient.invitesService, membersRepository, invitesRepository)
         )[TeamsViewModel::class.java]
         signUpViewModel = ViewModelProvider(
             this,

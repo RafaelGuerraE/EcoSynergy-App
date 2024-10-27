@@ -10,5 +10,5 @@ data class Notifications(
     val type: String,
     val title: String,
     val subtitle: String,
-    val time: Long
+    val time: String
 )

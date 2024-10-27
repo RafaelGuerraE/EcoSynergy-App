@@ -83,7 +83,7 @@ class AppSettingsActivity : AppCompatActivity() {
         }
 
         areaNotifications.setOnClickListener {
-            val i = Intent(this, NotificationsActivity::class.java)
+            val i = Intent(this, NotificationPreferencesActivity::class.java)
             startActivity(i)
         }
 

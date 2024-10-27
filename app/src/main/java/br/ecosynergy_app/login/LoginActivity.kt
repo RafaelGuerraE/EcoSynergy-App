@@ -22,6 +22,7 @@ import br.ecosynergy_app.home.HomeActivity
 import br.ecosynergy_app.readings.ReadingsViewModel
 import br.ecosynergy_app.readings.ReadingsViewModelFactory
 import br.ecosynergy_app.room.AppDatabase
+import br.ecosynergy_app.room.invites.InvitesRepository
 import br.ecosynergy_app.room.readings.ReadingsRepository
 import br.ecosynergy_app.room.teams.MembersRepository
 import br.ecosynergy_app.room.teams.TeamsRepository
@@ -68,20 +69,30 @@ class LoginActivity : AppCompatActivity() {
             return
         }
 
-        val userDao = AppDatabase.getDatabase(applicationContext).userDao()
-        val userRepository = UserRepository(userDao)
+        val userRepository = UserRepository(AppDatabase.getDatabase(applicationContext).userDao())
+        val teamsRepository =
+            TeamsRepository(AppDatabase.getDatabase(applicationContext).teamsDao())
+        val readingsRepository = ReadingsRepository(
+            AppDatabase.getDatabase(applicationContext).mq7ReadingsDao(),
+            AppDatabase.getDatabase(applicationContext).mq135ReadingsDao(),
+            AppDatabase.getDatabase(applicationContext).fireReadingsDao()
+        )
+        val invitesRepository = InvitesRepository(AppDatabase.getDatabase(applicationContext).invitesDao())
+        val membersRepository =
+            MembersRepository(AppDatabase.getDatabase(applicationContext).membersDao())
 
-        val teamsDao = AppDatabase.getDatabase(applicationContext).teamsDao()
-        val teamsRepository = TeamsRepository(teamsDao)
-
-        val readingsRepository = ReadingsRepository(AppDatabase.getDatabase(applicationContext).mq7ReadingsDao(), AppDatabase.getDatabase(applicationContext).mq135ReadingsDao(), AppDatabase.getDatabase(applicationContext).fireReadingsDao())
-
-        val membersDao = AppDatabase.getDatabase(applicationContext).membersDao()
-        val membersRepository = MembersRepository(membersDao)
-
-        userViewModel = ViewModelProvider(this, UserViewModelFactory(RetrofitClient.userService, userRepository))[UserViewModel::class.java]
-        teamsViewModel = ViewModelProvider(this, TeamsViewModelFactory(RetrofitClient.teamsService, teamsRepository, membersRepository))[TeamsViewModel::class.java]
-        readingsViewModel = ViewModelProvider(this, ReadingsViewModelFactory(RetrofitClient.readingsService, readingsRepository))[ReadingsViewModel::class.java]
+        userViewModel = ViewModelProvider(
+            this,
+            UserViewModelFactory(RetrofitClient.userService, userRepository)
+        )[UserViewModel::class.java]
+        teamsViewModel = ViewModelProvider(
+            this,
+            TeamsViewModelFactory(RetrofitClient.teamsService, teamsRepository, RetrofitClient.invitesService, membersRepository, invitesRepository)
+        )[TeamsViewModel::class.java]
+        readingsViewModel = ViewModelProvider(
+            this,
+            ReadingsViewModelFactory(RetrofitClient.readingsService, readingsRepository)
+        )[ReadingsViewModel::class.java]
 
 
         txtEntry = findViewById(R.id.txtEntry)
@@ -92,7 +103,7 @@ class LoginActivity : AppCompatActivity() {
         loadingProgressBar = findViewById(R.id.loadingProgressBar)
         overlayView = findViewById(R.id.overlayView)
 
-        btnLogin.setOnClickListener {view ->
+        btnLogin.setOnClickListener { view ->
             val username = txtEntry.text.toString()
             val password = txtPassword.text.toString()
 
@@ -108,6 +119,7 @@ class LoginActivity : AppCompatActivity() {
                     txtEntry.setSelection(lowercaseText.length)
                 }
             }
+
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
@@ -137,7 +149,7 @@ class LoginActivity : AppCompatActivity() {
 
         lblReset = findViewById(R.id.lblReset)
 
-        lblReset.setOnClickListener(){
+        lblReset.setOnClickListener() {
             val i = Intent(this, RecoverPasswordActivity::class.java)
             startActivity(i)
         }
@@ -149,7 +161,12 @@ class LoginActivity : AppCompatActivity() {
         finish()
     }
 
-    private fun loginUser(view: View, username: String, password: String, passwordLayout: TextInputLayout) {
+    private fun loginUser(
+        view: View,
+        username: String,
+        password: String,
+        passwordLayout: TextInputLayout
+    ) {
         if (username.isEmpty() || password.isEmpty()) {
             if (username.isEmpty()) {
                 txtEntry.error = "Insira seu Nome de Usuário"
@@ -178,7 +195,11 @@ class LoginActivity : AppCompatActivity() {
                 Log.d("LoginActivity", "Login success")
                 userViewModel.user.observe(this) { result ->
                     result.onSuccess { userData ->
-                        userViewModel.insertUserInfoDB(userData, loginResponse.accessToken, loginResponse.refreshToken)
+                        userViewModel.insertUserInfoDB(
+                            userData,
+                            loginResponse.accessToken,
+                            loginResponse.refreshToken
+                        )
                         teamsViewModel.getTeamsByUserId(userData.id, loginResponse.accessToken) {
                             setLoggedIn(true)
                             startHomeActivity()

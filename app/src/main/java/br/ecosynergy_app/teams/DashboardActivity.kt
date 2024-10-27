@@ -17,6 +17,7 @@ import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.readings.ReadingsViewModel
 import br.ecosynergy_app.readings.ReadingsViewModelFactory
 import br.ecosynergy_app.room.AppDatabase
+import br.ecosynergy_app.room.invites.InvitesRepository
 import br.ecosynergy_app.room.readings.FireReading
 import br.ecosynergy_app.room.readings.MQ135Reading
 import br.ecosynergy_app.room.readings.MQ7Reading
@@ -47,7 +48,7 @@ class DashboardActivity : AppCompatActivity() {
     private lateinit var readingsViewModel: ReadingsViewModel
     private lateinit var teamsViewModel: TeamsViewModel
 
-    private lateinit var btnClose : ImageButton
+    private lateinit var btnClose: ImageButton
     private lateinit var lblTeamName: TextView
     private lateinit var lblTeamHandle: TextView
     private lateinit var imgTeam: CircleImageView
@@ -60,7 +61,7 @@ class DashboardActivity : AppCompatActivity() {
     private var teamHandle: String? = null
     private var teamInitial: Int = 0
     private var teamName: String = ""
-    private var accessToken: String =""
+    private var accessToken: String = ""
 
     private var refresh = false
 
@@ -77,20 +78,31 @@ class DashboardActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dashboard)
 
-        val userDao = AppDatabase.getDatabase(applicationContext).userDao()
-        val userRepository = UserRepository(userDao)
+        val userRepository = UserRepository(AppDatabase.getDatabase(applicationContext).userDao())
+        val teamsRepository = TeamsRepository(AppDatabase.getDatabase(applicationContext).teamsDao())
+        val invitesRepository = InvitesRepository(AppDatabase.getDatabase(applicationContext).invitesDao())
 
-        val teamsDao = AppDatabase.getDatabase(applicationContext).teamsDao()
-        val teamsRepository = TeamsRepository(teamsDao)
-
-        val readingsRepository = ReadingsRepository(AppDatabase.getDatabase(applicationContext).mq7ReadingsDao(), AppDatabase.getDatabase(applicationContext).mq135ReadingsDao(), AppDatabase.getDatabase(applicationContext).fireReadingsDao())
+        val readingsRepository = ReadingsRepository(
+            AppDatabase.getDatabase(applicationContext).mq7ReadingsDao(),
+            AppDatabase.getDatabase(applicationContext).mq135ReadingsDao(),
+            AppDatabase.getDatabase(applicationContext).fireReadingsDao()
+        )
 
         val membersDao = AppDatabase.getDatabase(applicationContext).membersDao()
         val membersRepository = MembersRepository(membersDao)
 
-        userViewModel = ViewModelProvider(this, UserViewModelFactory(RetrofitClient.userService, userRepository))[UserViewModel::class.java]
-        readingsViewModel = ViewModelProvider(this, ReadingsViewModelFactory(RetrofitClient.readingsService, readingsRepository))[ReadingsViewModel::class.java]
-        teamsViewModel = ViewModelProvider(this, TeamsViewModelFactory(RetrofitClient.teamsService, teamsRepository, membersRepository))[TeamsViewModel::class.java]
+        userViewModel = ViewModelProvider(
+            this,
+            UserViewModelFactory(RetrofitClient.userService, userRepository)
+        )[UserViewModel::class.java]
+        readingsViewModel = ViewModelProvider(
+            this,
+            ReadingsViewModelFactory(RetrofitClient.readingsService, readingsRepository)
+        )[ReadingsViewModel::class.java]
+        teamsViewModel = ViewModelProvider(
+            this,
+            TeamsViewModelFactory(RetrofitClient.teamsService, teamsRepository, RetrofitClient.invitesService, membersRepository, invitesRepository)
+        )[TeamsViewModel::class.java]
 
 
         btnClose = findViewById(R.id.btnClose)
@@ -121,17 +133,16 @@ class DashboardActivity : AppCompatActivity() {
         lblTeamName.text = teamName
         lblTeamHandle.text = teamHandle
 
-        btnClose.setOnClickListener{ finish() }
+        btnClose.setOnClickListener { finish() }
 
 
-        btnRefresh.setOnClickListener{
+        btnRefresh.setOnClickListener {
             if (!refresh) {
                 imgRefresh.visibility = View.GONE
                 progressRefresh.visibility = View.VISIBLE
                 txtRefresh.text = "Atualizando"
                 refresh = true
-            }
-            else{
+            } else {
                 imgRefresh.visibility = View.VISIBLE
                 progressRefresh.visibility = View.GONE
                 txtRefresh.text = "Atualizar dados"

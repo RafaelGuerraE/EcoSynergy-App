@@ -79,7 +79,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/rect_shape"
+            android:background="@drawable/shimmer_shape"
             android:visibility="visible"
             android:backgroundTint="?attr/shimmerColor"/>
     </com.facebook.shimmer.ShimmerFrameLayout>

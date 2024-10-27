@@ -8,17 +8,6 @@
     tools:context=".home.TermsActivity"
     android:gravity="top">
 
-    <ImageButton
-        android:id="@+id/btnBack"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
-        android:background="?android:attr/selectableItemBackgroundBorderless"
-        android:contentDescription="BackButton"
-        app:tint="?android:attr/iconTint"
-        android:src="@drawable/ic_arrowback"
-        android:scaleType="fitXY"
-        android:gravity="top"
-        android:layout_margin="15dp"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -49,6 +38,56 @@
             android:layout_gravity="center"
             android:textSize="16sp"
             android:visibility="visible"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="top">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal"
+            android:layout_gravity="top"
+            android:background="?android:attr/colorBackground">
+
+
+            <ImageButton
+                android:id="@+id/btnBack"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:contentDescription="BackButton"
+                android:src="@drawable/ic_arrowback"
+                android:scaleType="fitXY"
+                app:tint="?android:attr/iconTint"
+                android:layout_margin="15dp"
+                android:layout_gravity="center_vertical"
+                android:clickable="true"
+                />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                android:text="Termos"
+                android:textAlignment="center"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginEnd="55dp"/>
+
+
+        </LinearLayout>
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="?android:attr/colorForeground"/>
 
     </LinearLayout>
 

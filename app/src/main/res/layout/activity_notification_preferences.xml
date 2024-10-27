@@ -5,59 +5,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".home.NotificationsActivity"
+    tools:context=".home.NotificationPreferencesActivity"
     android:orientation="vertical"
     android:gravity="top">
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:orientation="horizontal"
-        android:layout_gravity="top"
-        android:background="?android:attr/colorBackground">
-
-        <ImageButton
-            android:id="@+id/btnBack"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:contentDescription="BackButton"
-            android:src="@drawable/ic_arrowback"
-            android:scaleType="fitXY"
-            app:tint="?android:attr/iconTint"
-            android:layout_margin="15dp"
-            android:layout_gravity="center_vertical"
-            android:clickable="true"/>
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_gravity="center"
-            android:text="Preferência de Notificão"
-            android:textAlignment="center"
-            android:textColor="?android:attr/textColorPrimary"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:layout_marginEnd="60dp"
-            />
-
-    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_gravity="center"
-        android:layout_marginTop="50dp"
-        android:layout_marginStart="15dp"
-        android:layout_marginEnd="15dp">
+        android:layout_marginTop="52dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-
 
             <TextView
                 android:layout_width="0dp"
@@ -112,6 +74,56 @@
                 android:background="?android:attr/selectableItemBackgroundBorderless"/>
         </LinearLayout>
 
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="top">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal"
+            android:layout_gravity="top"
+            android:background="?android:attr/colorBackground">
+
+
+            <ImageButton
+                android:id="@+id/btnBack"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:contentDescription="BackButton"
+                android:src="@drawable/ic_arrowback"
+                android:scaleType="fitXY"
+                app:tint="?android:attr/iconTint"
+                android:layout_margin="15dp"
+                android:layout_gravity="center_vertical"
+                android:clickable="true"
+                />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                android:text="Preferências de Notificação"
+                android:textAlignment="center"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginEnd="55dp"/>
+
+
+        </LinearLayout>
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="?android:attr/colorForeground"/>
 
     </LinearLayout>
 

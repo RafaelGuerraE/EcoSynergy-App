@@ -31,6 +31,8 @@ import br.ecosynergy_app.login.LoginActivity
 import br.ecosynergy_app.readings.ReadingsViewModel
 import br.ecosynergy_app.readings.ReadingsViewModelFactory
 import br.ecosynergy_app.room.AppDatabase
+import br.ecosynergy_app.room.invites.Invites
+import br.ecosynergy_app.room.invites.InvitesRepository
 import br.ecosynergy_app.room.readings.ReadingsRepository
 import br.ecosynergy_app.room.teams.MembersRepository
 import br.ecosynergy_app.room.teams.TeamsRepository
@@ -92,11 +94,9 @@ class HomeActivity : AppCompatActivity() {
 
         val notificationClicked = intent.getBooleanExtra("NOTIFICATION_CLICKED", false)
 
-        val userDao = AppDatabase.getDatabase(applicationContext).userDao()
-        val userRepository = UserRepository(userDao)
+        val userRepository = UserRepository(AppDatabase.getDatabase(applicationContext).userDao())
 
-        val teamsDao = AppDatabase.getDatabase(applicationContext).teamsDao()
-        val teamsRepository = TeamsRepository(teamsDao)
+        val teamsRepository = TeamsRepository(AppDatabase.getDatabase(applicationContext).teamsDao())
 
         val readingsRepository = ReadingsRepository(
             AppDatabase.getDatabase(applicationContext).mq7ReadingsDao(),
@@ -104,8 +104,8 @@ class HomeActivity : AppCompatActivity() {
             AppDatabase.getDatabase(applicationContext).fireReadingsDao()
         )
 
-        val membersDao = AppDatabase.getDatabase(applicationContext).membersDao()
-        val membersRepository = MembersRepository(membersDao)
+        val membersRepository = MembersRepository(AppDatabase.getDatabase(applicationContext).membersDao())
+        val invitesRepository = InvitesRepository(AppDatabase.getDatabase(applicationContext).invitesDao())
 
         userViewModel = ViewModelProvider(
             this,
@@ -117,7 +117,7 @@ class HomeActivity : AppCompatActivity() {
         )[ReadingsViewModel::class.java]
         teamsViewModel = ViewModelProvider(
             this,
-            TeamsViewModelFactory(RetrofitClient.teamsService, teamsRepository, membersRepository)
+            TeamsViewModelFactory(RetrofitClient.teamsService, teamsRepository, RetrofitClient.invitesService, membersRepository, invitesRepository)
         )[TeamsViewModel::class.java]
 
         loginSp = getSharedPreferences("login_prefs", Context.MODE_PRIVATE)

@@ -11,5 +11,5 @@
         android:id="@+id/shimmer_lblFirstname"
         android:layout_width="150dp"
         android:layout_height="30dp"
-        android:background="@drawable/rect_shape"/>
+        android:background="@drawable/shimmer_shape"/>
 </com.facebook.shimmer.ShimmerFrameLayout>

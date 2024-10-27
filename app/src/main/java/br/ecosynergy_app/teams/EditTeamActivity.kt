@@ -19,6 +19,7 @@ import androidx.lifecycle.ViewModelProvider
 import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.room.AppDatabase
+import br.ecosynergy_app.room.invites.InvitesRepository
 import br.ecosynergy_app.room.teams.MembersRepository
 import br.ecosynergy_app.room.teams.TeamsRepository
 import br.ecosynergy_app.room.user.UserRepository
@@ -76,18 +77,14 @@ class EditTeamActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_team)
 
-        val userDao = AppDatabase.getDatabase(this).userDao()
-        val userRepository = UserRepository(userDao)
-
-        val teamsDao = AppDatabase.getDatabase(this).teamsDao()
-        val teamsRepository = TeamsRepository(teamsDao)
-
-        val membersDao = AppDatabase.getDatabase(this).membersDao()
-        val membersRepository = MembersRepository(membersDao)
+        val userRepository = UserRepository(AppDatabase.getDatabase(this).userDao())
+        val teamsRepository = TeamsRepository(AppDatabase.getDatabase(this).teamsDao())
+        val membersRepository = MembersRepository(AppDatabase.getDatabase(this).membersDao())
+        val invitesRepository = InvitesRepository(AppDatabase.getDatabase(applicationContext).invitesDao())
 
         teamsViewModel = ViewModelProvider(
             this,
-            TeamsViewModelFactory(RetrofitClient.teamsService, teamsRepository, membersRepository)
+            TeamsViewModelFactory(RetrofitClient.teamsService, teamsRepository, RetrofitClient.invitesService, membersRepository, invitesRepository)
         )[TeamsViewModel::class.java]
         userViewModel = ViewModelProvider(
             this,

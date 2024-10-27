@@ -2,6 +2,7 @@ package br.ecosynergy_app.user
 
 import android.app.AlertDialog
 import android.content.Intent
+import android.graphics.PorterDuff
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -9,10 +10,13 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import br.ecosynergy_app.R
 import br.ecosynergy_app.home.HomeActivity
+import br.ecosynergy_app.teams.invites.InviteRequest
 import br.ecosynergy_app.teams.viewmodel.RoleRequest
 import br.ecosynergy_app.teams.viewmodel.TeamsViewModel
 
@@ -62,7 +66,9 @@ class UsersAdapter(
         private val txtEmail: TextView = itemView.findViewById(R.id.txtEmail)
         private val imgUser: ImageView = itemView.findViewById(R.id.imgUser)
         private val btnInvite: ImageButton = itemView.findViewById(R.id.btnInvite)
+
         private var memberId: Int = 0
+        private var isMember: Boolean = false
 
         fun bind(user: UserResponse) {
             username = user.username
@@ -92,13 +98,20 @@ class UsersAdapter(
             //Log.d("UsersAdapter", "MemberIDS: $memberIds")
 
             if (memberIds.contains(memberId.toString())) {
-                btnInvite.visibility = View.GONE
+                isMember = true
+                btnInvite.visibility = View.VISIBLE
+                btnInvite.setColorFilter(ContextCompat.getColor(itemView.context, R.color.disabled), PorterDuff.Mode.SRC_IN)
             } else {
                 btnInvite.visibility = View.VISIBLE
             }
 
             btnInvite.setOnClickListener {
-                inviteUser()
+                if(!isMember) {
+                    inviteUser()
+                }
+                else{
+                    showToast("Esse usuário já faz parte da equipe")
+                }
             }
         }
 
@@ -108,10 +121,20 @@ class UsersAdapter(
             builder.setMessage("O convite será enviado para este usuário.")
 
             builder.setPositiveButton("Sim") { dialog, _ ->
-                teamsViewModel.addMember(accessToken, teamId, memberId, RoleRequest("COMMON_USER"))
-                btnInvite.visibility = View.GONE
+                val inviteRequest = InviteRequest(memberId, teamId)
+                teamsViewModel.createInvite(inviteRequest, accessToken){
+                    val inviteResult = teamsViewModel.inviteResult.value
+                    if (inviteResult != null) {
+                        if(inviteResult.isSuccessful){
+                            showToast("Convite enviado com sucesso!")
+                        }
+                        else{
+                            showToast("Este usuário já foi convidado a equipe.")
+                        }
+                    }
+                }
 
-              //  LoginActivity().showSnackBar("Usuário convidado com sucesso!", "FECHAR", R.color.greenDark, activity)
+                dialog.dismiss()
             }
 
             builder.setNegativeButton("Cancelar") { dialog, _ ->
@@ -122,6 +145,10 @@ class UsersAdapter(
             dialog.show()
 
 
+        }
+
+        private fun showToast(message: String) {
+            Toast.makeText(itemView.context, message, Toast.LENGTH_SHORT).show()
         }
     }
 }

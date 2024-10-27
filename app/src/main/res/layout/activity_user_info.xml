@@ -12,40 +12,6 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_gravity="top">
-
-        <ImageButton
-            android:id="@+id/btnBack"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:contentDescription="BackButton"
-            android:src="@drawable/ic_close"
-            android:scaleType="fitXY"
-            app:tint="?android:attr/iconTint"
-            android:layout_margin="15dp"
-            android:layout_gravity="center_vertical"
-            android:clickable="true"/>
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_gravity="center"
-            android:text="Informações do Usuário"
-            android:textAlignment="center"
-            android:textColor="?android:attr/textColorPrimary"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:layout_marginEnd="60dp"
-            />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:gravity="center_horizontal"
@@ -198,6 +164,56 @@
                 tools:text="Conta criada há ..."
                 android:textSize="12sp"/>
         </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="top">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal"
+            android:layout_gravity="top"
+            android:background="?android:attr/colorBackground">
+
+
+            <ImageButton
+                android:id="@+id/btnClose"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:contentDescription="CloseButton"
+                android:src="@drawable/ic_close"
+                android:scaleType="fitXY"
+                app:tint="?android:attr/iconTint"
+                android:layout_margin="15dp"
+                android:layout_gravity="center_vertical"
+                android:clickable="true"
+                />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                android:text="Informações do Usuário"
+                android:textAlignment="center"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginEnd="55dp"/>
+
+
+        </LinearLayout>
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="?android:attr/colorForeground"/>
 
     </LinearLayout>
 

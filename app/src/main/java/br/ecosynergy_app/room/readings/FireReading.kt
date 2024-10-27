@@ -15,7 +15,7 @@ import br.ecosynergy_app.room.teams.Teams
     )]
 )
 data class FireReading(
-    @PrimaryKey val id: Int,
+    @PrimaryKey(autoGenerate = false) val id: Int,
     val teamHandle: String,
     val timestamp: String,
     val fire: Boolean

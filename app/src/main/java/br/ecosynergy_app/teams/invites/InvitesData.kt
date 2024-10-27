@@ -19,14 +19,6 @@ data class InviteVOList(
     val inviteVOList: List<InviteResponse>
 )
 
-data class InviteLinks(
-    val self: HrefLink
-)
-
-data class HrefLink(
-    val href: String
-)
-
 data class PageDetails(
     val size: Int,
     val totalElements: Int,
@@ -36,6 +28,5 @@ data class PageDetails(
 
 data class InviteApiResponse(
     val _embedded: InviteVOList,
-    val _links: InviteLinks,
     val page: PageDetails
 )

@@ -2,6 +2,7 @@ package br.ecosynergy_app.teams.invites
 
 import br.ecosynergy_app.login.LoginRequest
 import br.ecosynergy_app.login.LoginResponse
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -12,7 +13,12 @@ import retrofit2.http.Path
 interface InvitesService {
 
     @POST("api/invite/v1")
-    suspend fun createInvite(@Body inviteRequest: InviteRequest)
+    suspend fun createInvite(@Body inviteRequest: InviteRequest,
+                             @Header("Authorization") accessToken: String) : Response<InviteResponse>
+
+    @GET("api/invite/v1/team/{teamId}")
+    suspend fun findInvitesByTeam(@Path("teamId") teamId: Int,
+                                  @Header("Authorization") accessToken: String): List<InviteResponse>
 
     @PUT("api/invite/v1/accept/{inviteId}")
     suspend fun acceptInvite(@Path("inviteId") inviteId:Int,
@@ -40,6 +46,5 @@ interface InvitesService {
     @GET("api/invite/v1/received/recipient/{recipientId}")
     suspend fun findInvitesReceivedByRecipient(@Path("recipientId") recipientId:Int,
                                                @Header("Authorization") accessToken: String)
-
 
 }

@@ -2,35 +2,37 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    android:layout_marginBottom="10dp"
-    android:id="@+id/linearNotification"
-    android:background="?android:attr/selectableItemBackground">
+    android:clickable="true">
+
     <LinearLayout
+        android:id="@+id/linearNotification"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="70dp"
         android:orientation="horizontal"
-        android:layout_marginBottom="5dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp">
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?android:attr/selectableItemBackground">
 
         <ImageView
             android:id="@+id/imgIcon"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@drawable/fire"
-            android:layout_gravity="center"/>
+            android:src="@drawable/ic_fire"
+            android:layout_gravity="center"
+            android:layout_marginStart="20dp"/>
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:layout_gravity="center"
             android:orientation="vertical"
-            android:layout_marginEnd="10dp"
-            android:layout_marginStart="10dp">
+            android:layout_marginEnd="15dp"
+            android:layout_marginStart="15dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -48,18 +50,22 @@
                     android:textStyle="bold"
                     android:ellipsize="end"
                     android:maxLines="1"
-                    android:layout_marginEnd="5dp" />
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginBottom="2dp"/>
             </LinearLayout>
 
             <TextView
                 android:id="@+id/txtSubtitle"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text=""
                 tools:text="Subtítulo"
                 android:textSize="14sp"
                 android:textColor="?android:attr/textColorSecondary"
-                android:layout_gravity="bottom"/>
+                android:layout_gravity="bottom"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:layout_marginBottom="2dp"/>
 
             <TextView
                 android:id="@+id/txtTime"
@@ -74,17 +80,13 @@
 
         </LinearLayout>
 
-        <ImageButton
-            android:id="@+id/btnInvite"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_gravity="end|center"
-            android:contentDescription="ButtonRemoveUser"
-            android:src="@drawable/ic_invite"
-            android:background="@color/transparent"
-            app:tint="?android:attr/iconTint"
-            android:scaleType="fitXY"
-            android:layout_marginEnd="10dp"
-            android:visibility="gone"/>
+
+
     </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="?android:attr/colorForeground"/>
+
 </LinearLayout>
