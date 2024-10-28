@@ -23,7 +23,7 @@
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:contentDescription="LogoApp"
-                android:src="@drawable/logo_transparent"
+                android:src="@drawable/logo_transparent_globe"
                 android:layout_marginBottom="20dp"/>
 
             <LinearLayout
@@ -336,21 +336,25 @@
                 android:id="@+id/btnActionContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:visibility="visible"
                 android:layout_marginTop="10dp"
                 android:layout_marginStart="15dp"
                 android:layout_marginEnd="15dp">
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnAction"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="60dp"
                     android:text="Próximo Passo"
-                    style="@style/CustomButtonStyle"
-                    android:textStyle="bold"/>
+                    android:backgroundTint="@color/green"
+                    android:padding="15dp"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    app:rippleColor="?attr/colorControlHighlight"/>
 
                 <ProgressBar
                     android:id="@+id/progressBarAction"
-                    style="?android:attr/progressBarStyleSmall"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_gravity="center"
@@ -370,17 +374,20 @@
                 android:layout_marginStart="15dp"
                 android:layout_marginEnd="15dp">
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnSignUp"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="CADASTRAR"
-                    style="@style/CustomButtonStyle"
-                    android:textStyle="bold"/>
+                    android:layout_height="60dp"
+                    android:text="Realizar Cadastro"
+                    android:backgroundTint="@color/green"
+                    android:padding="15dp"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    app:rippleColor="?attr/colorControlHighlight"/>
 
                 <ProgressBar
                     android:id="@+id/progressBarSignUp"
-                    style="?android:attr/progressBarStyleSmall"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_gravity="center"

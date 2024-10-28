@@ -46,7 +46,6 @@ class NotificationsFragment : Fragment() {
         setupRecyclerView()
         setupSwipeRefresh()
 
-        // Initially load notifications and update the UI
         loadNotifications()
     }
 
@@ -87,7 +86,7 @@ class NotificationsFragment : Fragment() {
 
     private fun fetchNotifications(): List<Notifications> {
         // Placeholder for fetching notifications from Room or another data source
-        return listOf(Notifications(1, "greeting", "Seja bem vindo à plataforma Ecosynergy!", "Aqui você pode explorar todas as métricas de sua indústria", "2024-10-26T19:40:00"))
+        return listOf(Notifications(1, "greeting", "Seja bem vindo à plataforma Ecosynergy\uD83C\uDF89", "Aqui você pode explorar todas as métricas de sua indústria", "2024-10-26T19:40:00"))
         // Empty list simulates no notifications
     }
 }

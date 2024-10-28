@@ -16,6 +16,7 @@ import br.ecosynergy_app.teams.invites.InviteRequest
 import br.ecosynergy_app.teams.invites.InviteResponse
 import br.ecosynergy_app.teams.invites.InvitesService
 import br.ecosynergy_app.user.UserResponse
+import br.ecosynergy_app.user.viewmodel.UserService
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -51,6 +52,9 @@ class TeamsViewModel(
 
     private val _allTeamsDB = MutableLiveData<Flow<List<Teams>>>()
     val allTeamsDB: LiveData<Flow<List<Teams>>> get() = _allTeamsDB
+
+    private val _invitesList = MutableLiveData<List<Invites>>()
+    val invitesList: LiveData<List<Invites>> = _invitesList
 
     private val _teamDB = MutableLiveData<Teams>()
     val teamDB: LiveData<Teams> get() = _teamDB
@@ -147,7 +151,7 @@ class TeamsViewModel(
 
                 val response = result.body()
 
-                if(response != null) {
+                if (response != null) {
                     insertTeamDB(
                         Teams(
                             id = response.id,
@@ -171,7 +175,8 @@ class TeamsViewModel(
 
                     val memberData = response.members.first()
 
-                    val memberResponse = service.getMembersById(memberData.id, "Bearer $accessToken")
+                    val memberResponse =
+                        service.getMembersById(memberData.id, "Bearer $accessToken")
                     val role = memberData.role
 
                     val member = Members(
@@ -204,13 +209,13 @@ class TeamsViewModel(
         }
     }
 
-    private fun insertTeamDB(team: Teams){
+    private fun insertTeamDB(team: Teams) {
         viewModelScope.launch {
             try {
                 teamsRepository.insertTeam(team)
                 Log.d("TeamsViewModel", "DB - InsertTeam Successful")
 
-            }catch (e: Exception) {
+            } catch (e: Exception) {
                 Log.e("TeamsViewModel", "Error while InsertTeamDB", e)
                 _teamsResult.value = Result.failure(e)
             }
@@ -253,7 +258,10 @@ class TeamsViewModel(
                         Log.e("TeamsViewModel", "Null response from the API")
                     }
                 } else {
-                    Log.e("TeamsViewModel", "Error response from API: ${result.errorBody()?.string()}")
+                    Log.e(
+                        "TeamsViewModel",
+                        "Error response from API: ${result.errorBody()?.string()}"
+                    )
                 }
 
             } catch (e: HttpException) {
@@ -266,7 +274,15 @@ class TeamsViewModel(
         }
     }
 
-    fun updateTeamGoals(accessToken: String, teamId: Int, dailyGoal: Double, weeklyGoal: Double, monthlyGoal: Double, annualGoal: Double, onComplete: () -> Unit) {
+    fun updateTeamGoals(
+        accessToken: String,
+        teamId: Int,
+        dailyGoal: Double,
+        weeklyGoal: Double,
+        monthlyGoal: Double,
+        annualGoal: Double,
+        onComplete: () -> Unit
+    ) {
         val request = UpdateRequest(
             dailyGoal = dailyGoal,
             weeklyGoal = weeklyGoal,
@@ -310,7 +326,10 @@ class TeamsViewModel(
                         Log.e("TeamsViewModel", "Null response from the API")
                     }
                 } else {
-                    Log.e("TeamsViewModel", "Error response from API: ${result.errorBody()?.string()}")
+                    Log.e(
+                        "TeamsViewModel",
+                        "Error response from API: ${result.errorBody()?.string()}"
+                    )
                 }
             } catch (e: HttpException) {
                 Log.e("TeamsViewModel", "HTTP error while UpdateTeam", e)
@@ -331,7 +350,7 @@ class TeamsViewModel(
                 _teamResult.value = Result.success(response)
 
             } catch (e: HttpException) {
-                Log.e("UserViewModel","HTTP error during addMember", e)
+                Log.e("UserViewModel", "HTTP error during addMember", e)
                 _teamResult.value = Result.failure(e)
             } catch (e: IOException) {
                 Log.e("UserViewModel", "Network error during addMember", e)
@@ -343,14 +362,14 @@ class TeamsViewModel(
         }
     }
 
-    private fun insertMemberDB(member: Members){
+    private fun insertMemberDB(member: Members) {
         viewModelScope.launch {
             try {
                 membersRepository.insertMember(member)
 
                 val memberName = member.fullName
                 Log.e("UserViewModel", "DB - Member: $memberName added successfully")
-            }catch (e: Exception){
+            } catch (e: Exception) {
 
                 Log.e("UserViewModel", "Unexpected error during insertMemberDB", e)
             }
@@ -365,42 +384,40 @@ class TeamsViewModel(
 
                 val dbTeams = teamsRepository.getAllTeams().first()
 
-                    val updatedTeams = fetchedTeams.filter { fetchedTeam ->
-                        dbTeams.none { dbTeam ->
-                            dbTeam.id == fetchedTeam.id && dbTeam.updatedAt == fetchedTeam.updatedAt
-                        }
+                val updatedTeams = fetchedTeams.filter { fetchedTeam ->
+                    dbTeams.none { dbTeam ->
+                        dbTeam.id == fetchedTeam.id && dbTeam.updatedAt == fetchedTeam.updatedAt
                     }
+                }
 
-                    updatedTeams.forEach { team ->
-                        val teamEntity = team.toTeam()
-                        teamsRepository.insertOrUpdateTeam(teamEntity)
-                        getMembersById(team.members, accessToken, team.id)
-                        Log.d("TeamsViewModel", "Members insertion completed for Team: ${team.id}")
-                    }
+                updatedTeams.forEach { team ->
+                    val teamEntity = team.toTeam()
+                    teamsRepository.insertOrUpdateTeam(teamEntity)
+                    //findInvitesByTeam(team.id, accessToken)
+                    getMembersById(team.members, accessToken, team.id)
+                    Log.d("TeamsViewModel", "Members insertion completed for Team: ${team.id}")
+                }
 
-                    val teamsToDelete = dbTeams.filter { dbTeam ->
-                        fetchedTeams.none { fetchedTeam -> fetchedTeam.id == dbTeam.id }
-                    }
+                val teamsToDelete = dbTeams.filter { dbTeam ->
+                    fetchedTeams.none { fetchedTeam -> fetchedTeam.id == dbTeam.id }
+                }
 
-                    teamsToDelete.forEach { team ->
-                        teamsRepository.deleteTeamById(team.id)
-                        Log.d("TeamsViewModel", "Deleted TeamID: ${team.id}")
-                    }
+                teamsToDelete.forEach { team ->
+                    teamsRepository.deleteTeamById(team.id)
+                    Log.d("TeamsViewModel", "Deleted TeamID: ${team.id}")
+                }
 
-                    _teamsResult.value = Result.success(fetchedTeams)
-                    Log.d("TeamsViewModel", "Teams updated in the DB successfully")
+                _teamsResult.value = Result.success(fetchedTeams)
+                Log.d("TeamsViewModel", "Teams updated in the DB successfully")
 
                 onComplete()
-
 
             } catch (e: HttpException) {
                 Log.e("TeamsViewModel", "HTTP error while getTeamsByUserId", e)
                 _teamsResult.value = Result.failure(e)
-
             } catch (e: IOException) {
                 Log.e("TeamsViewModel", "Network error during getTeamsByUserId", e)
                 _teamsResult.value = Result.failure(e)
-
             } catch (e: Exception) {
                 Log.e("TeamsViewModel", "Error while getTeamsByUserId", e)
                 _teamsResult.value = Result.failure(e)
@@ -428,7 +445,6 @@ class TeamsViewModel(
         Log.i("TeamsViewModel", "GetAllTeamsCalled")
         return teamsRepository.getAllTeams()
     }
-
 
 
     private suspend fun getMembersById(
@@ -508,14 +524,14 @@ class TeamsViewModel(
         }
     }
 
-    fun deleteTeamFromDB(teamId: Int){
+    fun deleteTeamFromDB(teamId: Int) {
         viewModelScope.launch {
             try {
                 val delete = teamsRepository.deleteTeamById(teamId)
                 val deleteState = if (delete == Unit) "OK" else "ERROR"
 
                 Log.d("TeamsViewModel", "Delete team ID($teamId): $deleteState")
-            }catch (e: Exception) {
+            } catch (e: Exception) {
                 Log.e("TeamsViewModel", "DB - Error during DeleteTeam", e)
                 _deleteResult.value = Result.failure(e)
             }
@@ -546,21 +562,51 @@ class TeamsViewModel(
                 val response = invitesService.createInvite(inviteRequest, "Bearer $accessToken")
 
                 if (response.isSuccessful) {
-                    Log.d("TeamsViewModel", "Invite sent to UserID: ${inviteRequest.recipientId} for teamID: ${inviteRequest.teamId}")
+                    Log.d("TeamsViewModel","Invite sent to UserID: ${inviteRequest.recipientId} for teamID: ${inviteRequest.teamId}")
                     _inviteResult.value = Response.success(response.body())
+
+                    val invite = response.body() ?: InviteResponse(1, 1, 1, 1, "", "", "")
+                    val recipientUsername = invitesService.getUserById(invite.recipientId,"Bearer $accessToken").username
+                    val senderUsername = invitesService.getUserById(invite.senderId, "Bearer $accessToken").username
+
+                    val inviteDB = Invites(
+                        id = invite.id,
+                        senderId = invite.senderId,
+                        senderUsername = senderUsername,
+                        recipientId = invite.recipientId,
+                        recipientUsername = recipientUsername,
+                        teamId = invite.teamId,
+                        status = invite.status,
+                        createdAt = invite.createdAt,
+                        updatedAt = invite.updatedAt
+                    )
+
+                    invitesRepository.insertOrUpdateInvite(inviteDB)
                 } else {
                     val errorBody = response.errorBody()?.string()
-                    Log.e("TeamsViewModel", "Error during createInvite: ${response.code()} - $errorBody")
-                    _inviteResult.value = Response.error(response.code(), errorBody?.toResponseBody("application/json".toMediaTypeOrNull()))
+                    Log.e(
+                        "TeamsViewModel",
+                        "Error during createInvite: ${response.code()} - $errorBody"
+                    )
+                    _inviteResult.value = Response.error(
+                        response.code(),
+                        errorBody?.toResponseBody("application/json".toMediaTypeOrNull())
+                    )
                 }
 
                 onComplete()
             } catch (e: HttpException) {
                 Log.e("TeamsViewModel", "HTTP error during createInvite", e)
-                _inviteResult.value = Response.error(e.code(), e.message?.toResponseBody("application/json".toMediaTypeOrNull()))
+                _inviteResult.value = Response.error(
+                    e.code(),
+                    e.message?.toResponseBody("application/json".toMediaTypeOrNull())
+                )
             } catch (e: Exception) {
                 Log.e("TeamsViewModel", "Error during createInvite", e)
-                _inviteResult.value = Response.error(500, e.message?.toResponseBody("application/json".toMediaTypeOrNull()))
+                _inviteResult.value = Response.error(
+                    500,
+                    e.message?.toResponseBody("application/json".toMediaTypeOrNull())
+                )
             }
         }
     }
@@ -571,16 +617,26 @@ class TeamsViewModel(
                 val response = invitesService.findInvitesByTeam(teamId, "Bearer $accessToken")
 
                 response.forEach { invite ->
+                    val recipientUsername = invitesService.getUserById(
+                        invite.recipientId,
+                        "Bearer $accessToken"
+                    ).username
+                    val senderUsername =
+                        invitesService.getUserById(invite.senderId, "Bearer $accessToken").username
+
                     val inviteDB = Invites(
                         id = invite.id,
                         senderId = invite.senderId,
+                        senderUsername = senderUsername,
                         recipientId = invite.recipientId,
+                        recipientUsername = recipientUsername,
                         teamId = invite.teamId,
                         status = invite.status,
                         createdAt = invite.createdAt,
                         updatedAt = invite.updatedAt
                     )
-                    invitesRepository.insertInvite(inviteDB)
+
+                    invitesRepository.insertOrUpdateInvite(inviteDB)
                 }
 
                 Log.d("TeamsViewModel", "Invites of $teamId were successfully stored")
@@ -590,6 +646,19 @@ class TeamsViewModel(
                 _deleteResult.value = Result.failure(e)
             } catch (e: Exception) {
                 Log.e("TeamsViewModel", "Error during findInvitesByTeam", e)
+                _deleteResult.value = Result.failure(e)
+            }
+        }
+    }
+
+    fun getInvitesByTeam(teamId: Int) {
+        viewModelScope.launch {
+            try {
+                val response = invitesRepository.getInvitesByTeam(teamId)
+                _invitesList.value = response
+
+            } catch (e: Exception) {
+                Log.e("TeamsViewModel", "Error during getInvitesByTeam", e)
                 _deleteResult.value = Result.failure(e)
             }
         }

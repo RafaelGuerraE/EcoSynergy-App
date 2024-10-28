@@ -7,30 +7,18 @@
     android:layout_height="match_parent"
     tools:context=".signup.EmailConfirmationActivity">
 
-    <ImageButton
-        android:id="@+id/btnBack"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
-        android:background="?android:attr/selectableItemBackgroundBorderless"
-        android:contentDescription="backButton"
-        android:src="@drawable/ic_arrowback"
-        android:scaleType="fitXY"
-        android:layout_margin="15dp"
-        app:tint="?android:attr/iconTint" />
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true">
+        android:fillViewport="true"
+        android:layout_marginTop="52dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:gravity="center"
-            android:layout_gravity="center"
-            android:layout_marginStart="15dp"
-            android:layout_marginEnd="15dp">
+            android:layout_gravity="center">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -56,7 +44,9 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:orientation="horizontal"
-                android:layout_marginBottom="2dp">
+                android:layout_marginBottom="2dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp">
 
                 <EditText
                     android:id="@+id/digit1"
@@ -185,9 +175,41 @@
 
             </LinearLayout>
 
+
+
+            <FrameLayout
+                android:id="@+id/btnCheckContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="visible"
+                android:layout_gravity="center"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:layout_marginTop="15dp"
+                >
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnCheck"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    app:rippleColor="?attr/colorControlHighlight"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:text="Verificar Código" />
+
+                <ProgressBar
+                    android:id="@+id/progressBarCheck"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center"
+                    android:visibility="gone"
+                    android:indeterminateTint="@color/white"
+                    android:indeterminateTintMode="src_in"/>
+            </FrameLayout>
+
             <LinearLayout
                 android:id="@+id/txtError"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center"
@@ -207,36 +229,55 @@
                     android:textSize="15sp"/>
             </LinearLayout>
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnCheck"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_marginTop="10dp"
-                app:rippleColor="?attr/colorControlHighlight"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:text="@string/verificar" />
-
 
         </LinearLayout>
     </ScrollView>
 
-    <ProgressBar
-        android:id="@+id/loadingProgressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:layout_centerInParent="true" />
-
-    <View
-        android:id="@+id/overlayView"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@android:color/background_dark"
-        android:alpha="0.5"
-        android:visibility="gone"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="top">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal"
+            android:layout_gravity="top"
+            android:background="?android:attr/colorBackground">
+
+            <ImageButton
+                android:id="@+id/btnBack"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:contentDescription="BackButton"
+                android:src="@drawable/ic_arrowback"
+                android:scaleType="fitXY"
+                app:tint="?android:attr/iconTint"
+                android:layout_margin="15dp"
+                android:layout_gravity="center_vertical"
+                android:clickable="true"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                android:text="Confirmação de Email"
+                android:textAlignment="center"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginEnd="55dp"/>
+
+
+        </LinearLayout>
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="?android:attr/colorForeground"/>
+
+    </LinearLayout>
 </RelativeLayout>

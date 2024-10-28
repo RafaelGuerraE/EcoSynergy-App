@@ -64,9 +64,7 @@ class TeamsFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        Log.d("TeamsFragment", "onResume OK")
         teamsViewModel.getAllTeamsFromDB()
-        observeTeamsData()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -86,7 +84,7 @@ class TeamsFragment : Fragment() {
     }
 
     private fun observeUserData() {
-        userViewModel.userInfo.observe(viewLifecycleOwner){user ->
+        userViewModel.userInfo.observe(viewLifecycleOwner) { user ->
             accessToken = user.accessToken
             userIdentifier = user.username
             userId = user.id
@@ -94,14 +92,11 @@ class TeamsFragment : Fragment() {
     }
 
     private fun observeTeamsData() {
-        // Start collecting the Flow of team data
         viewLifecycleOwner.lifecycleScope.launch {
             teamsViewModel.getAllTeamsFromDB().collect { teamData ->
-                // Initialize the adapter with the collected team data
                 teamsAdapter = TeamAdapter(teamData)
                 recyclerView.adapter = teamsAdapter
 
-                // Check if the team data is empty
                 if (teamData.isEmpty()) {
                     linearAlert.visibility = View.VISIBLE
                     recyclerView.visibility = View.GONE
@@ -109,7 +104,6 @@ class TeamsFragment : Fragment() {
                     linearAlert.visibility = View.GONE
                     recyclerView.visibility = View.VISIBLE
                 }
-                // Hide the progress bar after data is loaded
                 progressBar.visibility = View.GONE
             }
         }
@@ -117,9 +111,17 @@ class TeamsFragment : Fragment() {
 
     private fun setupSwipeRefresh() {
         swipeRefresh.setOnRefreshListener {
-            teamsViewModel.getAllTeamsFromDB()
-            observeTeamsData()
-            swipeRefresh.isRefreshing = false
+            teamsViewModel.getTeamsByUserId(userId, accessToken) {
+                lifecycleScope.launch {
+                    teamsViewModel.getAllTeamsFromDB().collect { teamData ->
+                        val teamIds = teamData.map { it.id }
+                        for (id in teamIds) {
+                            teamsViewModel.findInvitesByTeam(id, accessToken)
+                        }
+                    }
+                }
+                swipeRefresh.isRefreshing = false
+            }
         }
     }
 

@@ -30,8 +30,8 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:gravity="center"
-                android:layout_marginStart="35dp"
-                android:layout_marginEnd="35dp">
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp">
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
@@ -87,6 +87,8 @@
                         android:textSize="15sp"
                         android:textColor="@color/greenDark"
                         android:clickable="true"
+                        android:maxLines="1"
+                        android:ellipsize="end"
                         android:focusable="true"/>
 
                 </LinearLayout>

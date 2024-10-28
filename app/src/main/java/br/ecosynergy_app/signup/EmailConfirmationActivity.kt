@@ -13,6 +13,7 @@ import android.view.KeyEvent
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.ProgressBar
@@ -43,8 +44,12 @@ class EmailConfirmationActivity : AppCompatActivity() {
     private lateinit var signUpViewModel: SignUpViewModel
     private lateinit var userViewModel: UserViewModel
     private lateinit var teamsViewModel: TeamsViewModel
-    private lateinit var loadingProgressBar: ProgressBar
-    private lateinit var overlayView: View
+
+    private lateinit var btnBack: ImageButton
+
+    private lateinit var btnCheck: Button
+    private lateinit var btnCheckContainer: FrameLayout
+    private lateinit var progressBarCheck: ProgressBar
 
     private lateinit var email: String
     private lateinit var password: String
@@ -86,8 +91,11 @@ class EmailConfirmationActivity : AppCompatActivity() {
 
         val txtError = findViewById<LinearLayout>(R.id.txtError)
 
-        val btnCheck: Button = findViewById(R.id.btnCheck)
-        val btnBack = findViewById<ImageButton>(R.id.btnBack)
+        btnCheck = findViewById(R.id.btnCheck)
+        btnCheckContainer = findViewById(R.id.btnCheckContainer)
+        progressBarCheck = findViewById(R.id.progressBarCheck)
+
+        btnBack = findViewById(R.id.btnBack)
 
         email = intent.getStringExtra("EMAIL").toString()
         password = intent.getStringExtra("PASSWORD").toString()
@@ -99,9 +107,12 @@ class EmailConfirmationActivity : AppCompatActivity() {
         txtEmailShow.text = "Digite o código que enviamos ao e-mail informado: $email"
 
         val userRepository = UserRepository(AppDatabase.getDatabase(applicationContext).userDao())
-        val teamsRepository = TeamsRepository(AppDatabase.getDatabase(applicationContext).teamsDao())
-        val membersRepository = MembersRepository(AppDatabase.getDatabase(applicationContext).membersDao())
-        val invitesRepository = InvitesRepository(AppDatabase.getDatabase(applicationContext).invitesDao())
+        val teamsRepository =
+            TeamsRepository(AppDatabase.getDatabase(applicationContext).teamsDao())
+        val membersRepository =
+            MembersRepository(AppDatabase.getDatabase(applicationContext).membersDao())
+        val invitesRepository =
+            InvitesRepository(AppDatabase.getDatabase(applicationContext).invitesDao())
 
         userViewModel = ViewModelProvider(
             this,
@@ -109,23 +120,26 @@ class EmailConfirmationActivity : AppCompatActivity() {
         )[UserViewModel::class.java]
         teamsViewModel = ViewModelProvider(
             this,
-            TeamsViewModelFactory(RetrofitClient.teamsService, teamsRepository, RetrofitClient.invitesService, membersRepository, invitesRepository)
+            TeamsViewModelFactory(
+                RetrofitClient.teamsService,
+                teamsRepository,
+                RetrofitClient.invitesService,
+                membersRepository,
+                invitesRepository
+            )
         )[TeamsViewModel::class.java]
         signUpViewModel = ViewModelProvider(
             this,
             SignUpViewModelFactory(RetrofitClient.signUpService)
         )[SignUpViewModel::class.java]
 
-        loadingProgressBar = findViewById(R.id.loadingProgressBar)
-        overlayView = findViewById(R.id.overlayView)
-
-        showProgressBar(true)
-
         btnBack.setOnClickListener { finish() }
 
         confirmationCode(email, fullName)
 
         btnCheck.setOnClickListener {
+            showButtonLoading(true, btnCheck, progressBarCheck)
+
             digit1Text = digit1.text.toString()
             digit2Text = digit2.text.toString()
             digit3Text = digit3.text.toString()
@@ -144,12 +158,12 @@ class EmailConfirmationActivity : AppCompatActivity() {
 
                 if (isCodeMatched) {
                     txtError.visibility = View.INVISIBLE
-                    showProgressBar(true)
 
                     val createUserRequest =
                         CreateUserRequest(username, fullName, email, password, gender, nationality)
                     registerUser(createUserRequest)
                 } else {
+                    showButtonLoading(false, btnCheck, progressBarCheck)
                     txtError.visibility = View.VISIBLE
                 }
             } else {
@@ -180,7 +194,7 @@ class EmailConfirmationActivity : AppCompatActivity() {
         digitListener(digit6)
     }
 
-    fun digitListener(textView: EditText){
+    fun digitListener(textView: EditText) {
         textView.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 val uppercaseText = s.toString().uppercase()
@@ -190,6 +204,7 @@ class EmailConfirmationActivity : AppCompatActivity() {
                     textView.setSelection(uppercaseText.length)
                 }
             }
+
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
@@ -201,7 +216,7 @@ class EmailConfirmationActivity : AppCompatActivity() {
         signUpViewModel.registerResult.observe(this) { result ->
             result.onSuccess { response ->
                 val loginRequest = LoginRequest(username, password)
-                userViewModel.loginUser(loginRequest)
+                userViewModel.loginUser(loginRequest) {}
                 userId = response.id
             }.onFailure { error ->
                 error.printStackTrace()
@@ -210,7 +225,6 @@ class EmailConfirmationActivity : AppCompatActivity() {
         }
 
         userViewModel.loginResult.observe(this) { result ->
-            showProgressBar(false)
             result.onSuccess { loginResponse ->
                 Log.d("ConfirmationActivity", "Login success")
                 teamsViewModel.addMember(
@@ -242,12 +256,10 @@ class EmailConfirmationActivity : AppCompatActivity() {
                 error.printStackTrace()
                 Log.d("ConfirmationActivity", "Login failed: ${error.message}")
             }
-        }
-    }
 
-    private fun showProgressBar(show: Boolean) {
-        loadingProgressBar.visibility = if (show) View.VISIBLE else View.GONE
-        overlayView.visibility = if (show) View.VISIBLE else View.GONE
+
+            showButtonLoading(false, btnCheck, progressBarCheck)
+        }
     }
 
     fun startCountDown(textView: TextView) {
@@ -264,7 +276,11 @@ class EmailConfirmationActivity : AppCompatActivity() {
         }.start()
     }
 
-    fun setEditTextFocusChange(currentEditText: EditText, nextEditText: EditText, previousEditText: EditText? = null) {
+    fun setEditTextFocusChange(
+        currentEditText: EditText,
+        nextEditText: EditText,
+        previousEditText: EditText? = null
+    ) {
         currentEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
@@ -305,12 +321,25 @@ class EmailConfirmationActivity : AppCompatActivity() {
                 verificationCode = code
                 Log.d("ConfirmationActivity", "Confirmation code: $code")
             }
-
-            showProgressBar(false)
         }
     }
 
     private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun showButtonLoading(isLoading: Boolean, button: Button, progressBar: ProgressBar) {
+        if (isLoading) {
+            button.text = ""
+            progressBar.visibility = View.VISIBLE
+            button.isClickable = false
+        } else {
+            button.text = when (button.id) {
+                R.id.btnCheck -> "Verificar Código"
+                else -> button.text.toString()
+            }
+            progressBar.visibility = View.GONE
+            button.isClickable = true
+        }
     }
 }

@@ -17,7 +17,9 @@ import br.ecosynergy_app.room.teams.Teams
 data class Invites (
     @PrimaryKey(autoGenerate = false) val id: Int,
     val senderId: Int,
+    val senderUsername: String,
     val recipientId: Int,
+    val recipientUsername: String,
     val teamId: Int,
     val status: String,
     val createdAt: String,

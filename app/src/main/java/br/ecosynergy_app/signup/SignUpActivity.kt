@@ -118,7 +118,7 @@ class SignUpActivity : AppCompatActivity() {
 
         val nationalities = loadNationalities()
         nationalityMap = nationalities.associate { it.nationality_br to it.nationality }
-        val nationalityBr = nationalities.mapNotNull{ it.nationality_br }
+        val nationalityBr = nationalities.mapNotNull { it.nationality_br }
 
         val nationalityAdapter =
             ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, nationalityBr)
@@ -138,8 +138,8 @@ class SignUpActivity : AppCompatActivity() {
                 0 -> {
                     showButtonLoading(true, btnAction, progressBarAction)
                     signUpViewModel.usernameExists.removeObservers(this)
-                    signUpViewModel.checkUsernameExists(txtUsername.text.toString())
-                    signUpViewModel.usernameExists.observe(this) { result ->
+                    signUpViewModel.checkUsernameExists(txtUsername.text.toString()) {
+                        val result = signUpViewModel.usernameExists.value
                         if (result == true) {
                             txtErrorUsername.apply {
                                 alpha = 0f
@@ -169,16 +169,16 @@ class SignUpActivity : AppCompatActivity() {
 
                             btnStepBack.visibility = View.VISIBLE
                         }
+
                         showButtonLoading(false, btnAction, progressBarAction)
                     }
                 }
+
 
                 1 -> {
                     showButtonLoading(true, btnAction, progressBarAction)
                     val genderSelected = spinnerGender.selectedItem.toString()
                     val nationalitySelected: String = txtNationality.text.toString()
-
-                    showButtonLoading(false, btnAction, progressBarAction)
                     if (nationalitySelected.isEmpty() && genderSelected == "Selecione uma opção") {
                         autoError.visibility = TextView.VISIBLE
                         autoError.text = "Selecione uma nacionalidade"
@@ -199,6 +199,9 @@ class SignUpActivity : AppCompatActivity() {
                         autoError.visibility = TextView.INVISIBLE
                         autoError.text = null
                         return@setOnClickListener
+                    } else {
+                        spinnerError.visibility = View.INVISIBLE
+                        autoError.visibility = View.INVISIBLE
                     }
 
                     gender = when (genderSelected) {
@@ -219,13 +222,15 @@ class SignUpActivity : AppCompatActivity() {
                         linearPasswords.visibility = View.VISIBLE
                     }
 
-                    btnAction.animate().alpha(0f).setDuration(300).withEndAction {
+                    btnActionContainer.animate().alpha(0f).setDuration(300).withEndAction {
                         btnActionContainer.visibility = View.GONE
                         btnSignUpContainer.alpha = 1f
                         btnSignUpContainer.visibility = View.VISIBLE
                     }
 
                     step++
+
+                    showButtonLoading(false, btnAction, progressBarAction)
                 }
             }
 
@@ -279,12 +284,15 @@ class SignUpActivity : AppCompatActivity() {
                     txtPassword.error = "Insira sua senha"
                     txtPassword.requestFocus()
                     hasErrorShown = true
+                    showButtonLoading(false, btnSignUp, progressBarSignUp)
                 }
                 if (confirmPasswordText.isEmpty()) {
                     confirmPasswordLayout.endIconMode = TextInputLayout.END_ICON_NONE
                     hasErrorShownC = true
                     txtConfirmPassword.error = "Confirme sua senha"
                     txtConfirmPassword.requestFocus()
+
+                    showButtonLoading(false, btnSignUp, progressBarSignUp)
                 }
                 return@setOnClickListener
             }
@@ -293,7 +301,7 @@ class SignUpActivity : AppCompatActivity() {
                 confirmPasswordLayout.endIconMode = TextInputLayout.END_ICON_NONE
                 hasErrorShownC = true
                 txtConfirmPassword.error = "As senhas não se correspondem"
-                txtConfirmPassword.requestFocus()
+                showButtonLoading(false, btnSignUp, progressBarSignUp)
                 return@setOnClickListener
             }
 
@@ -307,12 +315,14 @@ class SignUpActivity : AppCompatActivity() {
                 putExtra("NATIONALITY", nationality)
                 putExtra("GENDER", gender)
             }
+            Log.d("SignUpActivity", "$email $password $fullname $username $nationality $gender")
+            showButtonLoading(false, btnSignUp, progressBarSignUp)
             startActivity(i)
         }
 
-        btnStepBack.setOnClickListener{
-            when(step){
-                1->{
+        btnStepBack.setOnClickListener {
+            when (step) {
+                1 -> {
                     btnStepBack.visibility = View.GONE
                     linearNationalityGender.animate().alpha(0f).setDuration(300).withEndAction {
                         linearInformation.visibility = View.VISIBLE
@@ -326,7 +336,8 @@ class SignUpActivity : AppCompatActivity() {
 
                     step--
                 }
-                2->{
+
+                2 -> {
                     step3.setBackgroundResource(R.drawable.step_inactive)
                     step3.setTextColor((ContextCompat.getColor(this, R.color.black)))
                     midStep2.setBackgroundColor(ContextCompat.getColor(this, R.color.gray))
@@ -337,7 +348,7 @@ class SignUpActivity : AppCompatActivity() {
                         linearPasswords.visibility = View.GONE
                     }
 
-                    btnSignUp.animate().alpha(0f).setDuration(300).withEndAction {
+                    btnSignUpContainer.animate().alpha(0f).setDuration(300).withEndAction {
                         btnSignUpContainer.visibility = View.GONE
                         btnActionContainer.alpha = 1f
                         btnActionContainer.visibility = View.VISIBLE
@@ -376,9 +387,9 @@ class SignUpActivity : AppCompatActivity() {
             progressBar.visibility = View.VISIBLE
             button.isClickable = false
         } else {
-            button.text = when(button.id) {
-                R.id.btnAction -> "CONTINUAR"
-                R.id.btnSignUp -> "CADASTRAR"
+            button.text = when (button.id) {
+                R.id.btnAction -> "Próximo Passo"
+                R.id.btnSignUp -> "Realizar Cadastro"
                 else -> button.text.toString()
             }
             progressBar.visibility = View.GONE

@@ -2,6 +2,7 @@ package br.ecosynergy_app.user
 
 import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.Editable
@@ -47,6 +48,8 @@ class UserSettingsActivity : AppCompatActivity() {
     private var accessToken: String = ""
     private var refreshToken: String = ""
     private var gender: Int = 0
+
+    private var lastUsername: String = ""
 
     private var nationality: String =""
 
@@ -113,7 +116,7 @@ class UserSettingsActivity : AppCompatActivity() {
         txtNationality.setOnItemClickListener { parent, _, position, _ ->
             val selectedNationalityBr = parent.getItemAtPosition(position) as String
             nationality = nationalityMap[selectedNationalityBr] ?: "Unknown"
-            Log.d("SignUpActivity", nationality)
+            Log.d("UserSettingsActivity", nationality)
         }
 
         btnEdit.visibility = View.VISIBLE
@@ -150,11 +153,6 @@ class UserSettingsActivity : AppCompatActivity() {
                 builder.setMessage("Se você alterar o seu nome de usuário, você será obrigado a fazer login novamente.")
 
                 builder.setPositiveButton("Sim") { dialog, _ ->
-                    val lastUsername = userUsername
-                    if(nationality == ""){
-                        nationality = txtNationality.text.toString()
-                    }
-
                     userUsername = txtUsername.text.toString()
                     userFullname = txtFullname.text.toString()
                     userEmail = txtEmail.text.toString()
@@ -167,7 +165,12 @@ class UserSettingsActivity : AppCompatActivity() {
                     disableEditTexts()
                     isEditing = false
                     dialog.dismiss()
-                    if (lastUsername != txtUsername.text.toString()){
+
+                    if (lastUsername != userUsername) {
+                        val resultIntent = Intent().apply {
+                            putExtra("USERNAME_CHANGED", true)
+                        }
+                        setResult(RESULT_OK, resultIntent)
                         finish()
                     }
                 }
@@ -198,9 +201,13 @@ class UserSettingsActivity : AppCompatActivity() {
             builder.setTitle("Confirme sua Ação")
             builder.setMessage("Você deseja excluir sua conta?")
 
-            builder.setPositiveButton("Sim") { dialog, _ ->
+            builder.setPositiveButton("Sim") { _, _ ->
                 deleteUserData()
-                dialog.dismiss()
+                val resultIntent = Intent().apply {
+                    putExtra("USER_DELETED", true)
+                }
+                setResult(RESULT_OK, resultIntent)
+                finish()
             }
 
             builder.setNegativeButton("Cancelar") { dialog, _ ->
@@ -279,6 +286,8 @@ class UserSettingsActivity : AppCompatActivity() {
                 }
 
                 txtUsername.setText(userUsername)
+                lastUsername = userUsername
+
                 txtFullname.setText(userFullname)
                 txtEmail.setText(userEmail)
                 txtGender.setSelection(gender)
@@ -292,7 +301,6 @@ class UserSettingsActivity : AppCompatActivity() {
 
     private fun deleteUserData() {
         userViewModel.deleteUserData(userId, accessToken)
-        finish()
     }
 
     private fun updateUserData() {
@@ -306,8 +314,6 @@ class UserSettingsActivity : AppCompatActivity() {
 
         val nationalities = loadNationalities()
         val nationalityMap = nationalities.associate { it.nationality_br to it.nationality }
-
-        userNationality = nationalityMap[userNationality].toString()
 
         userViewModel.updateUserData(
             userId,

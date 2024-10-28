@@ -86,7 +86,7 @@ class TeamMembersActivity : AppCompatActivity() {
         swipeRefresh = findViewById(R.id.swipeRefresh)
         btnBack = findViewById(R.id.btnBack)
 
-        btnAddMember.visibility = if (userRole == "ADMINISTRATOR") View.VISIBLE else View.GONE
+        btnAddMember.visibility = if (userRole == "ADMINISTRATOR"|| userRole == "FOUNDER") View.VISIBLE else View.GONE
 
         observeMembersInfo()
         setupSwipeRefresh()

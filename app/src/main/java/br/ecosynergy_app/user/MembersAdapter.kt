@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import br.ecosynergy_app.R
@@ -175,6 +176,8 @@ class MembersAdapter(
                 dialog.dismiss()
             }
 
+            showToast("Usuário removido com sucesso")
+
             val dialog: AlertDialog = builder.create()
             dialog.show()
         }
@@ -204,12 +207,16 @@ class MembersAdapter(
 
                 // Notify the adapter to refresh the list
                 (activity as TeamMembersActivity).membersAdapter.updateList(membersList, memberRoles)
-
+                showToast("Cargo alterado com sucesso")
                 dialog.dismiss()
             }
 
             val dialog: AlertDialog = builder.create()
             dialog.show()
+        }
+
+        private fun showToast(message: String) {
+            Toast.makeText(itemView.context, message, Toast.LENGTH_SHORT).show()
         }
     }
 }

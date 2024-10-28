@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.ImageButton
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -51,7 +52,7 @@ class TeamInfoActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_teaminfo)
+        setContentView(R.layout.activity_team_info)
 
         teamsViewModel = ViewModelProvider(
             this,
@@ -137,12 +138,18 @@ class TeamInfoActivity : AppCompatActivity() {
         }
 
         areaInvites.setOnClickListener {
-            val i = Intent(this, TeamInvitesActivity::class.java).apply {
-                putExtra("TEAM_ID", teamId)
-                putExtra("TEAM_HANDLE", teamHandle)
-                putExtra("ACCESS_TOKEN", accessToken)
+
+            if(userRole == "ADMINISTRATOR" || userRole == "FOUNDER") {
+                val i = Intent(this, TeamInvitesActivity::class.java).apply {
+                    putExtra("TEAM_ID", teamId)
+                    putExtra("TEAM_HANDLE", teamHandle)
+                    putExtra("ACCESS_TOKEN", accessToken)
+                }
+                startActivity(i)
             }
-            startActivity(i)
+            else{
+                showToast("Você não pode acessar os convites da equipe")
+            }
         }
 
 
@@ -167,5 +174,9 @@ class TeamInfoActivity : AppCompatActivity() {
             accessToken = userInfo.accessToken
             onComplete()
         }
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 }

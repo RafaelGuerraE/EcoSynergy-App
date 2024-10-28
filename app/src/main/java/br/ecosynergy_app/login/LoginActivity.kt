@@ -77,7 +77,8 @@ class LoginActivity : AppCompatActivity() {
             AppDatabase.getDatabase(applicationContext).mq135ReadingsDao(),
             AppDatabase.getDatabase(applicationContext).fireReadingsDao()
         )
-        val invitesRepository = InvitesRepository(AppDatabase.getDatabase(applicationContext).invitesDao())
+        val invitesRepository =
+            InvitesRepository(AppDatabase.getDatabase(applicationContext).invitesDao())
         val membersRepository =
             MembersRepository(AppDatabase.getDatabase(applicationContext).membersDao())
 
@@ -87,7 +88,13 @@ class LoginActivity : AppCompatActivity() {
         )[UserViewModel::class.java]
         teamsViewModel = ViewModelProvider(
             this,
-            TeamsViewModelFactory(RetrofitClient.teamsService, teamsRepository, RetrofitClient.invitesService, membersRepository, invitesRepository)
+            TeamsViewModelFactory(
+                RetrofitClient.teamsService,
+                teamsRepository,
+                RetrofitClient.invitesService,
+                membersRepository,
+                invitesRepository
+            )
         )[TeamsViewModel::class.java]
         readingsViewModel = ViewModelProvider(
             this,
@@ -149,7 +156,7 @@ class LoginActivity : AppCompatActivity() {
 
         lblReset = findViewById(R.id.lblReset)
 
-        lblReset.setOnClickListener() {
+        lblReset.setOnClickListener {
             val i = Intent(this, RecoverPasswordActivity::class.java)
             startActivity(i)
         }
@@ -167,6 +174,8 @@ class LoginActivity : AppCompatActivity() {
         password: String,
         passwordLayout: TextInputLayout
     ) {
+
+
         if (username.isEmpty() || password.isEmpty()) {
             if (username.isEmpty()) {
                 txtEntry.error = "Insira seu Nome de Usuário"
@@ -181,49 +190,61 @@ class LoginActivity : AppCompatActivity() {
             return
         }
 
+        txtEntry.error = null
+        txtPassword.error = null
+
         val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view.windowToken, 0)
+
+        // Show loading indicator
         loadingProgressBar.visibility = View.VISIBLE
         overlayView.visibility = View.VISIBLE
 
         val loginRequest = LoginRequest(username, password)
 
-        userViewModel.loginUser(loginRequest)
-        userViewModel.loginResult.observe(this) { result ->
+        // Trigger login attempt
+        userViewModel.loginUser(loginRequest) {
 
-            result.onSuccess { loginResponse ->
-                Log.d("LoginActivity", "Login success")
-                userViewModel.user.observe(this) { result ->
-                    result.onSuccess { userData ->
-                        userViewModel.insertUserInfoDB(
-                            userData,
-                            loginResponse.accessToken,
-                            loginResponse.refreshToken
-                        )
-                        teamsViewModel.getTeamsByUserId(userData.id, loginResponse.accessToken) {
-                            setLoggedIn(true)
-                            startHomeActivity()
-                            loginSp.edit().apply {
-                                putBoolean("just_logged_in", true)
-                                putBoolean("open", true)
-                                apply()
+            userViewModel.loginResult.observe(this) { result ->
+                result.onSuccess { loginResponse ->
+                    Log.d("LoginActivity", "Login success")
+                    userViewModel.user.observe(this) { result ->
+                        result.onSuccess { userData ->
+                            userViewModel.insertUserInfoDB(
+                                userData,
+                                loginResponse.accessToken,
+                                loginResponse.refreshToken
+                            )
+                            teamsViewModel.getTeamsByUserId(
+                                userData.id,
+                                loginResponse.accessToken
+                            ) {
+                                setLoggedIn(true)
+                                startHomeActivity()
+                                loginSp.edit().apply {
+                                    putBoolean("just_logged_in", true)
+                                    putBoolean("open", true)
+                                    apply()
+                                }
                             }
                         }
+                        // Remove observer after success
+                        userViewModel.user.removeObservers(this)
                     }
+                }.onFailure { error ->
+                    // Hide loading indicator
+                    loadingProgressBar.visibility = View.GONE
+                    overlayView.visibility = View.GONE
 
-                    userViewModel.user.removeObservers(this)
+                    Log.d("LoginActivity", "Login failed: ${error.message}")
+                    txtEntry.error =
+                        "Usuário/Email ou Senha incorreto! Por favor verifique seus dados"
+                    txtPassword.text = null
+                    txtEntry.requestFocus()
                 }
-            }.onFailure { error ->
-                loadingProgressBar.visibility = View.GONE
-                overlayView.visibility = View.GONE
-                error.printStackTrace()
-                Log.d("LoginActivity", "Login failed: ${error.message}")
-                txtEntry.error = "Usuário/Email ou Senha incorreto! Por favor verifique seus dados"
-                txtPassword.text = null
-                txtEntry.requestFocus()
+                // Remove observer after receiving a result
+                userViewModel.loginResult.removeObservers(this)
             }
-
-            userViewModel.loginResult.removeObservers(this)
         }
     }
 
@@ -242,7 +263,7 @@ class LoginActivity : AppCompatActivity() {
         return loginSp.getBoolean("isLoggedIn", false)
     }
 
-    fun showSnackBar(message: String, action: String, bgTint: Int, context: Context) {
+    private fun showSnackBar(message: String, action: String, bgTint: Int, context: Context) {
         val rootView = findViewById<View>(android.R.id.content)
         val snackBar = Snackbar.make(rootView, message, Snackbar.LENGTH_SHORT)
             .setAction(action) {}

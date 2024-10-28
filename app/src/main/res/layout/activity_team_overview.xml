@@ -63,6 +63,8 @@
             android:layout_gravity="center"
             android:text="Informações da Equipe"
             android:textSize="18sp"
+            android:maxLines="1"
+            android:ellipsize="end"
             android:textColor="?android:attr/textColorPrimary"
             android:textStyle="bold"/>
 

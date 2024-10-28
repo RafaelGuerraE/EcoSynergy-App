@@ -41,14 +41,20 @@ class UserViewModel(
     private val _userInfo = MutableLiveData<User>()
     val userInfo: LiveData<User> get() = _userInfo
 
-    fun loginUser(loginRequest: LoginRequest) {
+    fun loginUser(loginRequest: LoginRequest, onComplete: () -> Unit) {
         viewModelScope.launch {
             try {
-                val loginResponse = service.loginUser(loginRequest)
-                _loginResult.value = Result.success(loginResponse)
+                val request= service.loginUser(loginRequest)
+                val loginResponse = request.body() ?: LoginResponse("", false, "", "", "", "")
 
-                getUserByUsername(loginRequest.identifier, loginResponse.accessToken, loginResponse.refreshToken)
+                if (request.isSuccessful) {
+                    _loginResult.value = Result.success(loginResponse)
+                    getUserByUsername(loginRequest.identifier, loginResponse.accessToken, loginResponse.refreshToken)
+                } else {
+                    _loginResult.value = Result.failure(Exception("Login failed with status: ${request.code()}"))
+                }
 
+                onComplete()
             } catch (e: HttpException) {
                 _loginResult.value = Result.failure(e)
             } catch (e: Exception) {
@@ -220,12 +226,10 @@ class UserViewModel(
                 val response = service.deleteUser(id, "Bearer $token")
                 if (response.isSuccessful) {
                     Log.d("UserViewModel", "User deleted successfully from API")
+                    deleteUserInfoFromDB()
                 } else {
-                    Log.e("UserViewModel", "Error deleting user: ${response.errorBody()?.string()}")
+                    Log.e("UserViewModel", "Error deleting user: ${response.body().toString()}")
                 }
-
-                deleteUserInfoFromDB()
-
             } catch (e: HttpException) {
                 Log.e("UserViewModel", "HTTP error during deleteUserData", e)
             } catch (e: IOException) {
@@ -274,10 +278,10 @@ class UserViewModel(
         }
     }
 
-    fun saveOrUpdateFcmToken(accessToken:String, userId: Int, fcmToken: String, deviceType: String, onComplete: () -> Unit) {
+    fun saveOrUpdateFcmToken(accessToken:String, userId: Int, fcmToken: String, onComplete: () -> Unit) {
         viewModelScope.launch {
             try {
-                val response = service.saveOrUpdateFcmToken("Bearer $accessToken", userId, fcmToken, deviceType ,"2024-12-31T12:20:20Z")
+                val response = service.saveOrUpdateFcmToken("Bearer $accessToken", userId, fcmToken,"2024-12-31T12:20:20Z")
                 if (response.isSuccessful) {
                     _fcmRequest.value = response
                     Log.d("UserViewModel", "FCM Token saved or updated successfully for userId: $userId")
@@ -307,10 +311,10 @@ class UserViewModel(
         }
     }
 
-    fun removeFCMToken(userId: Int, deviceType: String) {
+    fun removeFCMToken(userId: Int, accessToken: String) {
         viewModelScope.launch {
             try {
-                val response = service.removeFCMToken(userId, deviceType)
+                val response = service.removeFCMToken(userId, "Bearer $accessToken")
                 if (response.isSuccessful) {
                     Log.d("UserViewModel", "FCM Token removed successfully for userId: $userId")
                 } else {

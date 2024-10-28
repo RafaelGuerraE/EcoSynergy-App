@@ -19,7 +19,7 @@ import retrofit2.http.Query
 interface UserService {
 
     @POST("auth/signin")
-    suspend fun loginUser(@Body loginUserRequest: LoginRequest): LoginResponse
+    suspend fun loginUser(@Body loginUserRequest: LoginRequest): Response<LoginResponse>
 
     @PUT("auth/refresh/{username}")
     suspend fun refreshToken(
@@ -45,9 +45,9 @@ interface UserService {
         @Body request: PasswordRequest
     )
 
-    @DELETE("api/user/v1/{id}")
+    @DELETE("api/user/v1/{userId}")
     suspend fun deleteUser(
-        @Path("id") id: Int,
+        @Path("userId") userId: Int,
         @Header("Authorization") token: String
     ): Response<Result<Unit>>
 
@@ -69,22 +69,23 @@ interface UserService {
         @Header("Authorization") accessToken: String,
         @Query("userId") userId: Int,
         @Query("fcmToken") fcmToken: String,
-        @Query("deviceType") deviceType: String,
-        @Query("expiresAt") expiresAt:String
+        @Query("expiresAt") expiresAt:String,
+        @Query("deviceType") deviceType: String = "android"
     ): Response<Void>
 
     @POST("api/token/v1/remove")
     suspend fun removeFCMToken(
         @Query("userId") userId: Int,
-        @Query("deviceType") deviceType: String
+        @Header("Authorization") accessToken: String,
+        @Query("deviceType") deviceType: String = "android"
     ): Response<Void>
 
     @POST("api/token/v1/remove-all")
     suspend fun removeAllFCMTokens(@Query("userId") userId: Int): Response<Void>
 
-    @POST("api/token/v1/get")
+    @GET("api/token/v1/get")
     suspend fun getFCMTokenByUserIdAndDeviceType(
         @Query("userId") userId: Int,
-        @Query("deviceType") deviceType: String
+        @Query("deviceType") deviceType: String = "android"
     ): Response<Void>
 }

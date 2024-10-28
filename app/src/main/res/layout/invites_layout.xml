@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/linearClick"
+        android:layout_width="match_parent"
+        android:layout_height="75dp"
+        android:orientation="horizontal"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?android:attr/selectableItemBackground"
+        android:visibility="visible">
+
+        <FrameLayout
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="15dp">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/imgTeam"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_default"
+                android:layout_margin="5dp"
+                tools:src="@drawable/a"/>
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/imgOverlay"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                app:civ_border_width="2dp"
+                app:civ_border_color="?android:attr/colorBackground"
+                android:layout_gravity="bottom|end"
+                tools:src="@drawable/r"/>
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            android:layout_marginEnd="10dp"
+            android:layout_marginStart="15dp">
+
+            <TextView
+                android:id="@+id/txtRecipient"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="Convite para @Anderson"
+                android:textSize="14sp"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textStyle="bold"
+                android:layout_gravity="bottom"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:layout_marginEnd="5dp"/>
+            <TextView
+                android:id="@+id/txtSender"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:textSize="13sp"
+                android:textColor="?android:attr/textColorPrimary"
+                android:text="Enviado por @rafaelguerra há 7 dias"
+                android:ellipsize="end"
+                android:maxLines="1"/>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:id="@+id/imgStatus"
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:src="@drawable/ic_error"
+                    android:layout_marginEnd="5dp"
+                    app:tint="@color/red" />
+
+            <TextView
+                android:id="@+id/txtStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                tools:text="Convite aceito"
+                android:textStyle="bold"
+                android:textSize="12sp"
+                android:textColor="?android:attr/textColorPrimary"
+                android:layout_gravity="bottom"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+        <ImageButton
+            android:id="@+id/btnInfo"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_gravity="end|center"
+            android:src="@drawable/ic_info"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:tint="?android:attr/iconTint"
+            android:scaleType="fitXY"
+            android:layout_marginEnd="15dp"/>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="?android:attr/colorForeground"/>
+</LinearLayout>

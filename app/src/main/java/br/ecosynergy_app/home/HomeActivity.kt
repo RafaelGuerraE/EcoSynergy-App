@@ -14,6 +14,8 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
@@ -67,10 +69,14 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var btnTheme: ImageButton
     private lateinit var txtTerms: TextView
 
+    private lateinit var userSettingsLauncher: ActivityResultLauncher<Intent>
+
     private var accessToken: String = ""
     private var listTeamHandles: List<String> = listOf()
     private var teamHandlesJob: Job? = null
     private var isTeamHandlesFetched = false
+
+    private var userId: Int = 0
 
     private lateinit var progressBar: ProgressBar
 
@@ -96,7 +102,20 @@ class HomeActivity : AppCompatActivity() {
 
         val userRepository = UserRepository(AppDatabase.getDatabase(applicationContext).userDao())
 
-        val teamsRepository = TeamsRepository(AppDatabase.getDatabase(applicationContext).teamsDao())
+        val teamsRepository =
+            TeamsRepository(AppDatabase.getDatabase(applicationContext).teamsDao())
+
+        userSettingsLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                val data = result.data
+                if (data?.getBooleanExtra("USERNAME_CHANGED", false) == true) {
+                    logout(false)
+                }
+                if (data?.getBooleanExtra("USER_DELETED", false) == true) {
+                    logout(true)
+                }
+            }
+        }
 
         val readingsRepository = ReadingsRepository(
             AppDatabase.getDatabase(applicationContext).mq7ReadingsDao(),
@@ -104,8 +123,10 @@ class HomeActivity : AppCompatActivity() {
             AppDatabase.getDatabase(applicationContext).fireReadingsDao()
         )
 
-        val membersRepository = MembersRepository(AppDatabase.getDatabase(applicationContext).membersDao())
-        val invitesRepository = InvitesRepository(AppDatabase.getDatabase(applicationContext).invitesDao())
+        val membersRepository =
+            MembersRepository(AppDatabase.getDatabase(applicationContext).membersDao())
+        val invitesRepository =
+            InvitesRepository(AppDatabase.getDatabase(applicationContext).invitesDao())
 
         userViewModel = ViewModelProvider(
             this,
@@ -117,7 +138,13 @@ class HomeActivity : AppCompatActivity() {
         )[ReadingsViewModel::class.java]
         teamsViewModel = ViewModelProvider(
             this,
-            TeamsViewModelFactory(RetrofitClient.teamsService, teamsRepository, RetrofitClient.invitesService, membersRepository, invitesRepository)
+            TeamsViewModelFactory(
+                RetrofitClient.teamsService,
+                teamsRepository,
+                RetrofitClient.invitesService,
+                membersRepository,
+                invitesRepository
+            )
         )[TeamsViewModel::class.java]
 
         loginSp = getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
@@ -129,7 +156,8 @@ class HomeActivity : AppCompatActivity() {
 
         if (isLoggedIn && !open) {
             Log.d("HomeActivity", "Passei no UPDATE")
-            updateUserInfo {}
+            updateUserInfo {
+            }
         } else {
             Log.d("HomeActivity", "Passei no DISPLAY")
             loginSp.edit().putBoolean("open", false).apply()
@@ -170,7 +198,7 @@ class HomeActivity : AppCompatActivity() {
         } else {
             val btnLogout = headerView.findViewById<ImageButton>(R.id.btnLogout)
             btnLogout?.setOnClickListener {
-                logout()
+                logout(false)
             }
         }
 
@@ -240,7 +268,7 @@ class HomeActivity : AppCompatActivity() {
 
                 R.id.account_config -> {
                     val i = Intent(this, UserSettingsActivity::class.java)
-                    startActivity(i)
+                    userSettingsLauncher.launch(i)
                     true
                 }
 
@@ -331,7 +359,7 @@ class HomeActivity : AppCompatActivity() {
                 updateNavigationHeader(navView, user)
                 accessToken = user.accessToken
             } else {
-                logout()
+                logout(false)
             }
         }
 
@@ -380,178 +408,185 @@ class HomeActivity : AppCompatActivity() {
 
 
     private fun updateTeamInfo(userId: Int, accessToken: String) {
-        teamsViewModel.getTeamsByUserId(userId, accessToken) {
-            teamsViewModel.getAllTeamsFromDB()
-        }
+        teamsViewModel.getTeamsByUserId(userId, accessToken) {}
     }
 
-    private fun getTeamHandles(onComplete: () -> Unit) {
-        if (isTeamHandlesFetched) {
-            onComplete()
-            return
-        }
-
-        teamHandlesJob = lifecycleScope.launch {
-            teamsViewModel.getAllTeamsFromDB().collectLatest { teamData ->
-                listTeamHandles = teamData.map { it.handle }
-                isTeamHandlesFetched = true
+        private fun getTeamHandles(onComplete: () -> Unit) {
+            if (isTeamHandlesFetched) {
                 onComplete()
+                return
             }
-        }
-    }
 
-    private fun fetchReadingsData(listTeamHandles: List<String>, accessToken: String) {
-        for (teamHandle in listTeamHandles) {
-            readingsViewModel.updateMQ7Readings(teamHandle, accessToken)
-            readingsViewModel.updateMQ135Readings(teamHandle, accessToken)
-            readingsViewModel.updateFireReadings(teamHandle, accessToken)
-        }
-    }
+            teamHandlesJob = lifecycleScope.launch {
+                teamsViewModel.getAllTeamsFromDB().collect { teamData ->
+                    listTeamHandles = teamData.map { it.handle }
+                    isTeamHandlesFetched = true
 
-    private fun logout() {
-        val editTheme = themeSp.edit()
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
-        editTheme.putString("theme", "system")
-        editTheme.apply()
-
-        val editLog = loginSp.edit()
-        editLog.putBoolean("isLoggedIn", false)
-        editLog.apply()
-
-        userViewModel.deleteUserInfoFromDB()
-        teamsViewModel.deleteTeamsFromDB()
-
-        val i = Intent(this, LoginActivity::class.java)
-        i.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        i.putExtra("LOGOUT_MESSAGE", "You have been logged out successfully.")
-        startActivity(i)
-        finish()
-    }
-
-    fun getDrawableForLetter(letter: Char): Int {
-        return when (letter.lowercaseChar()) {
-            'a' -> R.drawable.a
-            'b' -> R.drawable.b
-            'c' -> R.drawable.c
-            'd' -> R.drawable.d
-            'e' -> R.drawable.e
-            'f' -> R.drawable.f
-            'g' -> R.drawable.g
-            'h' -> R.drawable.h
-            'i' -> R.drawable.i
-            'j' -> R.drawable.j
-            'k' -> R.drawable.k
-            'l' -> R.drawable.l
-            'm' -> R.drawable.m
-            'n' -> R.drawable.n
-            'o' -> R.drawable.o
-            'p' -> R.drawable.p
-            'q' -> R.drawable.q
-            'r' -> R.drawable.r
-            's' -> R.drawable.s
-            't' -> R.drawable.t
-            'u' -> R.drawable.u
-            'v' -> R.drawable.v
-            'w' -> R.drawable.w
-            'x' -> R.drawable.x
-            'y' -> R.drawable.y
-            'z' -> R.drawable.z
-            else -> R.drawable.ic_default
-        }
-    }
-
-    private fun updateNavigationHeader(navView: NavigationView, userData: User) {
-        val headerView = navView.getHeaderView(0)
-        val userPicture: CircleImageView = headerView.findViewById(R.id.userPicture)
-        val lblUserFullname: TextView = headerView.findViewById(R.id.lblUserFullname)
-        val lblUsername: TextView = headerView.findViewById(R.id.lblUsername)
-        val lblUserEmail: TextView = headerView.findViewById(R.id.lblUserEmail)
-
-        lblUserFullname.text = userData.fullName
-        lblUsername.text = "@${userData.username}"
-        lblUserEmail.text = userData.email
-        val firstName = userData.fullName.split(" ").firstOrNull()
-        if (!firstName.isNullOrEmpty()) {
-            progressBar.visibility = View.GONE
-            navDrawerButton.visibility = View.VISIBLE
-            val firstLetter = firstName[0]
-            val drawableId = getDrawableForLetter(firstLetter)
-            userPicture.setImageResource(drawableId)
-            navDrawerButton.setImageResource(drawableId)
-        } else {
-            progressBar.visibility = View.GONE
-            navDrawerButton.visibility = View.VISIBLE
-            showToast("ERRO: Imagem de Perfil")
-        }
-    }
-
-    private fun showToast(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-    }
-
-    private fun showSnackBar(message: String, action: String, bgTint: Int) {
-        val rootView = findViewById<View>(android.R.id.content)
-        val snackBar = Snackbar.make(rootView, message, Snackbar.LENGTH_SHORT)
-            .setAction(action) {}
-        snackBar.setBackgroundTint(ContextCompat.getColor(this, bgTint))
-        snackBar.setTextColor(ContextCompat.getColor(this, R.color.white))
-        snackBar.setActionTextColor(ContextCompat.getColor(this, R.color.white))
-
-        snackBar.addCallback(object : Snackbar.Callback() {
-            override fun onShown(sb: Snackbar?) {
-                super.onShown(sb)
-                val snackbarView = snackBar.view
-                val params = snackbarView.layoutParams as FrameLayout.LayoutParams
-                params.setMargins(
-                    params.leftMargin,
-                    params.topMargin,
-                    params.rightMargin,
-                    findViewById<View>(R.id.bottomNavView).height
-                )
-                snackbarView.layoutParams = params
-            }
-        })
-        snackBar.show()
-    }
-
-    private fun retrieveAndSendFcmToken() {
-        FirebaseMessaging.getInstance().token
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    val fcmToken = task.result
-                    if (fcmToken != null) {
-                        sendFcmTokenToServer(fcmToken)
+                    val teamIds = teamData.map { it.id }
+                    for(id in teamIds){
+                        teamsViewModel.findInvitesByTeam(id, accessToken)
                     }
-                } else {
-                    Log.e("HomeActivity", "Erro ao obter o token FCM: ${task.exception}")
+
+                    onComplete()
                 }
             }
-    }
+        }
 
-    private fun sendFcmTokenToServer(fcmToken: String) {
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val userId = userViewModel.userRepository.getUserId()
-                userViewModel.saveOrUpdateFcmToken(accessToken, userId, fcmToken, "android"){
-                    val fcmRequest = userViewModel.fcmRequest.value
-                    if (fcmRequest != null) {
-                        if (fcmRequest.isSuccessful){
-                            Log.d(
-                                "HomeActivity",
-                                "UserID: $userId, FCMToken: $fcmToken"
-                            )
-                            showToast("FCM Token enviado")
-                        }
-                        else{
-
-                            showToast("Erro ao Enviar ao Back")
-                        }
-                    }
-                }
-            } catch (e: Exception) {
-                Log.e("HomeActivity", "Erro ao enviar token FCM para o servidor", e)
+        private fun fetchReadingsData(listTeamHandles: List<String>, accessToken: String) {
+            for (teamHandle in listTeamHandles) {
+                readingsViewModel.updateMQ7Readings(teamHandle, accessToken)
+                readingsViewModel.updateMQ135Readings(teamHandle, accessToken)
+                readingsViewModel.updateFireReadings(teamHandle, accessToken)
             }
         }
-    }
 
-}
+        private fun logout(wasDeleted:Boolean) {
+            val editTheme = themeSp.edit()
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+            editTheme.putString("theme", "system")
+            editTheme.apply()
+
+            val editLog = loginSp.edit()
+            editLog.putBoolean("isLoggedIn", false)
+            editLog.apply()
+
+            userViewModel.deleteUserInfoFromDB()
+            teamsViewModel.deleteTeamsFromDB()
+
+            if(!wasDeleted) {
+                userViewModel.removeFCMToken(userId, accessToken)
+            }
+
+            val i = Intent(this, LoginActivity::class.java)
+            i.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            i.putExtra("LOGOUT_MESSAGE", "You have been logged out successfully.")
+            startActivity(i)
+            finish()
+        }
+
+        fun getDrawableForLetter(letter: Char): Int {
+            return when (letter.lowercaseChar()) {
+                'a' -> R.drawable.a
+                'b' -> R.drawable.b
+                'c' -> R.drawable.c
+                'd' -> R.drawable.d
+                'e' -> R.drawable.e
+                'f' -> R.drawable.f
+                'g' -> R.drawable.g
+                'h' -> R.drawable.h
+                'i' -> R.drawable.i
+                'j' -> R.drawable.j
+                'k' -> R.drawable.k
+                'l' -> R.drawable.l
+                'm' -> R.drawable.m
+                'n' -> R.drawable.n
+                'o' -> R.drawable.o
+                'p' -> R.drawable.p
+                'q' -> R.drawable.q
+                'r' -> R.drawable.r
+                's' -> R.drawable.s
+                't' -> R.drawable.t
+                'u' -> R.drawable.u
+                'v' -> R.drawable.v
+                'w' -> R.drawable.w
+                'x' -> R.drawable.x
+                'y' -> R.drawable.y
+                'z' -> R.drawable.z
+                else -> R.drawable.ic_default
+            }
+        }
+
+        private fun updateNavigationHeader(navView: NavigationView, userData: User) {
+            val headerView = navView.getHeaderView(0)
+            val userPicture: CircleImageView = headerView.findViewById(R.id.userPicture)
+            val lblUserFullname: TextView = headerView.findViewById(R.id.lblUserFullname)
+            val lblUsername: TextView = headerView.findViewById(R.id.lblUsername)
+            val lblUserEmail: TextView = headerView.findViewById(R.id.lblUserEmail)
+
+            lblUserFullname.text = userData.fullName
+            lblUsername.text = "@${userData.username}"
+            lblUserEmail.text = userData.email
+            val firstName = userData.fullName.split(" ").firstOrNull()
+            if (!firstName.isNullOrEmpty()) {
+                progressBar.visibility = View.GONE
+                navDrawerButton.visibility = View.VISIBLE
+                val firstLetter = firstName[0]
+                val drawableId = getDrawableForLetter(firstLetter)
+                userPicture.setImageResource(drawableId)
+                navDrawerButton.setImageResource(drawableId)
+            } else {
+                progressBar.visibility = View.GONE
+                navDrawerButton.visibility = View.VISIBLE
+                showToast("ERRO: Imagem de Perfil")
+            }
+        }
+
+        private fun showToast(message: String) {
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+        }
+
+        private fun showSnackBar(message: String, action: String, bgTint: Int) {
+            val rootView = findViewById<View>(android.R.id.content)
+            val snackBar = Snackbar.make(rootView, message, Snackbar.LENGTH_SHORT)
+                .setAction(action) {}
+            snackBar.setBackgroundTint(ContextCompat.getColor(this, bgTint))
+            snackBar.setTextColor(ContextCompat.getColor(this, R.color.white))
+            snackBar.setActionTextColor(ContextCompat.getColor(this, R.color.white))
+
+            snackBar.addCallback(object : Snackbar.Callback() {
+                override fun onShown(sb: Snackbar?) {
+                    super.onShown(sb)
+                    val snackbarView = snackBar.view
+                    val params = snackbarView.layoutParams as FrameLayout.LayoutParams
+                    params.setMargins(
+                        params.leftMargin,
+                        params.topMargin,
+                        params.rightMargin,
+                        findViewById<View>(R.id.bottomNavView).height
+                    )
+                    snackbarView.layoutParams = params
+                }
+            })
+            snackBar.show()
+        }
+
+        private fun retrieveAndSendFcmToken() {
+            FirebaseMessaging.getInstance().token
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        val fcmToken = task.result
+                        if (fcmToken != null) {
+                            sendFcmTokenToServer(fcmToken)
+                        }
+                    } else {
+                        Log.e("HomeActivity", "Erro ao obter o token FCM: ${task.exception}")
+                    }
+                }
+        }
+
+        private fun sendFcmTokenToServer(fcmToken: String) {
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    userId = userViewModel.userRepository.getUserId()
+                    userViewModel.saveOrUpdateFcmToken(accessToken, userId, fcmToken) {
+                        val fcmRequest = userViewModel.fcmRequest.value
+                        if (fcmRequest != null) {
+                            if (fcmRequest.isSuccessful) {
+                                Log.d(
+                                    "HomeActivity",
+                                    "UserID: $userId, FCMToken: $fcmToken"
+                                )
+                                showToast("FCM Token enviado")
+                            } else {
+
+                                showToast("Erro ao Enviar ao Back")
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    Log.e("HomeActivity", "Erro ao enviar token FCM para o servidor", e)
+                }
+            }
+        }
+
+    }

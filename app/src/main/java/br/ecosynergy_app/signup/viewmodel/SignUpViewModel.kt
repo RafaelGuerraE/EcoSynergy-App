@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import retrofit2.HttpException
 import kotlinx.coroutines.launch
+import kotlin.system.exitProcess
 
 class SignUpViewModel(private val service: SignUpService): ViewModel() {
 
@@ -69,14 +70,15 @@ class SignUpViewModel(private val service: SignUpService): ViewModel() {
     private val _usernameExists = MutableLiveData<Boolean>()
     val usernameExists: LiveData<Boolean> get() = _usernameExists
 
-    fun checkUsernameExists(username: String) {
+    fun checkUsernameExists(username: String, onComplete: () -> Unit) {
         viewModelScope.launch {
             try {
                 val response = service.checkUsernameExists(username)
                 val exists = response.string().toBoolean()
-                _usernameExists.postValue(exists)
-
+                _usernameExists.value = exists
                 Log.d("SignUpViewModel", "UsernameExists: $exists")
+
+                onComplete()
             } catch (e: HttpException) {
                 Log.e("SignUpViewModel", "HTTP error during checkUsernameExists", e)
                 _usernameExists.postValue(false)
