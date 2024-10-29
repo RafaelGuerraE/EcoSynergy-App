@@ -9,15 +9,24 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
+import br.ecosynergy_app.room.AppDatabase
+import br.ecosynergy_app.room.user.UserRepository
 import br.ecosynergy_app.signup.EmailConfirmationActivity
 import br.ecosynergy_app.signup.viewmodel.SignUpViewModel
 import br.ecosynergy_app.signup.viewmodel.SignUpViewModelFactory
+import br.ecosynergy_app.user.ForgotRequest
+import br.ecosynergy_app.user.viewmodel.UserViewModel
+import br.ecosynergy_app.user.viewmodel.UserViewModelFactory
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 
 class RecoverPasswordActivity : AppCompatActivity() {
 
     private lateinit var registerViewModel: SignUpViewModel
+    private lateinit var userViewModel: UserViewModel
+
+    private var userUsername: String = ""
+    private var accessToken: String = ""
 
     private lateinit var btnBack: ImageButton
     private lateinit var btnSend: Button
@@ -25,7 +34,7 @@ class RecoverPasswordActivity : AppCompatActivity() {
     private lateinit var btnChangePassword: Button
     private lateinit var txtResend: TextView
     private lateinit var txtEmailShow: TextView
-    private lateinit var txtEmail: TextInputEditText
+    private lateinit var txtEmail: EditText
     private lateinit var txtPassword: TextInputEditText
     private lateinit var txtConfirmPassword: TextInputEditText
     private lateinit var txtError: LinearLayout
@@ -52,10 +61,10 @@ class RecoverPasswordActivity : AppCompatActivity() {
 
     private var verificationCode: String = ""
     private var email: String = ""
+    private var password: String = ""
 
     private var hasErrorShown = false
     private var hasErrorShownC = false
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,6 +75,12 @@ class RecoverPasswordActivity : AppCompatActivity() {
             this,
             SignUpViewModelFactory(RetrofitClient.signUpService)
         )[SignUpViewModel::class.java]
+
+        val userRepository = UserRepository(AppDatabase.getDatabase(this).userDao())
+        userViewModel = ViewModelProvider(
+            this,
+            UserViewModelFactory(RetrofitClient.userService, userRepository)
+        )[UserViewModel::class.java]
 
         btnBack = findViewById(R.id.btnBack)
         btnSend = findViewById(R.id.btnSend)
@@ -91,18 +106,13 @@ class RecoverPasswordActivity : AppCompatActivity() {
         linearEmail = findViewById(R.id.linearEmail)
         linearPasswords = findViewById(R.id.linearPasswords)
 
-        btnBack.setOnClickListener {finish()}
+        btnBack.setOnClickListener { finish() }
 
         btnSend.setOnClickListener {
-            if(txtEmail.text != null){
+            if (txtEmail.text != null) {
                 email = txtEmail.text.toString()
                 forgotPasswordCode(email)
-                linearEmail.animate().alpha(0f).setDuration(300).withEndAction {
-                    linearEmail.visibility = View.GONE
-                    linearVerification.visibility = View.VISIBLE
-                }
-            }
-            else{
+            } else {
                 showToast("Insira o seu email")
             }
         }
@@ -172,7 +182,9 @@ class RecoverPasswordActivity : AppCompatActivity() {
             }
 
             showProgressBar(true)
-            changePassword(txtPassword.text.toString())
+            password = txtPassword.text.toString()
+
+            changePassword(email, password)
         }
 
         txtResend.setOnClickListener {
@@ -203,18 +215,25 @@ class RecoverPasswordActivity : AppCompatActivity() {
         overlayView.visibility = if (show) View.VISIBLE else View.GONE
     }
 
-    private fun changePassword(password: String){
-        finish()
+    private fun changePassword(email: String, password: String) {
+        userViewModel.forgotPassword(ForgotRequest(email, password)) {
+            showToast("Senha alterada com sucesso")
+            finish()
+        }
     }
 
     private fun forgotPasswordCode(userEmail: String) {
         showProgressBar(true)
         registerViewModel.verificationCode.removeObservers(this)
-        registerViewModel.forgotPasswordCode(userEmail)
-        registerViewModel.verificationCode.observe(this) { code ->
+        registerViewModel.forgotPasswordCode(userEmail) {
+            val code = registerViewModel.verificationCode.value
             Log.d("ConfirmationActivity", "Confirmation code: $code")
             if (code != null) {
                 verificationCode = code
+            }
+            linearEmail.animate().alpha(0f).setDuration(300).withEndAction {
+                linearEmail.visibility = View.GONE
+                linearVerification.visibility = View.VISIBLE
             }
             showProgressBar(false)
         }

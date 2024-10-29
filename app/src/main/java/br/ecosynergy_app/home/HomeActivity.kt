@@ -55,6 +55,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
+import androidx.core.app.ActivityCompat
 
 class HomeActivity : AppCompatActivity() {
 
@@ -92,11 +96,13 @@ class HomeActivity : AppCompatActivity() {
             "system" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
         }
 
-//        val notificationServiceIntent = Intent(this, NotificationService::class.java)
-//        startService(notificationServiceIntent)
-
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
+
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)== PackageManager.PERMISSION_DENIED) {
+            requestNotificationPermission()
+        }
 
         val notificationClicked = intent.getBooleanExtra("NOTIFICATION_CLICKED", false)
 
@@ -105,17 +111,18 @@ class HomeActivity : AppCompatActivity() {
         val teamsRepository =
             TeamsRepository(AppDatabase.getDatabase(applicationContext).teamsDao())
 
-        userSettingsLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == RESULT_OK) {
-                val data = result.data
-                if (data?.getBooleanExtra("USERNAME_CHANGED", false) == true) {
-                    logout(false)
-                }
-                if (data?.getBooleanExtra("USER_DELETED", false) == true) {
-                    logout(true)
+        userSettingsLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                if (result.resultCode == RESULT_OK) {
+                    val data = result.data
+                    if (data?.getBooleanExtra("USERNAME_CHANGED", false) == true) {
+                        logout(false)
+                    }
+                    if (data?.getBooleanExtra("USER_DELETED", false) == true) {
+                        logout(true)
+                    }
                 }
             }
-        }
 
         val readingsRepository = ReadingsRepository(
             AppDatabase.getDatabase(applicationContext).mq7ReadingsDao(),
@@ -411,182 +418,207 @@ class HomeActivity : AppCompatActivity() {
         teamsViewModel.getTeamsByUserId(userId, accessToken) {}
     }
 
-        private fun getTeamHandles(onComplete: () -> Unit) {
-            if (isTeamHandlesFetched) {
-                onComplete()
-                return
-            }
+    private fun getTeamHandles(onComplete: () -> Unit) {
+        if (isTeamHandlesFetched) {
+            onComplete()
+            return
+        }
 
-            teamHandlesJob = lifecycleScope.launch {
-                teamsViewModel.getAllTeamsFromDB().collect { teamData ->
-                    listTeamHandles = teamData.map { it.handle }
-                    isTeamHandlesFetched = true
+        teamHandlesJob = lifecycleScope.launch {
+            teamsViewModel.getAllTeamsFromDB().collect { teamData ->
+                listTeamHandles = teamData.map { it.handle }
+                isTeamHandlesFetched = true
 
-                    val teamIds = teamData.map { it.id }
-                    for(id in teamIds){
-                        teamsViewModel.findInvitesByTeam(id, accessToken)
-                    }
-
-                    onComplete()
+                val teamIds = teamData.map { it.id }
+                for (id in teamIds) {
+                    teamsViewModel.findInvitesByTeam(id, accessToken)
                 }
+
+                onComplete()
             }
         }
+    }
 
-        private fun fetchReadingsData(listTeamHandles: List<String>, accessToken: String) {
-            for (teamHandle in listTeamHandles) {
-                readingsViewModel.updateMQ7Readings(teamHandle, accessToken)
-                readingsViewModel.updateMQ135Readings(teamHandle, accessToken)
-                readingsViewModel.updateFireReadings(teamHandle, accessToken)
-            }
+    private fun fetchReadingsData(listTeamHandles: List<String>, accessToken: String) {
+        for (teamHandle in listTeamHandles) {
+            readingsViewModel.updateMQ7Readings(teamHandle, accessToken)
+            readingsViewModel.updateMQ135Readings(teamHandle, accessToken)
+            readingsViewModel.updateFireReadings(teamHandle, accessToken)
+        }
+    }
+
+    private fun logout(wasDeleted: Boolean) {
+        val editTheme = themeSp.edit()
+        editTheme.putString("theme", "system")
+        editTheme.apply()
+
+        val editLog = loginSp.edit()
+        editLog.putBoolean("isLoggedIn", false)
+        editLog.apply()
+
+        if (!wasDeleted) {
+            userViewModel.removeFCMToken(userId, accessToken)
         }
 
-        private fun logout(wasDeleted:Boolean) {
-            val editTheme = themeSp.edit()
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
-            editTheme.putString("theme", "system")
-            editTheme.apply()
-
-            val editLog = loginSp.edit()
-            editLog.putBoolean("isLoggedIn", false)
-            editLog.apply()
-
-            userViewModel.deleteUserInfoFromDB()
+        userViewModel.deleteUserInfoFromDB(){
             teamsViewModel.deleteTeamsFromDB()
-
-            if(!wasDeleted) {
-                userViewModel.removeFCMToken(userId, accessToken)
-            }
-
             val i = Intent(this, LoginActivity::class.java)
             i.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             i.putExtra("LOGOUT_MESSAGE", "You have been logged out successfully.")
             startActivity(i)
             finish()
         }
-
-        fun getDrawableForLetter(letter: Char): Int {
-            return when (letter.lowercaseChar()) {
-                'a' -> R.drawable.a
-                'b' -> R.drawable.b
-                'c' -> R.drawable.c
-                'd' -> R.drawable.d
-                'e' -> R.drawable.e
-                'f' -> R.drawable.f
-                'g' -> R.drawable.g
-                'h' -> R.drawable.h
-                'i' -> R.drawable.i
-                'j' -> R.drawable.j
-                'k' -> R.drawable.k
-                'l' -> R.drawable.l
-                'm' -> R.drawable.m
-                'n' -> R.drawable.n
-                'o' -> R.drawable.o
-                'p' -> R.drawable.p
-                'q' -> R.drawable.q
-                'r' -> R.drawable.r
-                's' -> R.drawable.s
-                't' -> R.drawable.t
-                'u' -> R.drawable.u
-                'v' -> R.drawable.v
-                'w' -> R.drawable.w
-                'x' -> R.drawable.x
-                'y' -> R.drawable.y
-                'z' -> R.drawable.z
-                else -> R.drawable.ic_default
-            }
-        }
-
-        private fun updateNavigationHeader(navView: NavigationView, userData: User) {
-            val headerView = navView.getHeaderView(0)
-            val userPicture: CircleImageView = headerView.findViewById(R.id.userPicture)
-            val lblUserFullname: TextView = headerView.findViewById(R.id.lblUserFullname)
-            val lblUsername: TextView = headerView.findViewById(R.id.lblUsername)
-            val lblUserEmail: TextView = headerView.findViewById(R.id.lblUserEmail)
-
-            lblUserFullname.text = userData.fullName
-            lblUsername.text = "@${userData.username}"
-            lblUserEmail.text = userData.email
-            val firstName = userData.fullName.split(" ").firstOrNull()
-            if (!firstName.isNullOrEmpty()) {
-                progressBar.visibility = View.GONE
-                navDrawerButton.visibility = View.VISIBLE
-                val firstLetter = firstName[0]
-                val drawableId = getDrawableForLetter(firstLetter)
-                userPicture.setImageResource(drawableId)
-                navDrawerButton.setImageResource(drawableId)
-            } else {
-                progressBar.visibility = View.GONE
-                navDrawerButton.visibility = View.VISIBLE
-                showToast("ERRO: Imagem de Perfil")
-            }
-        }
-
-        private fun showToast(message: String) {
-            Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-        }
-
-        private fun showSnackBar(message: String, action: String, bgTint: Int) {
-            val rootView = findViewById<View>(android.R.id.content)
-            val snackBar = Snackbar.make(rootView, message, Snackbar.LENGTH_SHORT)
-                .setAction(action) {}
-            snackBar.setBackgroundTint(ContextCompat.getColor(this, bgTint))
-            snackBar.setTextColor(ContextCompat.getColor(this, R.color.white))
-            snackBar.setActionTextColor(ContextCompat.getColor(this, R.color.white))
-
-            snackBar.addCallback(object : Snackbar.Callback() {
-                override fun onShown(sb: Snackbar?) {
-                    super.onShown(sb)
-                    val snackbarView = snackBar.view
-                    val params = snackbarView.layoutParams as FrameLayout.LayoutParams
-                    params.setMargins(
-                        params.leftMargin,
-                        params.topMargin,
-                        params.rightMargin,
-                        findViewById<View>(R.id.bottomNavView).height
-                    )
-                    snackbarView.layoutParams = params
-                }
-            })
-            snackBar.show()
-        }
-
-        private fun retrieveAndSendFcmToken() {
-            FirebaseMessaging.getInstance().token
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        val fcmToken = task.result
-                        if (fcmToken != null) {
-                            sendFcmTokenToServer(fcmToken)
-                        }
-                    } else {
-                        Log.e("HomeActivity", "Erro ao obter o token FCM: ${task.exception}")
-                    }
-                }
-        }
-
-        private fun sendFcmTokenToServer(fcmToken: String) {
-            CoroutineScope(Dispatchers.IO).launch {
-                try {
-                    userId = userViewModel.userRepository.getUserId()
-                    userViewModel.saveOrUpdateFcmToken(accessToken, userId, fcmToken) {
-                        val fcmRequest = userViewModel.fcmRequest.value
-                        if (fcmRequest != null) {
-                            if (fcmRequest.isSuccessful) {
-                                Log.d(
-                                    "HomeActivity",
-                                    "UserID: $userId, FCMToken: $fcmToken"
-                                )
-                                showToast("FCM Token enviado")
-                            } else {
-
-                                showToast("Erro ao Enviar ao Back")
-                            }
-                        }
-                    }
-                } catch (e: Exception) {
-                    Log.e("HomeActivity", "Erro ao enviar token FCM para o servidor", e)
-                }
-            }
-        }
-
     }
+
+    fun getDrawableForLetter(letter: Char): Int {
+        return when (letter.lowercaseChar()) {
+            'a' -> R.drawable.a
+            'b' -> R.drawable.b
+            'c' -> R.drawable.c
+            'd' -> R.drawable.d
+            'e' -> R.drawable.e
+            'f' -> R.drawable.f
+            'g' -> R.drawable.g
+            'h' -> R.drawable.h
+            'i' -> R.drawable.i
+            'j' -> R.drawable.j
+            'k' -> R.drawable.k
+            'l' -> R.drawable.l
+            'm' -> R.drawable.m
+            'n' -> R.drawable.n
+            'o' -> R.drawable.o
+            'p' -> R.drawable.p
+            'q' -> R.drawable.q
+            'r' -> R.drawable.r
+            's' -> R.drawable.s
+            't' -> R.drawable.t
+            'u' -> R.drawable.u
+            'v' -> R.drawable.v
+            'w' -> R.drawable.w
+            'x' -> R.drawable.x
+            'y' -> R.drawable.y
+            'z' -> R.drawable.z
+            else -> R.drawable.ic_default
+        }
+    }
+
+    private fun updateNavigationHeader(navView: NavigationView, userData: User) {
+        val headerView = navView.getHeaderView(0)
+        val userPicture: CircleImageView = headerView.findViewById(R.id.userPicture)
+        val lblUserFullname: TextView = headerView.findViewById(R.id.lblUserFullname)
+        val lblUsername: TextView = headerView.findViewById(R.id.lblUsername)
+        val lblUserEmail: TextView = headerView.findViewById(R.id.lblUserEmail)
+
+        lblUserFullname.text = userData.fullName
+        lblUsername.text = "@${userData.username}"
+        lblUserEmail.text = userData.email
+        val firstName = userData.fullName.split(" ").firstOrNull()
+        if (!firstName.isNullOrEmpty()) {
+            progressBar.visibility = View.GONE
+            navDrawerButton.visibility = View.VISIBLE
+            val firstLetter = firstName[0]
+            val drawableId = getDrawableForLetter(firstLetter)
+            userPicture.setImageResource(drawableId)
+            navDrawerButton.setImageResource(drawableId)
+        } else {
+            progressBar.visibility = View.GONE
+            navDrawerButton.visibility = View.VISIBLE
+            showToast("ERRO: Imagem de Perfil")
+        }
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun showSnackBar(message: String, action: String, bgTint: Int) {
+        val rootView = findViewById<View>(android.R.id.content)
+        val snackBar = Snackbar.make(rootView, message, Snackbar.LENGTH_SHORT)
+            .setAction(action) {}
+        snackBar.setBackgroundTint(ContextCompat.getColor(this, bgTint))
+        snackBar.setTextColor(ContextCompat.getColor(this, R.color.white))
+        snackBar.setActionTextColor(ContextCompat.getColor(this, R.color.white))
+
+        snackBar.addCallback(object : Snackbar.Callback() {
+            override fun onShown(sb: Snackbar?) {
+                super.onShown(sb)
+                val snackbarView = snackBar.view
+                val params = snackbarView.layoutParams as FrameLayout.LayoutParams
+                params.setMargins(
+                    params.leftMargin,
+                    params.topMargin,
+                    params.rightMargin,
+                    findViewById<View>(R.id.bottomNavView).height
+                )
+                snackbarView.layoutParams = params
+            }
+        })
+        snackBar.show()
+    }
+
+    private fun retrieveAndSendFcmToken() {
+        FirebaseMessaging.getInstance().token
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val fcmToken = task.result
+                    if (fcmToken != null) {
+                        sendFcmTokenToServer(fcmToken)
+                    }
+                } else {
+                    Log.e("HomeActivity", "Erro ao obter o token FCM: ${task.exception}")
+                }
+            }
+    }
+
+    private fun sendFcmTokenToServer(fcmToken: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                userId = userViewModel.userRepository.getUserId()
+                userViewModel.saveOrUpdateFcmToken(accessToken, userId, fcmToken) {
+                    val fcmRequest = userViewModel.fcmRequest.value
+                    if (fcmRequest != null) {
+                        if (fcmRequest.isSuccessful) {
+                            Log.d("HomeActivity","UserID: $userId, FCMToken: $fcmToken")
+                           // showToast("FCM Token enviado")
+                        } else {
+                            showToast("Erro ao Enviar ao Back")
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e("HomeActivity", "Erro ao enviar token FCM para o servidor", e)
+            }
+        }
+    }
+
+    private fun requestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                NOTIFICATION_PERMISSION_REQUEST_CODE
+            )
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == NOTIFICATION_PERMISSION_REQUEST_CODE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Log.d("HomeActivity", "Notification permission granted")
+            } else {
+                // Permission denied, handle accordingly
+                Log.d("HomeActivity", "Notification permission denied")
+            }
+        }
+    }
+
+    companion object {
+        private const val NOTIFICATION_PERMISSION_REQUEST_CODE = 1001
+        private const val STORAGE_PERMISSION_REQUEST_CODE = 101
+    }
+}

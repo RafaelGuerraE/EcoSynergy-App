@@ -57,16 +57,61 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Username Label and EditText -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="5dp"
+                android:layout_gravity="center"
+                android:gravity="center">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textSize="18sp"
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:textStyle="bold"
+                    android:text="Dados de Contato"
+                    android:maxLines="1"
+                    android:ellipsize="end"/>
+
+                <TextView
+                    android:id="@+id/btnCancelContact"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cancelar"
+                    android:background="@drawable/ripple_bg"
+                    android:visibility="gone"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:paddingStart="15dp"
+                    android:paddingEnd="15dp"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
+                    android:layout_marginEnd="5dp"/>
+
+                <TextView
+                    android:id="@+id/btnEditContact"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Editar"
+                    android:background="@drawable/ripple_bg"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:paddingStart="15dp"
+                    android:paddingEnd="15dp"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"/>
+
+            </LinearLayout>
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Nome de Usuário"
                 android:textColor="?android:attr/textColorPrimary"
-                android:textSize="12sp"
+                android:textSize="14sp"
                 android:textStyle="bold"
-            android:layout_marginBottom="2dp"/>
-
+                android:layout_marginBottom="5dp"/>
             <EditText
                 android:id="@+id/txtUsername"
                 android:layout_width="match_parent"
@@ -79,15 +124,21 @@
                 android:background="@drawable/component_bg"
                 android:layout_marginBottom="15dp"/>
 
-            <!-- Full Name Label and EditText -->
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Nome Completo"
-                android:textColor="?android:attr/textColorPrimary"
-                android:textSize="12sp"
-                android:textStyle="bold"
-            android:layout_marginBottom="2dp"/>
+                android:orientation="horizontal"
+                android:layout_marginBottom="5dp">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Nome Completo"
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:textSize="14sp"
+                    android:textStyle="bold"/>
+
+            </LinearLayout>
 
             <EditText
                 android:id="@+id/txtFullname"
@@ -101,14 +152,49 @@
             android:background="@drawable/component_bg"
             android:layout_marginBottom="15dp"/>
 
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="E-mail"
-                android:textColor="?android:attr/textColorPrimary"
-                android:textSize="12sp"
-                android:textStyle="bold"
-            android:layout_marginBottom="2dp"/>
+                android:orientation="horizontal"
+                android:layout_marginBottom="5dp">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="E-mail"
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:textSize="14sp"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:id="@+id/btnCancelEmail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cancelar"
+                    android:background="@drawable/ripple_bg"
+                    android:visibility="gone"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:paddingStart="15dp"
+                    android:paddingEnd="15dp"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
+                    android:layout_marginEnd="5dp"/>
+
+                <TextView
+                    android:id="@+id/btnEditEmail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Alterar"
+                    android:background="@drawable/ripple_bg"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:paddingStart="15dp"
+                    android:paddingEnd="15dp"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"/>
+
+            </LinearLayout>
 
             <EditText
                 android:id="@+id/txtEmail"
@@ -120,17 +206,65 @@
                 android:textSize="16sp"
             android:textColor="@color/disabled"
             android:background="@drawable/component_bg"
-            android:layout_marginBottom="15dp"/>
+            android:layout_marginBottom="20dp"/>
 
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="5dp"
+                android:layout_gravity="center"
+                android:gravity="center">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textSize="18sp"
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:textStyle="bold"
+                    android:text="Informações Pessoais"
+                    android:maxLines="1"
+                    android:ellipsize="end"/>
+
+
+                <TextView
+                    android:id="@+id/btnCancelPersonal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cancelar"
+                    android:background="@drawable/ripple_bg"
+                    android:visibility="gone"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:paddingStart="15dp"
+                    android:paddingEnd="15dp"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
+                    android:layout_marginEnd="5dp"/>
+
+                <TextView
+                    android:id="@+id/btnEditPersonal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Editar"
+                    android:background="@drawable/ripple_bg"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:paddingStart="15dp"
+                    android:paddingEnd="15dp"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"/>
+
+            </LinearLayout>
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Gênero"
                 android:textColor="?android:attr/textColorPrimary"
-                android:textSize="12sp"
+                android:textSize="14sp"
                 android:textStyle="bold"
-            android:layout_marginBottom="2dp"/>
-
+                android:layout_marginBottom="5dp"/>
             <Spinner
                 android:id="@+id/txtGender"
                 android:layout_width="match_parent"
@@ -140,14 +274,14 @@
                 android:background="@drawable/component_bg"
                 android:layout_marginBottom="15dp"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Nacionalidade"
-                android:textColor="?android:attr/textColorPrimary"
-                android:textSize="12sp"
-                android:textStyle="bold"
-            android:layout_marginBottom="2dp"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Nacionalidade"
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="5dp"/>
 
             <AutoCompleteTextView
                 android:id="@+id/txtNationality"
@@ -178,6 +312,8 @@
             android:padding="15dp"
             android:textColor="?android:attr/textColorPrimary"
             android:textStyle="bold"
+            android:maxLines="1"
+            android:ellipsize="end"
             android:textSize="16sp"
             app:rippleColor="?attr/colorControlHighlight"/>
 
@@ -215,25 +351,13 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_gravity="center"
+                android:layout_marginEnd="55dp"
                 android:text="Informações do Usuário"
                 android:textAlignment="center"
                 android:textColor="?android:attr/textColorPrimary"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 />
-
-            <ImageButton
-                android:id="@+id/btnEdit"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:background="@null"
-                android:contentDescription="EditButton"
-                android:src="@drawable/ic_edit"
-                android:scaleType="fitXY"
-                app:tint="?android:attr/iconTint"
-                android:layout_margin="15dp"
-                android:layout_gravity="center_vertical"
-                android:clickable="true"/>
 
 
         </LinearLayout>

@@ -11,6 +11,7 @@ import br.ecosynergy_app.R
 import br.ecosynergy_app.home.AppSettingsActivity
 import br.ecosynergy_app.home.HomeActivity
 import br.ecosynergy_app.teams.DashboardActivity
+import br.ecosynergy_app.teams.TeamInfoActivity
 import br.ecosynergy_app.user.NotificationActivity
 import br.ecosynergy_app.user.UserSettingsActivity
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -25,6 +26,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             val targetActivity = when (type) {
                 "invite" -> NotificationActivity::class.java
                 "fire" -> DashboardActivity::class.java
+                "team" -> TeamInfoActivity::class.java
                 else -> HomeActivity::class.java
             }
             sendNotification(it.title, it.body, targetActivity)

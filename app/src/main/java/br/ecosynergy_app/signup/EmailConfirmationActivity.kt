@@ -102,6 +102,10 @@ class EmailConfirmationActivity : AppCompatActivity() {
         fullName = intent.getStringExtra("FULLNAME").toString()
         username = intent.getStringExtra("USERNAME").toString()
         nationality = intent.getStringExtra("NATIONALITY").toString()
+
+
+        Log.d("SignUpViewModel", "nationality: $nationality")
+
         gender = intent.getStringExtra("GENDER").toString()
 
         txtEmailShow.text = "Digite o código que enviamos ao e-mail informado: $email"
@@ -135,7 +139,7 @@ class EmailConfirmationActivity : AppCompatActivity() {
 
         btnBack.setOnClickListener { finish() }
 
-        confirmationCode(email, fullName)
+        confirmationCode(email, fullName){}
 
         btnCheck.setOnClickListener {
             showButtonLoading(true, btnCheck, progressBarCheck)
@@ -175,7 +179,7 @@ class EmailConfirmationActivity : AppCompatActivity() {
             txtResend.isClickable = false
             txtResend.setTextColor(Color.GRAY)
             startCountDown(txtResend)
-            confirmationCode(email, fullName)
+            confirmationCode(email, fullName){}
         }
 
         setEditTextFocusChange(digit1, digit2, null)
@@ -313,14 +317,14 @@ class EmailConfirmationActivity : AppCompatActivity() {
         editor.apply()
     }
 
-    private fun confirmationCode(userEmail: String, userFullname: String) {
-        signUpViewModel.verificationCode.removeObservers(this)
-        signUpViewModel.confirmationCode(userEmail, userFullname)
-        signUpViewModel.verificationCode.observe(this) { code ->
+    private fun confirmationCode(userEmail: String, userFullname: String, onComplete: () -> Unit) {
+        signUpViewModel.confirmationCode(userEmail, userFullname) {
+            val code = signUpViewModel.verificationCode.value
             if (code != null) {
                 verificationCode = code
-                Log.d("ConfirmationActivity", "Confirmation code: $code")
+                Log.d("UserSettingsActivity", "Confirmation code: $code")
             }
+            onComplete()
         }
     }
 

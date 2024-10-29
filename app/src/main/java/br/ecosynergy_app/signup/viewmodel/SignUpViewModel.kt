@@ -21,6 +21,7 @@ class SignUpViewModel(private val service: SignUpService): ViewModel() {
         viewModelScope.launch {
             try{
                 val response = service.createUser(createUserRequest)
+                Log.d("SignUpViewModel", "Request: $createUserRequest")
                 Log.d("SignUpViewModel", "Register Successful: $response")
                 _registerResult.value = Result.success(response)
             }
@@ -35,12 +36,14 @@ class SignUpViewModel(private val service: SignUpService): ViewModel() {
         }
     }
 
-    fun confirmationCode(userEmail: String, userFullname: String){
+    fun confirmationCode(userEmail: String, userFullname: String, onComplete: () -> Unit){
         viewModelScope.launch {
             try {
                 val response = service.confirmationCode(userEmail, userFullname)
                 val code = response.string()
                 _verificationCode.value = code
+
+                onComplete()
             }
             catch(e: HttpException){
                 Log.e("SignUpViewModel", "HTTP error during confirmationCode", e)
@@ -51,12 +54,14 @@ class SignUpViewModel(private val service: SignUpService): ViewModel() {
         }
     }
 
-    fun forgotPasswordCode(userEmail: String){
+    fun forgotPasswordCode(userEmail: String, onComplete: () -> Unit){
         viewModelScope.launch {
             try {
                 val response = service.forgotPasswordCode(userEmail)
                 val code = response.string()
                 _verificationCode.value = code
+
+                onComplete()
             }
             catch(e: HttpException){
                 Log.e("SignUpViewModel", "HTTP error during forgotPasswordCode", e)

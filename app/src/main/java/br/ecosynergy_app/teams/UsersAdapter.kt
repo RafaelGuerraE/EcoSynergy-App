@@ -1,9 +1,8 @@
-package br.ecosynergy_app.user
+package br.ecosynergy_app.teams
 
 import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.PorterDuff
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,8 +16,9 @@ import androidx.recyclerview.widget.RecyclerView
 import br.ecosynergy_app.R
 import br.ecosynergy_app.home.HomeActivity
 import br.ecosynergy_app.teams.invites.InviteRequest
-import br.ecosynergy_app.teams.viewmodel.RoleRequest
 import br.ecosynergy_app.teams.viewmodel.TeamsViewModel
+import br.ecosynergy_app.user.UserInfoActivity
+import br.ecosynergy_app.user.UserResponse
 
 class UsersAdapter(
     private var usersList: MutableList<UserResponse>,

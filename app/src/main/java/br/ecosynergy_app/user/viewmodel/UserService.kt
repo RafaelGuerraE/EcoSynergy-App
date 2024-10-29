@@ -4,6 +4,7 @@ import br.ecosynergy_app.home.PasswordRequest
 import br.ecosynergy_app.home.UpdateRequest
 import br.ecosynergy_app.login.LoginRequest
 import br.ecosynergy_app.login.LoginResponse
+import br.ecosynergy_app.user.ForgotRequest
 import br.ecosynergy_app.user.UserResponse
 import retrofit2.Call
 import retrofit2.Response
@@ -45,6 +46,11 @@ interface UserService {
         @Body request: PasswordRequest
     )
 
+    @POST("auth/forgot-password")
+    suspend fun forgotPassword(
+        @Body forgotRequest: ForgotRequest
+    )
+
     @DELETE("api/user/v1/{userId}")
     suspend fun deleteUser(
         @Path("userId") userId: Int,
@@ -56,7 +62,7 @@ interface UserService {
         @Path("id") id: Int,
         @Header("Authorization") token: String,
         @Body request: UpdateRequest
-    ): UserResponse
+    ): Response<UserResponse>
 
     @GET("api/user/v1/search/{username}")
     suspend fun searchUser(

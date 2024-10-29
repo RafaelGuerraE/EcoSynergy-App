@@ -52,7 +52,9 @@
                     tools:text="Ecosynergy"
                     android:textColor="?android:attr/textColorPrimary"
                     android:textSize="17sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:maxLines="1"
+                    android:ellipsize="end"/>
 
             <TextView
                 android:id="@+id/lblTeamHandle"
@@ -62,7 +64,9 @@
                 tools:text="\@ecosynergyofc"
                 android:textColor="@color/disabled"
                 android:textSize="12sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:maxLines="1"
+                android:ellipsize="end"/>
 
             </LinearLayout>
 

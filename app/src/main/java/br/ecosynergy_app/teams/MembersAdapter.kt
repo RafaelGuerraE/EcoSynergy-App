@@ -1,8 +1,7 @@
-package br.ecosynergy_app.user
+package br.ecosynergy_app.teams
 
 import android.app.AlertDialog
 import android.content.Intent
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,10 +14,9 @@ import androidx.recyclerview.widget.RecyclerView
 import br.ecosynergy_app.R
 import br.ecosynergy_app.home.HomeActivity
 import br.ecosynergy_app.room.teams.Members
-import br.ecosynergy_app.room.teams.TeamsRepository
 import br.ecosynergy_app.teams.viewmodel.RoleRequest
-import br.ecosynergy_app.teams.TeamMembersActivity
 import br.ecosynergy_app.teams.viewmodel.TeamsViewModel
+import br.ecosynergy_app.user.UserInfoActivity
 
 class MembersAdapter(
     private var membersList: MutableList<Members>,
@@ -170,13 +168,12 @@ class MembersAdapter(
                 teamsViewModel.removeMember(accessToken, teamId, memberId)
                 dialog.dismiss()
                 (activity as TeamMembersActivity).membersAdapter.removeMember(memberId)
+                showToast("Usuário removido com sucesso")
             }
 
             builder.setNegativeButton("Cancelar") { dialog, _ ->
                 dialog.dismiss()
             }
-
-            showToast("Usuário removido com sucesso")
 
             val dialog: AlertDialog = builder.create()
             dialog.show()

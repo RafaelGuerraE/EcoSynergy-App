@@ -13,3 +13,8 @@ data class UserResponse(
     val credentialsNonExpired: Boolean,
     val enabled: Boolean
 )
+
+data class ForgotRequest(
+    val email: String,
+    val password: String
+)

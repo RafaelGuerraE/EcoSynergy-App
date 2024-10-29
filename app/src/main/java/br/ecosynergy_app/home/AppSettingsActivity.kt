@@ -54,8 +54,7 @@ class AppSettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_appsetings)
 
-        val userDao = AppDatabase.getDatabase(this).userDao()
-        val userRepository = UserRepository(userDao)
+        val userRepository = UserRepository(AppDatabase.getDatabase(this).userDao())
         userViewModel = ViewModelProvider(this, UserViewModelFactory(RetrofitClient.userService, userRepository))[UserViewModel::class.java]
 
         btnBack = findViewById(R.id.btnBack)

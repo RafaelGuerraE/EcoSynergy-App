@@ -21,7 +21,6 @@ import br.ecosynergy_app.room.teams.TeamsRepository
 import br.ecosynergy_app.room.user.UserRepository
 import br.ecosynergy_app.teams.viewmodel.TeamsViewModel
 import br.ecosynergy_app.teams.viewmodel.TeamsViewModelFactory
-import br.ecosynergy_app.user.MembersAdapter
 import br.ecosynergy_app.user.viewmodel.UserViewModel
 import br.ecosynergy_app.user.viewmodel.UserViewModelFactory
 import com.facebook.shimmer.ShimmerFrameLayout

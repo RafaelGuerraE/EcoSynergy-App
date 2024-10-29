@@ -12,8 +12,11 @@ import br.ecosynergy_app.login.LoginResponse
 import br.ecosynergy_app.room.user.User
 import br.ecosynergy_app.room.user.UserRepository
 import br.ecosynergy_app.room.user.toUser
+import br.ecosynergy_app.user.ForgotRequest
 import br.ecosynergy_app.user.UserResponse
 import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.ResponseBody.Companion.toResponseBody
 import retrofit2.HttpException
 import retrofit2.Response
 import java.io.IOException
@@ -25,6 +28,9 @@ class UserViewModel(
 
     private val _user = MutableLiveData<Result<UserResponse>>()
     val user: LiveData<Result<UserResponse>> = _user
+
+    private val _update = MutableLiveData<Response<UserResponse>>()
+    val update: LiveData<Response<UserResponse>> = _update
 
     private val _fcmRequest = MutableLiveData<Response<Void>>()
     val fcmRequest: LiveData<Response<Void>> get() = _fcmRequest
@@ -143,25 +149,39 @@ class UserViewModel(
         }
     }
 
-    fun updateUserData(userId: Int, accessToken: String, refreshToken: String, username: String, fullName: String, email: String, gender: String, nationality: String) {
+    fun updateUserData(userId: Int, accessToken: String, refreshToken: String, username: String, fullName: String, email: String, gender: String, nationality: String, onComplete: () -> Unit) {
         viewModelScope.launch {
             try {
                 val request = UpdateRequest(username, fullName, email, gender, nationality)
                 val response = service.updateUser(userId, "Bearer $accessToken", request)
 
-                Log.d("UserViewModel", "User updated successfully on API")
-                _user.value = Result.success(response)
+                if(response.isSuccessful) {
+                    Log.d("UserViewModel", "User updated successfully on API")
+                    _update.value = Response.success(response.body())
 
-                updateUserInfoDB(
-                    userId,
-                    username,
-                    fullName,
-                    email,
-                    gender,
-                    nationality,
-                    accessToken,
-                    refreshToken
-                ){}
+                    updateUserInfoDB(
+                        userId,
+                        username,
+                        fullName,
+                        email,
+                        gender,
+                        nationality,
+                        accessToken,
+                        refreshToken
+                    ) {}
+                }else{
+                    val errorBody = response.errorBody()?.string()
+                    Log.e(
+                        "UserViewModel",
+                        "Error during updateUserData: ${response.code()} - $errorBody"
+                    )
+                    _update.value = Response.error(
+                        response.code(),
+                        errorBody?.toResponseBody("application/json".toMediaTypeOrNull())
+                    )
+                }
+
+                onComplete()
             } catch (e: HttpException) {
                 Log.e("UserViewModel", "HTTP error during updateUserData", e)
                 _user.value = Result.failure(e)
@@ -189,12 +209,14 @@ class UserViewModel(
         }
     }
 
-    fun deleteUserInfoFromDB() {
+    fun deleteUserInfoFromDB(onComplete: () -> Unit) {
         viewModelScope.launch {
             try {
                 val delete = userRepository.deleteUser()
                 val deleteState = if(delete == Unit) "OK" else "ERROR"
                 Log.d("UserViewModel", "DeleteUserInfo: $deleteState")
+
+                onComplete()
             } catch (e: Exception) {
                 Log.e("UserViewModel", "Unexpected error during deleteUserInfo", e)
             }
@@ -226,7 +248,7 @@ class UserViewModel(
                 val response = service.deleteUser(id, "Bearer $token")
                 if (response.isSuccessful) {
                     Log.d("UserViewModel", "User deleted successfully from API")
-                    deleteUserInfoFromDB()
+                    deleteUserInfoFromDB(){}
                 } else {
                     Log.e("UserViewModel", "Error deleting user: ${response.body().toString()}")
                 }
@@ -240,6 +262,22 @@ class UserViewModel(
         }
     }
 
+    fun forgotPassword(forgotRequest: ForgotRequest, onComplete: () -> Unit) {
+        viewModelScope.launch {
+            try {
+                service.forgotPassword(forgotRequest)
+                Log.d("UserViewModel", "Password recovery successful for user: $forgotRequest")
+
+                onComplete()
+            } catch (e: HttpException) {
+                Log.e("UserViewModel", "HTTP error during forgotPassword", e)
+            } catch (e: IOException) {
+                Log.e("UserViewModel", "Network error during forgotPassword", e)
+            } catch (e: Exception) {
+                Log.e("UserViewModel", "Unexpected error during forgotPassword", e)
+            }
+        }
+    }
 
 
     fun resetPassword(username: String, password: String, token: String) {
@@ -247,13 +285,13 @@ class UserViewModel(
             try {
                 val request = PasswordRequest(username, password)
                 service.resetPassword("Bearer $token", request)
-                Log.d("UserViewModel", "Password recovery successful for user: $username")
+                Log.d("UserViewModel", "Password reset successful for user: $username")
             } catch (e: HttpException) {
-                Log.e("UserViewModel", "HTTP error during recoverPassword", e)
+                Log.e("UserViewModel", "HTTP error during resetPassword", e)
             } catch (e: IOException) {
-                Log.e("UserViewModel", "Network error during recoverPassword", e)
+                Log.e("UserViewModel", "Network error during resetPassword", e)
             } catch (e: Exception) {
-                Log.e("UserViewModel", "Unexpected error during recoverPassword", e)
+                Log.e("UserViewModel", "Unexpected error during resetPassword", e)
             }
         }
     }

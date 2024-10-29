@@ -22,7 +22,6 @@ import br.ecosynergy_app.teams.viewmodel.TeamsViewModel
 import br.ecosynergy_app.teams.viewmodel.TeamsViewModelFactory
 import br.ecosynergy_app.user.viewmodel.UserViewModel
 import br.ecosynergy_app.user.viewmodel.UserViewModelFactory
-import br.ecosynergy_app.user.UsersAdapter
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
