@@ -61,6 +61,7 @@ class TeamAdapter(private var teamsList: List<Teams>) :
                 i.apply {
                     putExtra("TEAM_NAME", team.name)
                     putExtra("TEAM_INITIAL", drawableLetter)
+                    putExtra("TEAM_ID", team.id)
                     putExtra("TEAM_HANDLE", team.handle)
                 }
                 context.startActivity(i)

@@ -75,7 +75,6 @@ class TeamsFragment : Fragment() {
             val i = Intent(requireContext(), CreateTeamActivity::class.java)
             i.apply {
                 putExtra("USER_ID", userId)
-                putExtra("USER_IDENTIFIER", userIdentifier)
                 putExtra("ACCESS_TOKEN", accessToken)
             }
             startActivity(i)

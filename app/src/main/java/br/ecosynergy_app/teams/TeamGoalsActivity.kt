@@ -95,16 +95,16 @@ class TeamGoalsActivity : AppCompatActivity() {
             editTeamGoalsBottomSheet.show(supportFragmentManager, "GoalsBottomSheet")
         }
 
+        observeTeamInfo()
     }
 
     override fun onResume() {
         super.onResume()
 
-        observeTeamInfo()
+        teamsViewModel.getTeamById(teamId)
     }
 
     private fun observeTeamInfo() {
-        teamsViewModel.getTeamById(teamId)
         teamsViewModel.teamDB.observe(this) { teamInfo ->
 
             measure = " toneladas"

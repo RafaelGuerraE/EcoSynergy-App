@@ -20,8 +20,13 @@ import com.google.firebase.messaging.RemoteMessage
 class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-        remoteMessage.notification?.let {
-            val type = remoteMessage.data["type"] ?: "default"
+        remoteMessage.notification.let {
+            val title = remoteMessage.data["title"]
+            val body = remoteMessage.data["body"]
+            val type = remoteMessage.data["type"]
+
+            Log.d("MyFirebaseService", "Title: $title, Body: $body, Type: $type")
+            Log.d("MyFirebaseService", "${remoteMessage.data}")
 
             val targetActivity = when (type) {
                 "invite" -> NotificationActivity::class.java
@@ -29,7 +34,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                 "team" -> TeamInfoActivity::class.java
                 else -> HomeActivity::class.java
             }
-            sendNotification(it.title, it.body, targetActivity)
+            sendNotification(title, body, targetActivity)
         }
     }
 
@@ -58,8 +63,11 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         )
         notificationManager.createNotificationChannel(channel)
 
-        notificationManager.notify(0, notificationBuilder.build())
+        val notificationId = System.currentTimeMillis().toInt()
+
+        notificationManager.notify(notificationId, notificationBuilder.build())
     }
+
 
     override fun onNewToken(token: String) {
         Log.d("FCM", "Refreshed token: $token")

@@ -107,7 +107,7 @@
                     android:id="@+id/spinnerTeam"
                     android:layout_width="wrap_content"
                     android:layout_height="40dp"
-                    android:background="@drawable/spinner_home"
+                    android:background="@drawable/spinner_bg"
                     android:spinnerMode="dropdown"/>
 
             </LinearLayout>
@@ -146,7 +146,7 @@
                         android:id="@+id/spinnerPeriod"
                         android:layout_width="wrap_content"
                         android:layout_height="40dp"
-                        android:background="@drawable/spinner_home"
+                        android:background="@drawable/spinner_bg"
                         android:layout_marginStart="5dp"
                         android:spinnerMode="dropdown"/>
                 </LinearLayout>

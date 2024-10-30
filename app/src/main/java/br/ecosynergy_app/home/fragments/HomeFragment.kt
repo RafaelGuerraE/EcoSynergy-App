@@ -19,6 +19,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import br.ecosynergy_app.R
 import br.ecosynergy_app.home.HomeActivity
 import br.ecosynergy_app.readings.ReadingsViewModel
+import br.ecosynergy_app.teams.CreateTeamActivity
 import br.ecosynergy_app.teams.DashboardActivity
 import br.ecosynergy_app.teams.viewmodel.TeamsViewModel
 import br.ecosynergy_app.user.viewmodel.UserViewModel
@@ -74,16 +75,29 @@ class HomeFragment : Fragment() {
 
         recyclerDashboards = view.findViewById(R.id.recyclerDashboards)
         recyclerDashboards.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-        dashboardsAdapter = DashboardsAdapter(emptyList(), requireActivity()){ dashboardItem ->
-            val i = Intent(requireActivity(), DashboardActivity::class.java).apply {
-                putExtra("TEAM_ID", dashboardItem.id)
-                putExtra("TEAM_NAME", dashboardItem.name)
-                putExtra("TEAM_HANDLE", dashboardItem.handle)
-                putExtra("TEAM_INITIAL", dashboardItem.imageResourceId)
-                putExtra("ACCESS_TOKEN", accessToken)
+        dashboardsAdapter = DashboardsAdapter(emptyList(), requireActivity(),
+            onItemClick ={ dashboardItem ->
+                val i = Intent(requireActivity(), DashboardActivity::class.java).apply {
+                    putExtra("TEAM_ID", dashboardItem.id)
+                    putExtra("TEAM_NAME", dashboardItem.name)
+                    putExtra("TEAM_HANDLE", dashboardItem.handle)
+                    putExtra("TEAM_INITIAL", dashboardItem.imageResourceId)
+                    putExtra("ACCESS_TOKEN", accessToken)
+                }
+                startActivity(i)
+            },
+            onCreateTeamClick = {
+                val i = Intent(requireContext(), CreateTeamActivity::class.java)
+                i.apply {
+                    putExtra("USER_ID", userId)
+                    putExtra("ACCESS_TOKEN", accessToken)
+                }
+                startActivity(i) },
+            onAllTeamsRedirectClick = {
+
             }
-            startActivity(i)
-        }
+            )
+
         recyclerDashboards.adapter = dashboardsAdapter
 
         spinnerTeam = view.findViewById(R.id.spinnerTeam)

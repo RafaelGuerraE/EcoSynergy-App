@@ -1,5 +1,6 @@
 package br.ecosynergy_app.teams
 
+import android.app.DatePickerDialog
 import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
@@ -30,7 +31,9 @@ import br.ecosynergy_app.teams.viewmodel.TeamsViewModelFactory
 import br.ecosynergy_app.user.viewmodel.UserViewModel
 import br.ecosynergy_app.user.viewmodel.UserViewModelFactory
 import com.facebook.shimmer.ShimmerFrameLayout
+import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.charts.LineChart
+import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
@@ -39,6 +42,7 @@ import com.github.mikephil.charting.formatter.DefaultValueFormatter
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import de.hdodenhof.circleimageview.CircleImageView
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Locale
 
 class DashboardActivity : AppCompatActivity() {
@@ -58,12 +62,25 @@ class DashboardActivity : AppCompatActivity() {
     private lateinit var imgRefresh: ImageView
     private lateinit var txtRefresh: TextView
 
+    private var teamId: Int = 0
     private var teamHandle: String? = null
     private var teamInitial: Int = 0
     private var teamName: String = ""
     private var accessToken: String = ""
 
     private var refresh = false
+
+    private lateinit var txtValue: TextView
+    private lateinit var txtGoal: TextView
+    private lateinit var txtMeasure: TextView
+
+    private lateinit var txtDate: TextView
+
+    private lateinit var shimmerTypes: ShimmerFrameLayout
+    private lateinit var typesChart: PieChart
+
+    private lateinit var shimmerBars: ShimmerFrameLayout
+    private lateinit var barChart: BarChart
 
     private lateinit var mq7Chart: LineChart
     private lateinit var shimmerMQ7: ShimmerFrameLayout
@@ -115,6 +132,20 @@ class DashboardActivity : AppCompatActivity() {
         imgRefresh = findViewById(R.id.imgRefresh)
         txtRefresh = findViewById(R.id.txtRefresh)
 
+        txtDate = findViewById(R.id.txtDate)
+        txtGoal = findViewById(R.id.txtGoal)
+        txtValue = findViewById(R.id.txtValue)
+        txtMeasure = findViewById(R.id.txtMeasure)
+
+        shimmerBars = findViewById(R.id.shimmerBars)
+        barChart = findViewById(R.id.barChart)
+
+        shimmerTypes = findViewById(R.id.shimmerTypes)
+        typesChart = findViewById(R.id.typesChart)
+
+        shimmerMQ7 = findViewById(R.id.shimmerMQ7)
+        mq7Chart = findViewById(R.id.mq7Chart)
+
         shimmerMQ7 = findViewById(R.id.shimmerMQ7)
         mq7Chart = findViewById(R.id.mq7Chart)
 
@@ -124,10 +155,18 @@ class DashboardActivity : AppCompatActivity() {
         shimmerFire = findViewById(R.id.shimmerFire)
         fireChart = findViewById(R.id.fireChart)
 
+        teamId = intent.getIntExtra("TEAM_ID", 0)
         teamInitial = intent.getIntExtra("TEAM_INITIAL", 0)
         teamHandle = intent.getStringExtra("TEAM_HANDLE").toString()
         accessToken = intent.getStringExtra("ACCESS_TOKEN").toString()
         teamName = intent.getStringExtra("TEAM_NAME").toString()
+
+        val calendar = Calendar.getInstance()
+        val year = calendar.get(Calendar.YEAR)
+        val month = calendar.get(Calendar.MONTH)
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+        val todayDate = "$day/${month + 1}/$year"
+        txtDate.text = todayDate
 
         imgTeam.setImageResource(teamInitial)
         lblTeamName.text = teamName
@@ -145,22 +184,41 @@ class DashboardActivity : AppCompatActivity() {
             } else {
                 imgRefresh.visibility = View.VISIBLE
                 progressRefresh.visibility = View.GONE
-                txtRefresh.text = "Atualizar dados"
+                txtRefresh.text = "Atualizar"
                 refresh = false
             }
+        }
+
+        txtDate.setOnClickListener {
+            val datePickerDialog = DatePickerDialog(this, { _, selectedYear, selectedMonth, selectedDay ->
+                val selectedDate = "$selectedDay/${selectedMonth + 1}/$selectedYear"
+                txtDate.text = selectedDate
+            }, year, month, day)
+
+            datePickerDialog.show()
         }
 
         //fetchMQ7ReadingsByTeamHandle()
         //fetchMQ135ReadingsByTeamHandle()
         //fetchFireReadingsByTeamHandle()
+
+
+        observeTeamInfo()
     }
+
+    override fun onResume() {
+        super.onResume()
+
+        teamsViewModel.getTeamById(teamId)
+    }
+
 
     private fun fetchMQ7ReadingsByTeamHandle() {
 //        readingsViewModel.mq7ReadingsDB.removeObservers(this)
 //        readingsViewModel.getReadingsBySensorFromDB("MQ7")
 //        readingsViewModel.mq7ReadingsDB.observe(this) { response ->
 //            handleMQ7Readings(response)
-//            Log.d("HomeFragment", "Sensors MQ7 OK")
+//            Log.d("DashboardActivity", "Sensors MQ7 OK")
 //        }
     }
 
@@ -169,7 +227,7 @@ class DashboardActivity : AppCompatActivity() {
 //        readingsViewModel.getReadingsBySensorFromDB("MQ135")
 //        readingsViewModel.mq135ReadingsDB.observe(this) { response ->
 //            handleMQ135Readings(response)
-//            Log.d("HomeFragment", "Sensors MQ135 OK")
+//            Log.d("DashboardActivity", "Sensors MQ135 OK")
 //        }
     }
 
@@ -178,7 +236,7 @@ class DashboardActivity : AppCompatActivity() {
 //        readingsViewModel.getReadingsBySensorFromDB("FIRE")
 //        readingsViewModel.fireReadingsDB.observe(this) { response ->
 //            handleFireReadings(response)
-//            Log.d("HomeFragment", "FireSensors OK")
+//            Log.d("DashboardActivity", "FireSensors OK")
 //        }
     }
 
@@ -186,7 +244,7 @@ class DashboardActivity : AppCompatActivity() {
         mq7Chart.visibility = View.GONE
         shimmerMQ7.visibility = View.VISIBLE
 
-        //Log.d("HomeFragment", "Readings: $mq7Readings")
+        //Log.d("DashboardActivity", "Readings: $mq7Readings")
 
         val dateFormatIn = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault())
         val dateFormatOut = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
@@ -198,7 +256,7 @@ class DashboardActivity : AppCompatActivity() {
             aggregatedData[date] = aggregatedData.getOrDefault(date, 0) + 1
         }
 
-        Log.d("HomeFragment", "MQ7 Aggregated Data: $aggregatedData")
+        Log.d("DashboardActivity", "MQ7 Aggregated Data: $aggregatedData")
 
         val sortedData = aggregatedData.entries.sortedBy { it.key }
 
@@ -207,7 +265,7 @@ class DashboardActivity : AppCompatActivity() {
             entries.add(Entry(index.toFloat(), entry.value.toFloat()))
         }
 
-        Log.d("HomeFragment", "Entries: $entries")
+        Log.d("DashboardActivity", "Entries: $entries")
 
         val dataSet = LineDataSet(entries, "Nº de alertas por dia").apply {
             color = ContextCompat.getColor(this@DashboardActivity, R.color.greenDark)
@@ -263,7 +321,7 @@ class DashboardActivity : AppCompatActivity() {
         mq135Chart.visibility = View.GONE
         shimmerMQ135.visibility = View.VISIBLE
 
-        Log.d("HomeFragment", "Readings: $mq135Readings")
+        Log.d("DashboardActivity", "Readings: $mq135Readings")
 
         val dateFormatIn = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault())
         val dateFormatOut = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
@@ -275,7 +333,7 @@ class DashboardActivity : AppCompatActivity() {
             aggregatedData[date] = aggregatedData.getOrDefault(date, 0) + 1
         }
 
-        Log.d("HomeFragment", "Aggregated Data: $aggregatedData")
+        Log.d("DashboardActivity", "Aggregated Data: $aggregatedData")
 
         val sortedData = aggregatedData.entries.sortedBy { it.key }
 
@@ -284,7 +342,7 @@ class DashboardActivity : AppCompatActivity() {
             entries.add(Entry(index.toFloat(), entry.value.toFloat()))
         }
 
-        Log.d("HomeFragment", "Entries: $entries")
+        Log.d("DashboardActivity", "Entries: $entries")
 
         val dataSet = LineDataSet(entries, "Nº de alertas por dia").apply {
             color = ContextCompat.getColor(this@DashboardActivity, R.color.yellow)
@@ -347,7 +405,7 @@ class DashboardActivity : AppCompatActivity() {
 
         shimmerFire.visibility = View.VISIBLE
 
-        Log.d("HomeFragment", "Readings: $fireReadings")
+        Log.d("DashboardActivity", "Readings: $fireReadings")
 
         val dateFormatIn = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault())
         val dateFormatOut = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
@@ -359,7 +417,7 @@ class DashboardActivity : AppCompatActivity() {
             aggregatedData[date] = aggregatedData.getOrDefault(date, 0) + 1
         }
 
-        Log.d("HomeFragment", "Aggregated Data: $aggregatedData")
+        Log.d("DashboardActivity", "Aggregated Data: $aggregatedData")
 
         val sortedData = aggregatedData.entries.sortedBy { it.key }
 
@@ -368,7 +426,7 @@ class DashboardActivity : AppCompatActivity() {
             entries.add(Entry(index.toFloat(), entry.value.toFloat()))
         }
 
-        Log.d("HomeFragment", "Entries: $entries")
+        Log.d("DashboardActivity", "Entries: $entries")
 
         val dataSet = LineDataSet(entries, "Nº de alertas por dia").apply {
             color = ContextCompat.getColor(this@DashboardActivity, R.color.red)
@@ -438,5 +496,22 @@ class DashboardActivity : AppCompatActivity() {
         val theme = this.theme
         theme.resolveAttribute(attrResId, typedValue, true)
         return typedValue.data
+    }
+
+    private fun observeTeamInfo() {
+        teamsViewModel.teamDB.observe(this) { teamInfo ->
+
+            txtMeasure.text = " toneladas"
+            txtGoal.text = formatGoal(teamInfo.dailyGoal)
+        }
+    }
+
+    private fun formatGoal(goal: Double): String {
+        return when {
+            goal < 1000 -> goal.toInt().toString()
+            goal < 1_000_000 -> "${(goal / 1000).toInt()} mil"
+            goal < 1_000_000_000 -> "${(goal / 1_000_000).toInt()} milhões"
+            else -> "${(goal / 1_000_000_000).toInt()} bilhões"
+        }
     }
 }
