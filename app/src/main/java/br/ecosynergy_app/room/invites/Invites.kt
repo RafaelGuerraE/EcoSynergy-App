@@ -2,6 +2,7 @@ package br.ecosynergy_app.room.invites
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import br.ecosynergy_app.room.teams.Teams
 
@@ -12,7 +13,8 @@ import br.ecosynergy_app.room.teams.Teams
         parentColumns = ["id"],
         childColumns = ["teamId"],
         onDelete = ForeignKey.CASCADE
-    )]
+    )],
+    indices = [Index(value = ["teamId"])]
 )
 data class Invites (
     @PrimaryKey(autoGenerate = false) val id: Int,

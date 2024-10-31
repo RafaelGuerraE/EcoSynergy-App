@@ -2,6 +2,7 @@ package br.ecosynergy_app.room.teams
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 
 @Entity(
     tableName = "members",
@@ -13,7 +14,8 @@ import androidx.room.ForeignKey
             onDelete = ForeignKey.CASCADE
         )
     ],
-    primaryKeys = ["userId", "teamId"]
+    primaryKeys = ["userId", "teamId"],
+    indices = [Index(value = ["teamId"])]
 )
 data class Members(
     val userId: Int,
