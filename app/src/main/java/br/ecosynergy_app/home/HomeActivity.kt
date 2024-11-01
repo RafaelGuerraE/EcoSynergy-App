@@ -59,12 +59,16 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContentProviderCompat.requireContext
+import br.ecosynergy_app.room.notifications.NotificationsRepository
 
 class HomeActivity : AppCompatActivity() {
 
     private lateinit var userViewModel: UserViewModel
     private lateinit var readingsViewModel: ReadingsViewModel
     private lateinit var teamsViewModel: TeamsViewModel
+
+    private lateinit var notificationsRepository: NotificationsRepository
 
     private lateinit var bottomNavView: BottomNavigationView
     private lateinit var drawerLayout: DrawerLayout
@@ -107,6 +111,7 @@ class HomeActivity : AppCompatActivity() {
         val notificationClicked = intent.getBooleanExtra("NOTIFICATION_CLICKED", false)
 
         val userRepository = UserRepository(AppDatabase.getDatabase(applicationContext).userDao())
+        notificationsRepository = NotificationsRepository(AppDatabase.getDatabase(this).notificationsDao())
 
         val teamsRepository =
             TeamsRepository(AppDatabase.getDatabase(applicationContext).teamsDao())
@@ -460,7 +465,11 @@ class HomeActivity : AppCompatActivity() {
             userViewModel.removeFCMToken(userId, accessToken)
         }
 
-        userViewModel.deleteUserInfoFromDB(){
+        userViewModel.deleteUserInfoFromDB{
+            CoroutineScope(Dispatchers.Main).launch{
+                notificationsRepository.deleteAllNotifications()
+            }
+
             teamsViewModel.deleteTeamsFromDB()
             val i = Intent(this, LoginActivity::class.java)
             i.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK

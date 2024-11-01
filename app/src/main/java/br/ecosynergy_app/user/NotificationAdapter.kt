@@ -21,7 +21,7 @@ class NotificationAdapter(
 ) : RecyclerView.Adapter<NotificationAdapter.NotificationViewHolder>() {
 
     private var notificationsList: List<Notifications> = notifications.sortedByDescending {
-        SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()).parse(it.time)?.time
+        SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()).parse(it.timestamp)?.time
     }
 
     // ViewHolder class to hold item views
@@ -36,7 +36,7 @@ class NotificationAdapter(
         fun bind(notification: Notifications) {
             txtTitle.text = notification.title
             txtSubtitle.text = notification.subtitle
-            txtTime.text = getDisplayTime(notification.time)
+            txtTime.text = getDisplayTime(notification.timestamp)
 
             // Set an icon based on the notification type (example)
             when (notification.type) {
@@ -102,7 +102,7 @@ class NotificationAdapter(
     fun updateData(newNotifications: List<Notifications>) {
         notifications = newNotifications
         notificationsList = notifications.sortedByDescending {
-            SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()).parse(it.time)?.time
+            SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()).parse(it.timestamp)?.time
         }
         notifyDataSetChanged()
     }

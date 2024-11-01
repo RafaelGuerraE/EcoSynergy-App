@@ -76,7 +76,7 @@ class DashboardsAdapter(
 
         fun bind(item: DashboardItem) {
             txtName.text = item.name
-            txtHandle.text = item.handle
+            txtHandle.text = "@" + item.handle
             imgTeam.setImageResource(item.imageResourceId)
             linearClick.setOnClickListener { onItemClick(item) }
         }

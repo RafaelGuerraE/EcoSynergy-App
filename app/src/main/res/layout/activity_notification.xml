@@ -15,10 +15,50 @@
         android:layout_marginTop="52dp"
         android:layout_marginBottom="52dp">
 
+        <LinearLayout
+            android:id="@+id/linearGreetings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="visible">
+
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearFireAlert"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="visible">
+
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearInviteStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="visible">
+
+
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/linearInvite"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Você tem um convite pendente da seguinte equipe:"
+            android:text="Detalhes do Convite"
             android:layout_marginStart="15dp"
             android:layout_marginEnd="15dp"
             android:textStyle="bold"
@@ -26,33 +66,39 @@
             android:textColor="?android:attr/textColorPrimary"
             android:layout_marginTop="15dp"
             android:layout_marginBottom="20dp"
+            android:maxLines="1"
+            android:ellipsize="end"
             />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:layout_gravity="center"
+            android:gravity="center"
             android:layout_marginStart="15dp"
             android:layout_marginEnd="15dp"
             android:background="@drawable/no_ripple_bg"
-            android:padding="15dp"
-            android:layout_marginBottom="2dp">
+            android:padding="25dp"
+            android:layout_marginBottom="5dp">
 
-            <ImageView
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/imgTeam"
                 android:layout_width="70dp"
                 android:layout_height="70dp"
                 android:contentDescription="TeamImage"
                 android:src="@drawable/e"
                 android:background="@drawable/radius_bg"
                 android:scaleType="centerCrop"
-                android:layout_marginEnd="10dp"/>
+                android:layout_marginBottom="10dp"/>
 
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:layout_gravity="center"
+                android:gravity="center">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -61,6 +107,7 @@
                     android:textStyle="bold"
                     android:textSize="18sp"
                     android:textColor="?android:attr/textColorPrimary"
+                    android:layout_marginBottom="10dp"
                     />
 
                 <TextView
@@ -68,32 +115,50 @@
                     android:layout_height="wrap_content"
                     android:text="Sistema de Monitoramento Ambiental Sustentável para Indústrias de Pequeno e Médio Porte"
                     android:textSize="14sp"
+                    android:textAlignment="center"
                     android:textColor="?android:attr/textColorPrimary"
+                    android:layout_marginBottom="15dp"
+                    android:maxLines="3"
+                    android:ellipsize="end"
                     />
 
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
                     android:layout_marginTop="10dp"
                     >
-                    
+
                     <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/imgUser"
                         android:layout_width="20dp"
                         android:layout_height="20dp"
                         android:src="@drawable/r"/>
-                    
+
+                    <TextView
+                        android:id="@+id/txtUserFullname"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Rafael Guerra"
+                        android:layout_marginStart="5dp"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Rafael Guerra te convidou para a equipe"
-                        android:layout_marginStart="5dp"
+                        android:text=" te convidou para a equipe"
                         android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:maxLines="1"
+                        android:ellipsize="end"
                         />
-                    
+
                 </LinearLayout>
-                
+
             </LinearLayout>
 
         </LinearLayout>
@@ -108,6 +173,8 @@
             android:layout_gravity="center"
             android:textSize="12sp"
             android:layout_marginBottom="50dp"
+            android:maxLines="2"
+            android:ellipsize="middle"
             />
 
         <TextView
@@ -121,9 +188,11 @@
             android:layout_gravity="center"
             android:textSize="14sp"
             android:layout_marginBottom="10dp"
+            android:maxLines="2"
+            android:ellipsize="middle"
             />
 
-
+        </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
@@ -133,7 +202,8 @@
         android:orientation="vertical"
         android:layout_gravity="bottom"
         android:gravity="bottom"
-        android:layout_alignParentBottom="true">
+        android:layout_alignParentBottom="true"
+        android:visibility="gone">
 
         <View
             android:layout_width="match_parent"
@@ -147,6 +217,7 @@
             android:background="?android:attr/colorBackground">
 
             <LinearLayout
+                android:id="@+id/linearAccept"
                 android:layout_width="0dp"
                 android:layout_height="50dp"
                 android:layout_weight="1"
@@ -182,6 +253,7 @@
                 android:background="?android:attr/colorForeground"/>
 
             <LinearLayout
+                android:id="@+id/linearDecline"
                 android:layout_width="0dp"
                 android:layout_height="50dp"
                 android:layout_weight="1"

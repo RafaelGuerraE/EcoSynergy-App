@@ -1,6 +1,7 @@
 package br.ecosynergy_app.teams
 
 import android.app.DatePickerDialog
+import android.graphics.PorterDuff
 import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
@@ -20,7 +21,6 @@ import br.ecosynergy_app.readings.ReadingsViewModelFactory
 import br.ecosynergy_app.room.AppDatabase
 import br.ecosynergy_app.room.invites.InvitesRepository
 import br.ecosynergy_app.room.readings.FireReading
-import br.ecosynergy_app.room.readings.MQ135Reading
 import br.ecosynergy_app.room.readings.MQ7Reading
 import br.ecosynergy_app.room.readings.ReadingsRepository
 import br.ecosynergy_app.room.teams.MembersRepository
@@ -38,8 +38,12 @@ import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.data.PieData
+import com.github.mikephil.charting.data.PieDataSet
+import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.formatter.DefaultValueFormatter
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
+import com.github.mikephil.charting.formatter.ValueFormatter
 import de.hdodenhof.circleimageview.CircleImageView
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -63,12 +67,16 @@ class DashboardActivity : AppCompatActivity() {
     private lateinit var txtRefresh: TextView
 
     private var teamId: Int = 0
-    private var teamHandle: String? = null
+    private var teamHandle: String = ""
     private var teamInitial: Int = 0
     private var teamName: String = ""
     private var accessToken: String = ""
 
     private var refresh = false
+
+    private lateinit var dailyProgressBar: ProgressBar
+    private lateinit var txtPercentage: TextView
+    private lateinit var imgPercentage: ImageView
 
     private lateinit var txtValue: TextView
     private lateinit var txtGoal: TextView
@@ -84,9 +92,6 @@ class DashboardActivity : AppCompatActivity() {
 
     private lateinit var mq7Chart: LineChart
     private lateinit var shimmerMQ7: ShimmerFrameLayout
-
-    private lateinit var mq135Chart: LineChart
-    private lateinit var shimmerMQ135: ShimmerFrameLayout
 
     private lateinit var fireChart: LineChart
     private lateinit var shimmerFire: ShimmerFrameLayout
@@ -127,6 +132,10 @@ class DashboardActivity : AppCompatActivity() {
         lblTeamHandle = findViewById(R.id.lblTeamHandle)
         imgTeam = findViewById(R.id.imgTeam)
 
+        txtPercentage = findViewById(R.id.txtPercentage)
+        imgPercentage = findViewById(R.id.imgPercentage)
+        dailyProgressBar = findViewById(R.id.dailyProgressBar)
+
         btnRefresh = findViewById(R.id.btnRefresh)
         progressRefresh = findViewById(R.id.progressRefresh)
         imgRefresh = findViewById(R.id.imgRefresh)
@@ -148,9 +157,6 @@ class DashboardActivity : AppCompatActivity() {
 
         shimmerMQ7 = findViewById(R.id.shimmerMQ7)
         mq7Chart = findViewById(R.id.mq7Chart)
-
-        shimmerMQ135 = findViewById(R.id.shimmerMQ135)
-        mq135Chart = findViewById(R.id.mq135Chart)
 
         shimmerFire = findViewById(R.id.shimmerFire)
         fireChart = findViewById(R.id.fireChart)
@@ -199,45 +205,90 @@ class DashboardActivity : AppCompatActivity() {
         }
 
         //fetchMQ7ReadingsByTeamHandle()
-        //fetchMQ135ReadingsByTeamHandle()
         //fetchFireReadingsByTeamHandle()
 
 
         observeTeamInfo()
+        observeMQ7ReadingsByTeamHandle()
+        setupTypesChart()
     }
 
     override fun onResume() {
         super.onResume()
-
+        readingsViewModel.getReadingsFromDB(teamHandle)
         teamsViewModel.getTeamById(teamId)
     }
 
+    private fun setupTypesChart() {
+        typesChart.visibility = View.GONE
+        shimmerTypes.visibility = View.VISIBLE
 
-    private fun fetchMQ7ReadingsByTeamHandle() {
-//        readingsViewModel.mq7ReadingsDB.removeObservers(this)
-//        readingsViewModel.getReadingsBySensorFromDB("MQ7")
-//        readingsViewModel.mq7ReadingsDB.observe(this) { response ->
-//            handleMQ7Readings(response)
-//            Log.d("DashboardActivity", "Sensors MQ7 OK")
-//        }
+        typesChart.setUsePercentValues(true)
+        typesChart.description.isEnabled = false
+        typesChart.isDrawHoleEnabled = false
+        typesChart.setEntryLabelColor(android.R.color.white)
+
+        typesChart.setEntryLabelTextSize(14f)
+        typesChart.legend.textColor = getThemeColor(android.R.attr.textColorPrimary)
+
+        typesChart.animateY(1000, com.github.mikephil.charting.animation.Easing.EaseInOutQuad)
+
+        val pieEntries = mutableListOf<PieEntry>()
+        val label = ""
+
+        val statsMap = mapOf("Propano(C3H8)" to 92.5f, "Dióxido de Carbono(CO2)" to 5.3f, "Outros" to 1.2f)
+
+        statsMap.forEach { (key, value) ->
+            pieEntries.add(PieEntry(value, key))
+        }
+
+        val pieDataSet = PieDataSet(pieEntries, label)
+
+        pieDataSet.valueTextColor = getThemeColor(android.R.attr.textColorPrimary)
+
+        pieDataSet.colors = listOf(
+            ContextCompat.getColor(this, R.color.blue),
+            ContextCompat.getColor(this, R.color.greenDark),
+            ContextCompat.getColor(this, R.color.green)
+        )
+
+        pieDataSet.sliceSpace = 2f
+        pieDataSet.selectionShift = 5f
+
+        val pieData = PieData(pieDataSet)
+        pieData.setValueTextSize(12f)
+        pieData.setValueTextColor(ContextCompat.getColor(this, android.R.color.white))
+
+        pieData.setValueFormatter(object : ValueFormatter() {
+            override fun getFormattedValue(value: Float): String {
+                return "${value.toInt()}%"
+            }
+        })
+
+        typesChart.data = pieData
+
+        typesChart.invalidate()
+        shimmerTypes.animate().alpha(0f).setDuration(300).withEndAction {
+            shimmerTypes.stopShimmer()
+            shimmerTypes.visibility = View.GONE
+            typesChart.visibility = View.VISIBLE
+            typesChart.animate().alpha(1f).setDuration(300)
+        }
     }
 
-    private fun fetchMQ135ReadingsByTeamHandle() {
-//        readingsViewModel.mq135ReadingsDB.removeObservers(this)
-//        readingsViewModel.getReadingsBySensorFromDB("MQ135")
-//        readingsViewModel.mq135ReadingsDB.observe(this) { response ->
-//            handleMQ135Readings(response)
-//            Log.d("DashboardActivity", "Sensors MQ135 OK")
-//        }
+
+    private fun observeMQ7ReadingsByTeamHandle() {
+        readingsViewModel.mq7ReadingsByTeamHandle.observe(this) { response ->
+            setupMQ7Chart(response)
+            Log.d("DashboardActivity", "Sensors MQ7 OK")
+        }
     }
 
-    private fun fetchFireReadingsByTeamHandle() {
-//        readingsViewModel.mq7ReadingsDB.removeObservers(this)
-//        readingsViewModel.getReadingsBySensorFromDB("FIRE")
-//        readingsViewModel.fireReadingsDB.observe(this) { response ->
-//            handleFireReadings(response)
-//            Log.d("DashboardActivity", "FireSensors OK")
-//        }
+    private fun observeFireReadingsByTeamHandle() {
+        readingsViewModel.fireReadingsByTeamHandle.observe(this) { response ->
+            setupFireChart(response)
+            Log.d("DashboardActivity", "FireSensors OK")
+        }
     }
 
     private fun setupMQ7Chart(mq7Readings: List<MQ7Reading>) {
@@ -247,7 +298,7 @@ class DashboardActivity : AppCompatActivity() {
         //Log.d("DashboardActivity", "Readings: $mq7Readings")
 
         val dateFormatIn = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault())
-        val dateFormatOut = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val dateFormatOut = SimpleDateFormat("MM/dd", Locale.getDefault())
         val aggregatedData = mutableMapOf<String, Int>()
 
         mq7Readings.forEach { reading ->
@@ -256,7 +307,7 @@ class DashboardActivity : AppCompatActivity() {
             aggregatedData[date] = aggregatedData.getOrDefault(date, 0) + 1
         }
 
-        Log.d("DashboardActivity", "MQ7 Aggregated Data: $aggregatedData")
+//        Log.d("DashboardActivity", "MQ7 Aggregated Data: $aggregatedData")
 
         val sortedData = aggregatedData.entries.sortedBy { it.key }
 
@@ -302,7 +353,6 @@ class DashboardActivity : AppCompatActivity() {
         mq7Chart.apply {
             isDragEnabled = true
             isScaleXEnabled = true
-            setExtraOffsets(10f, 10f, 10f, 10f)
         }
 
         val lineData = LineData(dataSet)
@@ -314,88 +364,6 @@ class DashboardActivity : AppCompatActivity() {
             shimmerMQ7.visibility = View.GONE
             mq7Chart.visibility = View.VISIBLE
             mq7Chart.animate().alpha(1f).setDuration(300)
-        }
-    }
-
-    private fun setupMQ135Chart(mq135Readings: List<MQ135Reading>) {
-        mq135Chart.visibility = View.GONE
-        shimmerMQ135.visibility = View.VISIBLE
-
-        Log.d("DashboardActivity", "Readings: $mq135Readings")
-
-        val dateFormatIn = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault())
-        val dateFormatOut = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        val aggregatedData = mutableMapOf<String, Int>()
-
-        mq135Readings.forEach { reading ->
-            val parsedDate = dateFormatIn.parse(reading.timestamp)
-            val date = if (parsedDate != null) dateFormatOut.format(parsedDate) else "Invalid Date"
-            aggregatedData[date] = aggregatedData.getOrDefault(date, 0) + 1
-        }
-
-        Log.d("DashboardActivity", "Aggregated Data: $aggregatedData")
-
-        val sortedData = aggregatedData.entries.sortedBy { it.key }
-
-        val entries = ArrayList<Entry>()
-        sortedData.forEachIndexed { index, entry ->
-            entries.add(Entry(index.toFloat(), entry.value.toFloat()))
-        }
-
-        Log.d("DashboardActivity", "Entries: $entries")
-
-        val dataSet = LineDataSet(entries, "Nº de alertas por dia").apply {
-            color = ContextCompat.getColor(this@DashboardActivity, R.color.yellow)
-            valueTextColor = getThemeColor(android.R.attr.textColorPrimary)
-            valueTextSize = 10f
-            setDrawValues(true)
-            lineWidth = 3f
-            setDrawCircles(true)
-            setCircleColor(ContextCompat.getColor(this@DashboardActivity, R.color.yellow))
-            circleRadius = 5f
-            setDrawFilled(true)
-            fillColor = ContextCompat.getColor(this@DashboardActivity, R.color.yellow)
-            valueFormatter = DefaultValueFormatter(0)
-        }
-
-        mq135Chart.xAxis.apply {
-            position = XAxis.XAxisPosition.BOTTOM
-            valueFormatter = IndexAxisValueFormatter(sortedData.map { it.key })
-            setDrawGridLines(false)
-            setDrawLabels(true)
-            textColor = getThemeColor(android.R.attr.textColorPrimary)
-            setLabelCount(sortedData.size, true)
-            labelRotationAngle = 90f
-        }
-
-        mq135Chart.axisLeft.apply {
-            setDrawGridLines(false)
-            textColor = getThemeColor(android.R.attr.textColorPrimary)
-        }
-
-        mq135Chart.axisRight.isEnabled = false
-        mq135Chart.description.isEnabled = false
-        mq135Chart.legend.textColor = getThemeColor(android.R.attr.textColorPrimary)
-
-        mq135Chart.apply {
-            isDragEnabled = true
-            setScaleEnabled(true)
-            isScaleXEnabled = true
-            isScaleYEnabled = false // Disable vertical scaling if not needed
-            setVisibleXRangeMaximum(5f) // Display only 5 entries at a time
-            setExtraOffsets(10f, 10f, 10f, 10f)
-            moveViewToX(0f) // Start chart view at the beginning
-        }
-
-        val lineData = LineData(dataSet)
-        mq135Chart.data = lineData
-        mq135Chart.invalidate()
-
-        shimmerMQ135.animate().alpha(0f).setDuration(300).withEndAction {
-            shimmerMQ135.stopShimmer()
-            shimmerMQ135.visibility = View.GONE
-            mq135Chart.visibility = View.VISIBLE
-            mq135Chart.animate().alpha(1f).setDuration(300)
         }
     }
 
@@ -478,18 +446,6 @@ class DashboardActivity : AppCompatActivity() {
         }
     }
 
-    private fun handleMQ7Readings(response: List<MQ7Reading>) {
-        setupMQ7Chart(response)
-    }
-
-    private fun handleMQ135Readings(response: List<MQ135Reading>) {
-        setupMQ135Chart(response)
-    }
-
-    private fun handleFireReadings(response: List<FireReading>) {
-        setupFireChart(response)
-    }
-
 
     private fun getThemeColor(attrResId: Int): Int {
         val typedValue = TypedValue()
@@ -500,11 +456,54 @@ class DashboardActivity : AppCompatActivity() {
 
     private fun observeTeamInfo() {
         teamsViewModel.teamDB.observe(this) { teamInfo ->
+            // Fetch today's aggregated readings
+            readingsViewModel.getAggregatedReadingsForToday(teamHandle) {
+                // This block will be executed once the data is fetched
+                readingsViewModel.aggregatedReadingsForToday.observe(this) { readings ->
+                    // Calculate the sum of mq7 and mq135 values
+                    val totalEmissions = readings.values.sum()
 
-            txtMeasure.text = " toneladas"
-            txtGoal.text = formatGoal(teamInfo.dailyGoal)
+                    // Update the UI with total emissions
+                    txtValue.text = String.format("%.0f", totalEmissions) + " /"
+                    txtMeasure.text = " toneladas"
+                    txtGoal.text = teamInfo.dailyGoal.toInt().toString()
+
+                    // Remaining code to calculate and set the progress
+                    if (teamInfo.dailyGoal != 0.0) {
+                        val percentage = (totalEmissions / teamInfo.dailyGoal) * 100
+                        txtPercentage.text = String.format("%.2f%%", percentage)
+                        dailyProgressBar.progress = percentage.toInt()
+                        imgPercentage.visibility = View.VISIBLE
+
+                        // Set color based on percentage
+                        when {
+                            percentage < 60.00 -> {
+                                imgPercentage.setImageResource(R.drawable.ic_decrease)
+                                imgPercentage.setColorFilter(ContextCompat.getColor(this, R.color.green), PorterDuff.Mode.SRC_IN)
+                                dailyProgressBar.progressTintList = ContextCompat.getColorStateList(this, R.color.green)
+                            }
+                            percentage < 100.00 -> {
+                                imgPercentage.setImageResource(R.drawable.ic_decrease)
+                                imgPercentage.setColorFilter(ContextCompat.getColor(this, R.color.orange), PorterDuff.Mode.SRC_IN)
+                                dailyProgressBar.progressTintList = ContextCompat.getColorStateList(this, R.color.orange)
+                            }
+                            percentage >= 100.00 -> {
+                                imgPercentage.setImageResource(R.drawable.ic_rise)
+                                imgPercentage.setColorFilter(ContextCompat.getColor(this, R.color.red), PorterDuff.Mode.SRC_IN)
+                                dailyProgressBar.progressTintList = ContextCompat.getColorStateList(this, R.color.red)
+                            }
+                        }
+                    } else {
+                        txtPercentage.text = "N/A"
+                        dailyProgressBar.progress = 0
+                        imgPercentage.visibility = View.GONE
+                    }
+                }
+            }
         }
     }
+
+
 
     private fun formatGoal(goal: Double): String {
         return when {

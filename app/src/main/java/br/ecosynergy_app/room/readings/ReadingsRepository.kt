@@ -1,6 +1,13 @@
 package br.ecosynergy_app.room.readings
 
+import android.util.Log
 import androidx.lifecycle.LiveData
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 class ReadingsRepository(
     private val mq7ReadingsDao: MQ7ReadingsDao,
@@ -19,16 +26,16 @@ class ReadingsRepository(
 
     suspend fun getAllFireReadings() = fireReadingsDao.getAllReadings()
 
-    fun getMQ7ReadingsByTeamHandle(teamHandle: String): List<MQ7Reading> {
-        return mq7ReadingsDao.getReadingsByTeamHandle(teamHandle)
+    suspend fun getMQ7ReadingsByTeamHandle(teamHandle: String): List<MQ7Reading> {
+        return withContext(Dispatchers.IO) { mq7ReadingsDao.getReadingsByTeamHandle(teamHandle)}
     }
 
-    fun getMQ135ReadingsByTeamHandle(teamHandle: String): List<MQ135Reading> {
-        return mq135ReadingsDao.getReadingsByTeamHandle(teamHandle)
+    suspend fun getMQ135ReadingsByTeamHandle(teamHandle: String): List<MQ135Reading> {
+        return withContext(Dispatchers.IO) { mq135ReadingsDao.getReadingsByTeamHandle(teamHandle)}
     }
 
-    fun getFireReadingsByTeamHandle(teamHandle: String): List<FireReading> {
-        return fireReadingsDao.getReadingsByTeamHandle(teamHandle)
+    suspend fun getFireReadingsByTeamHandle(teamHandle: String): List<FireReading> {
+        return withContext(Dispatchers.IO) { fireReadingsDao.getReadingsByTeamHandle(teamHandle)}
     }
 
     suspend fun deleteReadingsForTeam(teamHandle: String) {
@@ -45,4 +52,118 @@ class ReadingsRepository(
             else -> "1970-01-01T00:00:00Z"
         }
     }
+
+
+    suspend fun getAggregatedReadingsForLastWeek(teamHandle: String): Map<String, Float> {
+        return withContext(Dispatchers.IO) {
+            val calendar = Calendar.getInstance()
+            val emissionsPerDay = mutableMapOf<String, Float>()
+
+            val today = Date()
+            calendar.time = today
+            val sevenDaysAgo = Calendar.getInstance().apply {
+                time = today
+                add(Calendar.DAY_OF_YEAR, -6)
+            }.time
+
+            for (i in 0..6) {
+                calendar.time = today
+                calendar.add(Calendar.DAY_OF_YEAR, -i)
+                val date = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendar.time)
+                emissionsPerDay[date] = 0f
+            }
+
+            val mq7Readings = mq7ReadingsDao.getReadingsByTeamHandle(teamHandle)
+            val mq135Readings = mq135ReadingsDao.getReadingsByTeamHandle(teamHandle)
+
+            mq7Readings.forEach { reading ->
+                val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault())
+                val readingDate = dateFormat.parse(reading.timestamp)
+
+                if (readingDate != null && readingDate.after(sevenDaysAgo)) {
+                    val formattedDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(readingDate)
+                    emissionsPerDay[formattedDate] = (emissionsPerDay[formattedDate] ?: 0f) + reading.value
+                }
+            }
+
+            mq135Readings.forEach { reading ->
+                val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault())
+                val readingDate = dateFormat.parse(reading.timestamp)
+
+                // Check if reading is within the last week
+                if (readingDate != null && readingDate.after(sevenDaysAgo)) {
+                    val formattedDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(readingDate)
+                    emissionsPerDay[formattedDate] = (emissionsPerDay[formattedDate] ?: 0f) + reading.value
+                }
+            }
+
+            val orderedEmissions = LinkedHashMap<String, Float>()
+            val dateKeys = emissionsPerDay.keys.sorted()
+
+            for (key in dateKeys) {
+                orderedEmissions[key] = emissionsPerDay[key] ?: 0f
+            }
+
+            Log.d("ReadingsRepository", "DATA $orderedEmissions")
+            orderedEmissions
+        }
+    }
+
+    suspend fun getAggregatedReadingsForToday(teamHandle: String): Map<String, Float> {
+        return withContext(Dispatchers.IO) {
+            val emissionsPerDay = mutableMapOf<String, Float>()
+
+            val today = Date()
+            val todayStart = Calendar.getInstance().apply {
+                time = today
+                set(Calendar.HOUR_OF_DAY, 0)
+                set(Calendar.MINUTE, 0)
+                set(Calendar.SECOND, 0)
+                set(Calendar.MILLISECOND, 0)
+            }.time
+
+            // Format the date for today's readings
+            val formattedDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(todayStart)
+
+            // Initialize today's emissions to 0
+            emissionsPerDay[formattedDate] = 0f
+
+            // Fetch readings from the database
+            val mq7Readings = mq7ReadingsDao.getReadingsByTeamHandle(teamHandle)
+            val mq135Readings = mq135ReadingsDao.getReadingsByTeamHandle(teamHandle)
+
+            // Process mq7 readings
+            mq7Readings.forEach { reading ->
+                val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault())
+                val readingDate = dateFormat.parse(reading.timestamp)
+
+                // Check if reading is from today
+                if (readingDate != null && isSameDay(readingDate, todayStart)) {
+                    emissionsPerDay[formattedDate] = (emissionsPerDay[formattedDate] ?: 0f) + reading.value
+                }
+            }
+
+            // Process mq135 readings
+            mq135Readings.forEach { reading ->
+                val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault())
+                val readingDate = dateFormat.parse(reading.timestamp)
+
+                // Check if reading is from today
+                if (readingDate != null && isSameDay(readingDate, todayStart)) {
+                    emissionsPerDay[formattedDate] = (emissionsPerDay[formattedDate] ?: 0f) + reading.value
+                }
+            }
+
+            Log.d("ReadingsRepository", "Today's DATA $emissionsPerDay")
+            emissionsPerDay
+        }
+    }
+
+    private fun isSameDay(date1: Date, date2: Date): Boolean {
+        val calendar1 = Calendar.getInstance().apply { time = date1 }
+        val calendar2 = Calendar.getInstance().apply { time = date2 }
+        return calendar1.get(Calendar.YEAR) == calendar2.get(Calendar.YEAR) &&
+                calendar1.get(Calendar.DAY_OF_YEAR) == calendar2.get(Calendar.DAY_OF_YEAR)
+    }
+
 }

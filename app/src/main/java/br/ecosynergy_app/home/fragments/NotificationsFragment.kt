@@ -2,6 +2,7 @@ package br.ecosynergy_app.home.fragments
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,9 +12,16 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import br.ecosynergy_app.R
+import br.ecosynergy_app.room.AppDatabase
 import br.ecosynergy_app.room.notifications.Notifications
+import br.ecosynergy_app.room.notifications.NotificationsRepository
+import br.ecosynergy_app.room.user.UserRepository
 import br.ecosynergy_app.user.NotificationActivity
 import br.ecosynergy_app.user.NotificationAdapter
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class NotificationsFragment : Fragment() {
 
@@ -21,6 +29,8 @@ class NotificationsFragment : Fragment() {
     private lateinit var recyclerViewNotifications: RecyclerView
     private lateinit var linearAlert: LinearLayout
     private lateinit var notificationAdapter: NotificationAdapter
+
+    private lateinit var notificationsRepository: NotificationsRepository
 
     private var notificationsList = listOf<Notifications>() // Replace with actual data fetching
 
@@ -31,6 +41,7 @@ class NotificationsFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_notifications, container, false)
 
+        notificationsRepository = NotificationsRepository(AppDatabase.getDatabase(requireContext()).notificationsDao())
 
         swipeRefresh = view.findViewById(R.id.swipeRefresh)
         recyclerViewNotifications = view.findViewById(R.id.recyclerViewNotifications)
@@ -50,7 +61,6 @@ class NotificationsFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        // Initialize the adapter with an empty list and a click listener
         notificationAdapter = NotificationAdapter(notificationsList)
 
         recyclerViewNotifications.apply {
@@ -67,26 +77,25 @@ class NotificationsFragment : Fragment() {
     }
 
     private fun loadNotifications() {
-        // Fetch notifications from the database or other data source
-        // Replace notificationsList with actual data loading logic
-        notificationsList = fetchNotifications()
+        CoroutineScope(Dispatchers.Main).launch {
+            notificationsList = fetchNotifications()
 
-        // Update adapter data and notify changes
-        notificationAdapter.updateData(notificationsList)
+            notificationAdapter.updateData(notificationsList)
 
-        // Show or hide linearAlert based on data availability
-        if (notificationsList.isEmpty()) {
-            linearAlert.visibility = View.VISIBLE
-            recyclerViewNotifications.visibility = View.GONE
-        } else {
-            linearAlert.visibility = View.GONE
-            recyclerViewNotifications.visibility = View.VISIBLE
+            if (notificationsList.isEmpty()) {
+                linearAlert.visibility = View.VISIBLE
+                recyclerViewNotifications.visibility = View.GONE
+            } else {
+                linearAlert.visibility = View.GONE
+                recyclerViewNotifications.visibility = View.VISIBLE
+            }
         }
     }
 
-    private fun fetchNotifications(): List<Notifications> {
-        // Placeholder for fetching notifications from Room or another data source
-        return listOf(Notifications(1, "greeting", "Seja bem vindo à plataforma Ecosynergy\uD83C\uDF89", "Aqui você pode explorar todas as métricas de sua indústria", "2024-10-26T19:40:00"))
-        // Empty list simulates no notifications
+    private suspend fun fetchNotifications(): List<Notifications> {
+        return withContext(Dispatchers.IO) {
+            notificationsRepository.getAllNotifications()
+        }
     }
+
 }

@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import br.ecosynergy_app.R
+import br.ecosynergy_app.readings.ReadingsViewModel
 import br.ecosynergy_app.teams.CreateTeamActivity
 import br.ecosynergy_app.teams.TeamAdapter
 import br.ecosynergy_app.teams.viewmodel.TeamsViewModel
@@ -26,6 +27,7 @@ class TeamsFragment : Fragment() {
 
     private val teamsViewModel: TeamsViewModel by activityViewModels()
     private val userViewModel: UserViewModel by activityViewModels()
+    private val readingsViewModel: ReadingsViewModel by activityViewModels()
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var teamsAdapter: TeamAdapter
@@ -117,10 +119,21 @@ class TeamsFragment : Fragment() {
                         for (id in teamIds) {
                             teamsViewModel.findInvitesByTeam(id, accessToken)
                         }
+
+                        val teamHandles = teamData.map {it.handle}
+                        fetchReadingsData(teamHandles, accessToken)
                     }
                 }
                 swipeRefresh.isRefreshing = false
             }
+        }
+    }
+
+    private fun fetchReadingsData(listTeamHandles: List<String>, accessToken: String) {
+        for (teamHandle in listTeamHandles) {
+            readingsViewModel.updateMQ7Readings(teamHandle, accessToken)
+            readingsViewModel.updateMQ135Readings(teamHandle, accessToken)
+            readingsViewModel.updateFireReadings(teamHandle, accessToken)
         }
     }
 

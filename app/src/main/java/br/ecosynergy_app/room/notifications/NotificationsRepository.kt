@@ -3,7 +3,7 @@ package br.ecosynergy_app.room.notifications
 class NotificationsRepository(private val notificationsDao: NotificationsDao) {
 
     suspend fun addNotification(notification: Notifications){
-        return notificationsDao.addNotification(notification)
+        notificationsDao.addNotification(notification)
     }
 
     suspend fun updateNotification(notification: Notifications) {

@@ -26,6 +26,12 @@ class ReadingsViewModel(
     private val _fireReadingsByTeamHandle = MutableLiveData<List<FireReading>>()
     val fireReadingsByTeamHandle: LiveData<List<FireReading>> get() = _fireReadingsByTeamHandle
 
+    private var _aggregatedReadingsForLastWeek = MutableLiveData<Map<String, Float>>()
+    val aggregatedReadingsForLastWeek: LiveData<Map<String, Float>> get() = _aggregatedReadingsForLastWeek
+
+    private var _aggregatedReadingsForToday = MutableLiveData<Map<String, Float>>()
+    val aggregatedReadingsForToday: LiveData<Map<String, Float>> get() = _aggregatedReadingsForToday
+
     fun updateMQ7Readings(teamHandle: String, accessToken: String) {
         viewModelScope.launch {
             try {
@@ -109,8 +115,40 @@ class ReadingsViewModel(
                 _mq7ReadingsByTeamHandle.value = mq7Response
                 _mq135ReadingsByTeamHandle.value =  mq135Response
                 _fireReadingsByTeamHandle.value = fireResponse
+
+
+                Log.d("ReadingsViewModel", "MQ7: $mq7Response")
+                Log.d("ReadingsViewModel", "Successfully got all readings from DB for $teamHandle")
             } catch (e: Exception) {
-                Log.e("ReadingsViewModel", "Error while updating Getting Readings From DB", e)
+                Log.e("ReadingsViewModel", "Error while Getting Readings From DB", e)
+            }
+        }
+    }
+
+    fun getAggregatedReadingsForLastWeek(teamHandle: String, onComplete: () -> Unit){
+        viewModelScope.launch {
+            try {
+                val response = readingsRepository.getAggregatedReadingsForLastWeek(teamHandle)
+                _aggregatedReadingsForLastWeek.value = response
+
+                Log.d("ReadingsViewModel", "LastWeekAggregated Complete")
+                onComplete()
+            }catch (e: Exception) {
+                Log.e("ReadingsViewModel", "Error while updating getAggregatedReadingsForLastWeek", e)
+            }
+        }
+    }
+
+    fun getAggregatedReadingsForToday(teamHandle: String, onComplete: () -> Unit){
+        viewModelScope.launch {
+            try {
+                val response = readingsRepository.getAggregatedReadingsForToday(teamHandle)
+                _aggregatedReadingsForToday.value = response
+
+                Log.d("ReadingsViewModel", "TodayAggregated Complete")
+                onComplete()
+            }catch (e: Exception) {
+                Log.e("ReadingsViewModel", "Error while updating getAggregatedReadingsForLastWeek", e)
             }
         }
     }

@@ -7,8 +7,10 @@ import androidx.room.PrimaryKey
 data class Notifications(
     @PrimaryKey(autoGenerate = true)
     val id: Int,
-    val type: String,
+    val type: String?,
     val title: String,
     val subtitle: String,
-    val time: String
+    val timestamp: String,
+    val teamId: String?,
+    val inviteId: String?
 )
