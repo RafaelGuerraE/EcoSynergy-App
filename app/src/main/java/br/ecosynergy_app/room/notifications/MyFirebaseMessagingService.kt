@@ -12,7 +12,7 @@ import br.ecosynergy_app.home.HomeActivity
 import br.ecosynergy_app.room.AppDatabase
 import br.ecosynergy_app.teams.DashboardActivity
 import br.ecosynergy_app.teams.TeamInfoActivity
-import br.ecosynergy_app.user.NotificationActivity
+import br.ecosynergy_app.home.fragments.NotificationActivity
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import kotlinx.coroutines.CoroutineScope
@@ -28,13 +28,11 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onCreate() {
         super.onCreate()
-        // Initialize Room Database and NotificationsRepository
         val db = AppDatabase.getDatabase(applicationContext)
         notificationsRepository = NotificationsRepository(db.notificationsDao())
     }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-        // Extract data from the notification message
         val title = remoteMessage.data["title"] ?: "No title"
         val body = remoteMessage.data["body"] ?: "No body"
         val type = remoteMessage.data["type"]
@@ -43,7 +41,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         Log.d("MyFirebaseService", "${remoteMessage.data}")
 
-        // Determine the target activity based on the notification type
         val targetActivity = when (type) {
             "invite" -> NotificationActivity::class.java
             "fire" -> DashboardActivity::class.java
@@ -51,10 +48,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             else -> HomeActivity::class.java
         }
 
-        // Display the notification
         sendNotification(title, body, targetActivity)
 
-        // Store the notification in the Room database
         saveNotificationToDatabase(type, title, body, teamId, inviteId)
     }
 
@@ -108,7 +103,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             subtitle = body,
             timestamp = formattedTimestamp,
             teamId = teamId,
-            inviteId = inviteId
+            inviteId = inviteId,
+            read = false
         )
 
         CoroutineScope(Dispatchers.IO).launch {

@@ -150,7 +150,7 @@ class EditTeamActivity : AppCompatActivity() {
 
         btnConfirm.setOnClickListener {
 
-            teamHandle = txtHandle.text.toString()
+            teamHandle = txtHandle.text.toString().split("@")[1]
             teamName = txtTeamName.text.toString()
             teamDescription = txtDescription.text.toString()
             teamTimezone = txtTimezone.text.toString()

@@ -12,5 +12,6 @@ data class Notifications(
     val subtitle: String,
     val timestamp: String,
     val teamId: String?,
-    val inviteId: String?
+    val inviteId: String?,
+    val read: Boolean
 )

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    android:id="@+id/linearClick"
+<LinearLayout android:id="@+id/linearClick"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="130dp"
     android:layout_height="120dp"
     android:orientation="vertical"
     android:background="@drawable/ripple_bg"
-    android:layout_marginStart="10dp">
+    android:layout_marginStart="10dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,7 +15,7 @@
         android:orientation="horizontal"
         android:clickable="true"
         android:focusable="true"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="15dp"
         android:layout_marginStart="5dp"
         android:layout_marginEnd="5dp"
         android:gravity="center">
@@ -25,6 +25,7 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_gravity="center"
+            app:tint = "?android:attr/iconTint"
             android:src="@drawable/ic_addmember"/>
 
 
@@ -34,7 +35,7 @@
         android:id="@+id/txtClick"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
         android:text="Clique aqui para criar uma equipe"
         android:textSize="14sp"
         android:textStyle="bold"

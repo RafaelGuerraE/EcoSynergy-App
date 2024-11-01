@@ -220,76 +220,87 @@ class UserSettingsActivity : AppCompatActivity() {
                 if (!isEditingEmail) {
                     enableEmail()
                 } else {
-                    val builder = AlertDialog.Builder(this)
-                    builder.setTitle("Você deseja alterar seu email?")
-                    builder.setMessage("Para alterá-lo você será redirecionado a uma tela de confirmação para o novo E-mail.")
+                    if (txtEmail.text.toString() == lastEmail) {
+                        showToast("Este é o mesmo E-mail cadastrado")
+                    } else {
+                        val builder = AlertDialog.Builder(this)
+                        builder.setTitle("Você deseja alterar seu email?")
+                        builder.setMessage("Para alterá-lo você será redirecionado a uma tela de confirmação para o novo E-mail.")
 
-                    builder.setPositiveButton("Sim") { dialog, _ ->
-                        confirmationCode(txtEmail.text.toString(), txtFullname.text.toString()) {
+                        builder.setPositiveButton("Sim") { dialog, _ ->
+                            confirmationCode(
+                                txtEmail.text.toString(),
+                                txtFullname.text.toString()
+                            ) {
 
-                            val dialogView =
-                                layoutInflater.inflate(R.layout.dialog_verification, null)
-                            val txtCode = dialogView.findViewById<EditText>(R.id.txtCode)
+                                val dialogView =
+                                    layoutInflater.inflate(R.layout.dialog_verification, null)
+                                val txtCode = dialogView.findViewById<EditText>(R.id.txtCode)
 
-                            txtCode.addTextChangedListener(object : TextWatcher {
-                                override fun afterTextChanged(s: Editable?) {
-                                    val uppercaseText = s.toString().uppercase()
+                                txtCode.addTextChangedListener(object : TextWatcher {
+                                    override fun afterTextChanged(s: Editable?) {
+                                        val uppercaseText = s.toString().uppercase()
 
-                                    if (s.toString() != uppercaseText) {
-                                        txtCode.setText(uppercaseText)
-                                        txtCode.setSelection(uppercaseText.length)
-                                    }
-                                }
-
-                                override fun beforeTextChanged(
-                                    s: CharSequence?,
-                                    start: Int,
-                                    count: Int,
-                                    after: Int
-                                ) {
-                                }
-
-                                override fun onTextChanged(
-                                    s: CharSequence?,
-                                    start: Int,
-                                    before: Int,
-                                    count: Int
-                                ) {
-                                }
-                            })
-
-                            AlertDialog.Builder(this)
-                                .setTitle("Código de Verificação")
-                                .setView(dialogView)
-                                .setPositiveButton("Confirmar") { dialog, _ ->
-                                    if (txtCode.text.toString() == verificationCode) {
-                                        userUsername = txtUsername.text.toString()
-                                        userFullname = txtFullname.text.toString()
-                                        userEmail = txtEmail.text.toString()
-                                        userGender = txtGender.selectedItem.toString()
-                                        userNationality = nationality
-
-                                        updateUserData {
-                                            disableEmail()
-
-                                            dialog.dismiss()
+                                        if (s.toString() != uppercaseText) {
+                                            txtCode.setText(uppercaseText)
+                                            txtCode.setSelection(uppercaseText.length)
                                         }
-
-                                    } else {
-                                        showToast("Erro: Código Incorreto")
                                     }
-                                }
-                                .setNegativeButton("Cancelar") { dialog, _ -> dialog.dismiss() }
-                                .show()
+
+                                    override fun beforeTextChanged(
+                                        s: CharSequence?,
+                                        start: Int,
+                                        count: Int,
+                                        after: Int
+                                    ) {
+                                    }
+
+                                    override fun onTextChanged(
+                                        s: CharSequence?,
+                                        start: Int,
+                                        before: Int,
+                                        count: Int
+                                    ) {
+                                    }
+                                })
+
+                                val alertDialog = AlertDialog.Builder(this)
+                                    .setTitle("Código de Verificação")
+                                    .setView(dialogView)
+                                    .setPositiveButton("Confirmar") { dialog, _ ->
+                                        if (txtCode.text.toString() == verificationCode) {
+                                            userUsername = txtUsername.text.toString()
+                                            userFullname = txtFullname.text.toString()
+                                            userEmail = txtEmail.text.toString()
+                                            userGender = txtGender.selectedItem.toString()
+                                            userNationality = nationality
+
+                                            updateUserData {
+                                                disableEmail()
+
+                                                dialog.dismiss()
+                                            }
+
+                                        } else {
+                                            showToast("Erro: Código Incorreto")
+                                        }
+                                    }
+                                    .setNegativeButton("Cancelar") { dialog, _ -> dialog.dismiss() }
+                                    .show()
+
+                                alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(this, R.color.green))
+                                alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(ContextCompat.getColor(this, R.color.red))
+
+                                dialog.dismiss()
+                            }
+                        }
+                        builder.setNegativeButton("Cancelar") { dialog, _ ->
                             dialog.dismiss()
                         }
-                    }
-                    builder.setNegativeButton("Cancelar") { dialog, _ ->
-                        dialog.dismiss()
-                    }
 
-                    val dialog: AlertDialog = builder.create()
-                    dialog.show()
+                        val dialog: AlertDialog = builder.create()
+                        dialog.show()
+                    }
                 }
             }
         }

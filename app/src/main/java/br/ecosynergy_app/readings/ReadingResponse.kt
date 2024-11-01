@@ -69,7 +69,7 @@ data class MQ135ReadingVO(
 
 data class FireReadingVO(
     val id: Int,
-    val fire: Boolean, // Only store records where fire is true
+    val fire: Boolean,
     val teamHandle: String,
     val timestamp: String,
 

@@ -1,5 +1,6 @@
 package br.ecosynergy_app.teams
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -42,6 +43,11 @@ class TeamMembersActivity : AppCompatActivity() {
 
     private lateinit var btnBack : ImageButton
 
+    private lateinit var userRepository: UserRepository
+    private lateinit var teamsRepository: TeamsRepository
+    private lateinit var membersRepository: MembersRepository
+    private lateinit var invitesRepository: InvitesRepository
+
     private var membersList: MutableList<Members> = mutableListOf()
     private var memberIds: MutableList<Int> = mutableListOf()
     private var memberRoles: MutableList<String> = mutableListOf()
@@ -57,10 +63,11 @@ class TeamMembersActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_team_members)
 
-        val userRepository = UserRepository(AppDatabase.getDatabase(this).userDao())
-        val teamsRepository = TeamsRepository(AppDatabase.getDatabase(this).teamsDao())
-        val membersRepository = MembersRepository(AppDatabase.getDatabase(this).membersDao())
-        val invitesRepository = InvitesRepository(AppDatabase.getDatabase(applicationContext).invitesDao())
+        val db = AppDatabase.getDatabase(applicationContext)
+        userRepository = UserRepository(db.userDao())
+        teamsRepository = TeamsRepository(db.teamsDao())
+        membersRepository = MembersRepository(db.membersDao())
+        invitesRepository = InvitesRepository(db.invitesDao())
 
         teamsViewModel = ViewModelProvider(
             this,
@@ -105,18 +112,16 @@ class TeamMembersActivity : AppCompatActivity() {
 
         btnAddMember.setOnClickListener {
             val memberIdsString = memberIds.joinToString(",")
-            val addMembersBottomSheet = AddMembersBottomSheet().apply {
-                arguments = Bundle().apply {
-                    putString("TEAM_HANDLE", teamHandle)
-                    putInt("TEAM_ID", teamId)
-                    putString("MEMBER_IDS", memberIdsString)
-                    putInt("USER_ID", userId)
-                    putString("ACCESS_TOKEN", accessToken)
-                }
+            val i = Intent(this, AddMembersActivity::class.java).apply {
+                putExtra("TEAM_HANDLE", teamHandle)
+                putExtra("TEAM_ID", teamId)
+                putExtra("MEMBER_IDS", memberIdsString)
+                putExtra("USER_ID", userId)
+                putExtra("ACCESS_TOKEN", accessToken)
             }
-            addMembersBottomSheet.show(supportFragmentManager, "AddMembersBottomSheet")
-            Log.d("btnAddMember", "MemberIDS: $memberIdsString, $teamId")
+            startActivity(i)
         }
+
     }
 
     private fun observeMembersInfo() {

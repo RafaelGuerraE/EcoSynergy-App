@@ -298,7 +298,7 @@ class EmailConfirmationActivity : AppCompatActivity() {
         })
         currentEditText.setOnKeyListener { _, keyCode, event ->
             if (keyCode == KeyEvent.KEYCODE_DEL && event.action == KeyEvent.ACTION_DOWN && currentEditText.text.isEmpty()) {
-                previousEditText?.requestFocus()  // Move focus back to the previous EditText
+                previousEditText?.requestFocus()
             }
             false
         }

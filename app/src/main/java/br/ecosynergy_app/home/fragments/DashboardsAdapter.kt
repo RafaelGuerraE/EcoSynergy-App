@@ -14,8 +14,8 @@ class DashboardsAdapter(
     private var dashboardList: List<DashboardItem>,
     private val activity: FragmentActivity,
     private val onItemClick: (DashboardItem) -> Unit,
-    private val onCreateTeamClick: () -> Unit,   // Callback for "Create Team"
-    private val onAllTeamsRedirectClick: () -> Unit // Callback for "View All Teams"
+    private val onCreateTeamClick: () -> Unit,
+    private val onAllTeamsRedirectClick: () -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val VIEW_TYPE_TEAM = 1

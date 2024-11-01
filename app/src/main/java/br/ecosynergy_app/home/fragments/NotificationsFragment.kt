@@ -1,8 +1,6 @@
 package br.ecosynergy_app.home.fragments
 
-import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,9 +13,6 @@ import br.ecosynergy_app.R
 import br.ecosynergy_app.room.AppDatabase
 import br.ecosynergy_app.room.notifications.Notifications
 import br.ecosynergy_app.room.notifications.NotificationsRepository
-import br.ecosynergy_app.room.user.UserRepository
-import br.ecosynergy_app.user.NotificationActivity
-import br.ecosynergy_app.user.NotificationAdapter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -32,7 +27,7 @@ class NotificationsFragment : Fragment() {
 
     private lateinit var notificationsRepository: NotificationsRepository
 
-    private var notificationsList = listOf<Notifications>() // Replace with actual data fetching
+    private var notificationsList = listOf<Notifications>()
 
 
     override fun onCreateView(

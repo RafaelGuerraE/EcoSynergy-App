@@ -121,7 +121,6 @@ class AppSettingsActivity : AppCompatActivity() {
         builder.setSingleChoiceItems(options, 1) { dialog, which ->
             val selectedMeasure = options[which]
             txtMeasure.text = selectedMeasure
-            // Save the selected measure if needed
             dialog.dismiss()
         }
         builder.setNegativeButton("Cancelar") { dialog, _ ->
@@ -138,12 +137,10 @@ class AppSettingsActivity : AppCompatActivity() {
         builder.setSingleChoiceItems(options, 0) { dialog, which ->
             val selectedLanguage = options[which]
             txtLanguage.text = selectedLanguage
-            // Save the selected language
             with(sharedPreferences.edit()) {
                 putString("language", selectedLanguage)
                 apply()
             }
-            // Apply language change
             setLocale(languageCodes[which])
             dialog.dismiss()
         }

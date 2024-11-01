@@ -588,7 +588,6 @@ class HomeActivity : AppCompatActivity() {
                     if (fcmRequest != null) {
                         if (fcmRequest.isSuccessful) {
                             Log.d("HomeActivity","UserID: $userId, FCMToken: $fcmToken")
-                           // showToast("FCM Token enviado")
                         } else {
                             showToast("Erro ao Enviar ao Back")
                         }
@@ -620,7 +619,6 @@ class HomeActivity : AppCompatActivity() {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Log.d("HomeActivity", "Notification permission granted")
             } else {
-                // Permission denied, handle accordingly
                 Log.d("HomeActivity", "Notification permission denied")
             }
         }

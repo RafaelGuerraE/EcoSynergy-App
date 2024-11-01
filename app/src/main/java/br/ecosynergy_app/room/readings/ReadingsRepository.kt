@@ -90,7 +90,6 @@ class ReadingsRepository(
                 val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault())
                 val readingDate = dateFormat.parse(reading.timestamp)
 
-                // Check if reading is within the last week
                 if (readingDate != null && readingDate.after(sevenDaysAgo)) {
                     val formattedDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(readingDate)
                     emissionsPerDay[formattedDate] = (emissionsPerDay[formattedDate] ?: 0f) + reading.value
@@ -122,33 +121,26 @@ class ReadingsRepository(
                 set(Calendar.MILLISECOND, 0)
             }.time
 
-            // Format the date for today's readings
             val formattedDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(todayStart)
 
-            // Initialize today's emissions to 0
             emissionsPerDay[formattedDate] = 0f
 
-            // Fetch readings from the database
             val mq7Readings = mq7ReadingsDao.getReadingsByTeamHandle(teamHandle)
             val mq135Readings = mq135ReadingsDao.getReadingsByTeamHandle(teamHandle)
 
-            // Process mq7 readings
             mq7Readings.forEach { reading ->
                 val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault())
                 val readingDate = dateFormat.parse(reading.timestamp)
 
-                // Check if reading is from today
                 if (readingDate != null && isSameDay(readingDate, todayStart)) {
                     emissionsPerDay[formattedDate] = (emissionsPerDay[formattedDate] ?: 0f) + reading.value
                 }
             }
 
-            // Process mq135 readings
             mq135Readings.forEach { reading ->
                 val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault())
                 val readingDate = dateFormat.parse(reading.timestamp)
 
-                // Check if reading is from today
                 if (readingDate != null && isSameDay(readingDate, todayStart)) {
                     emissionsPerDay[formattedDate] = (emissionsPerDay[formattedDate] ?: 0f) + reading.value
                 }

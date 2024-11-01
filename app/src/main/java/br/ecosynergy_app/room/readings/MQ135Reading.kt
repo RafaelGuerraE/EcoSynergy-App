@@ -12,7 +12,8 @@ import br.ecosynergy_app.room.teams.Teams
         entity = Teams::class,
         parentColumns = ["handle"],
         childColumns = ["teamHandle"],
-        onDelete = ForeignKey.CASCADE
+        onDelete = ForeignKey.CASCADE,
+        onUpdate = ForeignKey.CASCADE
     )],
     indices = [Index(value = ["teamHandle"])]
 )

@@ -11,7 +11,7 @@
     <LinearLayout
         android:id="@+id/linearNotification"
         android:layout_width="match_parent"
-        android:layout_height="70dp"
+        android:layout_height="100dp"
         android:orientation="horizontal"
         android:clickable="true"
         android:focusable="true"
@@ -22,6 +22,7 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:src="@drawable/ic_fire"
+            app:tint = "?android:attr/iconTint"
             android:layout_gravity="center"
             android:layout_marginStart="20dp"/>
 
@@ -37,35 +38,44 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:layout_gravity="start"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="2dp">
 
                 <TextView
                     android:id="@+id/txtTitle"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     tools:text="Título"
                     android:textSize="16sp"
                     android:textColor="?android:attr/textColorPrimary"
                     android:textStyle="bold"
                     android:ellipsize="end"
                     android:maxLines="1"
-                    android:layout_marginEnd="5dp"
-                    android:layout_marginBottom="2dp"/>
+                    android:layout_marginEnd="5dp"/>
+
+                <ImageView
+                    android:id="@+id/imgNew"
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    app:tint = "@color/green"
+                    android:src="@drawable/ic_new"/>
+
             </LinearLayout>
 
             <TextView
                 android:id="@+id/txtSubtitle"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="35dp"
                 android:text=""
-                tools:text="Subtítulo"
+                tools:text="Subtítuloaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
                 android:textSize="14sp"
                 android:textColor="?android:attr/textColorSecondary"
                 android:layout_gravity="bottom"
-                android:maxLines="1"
+                android:maxLines="2"
                 android:ellipsize="end"
-                android:layout_marginBottom="2dp"/>
+                android:layout_marginBottom="5dp"/>
 
             <TextView
                 android:id="@+id/txtTime"

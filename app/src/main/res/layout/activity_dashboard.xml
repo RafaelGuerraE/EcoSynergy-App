@@ -73,25 +73,24 @@
 
             <LinearLayout
                 android:id="@+id/btnRefresh"
-                android:layout_width="0dp"
+                android:layout_width="50dp"
                 android:layout_height="match_parent"
-                android:layout_weight="0.5"
                 android:orientation="horizontal"
-                android:layout_gravity="center_vertical"
-                android:gravity="center_vertical"
+                android:layout_gravity="center"
+                android:gravity="center"
                 android:background="@drawable/ripple_bg"
                 android:clickable="true"
                 android:focusable="true"
                 android:paddingStart="10dp"
                 android:paddingEnd="10dp">
+
                 <ProgressBar
                     android:id="@+id/progressRefresh"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:indeterminate="true"
-                    android:indeterminateTint="@android:color/black"
+                    android:indeterminateTint="?android:attr/iconTint"
                     android:visibility="gone"
-                    android:layout_marginEnd="4dp"
                     />
 
                 <ImageView
@@ -100,18 +99,7 @@
                     android:layout_height="20dp"
                     android:src="@drawable/ic_refresh"
                     app:tint="?android:attr/iconTint"
-                    android:layout_marginEnd="4dp"
                     />
-                <TextView
-                    android:id="@+id/txtRefresh"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:maxLines="1"
-                    android:ellipsize="end"
-                    android:text="Atualizar"
-                    android:textSize="14sp"
-                    android:textStyle="bold"/>
             </LinearLayout>
 
         </LinearLayout>

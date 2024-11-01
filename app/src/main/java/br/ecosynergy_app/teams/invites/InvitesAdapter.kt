@@ -1,5 +1,7 @@
 package br.ecosynergy_app.teams.invites
 
+import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -87,41 +89,41 @@ class InvitesAdapter(private val invites: List<Invites>) :
                     diffMillis < TimeUnit.HOURS.toMillis(1) -> {
                         val minutes = TimeUnit.MILLISECONDS.toMinutes(diffMillis)
                         if (minutes == 1L) {
-                            "há 1 minuto"  // Singular form
+                            "há 1 minuto"
                         } else {
-                            "há $minutes minutos"  // Plural form
+                            "há $minutes minutos"
                         }
                     }
                     diffMillis < TimeUnit.DAYS.toMillis(1) -> {
                         val hours = TimeUnit.MILLISECONDS.toHours(diffMillis)
                         if (hours == 1L) {
-                            "1 hora"  // Singular form
+                            "1 hora"
                         } else {
-                            "há $hours horas"  // Plural form
+                            "há $hours horas"
                         }
                     }
                     diffMillis < TimeUnit.DAYS.toMillis(7) -> {
                         val days = TimeUnit.MILLISECONDS.toDays(diffMillis)
                         if (days == 1L) {
-                            "há 1 dia"  // Singular form
+                            "há 1 dia"
                         } else {
-                            "há $days dias"  // Plural form
+                            "há $days dias"
                         }
                     }
                     diffMillis < TimeUnit.DAYS.toMillis(30) -> {
                         val weeks = TimeUnit.MILLISECONDS.toDays(diffMillis) / 7
                         if (weeks == 1L) {
-                            "há 1 semana"  // Singular form
+                            "há 1 semana"
                         } else {
-                            "há $weeks semanas"  // Plural form
+                            "há $weeks semanas"
                         }
                     }
                     else -> {
                         val months = TimeUnit.MILLISECONDS.toDays(diffMillis) / 30
                         if (months == 1L) {
-                            "há 1 mês"  // Singular form
+                            "há 1 mês"
                         } else {
-                            "há $months meses"  // Plural form
+                            "há $months meses"
                         }
                     }
                 }
@@ -153,11 +155,18 @@ class InvitesAdapter(private val invites: List<Invites>) :
             alertDialog.show()
         }
 
+        private fun getThemeColor(attrResId: Int): Int {
+            val typedValue = TypedValue()
+            val theme = itemView.context.theme
+            theme.resolveAttribute(attrResId, typedValue, true)
+            return typedValue.data
+        }
+
 
         private fun setIconTint(status: String) {
             val color = when (status) {
                 "ACCEPTED" -> R.color.greenDark
-                "PENDING" -> R.color.black
+                "PENDING" -> getThemeColor(android.R.attr.iconTint)
                 "DECLINED" -> R.color.red
                 else -> R.color.black
             }

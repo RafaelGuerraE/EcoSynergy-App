@@ -64,7 +64,6 @@ class DashboardActivity : AppCompatActivity() {
     private lateinit var btnRefresh: LinearLayout
     private lateinit var progressRefresh: ProgressBar
     private lateinit var imgRefresh: ImageView
-    private lateinit var txtRefresh: TextView
 
     private var teamId: Int = 0
     private var teamHandle: String = ""
@@ -139,7 +138,6 @@ class DashboardActivity : AppCompatActivity() {
         btnRefresh = findViewById(R.id.btnRefresh)
         progressRefresh = findViewById(R.id.progressRefresh)
         imgRefresh = findViewById(R.id.imgRefresh)
-        txtRefresh = findViewById(R.id.txtRefresh)
 
         txtDate = findViewById(R.id.txtDate)
         txtGoal = findViewById(R.id.txtGoal)
@@ -185,12 +183,10 @@ class DashboardActivity : AppCompatActivity() {
             if (!refresh) {
                 imgRefresh.visibility = View.GONE
                 progressRefresh.visibility = View.VISIBLE
-                txtRefresh.text = "Atualizando"
                 refresh = true
             } else {
                 imgRefresh.visibility = View.VISIBLE
                 progressRefresh.visibility = View.GONE
-                txtRefresh.text = "Atualizar"
                 refresh = false
             }
         }

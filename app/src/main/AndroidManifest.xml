@@ -24,13 +24,16 @@
         android:theme="@style/Base.Theme.EcoSynergyApp"
         tools:targetApi="31">
         <activity
-            android:name=".user.NotificationActivity"
+            android:name=".home.fragments.NotificationActivity"
             android:exported="false" />
         <activity
             android:name=".teams.TeamGoalsActivity"
             android:exported="false" />
         <activity
             android:name=".teams.TeamInvitesActivity"
+            android:exported="false" />
+        <activity
+            android:name=".teams.AddMembersActivity"
             android:exported="false" />
         <activity
             android:name=".teams.EditTeamGoalsBottomSheet"

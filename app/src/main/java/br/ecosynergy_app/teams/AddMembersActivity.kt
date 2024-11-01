@@ -2,10 +2,9 @@ package br.ecosynergy_app.teams
 
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.ImageButton
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,12 +22,10 @@ import br.ecosynergy_app.teams.viewmodel.TeamsViewModelFactory
 import br.ecosynergy_app.user.viewmodel.UserViewModel
 import br.ecosynergy_app.user.viewmodel.UserViewModelFactory
 import com.facebook.shimmer.ShimmerFrameLayout
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 
-class AddMembersBottomSheet : BottomSheetDialogFragment() {
+class AddMembersActivity : AppCompatActivity() {
 
     private lateinit var btnClose: ImageButton
     private lateinit var txtMember: TextInputEditText
@@ -43,6 +40,11 @@ class AddMembersBottomSheet : BottomSheetDialogFragment() {
 
     private lateinit var swipeRefresh: SwipeRefreshLayout
 
+    private lateinit var userRepository: UserRepository
+    private lateinit var teamsRepository: TeamsRepository
+    private lateinit var membersRepository: MembersRepository
+    private lateinit var invitesRepository: InvitesRepository
+
     private var accessToken: String = ""
     private var teamId: Int = 0
     private var teamHandle: String = ""
@@ -53,50 +55,55 @@ class AddMembersBottomSheet : BottomSheetDialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            teamHandle = it.getString("TEAM_HANDLE").toString()
-            teamId = it.getInt("TEAM_ID")
-            val memberIdsString = it.getString("MEMBER_IDS") ?: ""
-            memberIds = ArrayList(memberIdsString.split(","))
-            accessToken = it.getString("ACCESS_TOKEN", "")
-        }
-        Log.d("AddMembers", "MemberIDS in onCreate: $memberIds, $teamHandle, $teamId")
-    }
+        setContentView(R.layout.activity_add_members)
 
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_addmembers_bottom_sheet, container, false)
-
-        val userRepository = UserRepository(AppDatabase.getDatabase(requireContext()).userDao())
-        val teamsRepository = TeamsRepository(AppDatabase.getDatabase(requireContext()).teamsDao())
-        val membersRepository =
-            MembersRepository(AppDatabase.getDatabase(requireContext()).membersDao())
-        val invitesRepository = InvitesRepository(AppDatabase.getDatabase(requireContext()).invitesDao())
+        val db = AppDatabase.getDatabase(applicationContext)
+        userRepository = UserRepository(db.userDao())
+        teamsRepository = TeamsRepository(db.teamsDao())
+        membersRepository = MembersRepository(db.membersDao())
+        invitesRepository = InvitesRepository(db.invitesDao())
 
         teamsViewModel = ViewModelProvider(
-            requireActivity(),
+            this,
             TeamsViewModelFactory(RetrofitClient.teamsService, teamsRepository, RetrofitClient.invitesService, membersRepository, invitesRepository)
         )[TeamsViewModel::class.java]
+
         userViewModel = ViewModelProvider(
-            requireActivity(),
+            this,
             UserViewModelFactory(RetrofitClient.userService, userRepository)
         )[UserViewModel::class.java]
 
-        btnClose = view.findViewById(R.id.btnClose)
-
-        txtMember = view.findViewById(R.id.txtMember)
-        btnSearch = view.findViewById(R.id.btnSearch)
-
-        shimmerUsers = view.findViewById(R.id.shimmerUsers)
-        recycleUsers = view.findViewById(R.id.recycleUsers)
+        btnClose = findViewById(R.id.btnClose)
+        txtMember = findViewById(R.id.txtMember)
+        btnSearch = findViewById(R.id.btnSearch)
+        shimmerUsers = findViewById(R.id.shimmerUsers)
+        recycleUsers = findViewById(R.id.recycleUsers)
 
         shimmerUsers.visibility = View.GONE
         recycleUsers.visibility = View.GONE
 
-        recycleUsers.layoutManager = LinearLayoutManager(requireContext())
+        intent?.let {
+            teamHandle = it.getStringExtra("TEAM_HANDLE") ?: ""
+            teamId = it.getIntExtra("TEAM_ID", 0)
+            val memberIdsString = it.getStringExtra("MEMBER_IDS") ?: ""
+            memberIds = ArrayList(memberIdsString.split(","))
+            accessToken = it.getStringExtra("ACCESS_TOKEN") ?: ""
+        }
+
+        setupRecyclerView()
+
+        btnClose.setOnClickListener {
+            finish()
+        }
+
+        btnSearch.setOnClickListener {
+            searchUser(txtMember.text.toString(), accessToken)
+        }
+    }
+
+
+    private fun setupRecyclerView() {
+        recycleUsers.layoutManager = LinearLayoutManager(this)
         usersAdapter = UsersAdapter(
             mutableListOf(),
             teamId,
@@ -106,38 +113,17 @@ class AddMembersBottomSheet : BottomSheetDialogFragment() {
             accessToken,
             userId,
             username,
-            requireActivity()
+            this
         )
         recycleUsers.adapter = usersAdapter
 
-        Log.d("AddMembers", "MemberIDS in onCreateView: $memberIds, $teamHandle, $teamId")
-
-        return view
+        Log.d("AddMembersActivity", "MemberIDs in setupRecyclerView: $memberIds, $teamHandle, $teamId")
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        val bottomSheet =
-            dialog?.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
-        bottomSheet?.let {
-            val behavior = BottomSheetBehavior.from(it)
-            behavior.peekHeight = 2000
-        }
-
-        btnClose.setOnClickListener {
-            parentFragmentManager.setFragmentResult("requestKey", Bundle())
-            dismiss()
-        }
-
-        btnSearch.setOnClickListener {
-            searchUser(txtMember.text.toString(), accessToken)
-        }
-    }
 
     private fun searchUser(username: String, accessToken: String) {
         userViewModel.searchUser(username, accessToken)
-        userViewModel.users.observe(viewLifecycleOwner) { result ->
+        userViewModel.users.observe(this) { result ->
             result.onSuccess { usersList ->
                 shimmerUsers.visibility = View.VISIBLE
                 recycleUsers.visibility = View.GONE
@@ -151,7 +137,7 @@ class AddMembersBottomSheet : BottomSheetDialogFragment() {
                     accessToken,
                     userId,
                     username,
-                    requireActivity()
+                    this
                 )
                 recycleUsers.adapter = usersAdapter
 
@@ -163,7 +149,7 @@ class AddMembersBottomSheet : BottomSheetDialogFragment() {
                 }
             }.onFailure { error ->
                 error.printStackTrace()
-                Log.d("TeamOverviewFragment", "User Result Failed: ${error.message}")
+                Log.d("AddMembersActivity", "User Result Failed: ${error.message}")
                 shimmerUsers.visibility = View.GONE
                 recycleUsers.visibility = View.GONE
                 showSnackBar("ERRO: Carregar usuários", "FECHAR", R.color.red)
@@ -172,12 +158,12 @@ class AddMembersBottomSheet : BottomSheetDialogFragment() {
     }
 
     private fun showSnackBar(message: String, action: String, bgTint: Int) {
-        val rootView = requireActivity().findViewById<View>(android.R.id.content)
+        val rootView = findViewById<View>(android.R.id.content)
         val snackBar = Snackbar.make(rootView, message, Snackbar.LENGTH_SHORT)
             .setAction(action) {}
-        snackBar.setBackgroundTint(ContextCompat.getColor(requireContext(), bgTint))
-        snackBar.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
-        snackBar.setActionTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+        snackBar.setBackgroundTint(ContextCompat.getColor(this, bgTint))
+        snackBar.setTextColor(ContextCompat.getColor(this, R.color.white))
+        snackBar.setActionTextColor(ContextCompat.getColor(this, R.color.white))
         snackBar.show()
     }
 }

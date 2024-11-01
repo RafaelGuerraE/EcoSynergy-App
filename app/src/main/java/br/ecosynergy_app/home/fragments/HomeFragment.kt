@@ -1,9 +1,7 @@
 package br.ecosynergy_app.home.fragments
 
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -23,26 +21,18 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import br.ecosynergy_app.R
 import br.ecosynergy_app.home.HomeActivity
 import br.ecosynergy_app.readings.ReadingsViewModel
-import br.ecosynergy_app.room.AppDatabase
-import br.ecosynergy_app.room.readings.ReadingsRepository
 import br.ecosynergy_app.teams.CreateTeamActivity
 import br.ecosynergy_app.teams.DashboardActivity
 import br.ecosynergy_app.teams.viewmodel.TeamsViewModel
 import br.ecosynergy_app.user.viewmodel.UserViewModel
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.github.mikephil.charting.charts.LineChart
-import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
-import com.github.mikephil.charting.data.PieData
-import com.github.mikephil.charting.data.PieDataSet
-import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.formatter.DefaultValueFormatter
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
-import com.github.mikephil.charting.formatter.ValueFormatter
-import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -283,7 +273,7 @@ class HomeFragment : Fragment() {
 
             for (i in 0..6) {
                 calendar.time = Date()
-                calendar.add(Calendar.DAY_OF_YEAR, -6 + i) // Adjusting to get the correct date
+                calendar.add(Calendar.DAY_OF_YEAR, -6 + i)
                 dateLabels.add(dateFormat.format(calendar.time))
             }
 

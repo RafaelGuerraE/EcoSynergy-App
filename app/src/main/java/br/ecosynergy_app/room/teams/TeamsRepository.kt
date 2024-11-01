@@ -12,7 +12,7 @@ class TeamsRepository(private val teamsDao: TeamsDao) {
         teamsDao.deleteAllTeams()
     }
 
-    fun getAllTeams(): Flow<List<Teams>> {  // Return Flow now
+    fun getAllTeams(): Flow<List<Teams>> {
         return teamsDao.getAllTeams()
     }
 

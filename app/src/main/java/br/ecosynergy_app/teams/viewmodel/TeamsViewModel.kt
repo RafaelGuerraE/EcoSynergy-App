@@ -393,7 +393,6 @@ class TeamsViewModel(
                 updatedTeams.forEach { team ->
                     val teamEntity = team.toTeam()
                     teamsRepository.insertOrUpdateTeam(teamEntity)
-                    //findInvitesByTeam(team.id, accessToken)
                     getMembersById(team.members, accessToken, team.id)
                     Log.d("TeamsViewModel", "Members insertion completed for Team: ${team.id}")
                 }
@@ -476,7 +475,6 @@ class TeamsViewModel(
                 )
 
                 membersRepository.insertMember(member)
-                //Log.d("TeamsViewModel", "Member inserted in DB: $member of TeamID: $teamId")
             } catch (e: HttpException) {
                 Log.e("TeamsViewModel", "HTTP error during getUsersByIds", e)
                 _members.value = Result.failure(e)

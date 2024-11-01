@@ -196,13 +196,11 @@ class LoginActivity : AppCompatActivity() {
         val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view.windowToken, 0)
 
-        // Show loading indicator
         loadingProgressBar.visibility = View.VISIBLE
         overlayView.visibility = View.VISIBLE
 
         val loginRequest = LoginRequest(username, password)
 
-        // Trigger login attempt
         userViewModel.loginUser(loginRequest) {
 
             userViewModel.loginResult.observe(this) { result ->
@@ -228,11 +226,9 @@ class LoginActivity : AppCompatActivity() {
                                 }
                             }
                         }
-                        // Remove observer after success
                         userViewModel.user.removeObservers(this)
                     }
                 }.onFailure { error ->
-                    // Hide loading indicator
                     loadingProgressBar.visibility = View.GONE
                     overlayView.visibility = View.GONE
 
@@ -242,7 +238,6 @@ class LoginActivity : AppCompatActivity() {
                     txtPassword.text = null
                     txtEntry.requestFocus()
                 }
-                // Remove observer after receiving a result
                 userViewModel.loginResult.removeObservers(this)
             }
         }
