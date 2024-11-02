@@ -137,7 +137,7 @@
             android:layout_height="25dp"
             android:layout_marginStart="22dp"
             android:contentDescription="Appearance"
-            android:src="@drawable/ic_teamsfull"
+            android:src="@drawable/ic_teams_filled"
             app:tint="?android:attr/iconTint"/>
 
         <TextView

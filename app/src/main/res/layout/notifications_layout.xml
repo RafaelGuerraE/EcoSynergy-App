@@ -19,20 +19,23 @@
 
         <ImageView
             android:id="@+id/imgIcon"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
             android:src="@drawable/ic_fire"
             app:tint = "?android:attr/iconTint"
-            android:layout_gravity="center"
+            android:layout_gravity="top"
+            android:layout_marginTop="10dp"
             android:layout_marginStart="20dp"/>
 
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:layout_gravity="center"
             android:orientation="vertical"
             android:layout_marginEnd="15dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
             android:layout_marginStart="15dp">
 
             <LinearLayout

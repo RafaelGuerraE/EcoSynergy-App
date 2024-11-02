@@ -27,4 +27,7 @@ interface NotificationsDao {
 
     @Query("SELECT * FROM notifications")
     suspend fun getAllNotifications(): List<Notifications>
+
+    @Query("UPDATE notifications SET read = 1 WHERE id = :notificationId")
+    suspend fun markAsRead(notificationId: Int)
 }

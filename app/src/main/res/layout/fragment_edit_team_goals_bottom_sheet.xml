@@ -188,13 +188,15 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp">
 
-                    <Button
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnConfirm"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="60dp"
                         android:text="Confirmar"
-                        style="@style/CustomButtonStyle"
-                        android:textStyle="bold"/>
+                        android:textStyle="bold"
+                        android:backgroundTint="@color/green"
+                        android:textSize="16sp"
+                        app:rippleColor="?attr/colorControlHighlight"/>
 
                     <ProgressBar
                         android:id="@+id/progressBarConfirm"

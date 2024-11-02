@@ -1,6 +1,7 @@
 package br.ecosynergy_app.home.fragments
 
 import android.content.Intent
+import android.graphics.Typeface
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,12 +16,13 @@ import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 class NotificationAdapter(
-    private var notifications: List<Notifications>,
+    private var notifications: MutableList<Notifications>,
+    private val onNotificationAccessed: (Int) -> Unit
 ) : RecyclerView.Adapter<NotificationAdapter.NotificationViewHolder>() {
 
-    private var notificationsList: List<Notifications> = notifications.sortedByDescending {
+    var notificationsList: MutableList<Notifications> = notifications.sortedByDescending {
         SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()).parse(it.timestamp)?.time
-    }
+    }.toMutableList()
 
     inner class NotificationViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val imgIcon: ImageView = itemView.findViewById(R.id.imgIcon)
@@ -35,6 +37,14 @@ class NotificationAdapter(
             txtSubtitle.text = notification.subtitle
             txtTime.text = getDisplayTime(notification.timestamp)
 
+            if (notification.read) {
+                imgNew.visibility = View.GONE
+                txtTitle.setTypeface(txtTitle.typeface, Typeface.NORMAL)
+            } else {
+                imgNew.visibility = View.VISIBLE
+                txtTitle.setTypeface(txtTitle.typeface, Typeface.BOLD)
+            }
+
             when (notification.type) {
                 "fire" -> imgIcon.setImageResource(R.drawable.ic_fire)
                 "invite" -> imgIcon.setImageResource(R.drawable.ic_invite)
@@ -43,8 +53,17 @@ class NotificationAdapter(
             }
 
             linearNotification.setOnClickListener {
+                if (!notification.read) {
+                    onNotificationAccessed(notification.id)
+                }
+
                 val context = itemView.context
                 val i = Intent(context, NotificationActivity::class.java)
+                i.apply {
+                    putExtra("TYPE", notification.type)
+                    putExtra("TEAM_ID", notification.teamId)
+                    putExtra("INVITE_ID", notification.inviteId)
+                }
                 context.startActivity(i)
             }
         }
@@ -69,7 +88,7 @@ class NotificationAdapter(
                     diffMillis < TimeUnit.DAYS.toMillis(1) -> {
                         val hours = TimeUnit.MILLISECONDS.toHours(diffMillis)
                         if (hours == 1L) {
-                            "1 hora"
+                            "há 1 hora"
                         } else {
                             "há $hours horas"
                         }
@@ -116,10 +135,10 @@ class NotificationAdapter(
     override fun getItemCount(): Int = notificationsList.size
 
     fun updateData(newNotifications: List<Notifications>) {
-        notifications = newNotifications
-        notificationsList = notifications.sortedByDescending {
+        notificationsList.clear()
+        notificationsList.addAll(newNotifications.sortedByDescending {
             SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()).parse(it.timestamp)?.time
-        }
+        })
         notifyDataSetChanged()
     }
 }

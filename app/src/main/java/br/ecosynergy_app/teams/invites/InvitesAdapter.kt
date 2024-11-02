@@ -1,6 +1,5 @@
 package br.ecosynergy_app.teams.invites
 
-import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -97,7 +96,7 @@ class InvitesAdapter(private val invites: List<Invites>) :
                     diffMillis < TimeUnit.DAYS.toMillis(1) -> {
                         val hours = TimeUnit.MILLISECONDS.toHours(diffMillis)
                         if (hours == 1L) {
-                            "1 hora"
+                            "há 1 hora"
                         } else {
                             "há $hours horas"
                         }
@@ -155,22 +154,25 @@ class InvitesAdapter(private val invites: List<Invites>) :
             alertDialog.show()
         }
 
-        private fun getThemeColor(attrResId: Int): Int {
+        private fun getThemeColor(attrResId: Int, defaultColorRes: Int): Int {
             val typedValue = TypedValue()
             val theme = itemView.context.theme
-            theme.resolveAttribute(attrResId, typedValue, true)
-            return typedValue.data
+            return if (theme.resolveAttribute(attrResId, typedValue, true)) {
+                typedValue.data
+            } else {
+                itemView.context.getColor(defaultColorRes)
+            }
         }
-
 
         private fun setIconTint(status: String) {
             val color = when (status) {
-                "ACCEPTED" -> R.color.greenDark
-                "PENDING" -> getThemeColor(android.R.attr.iconTint)
-                "DECLINED" -> R.color.red
-                else -> R.color.black
+                "ACCEPTED" -> itemView.context.getColor(R.color.greenDark)
+                "PENDING" -> getThemeColor(android.R.attr.colorAccent, R.color.gray)
+                "DECLINED" -> itemView.context.getColor(R.color.red)
+                else -> itemView.context.getColor(R.color.black)
             }
-            imgStatus.setColorFilter(itemView.context.getColor(color), android.graphics.PorterDuff.Mode.SRC_IN)
+            imgStatus.setColorFilter(color, android.graphics.PorterDuff.Mode.SRC_IN)
         }
+
     }
 }

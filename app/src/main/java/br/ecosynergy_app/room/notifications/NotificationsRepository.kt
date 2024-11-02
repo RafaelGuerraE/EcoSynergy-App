@@ -25,4 +25,8 @@ class NotificationsRepository(private val notificationsDao: NotificationsDao) {
     suspend fun getAllNotifications(): List<Notifications>{
         return notificationsDao.getAllNotifications()
     }
+
+    suspend fun markAsRead(notificationId: Int) {
+        notificationsDao.markAsRead(notificationId)
+    }
 }

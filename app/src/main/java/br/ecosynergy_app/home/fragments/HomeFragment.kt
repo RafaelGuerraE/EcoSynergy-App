@@ -11,6 +11,7 @@ import android.widget.ArrayAdapter
 import android.widget.LinearLayout
 import android.widget.Spinner
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -71,6 +72,7 @@ class HomeFragment : Fragment() {
     private var selectedTeamHandle: String = ""
 
     private var teamHandles: List<String> = emptyList()
+    private var isHandles: Boolean = false
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -137,10 +139,16 @@ class HomeFragment : Fragment() {
         observeTeamsData()
 
         spinnerTeam.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+            override fun onItemSelected(
+                parent: AdapterView<*>,
+                view: View,
+                position: Int,
+                id: Long
+            ) {
                 selectedTeamHandle = parent.getItemAtPosition(position) as String
-                setupTeamsChart(selectedTeamHandle)
+                setupTeamsChart(selectedTeamHandle, isHandles)
             }
+
             override fun onNothingSelected(parent: AdapterView<*>) {}
         }
     }
@@ -173,7 +181,7 @@ class HomeFragment : Fragment() {
                     ArrayAdapter(
                         requireContext(),
                         android.R.layout.simple_spinner_dropdown_item,
-                        listOf("Não há equipe")
+                        listOf("Não há equipes")
                     )
                 } else {
                     ArrayAdapter(
@@ -187,16 +195,21 @@ class HomeFragment : Fragment() {
                     spinnerTeam.isClickable = false
                     spinnerTeam.isEnabled = false
 
+                    isHandles = false
+
                     txtAlert.visibility = View.VISIBLE
                     linearTotal.visibility = View.GONE
+                    linearTeamChart.visibility = View.GONE
 
                 } else {
                     spinnerTeam.isClickable = true
                     spinnerTeam.isEnabled = true
 
+                    isHandles = true
 
                     txtAlert.visibility = View.GONE
                     linearTotal.visibility = View.VISIBLE
+                    linearTeamChart.visibility = View.VISIBLE
                 }
 
                 spinnerTeam.adapter = teamsArrayAdapter
@@ -226,9 +239,9 @@ class HomeFragment : Fragment() {
                             teamsViewModel.findInvitesByTeam(id, accessToken)
                         }
 
-                        val teamHandles = teamData.map {it.handle}
-                        fetchReadingsData(teamHandles, accessToken){
-                            setupTeamsChart(selectedTeamHandle)
+                        val teamHandles = teamData.map { it.handle }
+                        fetchReadingsData(teamHandles, accessToken) {
+                            setupTeamsChart(selectedTeamHandle, isHandles)
                         }
 
                     }
@@ -238,7 +251,11 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun fetchReadingsData(listTeamHandles: List<String>, accessToken: String, onComplete: () -> Unit) {
+    private fun fetchReadingsData(
+        listTeamHandles: List<String>,
+        accessToken: String,
+        onComplete: () -> Unit
+    ) {
         for (teamHandle in listTeamHandles) {
             readingsViewModel.updateMQ7Readings(teamHandle, accessToken)
             readingsViewModel.updateMQ135Readings(teamHandle, accessToken)
@@ -256,83 +273,92 @@ class HomeFragment : Fragment() {
     }
 
 
-    private fun setupTeamsChart(teamHandle: String) {
-        shimmerTeams.animate().alpha(1f).setDuration(100).withEndAction {
-            shimmerTeams.startShimmer()
-            shimmerTeams.visibility = View.VISIBLE
-            teamsChart.visibility = View.GONE
-            teamsChart.animate().alpha(0f).setDuration(100)
-        }
-
-        val dateLabels = mutableListOf<String>()
-        val calendar = Calendar.getInstance()
-        val dateFormat = SimpleDateFormat("dd/MM", Locale.getDefault())
-
-        readingsViewModel.getAggregatedReadingsForLastWeek(teamHandle) {
-            val emissionsData = readingsViewModel.aggregatedReadingsForLastWeek.value
-
-            for (i in 0..6) {
-                calendar.time = Date()
-                calendar.add(Calendar.DAY_OF_YEAR, -6 + i)
-                dateLabels.add(dateFormat.format(calendar.time))
+    private fun setupTeamsChart(teamHandle: String, isHandles: Boolean) {
+        if (!isHandles) {
+            showToast("Não existem equipes")
+        } else {
+            shimmerTeams.animate().alpha(1f).setDuration(100).withEndAction {
+                shimmerTeams.startShimmer()
+                shimmerTeams.visibility = View.VISIBLE
+                teamsChart.visibility = View.GONE
+                teamsChart.animate().alpha(0f).setDuration(100)
             }
 
-            val lineEntries = mutableListOf<Entry>()
-            val tempCalendar = Calendar.getInstance()
+            val dateLabels = mutableListOf<String>()
+            val calendar = Calendar.getInstance()
+            val dateFormat = SimpleDateFormat("dd/MM", Locale.getDefault())
 
-            for (i in 0 until 7) {
-                tempCalendar.time = Date()
-                tempCalendar.add(Calendar.DAY_OF_YEAR, -6 + i)
+            readingsViewModel.getAggregatedReadingsForLastWeek(teamHandle) {
+                val emissionsData = readingsViewModel.aggregatedReadingsForLastWeek.value
 
-                val dateKey = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(tempCalendar.time)
-                val value = emissionsData?.get(dateKey) ?: 0f
+                for (i in 0..6) {
+                    calendar.time = Date()
+                    calendar.add(Calendar.DAY_OF_YEAR, -6 + i)
+                    dateLabels.add(dateFormat.format(calendar.time))
+                }
 
-                lineEntries.add(Entry(i.toFloat(), value))
-            }
+                val lineEntries = mutableListOf<Entry>()
+                val tempCalendar = Calendar.getInstance()
 
-            val lineDataSet = LineDataSet(lineEntries, "Total de Emissões").apply {
-                color = ContextCompat.getColor(requireContext(), R.color.blue)
-                valueTextColor = getThemeColor(android.R.attr.textColorPrimary)
-                valueTextSize = 10f
-                setDrawValues(true)
-                lineWidth = 3f
-                setDrawFilled(true)
-                setDrawCircles(true)
-                fillColor = ContextCompat.getColor(requireContext(), R.color.blue_50)
-                setCircleColor(ContextCompat.getColor(requireContext(), R.color.blue))
-                circleRadius = 5f
-                valueFormatter = DefaultValueFormatter(0)
-            }
+                for (i in 0 until 7) {
+                    tempCalendar.time = Date()
+                    tempCalendar.add(Calendar.DAY_OF_YEAR, -6 + i)
 
-            teamsChart.xAxis.apply {
-                position = XAxis.XAxisPosition.BOTTOM
-                setDrawGridLines(false)
-                textColor = getThemeColor(android.R.attr.textColorPrimary)
-                granularity = 1f
-                labelCount = dateLabels.size
-                valueFormatter = IndexAxisValueFormatter(dateLabels)
-            }
+                    val dateKey = SimpleDateFormat(
+                        "yyyy-MM-dd",
+                        Locale.getDefault()
+                    ).format(tempCalendar.time)
+                    val value = emissionsData?.get(dateKey) ?: 0f
 
-            teamsChart.axisLeft.apply {
-                setDrawGridLines(false)
-                textColor = getThemeColor(android.R.attr.textColorPrimary)
-            }
-            teamsChart.axisRight.isEnabled = false
-            teamsChart.description.isEnabled = false
-            teamsChart.legend.textColor = getThemeColor(android.R.attr.textColorPrimary)
+                    lineEntries.add(Entry(i.toFloat(), value))
+                }
 
-            val lineData = LineData(lineDataSet)
-            teamsChart.data = lineData
-            teamsChart.invalidate()
+                val lineDataSet = LineDataSet(lineEntries, "Total de Emissões").apply {
+                    color = ContextCompat.getColor(requireContext(), R.color.blue)
+                    valueTextColor = getThemeColor(android.R.attr.textColorPrimary)
+                    valueTextSize = 10f
+                    setDrawValues(true)
+                    lineWidth = 3f
+                    setDrawFilled(true)
+                    setDrawCircles(true)
+                    fillColor = ContextCompat.getColor(requireContext(), R.color.blue_50)
+                    setCircleColor(ContextCompat.getColor(requireContext(), R.color.blue))
+                    circleRadius = 5f
+                    valueFormatter = DefaultValueFormatter(0)
+                }
 
-            shimmerTeams.animate().alpha(0f).setDuration(300).withEndAction {
-                shimmerTeams.stopShimmer()
-                shimmerTeams.visibility = View.GONE
-                teamsChart.visibility = View.VISIBLE
-                teamsChart.animate().alpha(1f).setDuration(300)
+                teamsChart.xAxis.apply {
+                    position = XAxis.XAxisPosition.BOTTOM
+                    setDrawGridLines(false)
+                    textColor = getThemeColor(android.R.attr.textColorPrimary)
+                    granularity = 1f
+                    labelCount = dateLabels.size
+                    valueFormatter = IndexAxisValueFormatter(dateLabels)
+                }
+
+                teamsChart.axisLeft.apply {
+                    setDrawGridLines(false)
+                    textColor = getThemeColor(android.R.attr.textColorPrimary)
+                }
+                teamsChart.axisRight.isEnabled = false
+                teamsChart.description.isEnabled = false
+                teamsChart.legend.textColor = getThemeColor(android.R.attr.textColorPrimary)
+
+                val lineData = LineData(lineDataSet)
+                teamsChart.data = lineData
+                teamsChart.invalidate()
+
+                shimmerTeams.animate().alpha(0f).setDuration(300).withEndAction {
+                    shimmerTeams.stopShimmer()
+                    shimmerTeams.visibility = View.GONE
+                    teamsChart.visibility = View.VISIBLE
+                    teamsChart.animate().alpha(1f).setDuration(300)
+                }
             }
         }
     }
 
-
+    private fun showToast(message: String) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+    }
 }

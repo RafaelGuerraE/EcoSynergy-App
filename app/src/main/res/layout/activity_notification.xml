@@ -20,9 +20,45 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:visibility="visible">
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_marginEnd="15dp"
+            android:layout_marginStart="15dp"
+            android:visibility="gone">
 
+            <ImageView
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:src="@drawable/ic_greetings"
+                android:layout_marginBottom="30dp"
+                app:tint="?android:attr/iconTint"/>
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Seja muito bem-vindo à plataforma Ecosynergy! A Plataforma que irá mudar o monitoramento de emissão de sua indústria"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textAlignment="center"
+                android:layout_marginBottom="20dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Acesse nosso site para mais informações:"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:textAlignment="center"
+                android:layout_marginBottom="10dp"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSiteAccess"
+                android:layout_width="wrap_content"
+                android:layout_height="60dp"
+                android:text="Acessar"
+                android:backgroundTint="@color/green"
+                android:textSize="16sp"
+                app:rippleColor="?attr/colorControlHighlight"/>
 
         </LinearLayout>
 
@@ -31,9 +67,37 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:visibility="visible">
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_marginEnd="15dp"
+            android:layout_marginStart="15dp"
+            android:visibility="gone">
 
+            <ImageView
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:src="@drawable/ic_fire"
+                android:layout_marginBottom="30dp"
+                app:tint="?android:attr/iconTint"/>
 
+            <TextView
+                android:id="@+id/txtFireAlert"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Houve uma detecção de emissão de fogo na equipe @ecosynergyofc às 09:30 de 31/10"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textAlignment="center"
+                android:layout_marginBottom="30dp"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnFireTeamAccess"
+                android:layout_width="wrap_content"
+                android:layout_height="60dp"
+                android:text="Acessar Equipe"
+                android:backgroundTint="@color/green"
+                android:textSize="16sp"
+                app:rippleColor="?attr/colorControlHighlight"/>
 
         </LinearLayout>
 
@@ -42,9 +106,150 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+            android:layout_gravity="top"
+            android:gravity="center"
+            android:layout_marginEnd="15dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginStart="15dp"
             android:visibility="visible">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Status do Convite"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:textColor="?android:attr/textColorPrimary"
+        android:layout_marginBottom="20dp"
+        android:maxLines="1"
+        android:ellipsize="end"
+        />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_marginHorizontal="15dp"
+        android:background="@drawable/no_ripple_bg"
+        android:padding="25dp"
+        android:layout_marginBottom="5dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginBottom="10dp">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/imgRecipient"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:contentDescription="TeamImage"
+                android:src="@drawable/r"/>
+
+            <FrameLayout
+                android:layout_width="43dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp">
+
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_gravity="center"
+                    tools:src="@drawable/ic_invite"
+                    app:tint="?android:attr/iconTint"/>
+
+                <ImageView
+                    android:id="@+id/imgStatus"
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:layout_gravity="bottom|end"
+                    tools:src="@drawable/ic_error"
+                    app:tint="@color/red"/>
+            </FrameLayout>
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/imgSender"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:contentDescription="TeamImage"
+                android:src="@drawable/a"/>
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center"
+            android:gravity="center">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ecosynergy"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:textColor="?android:attr/textColorPrimary"
+                android:layout_marginBottom="10dp"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sistema de Monitoramento Ambiental Sustentável para Indústrias de Pequeno e Médio Porte"
+                android:textSize="14sp"
+                android:textAlignment="center"
+                android:textColor="?android:attr/textColorPrimary"
+                android:layout_marginBottom="15dp"
+                android:maxLines="3"
+                android:ellipsize="end"
+                />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="10dp"
+                >
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/r"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Rafael Guerra"
+                    android:layout_marginStart="5dp"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" te convidou para a equipe"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    />
+
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
 
         </LinearLayout>
 
@@ -55,109 +260,109 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:visibility="gone">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Detalhes do Convite"
-            android:layout_marginStart="15dp"
-            android:layout_marginEnd="15dp"
-            android:textStyle="bold"
-            android:textSize="18sp"
-            android:textColor="?android:attr/textColorPrimary"
-            android:layout_marginTop="15dp"
-            android:layout_marginBottom="20dp"
-            android:maxLines="1"
-            android:ellipsize="end"
-            />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:layout_marginStart="15dp"
-            android:layout_marginEnd="15dp"
-            android:background="@drawable/no_ripple_bg"
-            android:padding="25dp"
-            android:layout_marginBottom="5dp">
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/imgTeam"
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:contentDescription="TeamImage"
-                android:src="@drawable/e"
-                android:background="@drawable/radius_bg"
-                android:scaleType="centerCrop"
-                android:layout_marginBottom="10dp"/>
-
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Detalhes do Convite"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:textColor="?android:attr/textColorPrimary"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="20dp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:layout_gravity="center"
-                android:gravity="center">
+                android:gravity="center"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:background="@drawable/no_ripple_bg"
+                android:padding="25dp"
+                android:layout_marginBottom="5dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Ecosynergy"
-                    android:textStyle="bold"
-                    android:textSize="18sp"
-                    android:textColor="?android:attr/textColorPrimary"
-                    android:layout_marginBottom="10dp"
-                    />
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/imgTeam"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:contentDescription="TeamImage"
+                    android:src="@drawable/e"
+                    android:background="@drawable/radius_bg"
+                    android:scaleType="centerCrop"
+                    android:layout_marginBottom="10dp"/>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Sistema de Monitoramento Ambiental Sustentável para Indústrias de Pequeno e Médio Porte"
-                    android:textSize="14sp"
-                    android:textAlignment="center"
-                    android:textColor="?android:attr/textColorPrimary"
-                    android:layout_marginBottom="15dp"
-                    android:maxLines="3"
-                    android:ellipsize="end"
-                    />
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:layout_marginTop="10dp"
-                    >
+                    android:orientation="vertical"
+                    android:layout_gravity="center"
+                    android:gravity="center">
 
-                    <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/imgUser"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:src="@drawable/r"/>
-
-                    <TextView
-                        android:id="@+id/txtUserFullname"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Rafael Guerra"
-                        android:layout_marginStart="5dp"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
-                        android:maxLines="1"
-                        android:ellipsize="end"
-                        />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text=" te convidou para a equipe"
-                        android:textSize="12sp"
+                        android:text="Ecosynergy"
                         android:textStyle="bold"
-                        android:maxLines="1"
+                        android:textSize="18sp"
+                        android:textColor="?android:attr/textColorPrimary"
+                        android:layout_marginBottom="10dp"
+                        />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Sistema de Monitoramento Ambiental Sustentável para Indústrias de Pequeno e Médio Porte"
+                        android:textSize="14sp"
+                        android:textAlignment="center"
+                        android:textColor="?android:attr/textColorPrimary"
+                        android:layout_marginBottom="15dp"
+                        android:maxLines="3"
                         android:ellipsize="end"
                         />
 
-                </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginTop="10dp"
+                        >
+
+                        <de.hdodenhof.circleimageview.CircleImageView
+                            android:id="@+id/imgUser"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/r"/>
+
+                        <TextView
+                            android:id="@+id/txtUserFullname"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Rafael Guerra"
+                            android:layout_marginStart="5dp"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            android:maxLines="1"
+                            android:ellipsize="end"
+                            />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=" te convidou para a equipe"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            android:maxLines="1"
+                            android:ellipsize="end"
+                            />
+
+                    </LinearLayout>
 
             </LinearLayout>
 

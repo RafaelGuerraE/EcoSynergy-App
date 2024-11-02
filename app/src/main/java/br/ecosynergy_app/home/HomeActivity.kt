@@ -21,7 +21,6 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import br.ecosynergy_app.R
@@ -33,7 +32,6 @@ import br.ecosynergy_app.login.LoginActivity
 import br.ecosynergy_app.readings.ReadingsViewModel
 import br.ecosynergy_app.readings.ReadingsViewModelFactory
 import br.ecosynergy_app.room.AppDatabase
-import br.ecosynergy_app.room.invites.Invites
 import br.ecosynergy_app.room.invites.InvitesRepository
 import br.ecosynergy_app.room.readings.ReadingsRepository
 import br.ecosynergy_app.room.teams.MembersRepository
@@ -53,13 +51,11 @@ import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContentProviderCompat.requireContext
 import br.ecosynergy_app.room.notifications.NotificationsRepository
 
 class HomeActivity : AppCompatActivity() {
@@ -238,7 +234,7 @@ class HomeActivity : AppCompatActivity() {
 
                 R.id.teams -> {
                     replaceFragment(TeamsFragment())
-                    item.setIcon(R.drawable.ic_teamsfull)
+                    item.setIcon(R.drawable.ic_teams_filled)
                     bottomNavView.menu.findItem(R.id.home)?.setIcon(R.drawable.ic_home)
                     bottomNavView.menu.findItem(R.id.notifications)
                         ?.setIcon(R.drawable.ic_notification)
