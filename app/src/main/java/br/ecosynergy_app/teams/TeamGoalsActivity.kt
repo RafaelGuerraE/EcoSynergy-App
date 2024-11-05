@@ -101,7 +101,7 @@ class TeamGoalsActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        teamsViewModel.getTeamById(teamId)
+        teamsViewModel.getTeamByIdFromDB(teamId)
     }
 
     private fun observeTeamInfo() {

@@ -75,7 +75,7 @@ class EmailConfirmationActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_emailconfirmation)
+        setContentView(R.layout.activity_email_confirmation)
 
         loginSp = getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
 

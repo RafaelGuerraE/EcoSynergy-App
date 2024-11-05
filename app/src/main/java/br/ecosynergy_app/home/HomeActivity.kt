@@ -163,11 +163,9 @@ class HomeActivity : AppCompatActivity() {
         Log.d("HomeActivity", "Open: $open")
 
         if (isLoggedIn && !open) {
-            Log.d("HomeActivity", "Passei no UPDATE")
             updateUserInfo {
             }
         } else {
-            Log.d("HomeActivity", "Passei no DISPLAY")
             loginSp.edit().putBoolean("open", false).apply()
         }
 
@@ -305,6 +303,10 @@ class HomeActivity : AppCompatActivity() {
                 fetchReadingsData(listTeamHandles, accessToken)
             }
         }
+    }
+
+    override fun onStart(){
+        super.onStart()
 
         retrieveAndSendFcmToken()
     }

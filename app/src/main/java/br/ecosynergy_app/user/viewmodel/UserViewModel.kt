@@ -223,12 +223,13 @@ class UserViewModel(
         }
     }
 
-    fun getUserById(id: String?, token: String?) {
+    fun getUserById(id: Int, token: String,onComplete: () -> Unit) {
         viewModelScope.launch {
             try {
                 val response = service.getUserById(id, "Bearer $token")
-                Log.d("UserViewModel", "User data fetched successfully: $response")
                 _user.value = Result.success(response)
+
+                onComplete()
             } catch (e: HttpException) {
                 Log.e("UserViewModel", "HTTP error during getUserById", e)
                 _user.value = Result.failure(e)

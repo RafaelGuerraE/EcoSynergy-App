@@ -216,7 +216,7 @@ class EditTeamGoalsBottomSheet : BottomSheetDialogFragment() {
             monthlyGoal,
             annualGoal
         ) {
-            teamsViewModel.getTeamById(teamId)
+            teamsViewModel.getTeamByIdFromDB(teamId)
         }
         teamsViewModel.updateResponse.observe(this) { result ->
             result.onSuccess {

@@ -36,7 +36,7 @@ interface UserService {
 
     @GET("api/user/v1/id/{id}")
     suspend fun getUserById(
-        @Path("id") id: String?,
+        @Path("id") id: Int,
         @Header("Authorization") token: String
     ): UserResponse
 

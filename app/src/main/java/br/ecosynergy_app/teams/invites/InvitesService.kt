@@ -41,7 +41,7 @@ interface InvitesService {
 
     @GET("api/invite/v1/id/{id}")
     suspend fun findInviteById(@Path("id") inviteId:Int,
-                               @Header("Authorization") accessToken: String)
+                               @Header("Authorization") accessToken: String): Response<InviteResponse>
 
     @GET("api/invite/v1/pending/recipient/{recipientId}")
     suspend fun findPendingInvitesByRecipient(@Path("recipientId") recipientId:Int,

@@ -25,9 +25,6 @@ class RecoverPasswordActivity : AppCompatActivity() {
     private lateinit var registerViewModel: SignUpViewModel
     private lateinit var userViewModel: UserViewModel
 
-    private var userUsername: String = ""
-    private var accessToken: String = ""
-
     private lateinit var btnBack: ImageButton
     private lateinit var btnSend: Button
     private lateinit var btnCheck: Button
@@ -69,7 +66,7 @@ class RecoverPasswordActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_recoverpassword)
+        setContentView(R.layout.activity_recover_password)
 
         registerViewModel = ViewModelProvider(
             this,

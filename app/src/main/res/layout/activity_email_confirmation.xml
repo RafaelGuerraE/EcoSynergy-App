@@ -195,7 +195,8 @@
                     app:rippleColor="?attr/colorControlHighlight"
                     android:textSize="16sp"
                     android:textStyle="bold"
-                    android:text="Verificar Código" />
+                    android:text="Verificar Código"
+                    android:backgroundTint="@color/green"/>
 
                 <ProgressBar
                     android:id="@+id/progressBarCheck"

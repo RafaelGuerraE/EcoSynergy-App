@@ -195,6 +195,7 @@
                         android:text="Confirmar"
                         android:textStyle="bold"
                         android:backgroundTint="@color/green"
+                        android:textColor="@color/white"
                         android:textSize="16sp"
                         app:rippleColor="?attr/colorControlHighlight"/>
 

@@ -16,6 +16,7 @@ import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -25,12 +26,17 @@ import br.ecosynergy_app.R
 import br.ecosynergy_app.room.AppDatabase
 import br.ecosynergy_app.room.notifications.Notifications
 import br.ecosynergy_app.room.notifications.NotificationsRepository
+import br.ecosynergy_app.user.viewmodel.UserViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class NotificationsFragment : Fragment() {
+
+    private val userViewModel: UserViewModel  by activityViewModels()
+
+    private var accessToken: String =""
 
     private lateinit var swipeRefresh: SwipeRefreshLayout
     private lateinit var recyclerViewNotifications: RecyclerView
@@ -51,7 +57,6 @@ class NotificationsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_notifications, container, false)
-
         deleteIcon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_delete)
 
         notificationsRepository =
@@ -71,14 +76,17 @@ class NotificationsFragment : Fragment() {
 
         loadingProgressBar.visibility = View.VISIBLE
 
-        setupRecyclerView()
-        setupSwipeRefresh()
-
-        loadNotifications()
+        userViewModel.getUserInfoFromDB {
+            val userInfo = userViewModel.userInfo.value
+            accessToken = userInfo!!.accessToken
+            setupRecyclerView()
+            setupSwipeRefresh()
+            loadNotifications()
+        }
     }
 
     private fun setupRecyclerView() {
-        notificationAdapter = NotificationAdapter(notificationsList) { notificationId ->
+        notificationAdapter = NotificationAdapter(notificationsList, accessToken) { notificationId ->
             lifecycleScope.launch {
                 notificationsRepository.markAsRead(notificationId)
                 val updatedNotifications = notificationsRepository.getAllNotifications()

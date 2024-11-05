@@ -44,6 +44,9 @@ class TeamsViewModel(
     private val _teamResult = MutableLiveData<Result<TeamsResponse>>()
     val teamResult: LiveData<Result<TeamsResponse>> get() = _teamResult
 
+    private val _teamResponse = MutableLiveData<Response<TeamsResponse>>()
+    val teamResponse: LiveData<Response<TeamsResponse>> get() = _teamResponse
+
     private val _updateResponse = MutableLiveData<Result<Response<TeamsResponse>>>()
     val updateResponse: LiveData<Result<Response<TeamsResponse>>> get() = _updateResponse
 
@@ -84,13 +87,6 @@ class TeamsViewModel(
         }
     }
 
-    fun findTeamByHandle(accessToken: String, handle: String) {
-        makeRequest(
-            request = { service.findTeamByHandle("Bearer $accessToken", handle) },
-            onResult = { _teamResult.value = it }
-        )
-    }
-
     fun getMembersByTeamId(teamId: Int) {
         viewModelScope.launch {
             try {
@@ -105,13 +101,6 @@ class TeamsViewModel(
                 _teamsResult.value = Result.failure(e)
             }
         }
-    }
-
-    fun searchTeamByPartialHandle(accessToken: String, handle: String) {
-        makeRequest(
-            request = { service.searchTeamByPartialHandle("Bearer $accessToken", handle) },
-            onResult = { _teamResult.value = it }
-        )
     }
 
     fun editMemberRole(accessToken: String, teamId: Int, userId: Int, request: RoleRequest) {
@@ -134,13 +123,6 @@ class TeamsViewModel(
                 _teamsResult.value = Result.failure(e)
             }
         }
-    }
-
-    fun findTeamById(accessToken: String, id: String) {
-        makeRequest(
-            request = { service.findTeamById("Bearer $accessToken", id) },
-            onResult = { _teamResult.value = it }
-        )
     }
 
     fun createTeam(accessToken: String, request: TeamsRequest, onComplete: () -> Unit) {
@@ -424,7 +406,7 @@ class TeamsViewModel(
         }
     }
 
-    fun getTeamById(teamId: Int) {
+    fun getTeamByIdFromDB(teamId: Int) {
         viewModelScope.launch {
             try {
                 val team = teamsRepository.getTeamById(teamId)
@@ -436,6 +418,37 @@ class TeamsViewModel(
             } catch (e: Exception) {
                 Log.e("TeamsViewModel", "Error while getAllTeamsFromDB", e)
                 _teamsResult.value = Result.failure(e)
+            }
+        }
+    }
+
+    fun getTeamById(teamId: Int, accessToken: String, onComplete: () -> Unit){
+        viewModelScope.launch{
+            try {
+                val response = service.getTeamById(teamId, "Bearer $accessToken")
+
+                if (response.isSuccessful) {
+                    Log.d("TeamsViewModel","Team $teamId was successfully fetched!")
+                    _teamResponse.value = Response.success(response.body())
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    Log.e(
+                        "TeamsViewModel",
+                        "Error during getTeamById: ${response.code()} - $errorBody"
+                    )
+                    _teamResponse.value = Response.error(
+                        response.code(),
+                        errorBody?.toResponseBody("application/json".toMediaTypeOrNull())
+                    )
+                }
+
+                onComplete()
+            }catch (e: HttpException) {
+                Log.e("TeamsViewModel", "HTTP error during findInviteById", e)
+                _deleteResult.value = Result.failure(e)
+            } catch (e: Exception) {
+                Log.e("TeamsViewModel", "Error during findInviteById", e)
+                _deleteResult.value = Result.failure(e)
             }
         }
     }
@@ -641,10 +654,8 @@ class TeamsViewModel(
 
             } catch (e: HttpException) {
                 Log.e("TeamsViewModel", "HTTP error during findInvitesByTeam", e)
-                _deleteResult.value = Result.failure(e)
             } catch (e: Exception) {
                 Log.e("TeamsViewModel", "Error during findInvitesByTeam", e)
-                _deleteResult.value = Result.failure(e)
             }
         }
     }
@@ -657,6 +668,37 @@ class TeamsViewModel(
 
             } catch (e: Exception) {
                 Log.e("TeamsViewModel", "Error during getInvitesByTeam", e)
+                _deleteResult.value = Result.failure(e)
+            }
+        }
+    }
+
+    fun findInviteById(inviteId:Int, accessToken: String, onComplete: () -> Unit){
+        viewModelScope.launch{
+            try {
+                val response = invitesService.findInviteById(inviteId, "Bearer $accessToken")
+
+                if (response.isSuccessful) {
+                    Log.d("TeamsViewModel","Invite $inviteId was successfully fetched!")
+                    _inviteResult.value = Response.success(response.body())
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    Log.e(
+                        "TeamsViewModel",
+                        "Error during findInviteById: ${response.code()} - $errorBody"
+                    )
+                    _inviteResult.value = Response.error(
+                        response.code(),
+                        errorBody?.toResponseBody("application/json".toMediaTypeOrNull())
+                    )
+                }
+
+                onComplete()
+            }catch (e: HttpException) {
+                Log.e("TeamsViewModel", "HTTP error during findInviteById", e)
+                _deleteResult.value = Result.failure(e)
+            } catch (e: Exception) {
+                Log.e("TeamsViewModel", "Error during findInviteById", e)
                 _deleteResult.value = Result.failure(e)
             }
         }

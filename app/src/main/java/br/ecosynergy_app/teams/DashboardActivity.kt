@@ -212,7 +212,7 @@ class DashboardActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         readingsViewModel.getReadingsFromDB(teamHandle)
-        teamsViewModel.getTeamById(teamId)
+        teamsViewModel.getTeamByIdFromDB(teamId)
     }
 
     private fun setupTypesChart() {

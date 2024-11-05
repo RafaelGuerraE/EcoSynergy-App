@@ -181,12 +181,12 @@
 
 
             <ImageButton
-                android:id="@+id/btnClose"
+                android:id="@+id/btnBack"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:contentDescription="CloseButton"
-                android:src="@drawable/ic_close"
+                android:src="@drawable/ic_arrowback"
                 android:scaleType="fitXY"
                 app:tint="?android:attr/iconTint"
                 android:layout_margin="15dp"

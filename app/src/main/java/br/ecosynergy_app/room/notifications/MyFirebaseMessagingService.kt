@@ -36,8 +36,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val title = remoteMessage.data["title"] ?: "No title"
         val body = remoteMessage.data["body"] ?: "No body"
         val type = remoteMessage.data["type"]
-        val inviteId = remoteMessage.data["inviteId"]
-        val teamId = remoteMessage.data["teamId"]
+        val inviteId = remoteMessage.data["inviteId"]?.toInt()
+        val teamId = remoteMessage.data["teamId"]?.toInt()
 
         Log.d("MyFirebaseService", "${remoteMessage.data}")
 
@@ -90,8 +90,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         type: String?,
         title: String,
         body: String,
-        teamId: String?,
-        inviteId: String?
+        teamId: Int?,
+        inviteId: Int?
     ) {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
         val formattedTimestamp = dateFormat.format(Date(System.currentTimeMillis()))

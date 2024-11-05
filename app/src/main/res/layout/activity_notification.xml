@@ -111,7 +111,7 @@
             android:layout_marginEnd="15dp"
             android:layout_marginTop="15dp"
             android:layout_marginStart="15dp"
-            android:visibility="visible">
+            android:visibility="gone">
 
     <TextView
         android:layout_width="wrap_content"
@@ -259,7 +259,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:visibility="gone">
+            android:visibility="visible">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -306,6 +306,7 @@
                     android:gravity="center">
 
                     <TextView
+                            android:id="@+id/txtTeamName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Ecosynergy"
@@ -316,6 +317,7 @@
                         />
 
                     <TextView
+                            android:id="@+id/txtTeamDescription"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Sistema de Monitoramento Ambiental Sustentável para Indústrias de Pequeno e Médio Porte"
@@ -541,5 +543,14 @@
             android:background="?android:attr/colorForeground"/>
 
     </LinearLayout>
+
+    <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:indeterminateTint="@color/green"
+            android:indeterminate="true"
+            android:layout_centerInParent="true"/>
+
 
 </RelativeLayout>
