@@ -52,7 +52,7 @@ class AppSettingsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_appsetings)
+        setContentView(R.layout.activity_app_setings)
 
         val userRepository = UserRepository(AppDatabase.getDatabase(this).userDao())
         userViewModel = ViewModelProvider(this, UserViewModelFactory(RetrofitClient.userService, userRepository))[UserViewModel::class.java]

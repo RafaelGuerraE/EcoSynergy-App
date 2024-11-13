@@ -82,7 +82,6 @@ interface UserService {
 
     @POST("api/token/v1/remove")
     suspend fun removeFCMToken(
-        @Query("userId") userId: Int,
         @Header("Authorization") accessToken: String,
         @Query("platform") platform: String = "ANDROID"
     ): Response<Void>

@@ -627,30 +627,43 @@ class TeamsViewModel(
             try {
                 val response = invitesService.findInvitesByTeam(teamId, "Bearer $accessToken")
 
-                response.forEach { invite ->
-                    val recipientUsername = invitesService.getUserById(
-                        invite.recipientId,
-                        "Bearer $accessToken"
-                    ).username
-                    val senderUsername =
-                        invitesService.getUserById(invite.senderId, "Bearer $accessToken").username
+                if(response.isSuccessful) {
 
-                    val inviteDB = Invites(
-                        id = invite.id,
-                        senderId = invite.senderId,
-                        senderUsername = senderUsername,
-                        recipientId = invite.recipientId,
-                        recipientUsername = recipientUsername,
-                        teamId = invite.teamId,
-                        status = invite.status,
-                        createdAt = invite.createdAt,
-                        updatedAt = invite.updatedAt
-                    )
+                    response.body()?.forEach { invite ->
+                        val recipientUsername = invitesService.getUserById(
+                            invite.recipientId,
+                            "Bearer $accessToken"
+                        ).username
+                        val senderUsername =
+                            invitesService.getUserById(
+                                invite.senderId,
+                                "Bearer $accessToken"
+                            ).username
 
-                    invitesRepository.insertOrUpdateInvite(inviteDB)
+                        val inviteDB = Invites(
+                            id = invite.id,
+                            senderId = invite.senderId,
+                            senderUsername = senderUsername,
+                            recipientId = invite.recipientId,
+                            recipientUsername = recipientUsername,
+                            teamId = invite.teamId,
+                            status = invite.status,
+                            createdAt = invite.createdAt,
+                            updatedAt = invite.updatedAt
+                        )
+
+                        invitesRepository.insertOrUpdateInvite(inviteDB)
+                    }
+
+                    Log.d("TeamsViewModel", "Invites of $teamId were successfully stored")
                 }
-
-                Log.d("TeamsViewModel", "Invites of $teamId were successfully stored")
+                else{
+                    val errorBody = response.errorBody()?.string()
+                    Log.e(
+                        "TeamsViewModel",
+                        "Error during findInvitesByTeam: ${response.code()} - $errorBody"
+                    )
+                }
 
             } catch (e: HttpException) {
                 Log.e("TeamsViewModel", "HTTP error during findInvitesByTeam", e)

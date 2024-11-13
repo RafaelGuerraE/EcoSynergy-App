@@ -21,6 +21,15 @@
         <item>Prefiro não dizer</item>
     </string-array>
 
+    <string-array name="indisponivel">
+        <item>Indisponível</item>
+    </string-array>
+
+    <string-array name="notification_options">
+        <item>Ativado</item>
+        <item>Desativado</item>
+    </string-array>
+
     <string-array name="gender_arrayB">
         <item>Masculino</item>
         <item>Feminino</item>

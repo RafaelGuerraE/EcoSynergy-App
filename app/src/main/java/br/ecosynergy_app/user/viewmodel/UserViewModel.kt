@@ -358,7 +358,7 @@ class UserViewModel(
     fun removeFCMToken(userId: Int, accessToken: String) {
         viewModelScope.launch {
             try {
-                val response = service.removeFCMToken(userId, "Bearer $accessToken")
+                val response = service.removeFCMToken("Bearer $accessToken")
                 if (response.isSuccessful) {
                     Log.d("UserViewModel", "FCM Token removed successfully for userId: $userId")
                 } else {

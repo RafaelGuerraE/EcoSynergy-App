@@ -19,7 +19,7 @@
                 android:layout_height="wrap_content"
             android:orientation="horizontal"
                 android:layout_marginHorizontal="10dp"
-                android:layout_marginVertical="10dp">
+                android:layout_marginVertical="15dp">
 
             <LinearLayout
                     android:layout_width="0dp"
@@ -52,11 +52,12 @@
             <Spinner
                     android:id="@+id/spinnerNotification"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                android:layout_weight="0.3"
+                    android:layout_height="40dp"
+                android:layout_weight="0.4"
                 android:background="@drawable/ripple_bg"
                 android:padding="5dp"
-                android:layout_gravity="center"/>
+                android:layout_gravity="center"
+                android:entries="@array/notification_options"/>
 
         </LinearLayout>
 
@@ -65,7 +66,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_marginHorizontal="10dp"
-                android:layout_marginVertical="10dp">
+                android:layout_marginVertical="15dp">
 
             <LinearLayout
                     android:layout_width="0dp"
@@ -98,11 +99,15 @@
             <Spinner
                     android:id="@+id/spinnerStorage"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.3"
+                    android:layout_height="40dp"
+                    android:layout_weight="0.4"
                     android:background="@drawable/ripple_bg"
                     android:padding="5dp"
-                    android:layout_gravity="center"/>
+                    android:layout_gravity="center"
+                    android:entries="@array/indisponivel"
+                    android:clickable="false"
+                    android:focusable="false"
+                    />
 
         </LinearLayout>
 

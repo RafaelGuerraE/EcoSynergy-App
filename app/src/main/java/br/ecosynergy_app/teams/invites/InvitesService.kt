@@ -19,7 +19,7 @@ interface InvitesService {
 
     @GET("api/invite/v1/team/{teamId}")
     suspend fun findInvitesByTeam(@Path("teamId") teamId: Int,
-                                  @Header("Authorization") accessToken: String): List<InviteResponse>
+                                  @Header("Authorization") accessToken: String): Response<List<InviteResponse>>
 
     @GET("api/user/v1/id/{id}")
     suspend fun getUserById(
