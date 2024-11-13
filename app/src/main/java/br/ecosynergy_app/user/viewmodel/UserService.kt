@@ -1,12 +1,13 @@
 package br.ecosynergy_app.user.viewmodel
 
-import br.ecosynergy_app.home.PasswordRequest
-import br.ecosynergy_app.home.UpdateRequest
 import br.ecosynergy_app.login.LoginRequest
 import br.ecosynergy_app.login.LoginResponse
 import br.ecosynergy_app.user.ForgotRequest
+import br.ecosynergy_app.user.PasswordRequest
+import br.ecosynergy_app.user.PreferencesResponse
+import br.ecosynergy_app.user.UpdatePreferencesRequest
+import br.ecosynergy_app.user.UpdateRequest
 import br.ecosynergy_app.user.UserResponse
-import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -76,14 +77,14 @@ interface UserService {
         @Query("userId") userId: Int,
         @Query("fcmToken") fcmToken: String,
         @Query("expiresAt") expiresAt:String,
-        @Query("deviceType") deviceType: String = "android"
+        @Query("platform") platform: String = "ANDROID"
     ): Response<Void>
 
     @POST("api/token/v1/remove")
     suspend fun removeFCMToken(
         @Query("userId") userId: Int,
         @Header("Authorization") accessToken: String,
-        @Query("deviceType") deviceType: String = "android"
+        @Query("platform") platform: String = "ANDROID"
     ): Response<Void>
 
     @POST("api/token/v1/remove-all")
@@ -92,6 +93,25 @@ interface UserService {
     @GET("api/token/v1/get")
     suspend fun getFCMTokenByUserIdAndDeviceType(
         @Query("userId") userId: Int,
-        @Query("deviceType") deviceType: String = "android"
+        @Header("Authorization") accessToken: String,
+        @Query("platform") platform: String = "ANDROID"
     ): Response<Void>
+
+    @GET("api/notifications/preferences/v1/")
+    suspend fun getNotificationPreferencesByUser(
+        @Header("Authorization") accessToken: String
+    ): Response<List<PreferencesResponse>>
+
+    @GET("api/notifications/preferences/v1/{platform}")
+    suspend fun getNotificationPreferencesByPlatform(
+        @Query("userId") userId: Int,
+        @Header("Authorization") accessToken: String,
+        @Path("platform") platform: String = "ANDROID"
+    ): Response<Void>
+
+    @PUT("api/notifications/preferences/v1/")
+    suspend fun updateNotificationPreferences(
+        @Body updatePreferencesRequest: UpdatePreferencesRequest,
+        @Header("Authorization") accessToken: String
+    ): Response<PreferencesResponse>
 }

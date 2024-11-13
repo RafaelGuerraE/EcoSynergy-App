@@ -204,7 +204,7 @@ class TeamsViewModel(
         }
     }
 
-    fun updateTeam(accessToken: String, teamId: Int, request: UpdateRequest) {
+    fun updateTeam(accessToken: String, teamId: Int, request: TeamUpdateRequest) {
         viewModelScope.launch {
             try {
                 val result = service.updateTeam("Bearer $accessToken", teamId, request)
@@ -265,7 +265,7 @@ class TeamsViewModel(
         annualGoal: Double,
         onComplete: () -> Unit
     ) {
-        val request = UpdateRequest(
+        val request = TeamUpdateRequest(
             dailyGoal = dailyGoal,
             weeklyGoal = weeklyGoal,
             monthlyGoal = monthlyGoal,
@@ -696,10 +696,66 @@ class TeamsViewModel(
                 onComplete()
             }catch (e: HttpException) {
                 Log.e("TeamsViewModel", "HTTP error during findInviteById", e)
-                _deleteResult.value = Result.failure(e)
             } catch (e: Exception) {
                 Log.e("TeamsViewModel", "Error during findInviteById", e)
-                _deleteResult.value = Result.failure(e)
+            }
+        }
+    }
+
+    fun acceptInvite(inviteId:Int, accessToken: String, onComplete: () -> Unit){
+        viewModelScope.launch{
+            try {
+                val response = invitesService.acceptInvite(inviteId, "Bearer $accessToken")
+
+                if (response.isSuccessful) {
+                    Log.d("TeamsViewModel","Invite $inviteId was successfully accepted!")
+                    _inviteResult.value = Response.success(response.body())
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    Log.e(
+                        "TeamsViewModel",
+                        "Error during acceptInvite: ${response.code()} - $errorBody"
+                    )
+                    _inviteResult.value = Response.error(
+                        response.code(),
+                        errorBody?.toResponseBody("application/json".toMediaTypeOrNull())
+                    )
+                }
+
+                onComplete()
+            }catch (e: HttpException) {
+                Log.e("TeamsViewModel", "HTTP error during acceptInvite", e)
+            } catch (e: Exception) {
+                Log.e("TeamsViewModel", "Error during acceptInvite", e)
+            }
+        }
+    }
+
+    fun declineInvite(inviteId:Int, accessToken: String, onComplete: () -> Unit){
+        viewModelScope.launch{
+            try {
+                val response = invitesService.declineInvite(inviteId, "Bearer $accessToken")
+
+                if (response.isSuccessful) {
+                    Log.d("TeamsViewModel","Invite $inviteId was declined!")
+                    _inviteResult.value = Response.success(response.body())
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    Log.e(
+                        "TeamsViewModel",
+                        "Error during declineInvite: ${response.code()} - $errorBody"
+                    )
+                    _inviteResult.value = Response.error(
+                        response.code(),
+                        errorBody?.toResponseBody("application/json".toMediaTypeOrNull())
+                    )
+                }
+
+                onComplete()
+            }catch (e: HttpException) {
+                Log.e("TeamsViewModel", "HTTP error during declineInvite", e)
+            } catch (e: Exception) {
+                Log.e("TeamsViewModel", "Error during declineInvite", e)
             }
         }
     }

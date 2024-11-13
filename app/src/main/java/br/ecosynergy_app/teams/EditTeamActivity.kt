@@ -28,7 +28,7 @@ import br.ecosynergy_app.teams.viewmodel.Sector
 import br.ecosynergy_app.teams.viewmodel.TeamsViewModel
 import br.ecosynergy_app.teams.viewmodel.TeamsViewModelFactory
 import br.ecosynergy_app.teams.viewmodel.Timezone
-import br.ecosynergy_app.teams.viewmodel.UpdateRequest
+import br.ecosynergy_app.teams.viewmodel.TeamUpdateRequest
 import br.ecosynergy_app.user.viewmodel.UserViewModel
 import br.ecosynergy_app.user.viewmodel.UserViewModelFactory
 import com.google.gson.Gson
@@ -173,7 +173,7 @@ class EditTeamActivity : AppCompatActivity() {
         teamsViewModel.updateTeam(
             accessToken,
             teamId,
-            UpdateRequest(
+            TeamUpdateRequest(
                 teamHandle,
                 teamName,
                 teamDescription,

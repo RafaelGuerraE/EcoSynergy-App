@@ -5,14 +5,16 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import br.ecosynergy_app.home.PasswordRequest
-import br.ecosynergy_app.home.UpdateRequest
 import br.ecosynergy_app.login.LoginRequest
 import br.ecosynergy_app.login.LoginResponse
 import br.ecosynergy_app.room.user.User
 import br.ecosynergy_app.room.user.UserRepository
 import br.ecosynergy_app.room.user.toUser
 import br.ecosynergy_app.user.ForgotRequest
+import br.ecosynergy_app.user.PasswordRequest
+import br.ecosynergy_app.user.PreferencesResponse
+import br.ecosynergy_app.user.UpdatePreferencesRequest
+import br.ecosynergy_app.user.UpdateRequest
 import br.ecosynergy_app.user.UserResponse
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -46,6 +48,9 @@ class UserViewModel(
 
     private val _userInfo = MutableLiveData<User>()
     val userInfo: LiveData<User> get() = _userInfo
+
+    private val _preferences = MutableLiveData<PreferencesResponse?>()
+    val preferences: LiveData<PreferencesResponse?> get() = _preferences
 
     fun loginUser(loginRequest: LoginRequest, onComplete: () -> Unit) {
         viewModelScope.launch {
@@ -379,4 +384,46 @@ class UserViewModel(
             }
         }
     }
+
+    fun getNotificationPreferencesByUser(accessToken: String, onComplete: () -> Unit) {
+        viewModelScope.launch {
+            try {
+                val response = service.getNotificationPreferencesByUser("Bearer $accessToken")
+                if (response.isSuccessful) {
+                    response.body()?.let { preferencesList ->
+                        val androidPreference = preferencesList.find { it.platform == "ANDROID" }
+
+                        if (androidPreference != null) {
+                            Log.d("UserViewModel", "ANDROID Preference: $androidPreference")
+                            _preferences.value = androidPreference
+                        } else {
+                            Log.d("UserViewModel", "No ANDROID platform preference found.")
+                        }
+                    }
+                    onComplete()
+                } else {
+                    Log.e("UserViewModel", "Failed to get preferences: ${response.errorBody()?.string()}")
+                }
+            } catch (e: Exception) {
+                Log.e("UserViewModel", "Unexpected error during getNotificationPreferencesByUser", e)
+            }
+        }
+    }
+
+    fun updateNotificationPreferences(updatePreferencesRequest: UpdatePreferencesRequest, accessToken: String, onComplete: () -> Unit) {
+        viewModelScope.launch {
+            try {
+                val response = service.updateNotificationPreferences(updatePreferencesRequest,"Bearer $accessToken")
+                if (response.isSuccessful) {
+                    onComplete()
+                } else {
+                    Log.e("UserViewModel", "Failed to get preferences: ${response.errorBody()?.string()}")
+                }
+            } catch (e: Exception) {
+                Log.e("UserViewModel", "Unexpected error during getNotificationPreferencesByUser", e)
+            }
+        }
+    }
+
+
 }

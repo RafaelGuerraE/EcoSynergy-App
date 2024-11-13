@@ -8,14 +8,17 @@
     tools:context=".home.TermsActivity"
     android:gravity="top">
 
-
+    <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+        android:fillViewport="true"
+            android:layout_marginTop="52dp">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_gravity="center"
+        android:layout_gravity="top"
         android:gravity="center"
-        android:layout_marginTop="10dp"
         android:layout_marginStart="15dp"
         android:layout_marginEnd="15dp">
 
@@ -23,24 +26,434 @@
             android:id="@+id/imgAlert"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:src="@drawable/ic_downloadfail"
-            android:layout_marginBottom="20dp"
-            app:tint="?android:attr/iconTint"/>
-
+            android:src="@drawable/logo_transparent_globe"
+            android:layout_marginVertical="15dp"/>
         <TextView
-            android:id="@+id/txtAlert"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
-            android:textAlignment="center"
-            android:text="Os Termos de Uso e Privacidade da plataforma 'Ecosynergy' ainda não estão disponíveis na plataforma mobile."
+            android:text="Última atualização: 08/11/2024"
             android:layout_gravity="center"
-            android:textSize="16sp"
-            android:visibility="visible"/>
+                android:textAlignment="center"
+            android:textSize="12sp"
+                android:layout_marginBottom="10dp"/>
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Bem-vindo ao Ecosynergy!"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="16sp"
+                android:layout_marginBottom="10dp"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="   O Ecosynergy é uma plataforma de monitoramento ambiental sustentável voltada para o controle de emissões de gases e detecção precoce de incêndios em ambientes industriais. Ao integrar sensores IoT com dispositivos Arduino, o Ecosynergy permite a coleta e análise em tempo real de dados ambientais críticos, promovendo a segurança, sustentabilidade e conformidade com a Política Nacional do Meio Ambiente (Lei N° 6.938/81). Ao utilizar o Ecosynergy, você concorda com nossos Termos de Uso e Política de Privacidade, conforme descrito abaixo."
+            android:layout_gravity="center"
+                android:justificationMode="inter_word"
+            android:textSize="14sp"
+                android:textColor="?android:attr/textColorPrimary"/>
+
+        <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+            android:background="@color/shimmer"
+                android:layout_marginVertical="20dp"/>
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="1. Termos de Uso"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:layout_marginBottom="10dp"
+                android:textColor="?android:attr/textColorPrimary"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="1.1. Aceitação dos Termos"
+                android:textStyle="bold"
+            android:layout_gravity="center"
+            android:textSize="15sp"
+            android:layout_marginStart="5dp"
+            android:textColor="?android:attr/textColorPrimary"
+            android:layout_marginBottom="5dp"/>
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="O uso da plataforma Ecosynergy implica na aceitação dos Termos de Uso aqui descritos. Caso não concorde com algum ponto, interrompa o uso da plataforma."
+                android:layout_gravity="center"
+                android:justificationMode="inter_word"
+                android:textSize="15sp"
+                android:layout_marginHorizontal="5dp"
+                android:textColor="?android:attr/textColorPrimary"
+                android:layout_marginBottom="15dp"/>
+
+
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="1.2. Propósito e Escopo do Ecosynergy"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:textSize="15sp"
+                android:layout_marginStart="5dp"
+                android:textColor="?android:attr/textColorPrimary"
+                android:layout_marginBottom="5dp"/>
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="O Ecosynergy foi desenvolvido com o objetivo de aprimorar o controle de emissões industriais e a gestão ambiental sustentável, apoiando empresas na implementação de práticas que garantam a segurança e minimizem os impactos ao meio ambiente, em conformidade com as diretrizes nacionais de preservação ambiental."
+                android:layout_gravity="center"
+                android:justificationMode="inter_word"
+                android:textSize="15sp"
+                android:layout_marginHorizontal="5dp"
+                android:textColor="?android:attr/textColorPrimary"
+                android:layout_marginBottom="15dp"/>
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="1.3. Acesso e Cadastro"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:textSize="15sp"
+                android:layout_marginStart="5dp"
+                android:textColor="?android:attr/textColorPrimary"
+                android:layout_marginBottom="5dp"/>
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Para utilizar o Ecosynergy, é necessário criar uma conta, fornecendo dados pessoais verídicos e completos. O usuário é responsável pela segurança de sua conta e pelas atividades realizadas por meio dela."
+                android:layout_gravity="center"
+                android:textSize="15sp"
+                android:justificationMode="inter_word"
+                android:layout_marginHorizontal="5dp"
+                android:textColor="?android:attr/textColorPrimary"
+                android:layout_marginBottom="15dp"/>
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="1.4. Uso da Plataforma"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:textSize="15sp"
+                android:layout_marginStart="5dp"
+                android:textColor="?android:attr/textColorPrimary"
+                android:layout_marginBottom="5dp"/>
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="A plataforma destina-se exclusivamente a atividades de monitoramento ambiental sustentável. É proibido qualquer uso que viole a legislação ambiental ou de direitos humanos, e a Ecosynergy poderá suspender contas de usuários envolvidos em atividades ilegais."
+                android:layout_gravity="center"
+                android:justificationMode="inter_word"
+                android:textSize="15sp"
+                android:layout_marginHorizontal="5dp"
+                android:textColor="?android:attr/textColorPrimary"
+                android:layout_marginBottom="15dp"/>
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="1.5. Propriedade Intelectual"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:textSize="15sp"
+                android:layout_marginStart="5dp"
+                android:textColor="?android:attr/textColorPrimary"
+                android:layout_marginBottom="15dp"/>
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Todos os conteúdos disponíveis no Ecosynergy, incluindo, mas não se limitando a textos, gráficos, logotipos e dados de sensores, são de propriedade da Ecosynergy ou de seus parceiros. É proibida a reprodução ou redistribuição de qualquer conteúdo da plataforma sem autorização."
+                android:layout_gravity="center"
+                android:textSize="15sp"
+                android:justificationMode="inter_word"
+                android:layout_marginHorizontal="5dp"
+                android:textColor="?android:attr/textColorPrimary"/>
+
+        <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="@color/shimmer"
+                android:layout_marginVertical="20dp"/>
+
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="2. Política de Privacidade"
+                android:layout_gravity="center"
+                android:layout_marginBottom="10dp"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:textColor="?android:attr/textColorPrimary"/>
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="2.1. Compromisso com a Privacidade"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:textSize="15sp"
+                android:layout_marginStart="5dp"
+                android:textColor="?android:attr/textColorPrimary"
+                android:layout_marginBottom="5dp"/>
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="O Ecosynergy está comprometido com a proteção de dados pessoais dos usuários e adere às legislações de privacidade em vigor."
+                android:layout_gravity="center"
+                android:textSize="15sp"
+                android:justificationMode="inter_word"
+                android:layout_marginHorizontal="5dp"
+                android:textColor="?android:attr/textColorPrimary"
+                android:layout_marginBottom="15dp"/>
+
+
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="2.2. Coleta de Informações"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:textSize="15sp"
+                android:layout_marginStart="5dp"
+                android:textColor="?android:attr/textColorPrimary"
+                android:layout_marginBottom="5dp"/>
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Para fornecer serviços eficazes de monitoramento ambiental, coletamos informações pessoais e dados ambientais, incluindo: \n - Dados Pessoais: Nome, e-mail, informações de localização (quando aplicável). \n - Dados Operacionais: Informações de monitoramento coletadas por sensores IoT para análise ambiental, como níveis de emissões e temperatura."
+                android:layout_gravity="center"
+                android:justificationMode="inter_word"
+                android:textSize="15sp"
+                android:layout_marginHorizontal="5dp"
+                android:textColor="?android:attr/textColorPrimary"
+                android:layout_marginBottom="15dp"/>
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="2.3. Uso das Informações"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:textSize="15sp"
+                android:layout_marginStart="5dp"
+                android:textColor="?android:attr/textColorPrimary"
+                android:layout_marginBottom="5dp"/>
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="As informações coletadas são usadas para: \n - Operar e gerenciar o sistema de monitoramento ambiental.\n - Fornecer relatórios e análises sobre emissões e detecção de incêndios.\n - Cumprir com normas e regulamentações de sustentabilidade e segurança ambiental."
+                android:layout_gravity="center"
+                android:textSize="15sp"
+                android:justificationMode="inter_word"
+                android:layout_marginHorizontal="5dp"
+                android:textColor="?android:attr/textColorPrimary"
+                android:layout_marginBottom="15dp"/>
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="2.4. Compartilhamento de Dados"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:textSize="15sp"
+                android:layout_marginStart="5dp"
+                android:textColor="?android:attr/textColorPrimary"
+                android:layout_marginBottom="5dp"/>
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Os dados pessoais e ambientais coletados pela Ecosynergy são confidenciais e não serão compartilhados com terceiros sem consentimento, exceto quando exigido por lei ou regulamentação."
+                android:layout_gravity="center"
+                android:textSize="15sp"
+                android:layout_marginHorizontal="5dp"
+                android:justificationMode="inter_word"
+                android:textColor="?android:attr/textColorPrimary"
+                android:layout_marginBottom="15dp"/>
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="2.5. Segurança dos Dados"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:textSize="15sp"
+                android:layout_marginStart="5dp"
+                android:textColor="?android:attr/textColorPrimary"
+                android:layout_marginBottom="15dp"/>
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="A Ecosynergy utiliza medidas de segurança apropriadas para proteger os dados pessoais e ambientais contra acessos não autorizados e ameaças cibernéticas. No entanto, o usuário reconhece que nenhum sistema é completamente seguro."
+                android:layout_gravity="center"
+                android:textSize="15sp"
+                android:justificationMode="inter_word"
+                android:layout_marginHorizontal="5dp"
+                android:textColor="?android:attr/textColorPrimary"
+                android:layout_marginBottom="5dp"/>
+
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="2.6. Direitos dos Usuários"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:textSize="15sp"
+                android:layout_marginStart="5dp"
+                android:textColor="?android:attr/textColorPrimary"
+                android:layout_marginBottom="15dp"/>
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="O usuário tem o direito de acessar, corrigir e, quando aplicável, excluir seus dados pessoais armazenados pela Ecosynergy. Para exercer esses direitos, entre em contato conosco pelo contato@ecosynergybr.com."
+                android:layout_gravity="center"
+                android:textSize="15sp"
+                android:justificationMode="inter_word"
+                android:layout_marginHorizontal="5dp"
+                android:textColor="?android:attr/textColorPrimary"/>
+
+        <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="@color/shimmer"
+                android:layout_marginVertical="20dp"/>
+
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="3. Isenção de Responsabilidade"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:layout_marginBottom="10dp"
+                android:textSize="16sp"
+                android:textColor="?android:attr/textColorPrimary"/>
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="3.1. Limitação de Responsabilidade"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:textSize="15sp"
+                android:layout_marginStart="5dp"
+                android:textColor="?android:attr/textColorPrimary"
+                android:layout_marginBottom="15dp"/>
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="A Ecosynergy não se responsabiliza por danos diretos ou indiretos relacionados ao uso da plataforma. O sistema é oferecido como está, sem garantia de que será ininterrupto ou livre de falhas."
+                android:layout_gravity="center"
+                android:justificationMode="inter_word"
+                android:textSize="15sp"
+                android:layout_marginHorizontal="5dp"
+                android:textColor="?android:attr/textColorPrimary"
+                android:layout_marginBottom="5dp"/>
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="3.2. Conformidade Ambiental"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:textSize="15sp"
+                android:layout_marginStart="5dp"
+                android:textColor="?android:attr/textColorPrimary"
+                android:layout_marginBottom="15dp"/>
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="O Ecosynergy oferece ferramentas de monitoramento e relatórios ambientais, mas a responsabilidade pela conformidade com as leis ambientais aplicáveis permanece com a empresa usuária da plataforma."
+                android:layout_gravity="center"
+                android:textSize="15sp"
+                android:justificationMode="inter_word"
+                android:layout_marginHorizontal="5dp"
+                android:textColor="?android:attr/textColorPrimary"/>
+
+        <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="@color/shimmer"
+                android:layout_marginVertical="20dp"/>
+
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="4. Legislação e Jurisdição"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:layout_marginBottom="10dp"
+                android:textSize="16sp"
+                android:textColor="?android:attr/textColorPrimary"/>
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="4.1. Aplicação da Lei"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:textSize="15sp"
+                android:layout_marginStart="5dp"
+                android:textColor="?android:attr/textColorPrimary"
+                android:layout_marginBottom="15dp"/>
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Estes Termos de Uso e Política de Privacidade são regidos pela legislação vigente no Brasil. Qualquer litígio será resolvido no foro da comarca de São Bernardo do Campo, São Paulo."
+                android:layout_gravity="center"
+                android:textSize="15sp"
+                android:justificationMode="inter_word"
+                android:layout_marginHorizontal="5dp"
+                android:textColor="?android:attr/textColorPrimary"/>
+
+        <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="@color/shimmer"
+                android:layout_marginVertical="20dp"/>
+
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Contato"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:layout_marginBottom="10dp"
+                android:textSize="16sp"
+                android:textColor="?android:attr/textColorPrimary"/>
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Caso tenha dúvidas ou preocupações sobre nossos Termos de Uso e Política de Privacidade, entre em contato conosco através dos seguintes meios de comunição:"
+                android:layout_gravity="center"
+                android:textSize="15sp"
+                android:justificationMode="inter_word"
+                android:layout_marginHorizontal="5dp"
+                android:textColor="?android:attr/textColorPrimary"
+                android:layout_marginBottom="5dp"/>
+
+        <TextView
+                android:id="@+id/txtEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="contato@ecosynergybr.com"
+                android:layout_gravity="center"
+                android:textSize="15sp"
+                android:layout_marginStart="5dp"
+                android:textColor="?android:attr/textColorPrimary"
+                android:layout_marginBottom="5dp"
+                android:focusable="true"
+                android:clickable="true"
+                android:background="?android:attr/selectableItemBackground"/>
+
+        <TextView
+                android:id="@+id/txtNumber"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="+55 11 99023-8074"
+                android:layout_gravity="center"
+                android:textSize="15sp"
+                android:layout_marginStart="5dp"
+                android:textColor="?android:attr/textColorPrimary"
+                android:layout_marginBottom="25dp"
+                android:focusable="true"
+                android:clickable="true"
+                android:background="?android:attr/selectableItemBackground"/>
 
     </LinearLayout>
-
+    </ScrollView>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -73,7 +486,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_gravity="center"
-                android:text="Termos"
+                android:text="Termos e Políticas"
                 android:textAlignment="center"
                 android:textColor="?android:attr/textColorPrimary"
                 android:textSize="16sp"
@@ -83,12 +496,10 @@
 
         </LinearLayout>
 
-
         <View
             android:layout_width="match_parent"
             android:layout_height="2dp"
             android:background="?android:attr/colorForeground"/>
 
     </LinearLayout>
-
 </FrameLayout>

@@ -10,6 +10,7 @@ import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.ImageButton
@@ -21,6 +22,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
+import br.ecosynergy_app.home.TermsActivity
 import br.ecosynergy_app.signup.viewmodel.SignUpViewModel
 import br.ecosynergy_app.signup.viewmodel.SignUpViewModelFactory
 import com.google.android.material.textfield.TextInputLayout
@@ -56,6 +58,9 @@ class SignUpActivity : AppCompatActivity() {
     private lateinit var btnSignUpContainer: FrameLayout
     private lateinit var btnSignUp: Button
     private lateinit var progressBarSignUp: ProgressBar
+
+    private lateinit var txtAccess: TextView
+    private lateinit var checkTerms:CheckBox
 
     private lateinit var btnStepBack: TextView
 
@@ -109,6 +114,9 @@ class SignUpActivity : AppCompatActivity() {
         btnSignUp = findViewById(R.id.btnSignUp)
         progressBarSignUp = findViewById(R.id.progressBarSignUp)
 
+        txtAccess = findViewById(R.id.txtAccess)
+        checkTerms = findViewById(R.id.checkTerms)
+
         btnStepBack = findViewById(R.id.btnStepBack)
 
         step2 = findViewById(R.id.step2)
@@ -131,6 +139,11 @@ class SignUpActivity : AppCompatActivity() {
         }
 
         btnBack.setOnClickListener { finish() }
+
+        txtAccess.setOnClickListener{
+            val i = Intent(this, TermsActivity::class.java)
+            startActivity(i)
+        }
 
         btnAction.setOnClickListener {
 

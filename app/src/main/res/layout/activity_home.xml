@@ -100,7 +100,7 @@
                 android:layout_weight="1"
                 android:layout_marginBottom="15dp"
                 android:layout_marginStart="20dp"
-                android:text="Termos de Uso e Privacidade"
+                android:text="Termos e Políticas"
                 android:textStyle="bold"
                 android:textSize="12sp"
                 android:textColor="@color/disabled"

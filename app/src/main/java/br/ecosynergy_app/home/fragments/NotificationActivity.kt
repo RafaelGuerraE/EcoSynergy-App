@@ -3,6 +3,7 @@ package br.ecosynergy_app.home.fragments
 import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
+import android.util.TypedValue
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -31,6 +32,7 @@ import br.ecosynergy_app.user.viewmodel.UserViewModel
 import br.ecosynergy_app.user.viewmodel.UserViewModelFactory
 import com.google.android.material.button.MaterialButton
 import de.hdodenhof.circleimageview.CircleImageView
+import org.w3c.dom.Text
 
 class NotificationActivity : AppCompatActivity() {
     private lateinit var userViewModel: UserViewModel
@@ -40,6 +42,8 @@ class NotificationActivity : AppCompatActivity() {
     private var type: String = ""
     private var teamId: Int = 0
     private var inviteId: Int = 0
+
+    private var inviteStatus: String = ""
 
     private lateinit var btnClose: ImageView
 
@@ -56,6 +60,10 @@ class NotificationActivity : AppCompatActivity() {
     private lateinit var txtUserFullname: TextView
     private lateinit var imgUser: CircleImageView
     private lateinit var imgTeam: CircleImageView
+
+    private lateinit var txtStatus:TextView
+    private lateinit var icStatus: ImageView
+    private lateinit var linearStatus: LinearLayout
 
     private lateinit var imgSender: CircleImageView
     private lateinit var imgRecipient: CircleImageView
@@ -121,6 +129,10 @@ class NotificationActivity : AppCompatActivity() {
         imgUser = findViewById(R.id.imgUser)
         imgTeam = findViewById(R.id.imgTeam)
 
+        txtStatus = findViewById(R.id.txtStatus)
+        icStatus = findViewById(R.id.icStatus)
+        linearStatus = findViewById(R.id.linearStatus)
+
         imgSender = findViewById(R.id.imgSender)
         imgRecipient = findViewById(R.id.imgRecipient)
         imgStatus = findViewById(R.id.imgStatus)
@@ -164,12 +176,40 @@ class NotificationActivity : AppCompatActivity() {
                         txtTeamDescription.text = teamResponse.description
                         txtTeamName.text = teamResponse.name
                         txtUserFullname.text = senderInfo.fullName
+                        inviteStatus = inviteResult.status
                         imgTeam.setImageResource(HomeActivity().getDrawableForLetter(teamResponse.name.first()))
                         imgUser.setImageResource(HomeActivity().getDrawableForLetter(senderInfo.fullName.first()))
 
+                        when(inviteStatus){
+                            "ACCEPTED"-> txtStatus.text = "Este convite já foi aceito"
+                            "DECLINED"-> txtStatus.text = "Este convite já foi negado"
+                            "PENDING"-> txtStatus.text = "Este convite está pendente"
+                            else -> txtStatus.text = ""
+                        }
+
+                        icStatus.setImageResource(
+                            when (inviteStatus) {
+                                "ACCEPTED" -> R.drawable.ic_successful
+                                "PENDING" -> R.drawable.ic_pending
+                                "DECLINED" -> R.drawable.ic_error
+                                else -> R.drawable.ic_pending
+                            }
+                        )
+
+                        setIconTint(inviteStatus)
+
+                        if(inviteStatus == "ACCEPTED" || inviteStatus == "DECLINED"){
+
+                            linearStatus.visibility = View.VISIBLE
+                            inviteHandle.visibility = View.GONE
+                            linearInvite.visibility = View.VISIBLE
+                        }
+                        else{
+                            inviteHandle.visibility = View.VISIBLE
+                            linearInvite.visibility = View.VISIBLE
+                        }
+
                         progressBar.visibility = View.GONE
-                        inviteHandle.visibility = View.VISIBLE
-                        linearInvite.visibility = View.VISIBLE
                     }
                 }
             }
@@ -180,8 +220,13 @@ class NotificationActivity : AppCompatActivity() {
             builder.setTitle("Você deseja aceitar o convite?")
             builder.setMessage("Você será adicionado a essa equipe como membro.")
 
+
             builder.setPositiveButton("Sim") { dialog, _ ->
-                dialog.dismiss()
+                progressBar.visibility = View.VISIBLE
+                teamsViewModel.acceptInvite(inviteId, accessToken){
+                    progressBar.visibility = View.GONE
+                    finish()
+                }
             }
 
             builder.setNegativeButton("Cancelar") { dialog, _ ->
@@ -198,7 +243,11 @@ class NotificationActivity : AppCompatActivity() {
             builder.setMessage("Este convite não poderá ser aceito outra hora")
 
             builder.setPositiveButton("Sim") { dialog, _ ->
-                dialog.dismiss()
+                progressBar.visibility = View.VISIBLE
+                teamsViewModel.declineInvite(inviteId, accessToken){
+                    progressBar.visibility = View.GONE
+                    finish()
+                }
             }
 
             builder.setNegativeButton("Cancelar") { dialog, _ ->
@@ -207,6 +256,26 @@ class NotificationActivity : AppCompatActivity() {
 
             val dialog: AlertDialog = builder.create()
             dialog.show()
+        }
+    }
+
+    private fun setIconTint(status: String) {
+        val color = when (status) {
+            "ACCEPTED" -> getColor(R.color.greenDark)
+            "PENDING" -> getThemeColor(android.R.attr.colorAccent, R.color.gray)
+            "DECLINED" -> getColor(R.color.red)
+            else -> getColor(R.color.black)
+        }
+        icStatus.setColorFilter(color, android.graphics.PorterDuff.Mode.SRC_IN)
+    }
+
+    private fun getThemeColor(attrResId: Int, defaultColorRes: Int): Int {
+        val typedValue = TypedValue()
+        val theme = theme
+        return if (theme.resolveAttribute(attrResId, typedValue, true)) {
+            typedValue.data
+        } else {
+            getColor(defaultColorRes)
         }
     }
 }

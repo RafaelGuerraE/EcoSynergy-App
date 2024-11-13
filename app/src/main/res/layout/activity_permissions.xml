@@ -11,7 +11,100 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+            android:layout_marginTop="52dp">
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+            android:orientation="horizontal"
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginVertical="10dp">
+
+            <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                    android:layout_marginEnd="10dp">
+                <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                    android:text="Permissão de Notificações"
+                        android:textSize="14sp"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="2dp"/>
+
+                <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="12sp"
+                        android:ellipsize="end"
+                        android:maxLines="2"
+                        android:layout_marginStart="3dp"
+                        android:justificationMode="inter_word"
+                        android:text="Essa permissão concede acesso ao aplicativo enviar notificações para o seu dispositivo."/>
+
+            </LinearLayout>
+
+            <Spinner
+                    android:id="@+id/spinnerNotification"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                android:layout_weight="0.3"
+                android:background="@drawable/ripple_bg"
+                android:padding="5dp"
+                android:layout_gravity="center"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginVertical="10dp">
+
+            <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginEnd="10dp">
+                <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Permissão de Armazenamento"
+                        android:textSize="14sp"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="2dp"/>
+
+                <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="12sp"
+                        android:ellipsize="end"
+                        android:maxLines="2"
+                        android:layout_marginStart="3dp"
+                        android:justificationMode="inter_word"
+                        android:text="Essa permissão concede acesso ao aplicativo de armazenar futuros documentos no dispositivo."/>
+
+            </LinearLayout>
+
+            <Spinner
+                    android:id="@+id/spinnerStorage"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.3"
+                    android:background="@drawable/ripple_bg"
+                    android:padding="5dp"
+                    android:layout_gravity="center"/>
+
+        </LinearLayout>
 
     </LinearLayout>
 

@@ -10,6 +10,7 @@
     android:gravity="top">
 
     <LinearLayout
+            android:id="@+id/content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -18,130 +19,184 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
             android:orientation="horizontal"
-            android:layout_marginTop="10dp">
+                android:layout_marginVertical="10dp">
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginStart="10dp"
-                android:text=""
-                android:textSize="16sp"/>
+            <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginHorizontal="10dp"
+                    android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Detecção de Fogo"
+                    android:maxLines="1"
+                    android:ellipsize="middle"
+                        android:textStyle="bold"
+                    android:textSize="16sp"
+                        android:textColor="?android:attr/textColorPrimary"/>
 
-            <TextView
-                android:layout_width="50dp"
-                android:layout_height="wrap_content"
-                android:text="SIM"
-                android:textStyle="bold"
-                android:textSize="14sp"
-                android:textAlignment="center"/>
-            <TextView
-                android:layout_width="50dp"
-                android:layout_height="wrap_content"
-                android:text="NÃO"
-                android:textStyle="bold"
-                android:textSize="14sp"
-                android:textAlignment="center"
-                android:layout_marginEnd="10dp"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginStart="10dp"
-                android:text="Detecção de Fogo"
-                android:maxLines="1"
-                android:ellipsize="middle"
-                android:textSize="16sp"/>
-
-            <CheckBox
-                android:id="@+id/fireYes"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:checked="true"
-                android:background="?android:attr/selectableItemBackgroundBorderless"/>
+                <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Receba notificações de emissões de fogo próximas dos sensores que podem auxiliar na prevenção de incêndios."
+                        android:maxLines="2"
+                        android:layout_marginStart="3dp"
+                        android:ellipsize="end"
+                        android:textSize="12sp"
+                        android:justificationMode="inter_word"
+                        android:textColor="?android:attr/textColorPrimary"/>
+            </LinearLayout>
 
 
-            <CheckBox
-                android:id="@+id/fireNo"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:checked="false"
-                android:layout_marginEnd="10dp"
-                android:background="?android:attr/selectableItemBackgroundBorderless"/>
+            <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switchFire"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center"
+                    android:layout_marginHorizontal="5dp"
+                    android:checked="false"
+                    app:thumbTint="@color/grayDark"
+                    app:trackTint="@color/gray"/>
         </LinearLayout>
 
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_height="60dp"
+            android:orientation="horizontal"
+                android:layout_marginVertical="10dp">
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginStart="10dp"
-                android:text="Status de Convites Enviados"
-                android:maxLines="1"
-                android:ellipsize="middle"
-                android:textSize="16sp"/>
+            <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginHorizontal="10dp"
+                    android:orientation="vertical">
+                <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Status de Convites Enviados"
+                        android:maxLines="1"
+                        android:ellipsize="middle"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:textColor="?android:attr/textColorPrimary"/>
 
-            <CheckBox
-                android:id="@+id/receivedInvitesYes"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:checked="true"
-                android:background="?android:attr/selectableItemBackgroundBorderless"/>
+                <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Receba notificações de status de convites que você enviou, ficando ciente se foram aceitos ou negados."
+                        android:maxLines="2"
+                        android:layout_marginStart="3dp"
+                        android:ellipsize="end"
+                        android:justificationMode="inter_word"
+                        android:textSize="12sp"
+                        android:textColor="?android:attr/textColorPrimary"/>
+            </LinearLayout>
 
-
-            <CheckBox
-                android:id="@+id/receivedInvitesNo"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:checked="false"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:layout_marginEnd="10dp"/>
+            <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switchInvitesSent"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center"
+                    android:layout_marginHorizontal="5dp"
+                    android:checked="false"
+                    app:thumbTint="@color/grayDark"
+                    app:trackTint="@color/gray"/>
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_height="60dp"
+            android:orientation="horizontal"
+                android:layout_marginVertical="10dp">
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginStart="10dp"
-                android:text="Convites Recebidos"
-                android:maxLines="1"
-                android:ellipsize="middle"
-                android:textSize="16sp"/>
+            <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginHorizontal="10dp"
+                    android:orientation="vertical">
+                <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Convites Recebidos"
+                        android:maxLines="1"
+                        android:ellipsize="middle"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:textColor="?android:attr/textColorPrimary"/>
 
-            <CheckBox
-                android:id="@+id/sentInvitesYes"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:checked="true"
-                android:background="?android:attr/selectableItemBackgroundBorderless"/>
+                <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Receba notificações quando enviarem convites de equipes para você."
+                        android:maxLines="2"
+                        android:layout_marginStart="3dp"
+                        android:ellipsize="end"
+                        android:justificationMode="inter_word"
+                        android:textSize="12sp"
+                        android:textColor="?android:attr/textColorPrimary"/>
+            </LinearLayout>
 
+            <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switchInvitesReceive"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:checked="false"
+                    android:layout_gravity="center"
+                    android:layout_marginHorizontal="5dp"
+                    app:thumbTint="@color/grayDark"
+                    app:trackTint="@color/gray"/>
+        </LinearLayout>
 
-            <CheckBox
-                android:id="@+id/sentInvitesNo"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:checked="false"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:layout_marginEnd="10dp"/>
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:orientation="horizontal"
+                android:layout_marginVertical="10dp">
+
+            <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginHorizontal="10dp"
+                    android:orientation="vertical">
+                <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Alerta de Metas"
+                        android:maxLines="1"
+                        android:ellipsize="middle"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:textColor="?android:attr/textColorPrimary"/>
+
+                <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Receba notificações quando sua equipe estiver alcançando as metas estipuladas."
+                        android:maxLines="2"
+                        android:layout_marginStart="3dp"
+                        android:ellipsize="end"
+                        android:justificationMode="inter_word"
+                        android:textSize="12sp"
+                        android:textColor="?android:attr/textColorPrimary"/>
+            </LinearLayout>
+
+            <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switchGoals"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:checked="false"
+                    android:layout_gravity="center"
+                    android:layout_marginHorizontal="5dp"
+                    app:thumbTint="@color/grayDark"
+                    app:trackTint="@color/gray"/>
         </LinearLayout>
 
 
@@ -199,5 +254,14 @@
             android:background="?android:attr/colorForeground"/>
 
     </LinearLayout>
+
+    <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+        android:indeterminate="true"
+        android:indeterminateTint="@color/green"
+        android:layout_centerInParent="true"
+            android:visibility="gone"/>
 
 </RelativeLayout>

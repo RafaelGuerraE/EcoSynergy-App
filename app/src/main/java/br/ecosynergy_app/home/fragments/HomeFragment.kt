@@ -275,7 +275,7 @@ class HomeFragment : Fragment() {
 
     private fun setupTeamsChart(teamHandle: String, isHandles: Boolean) {
         if (!isHandles) {
-            showToast("Não existem equipes")
+            //showToast("Não existem equipes")
         } else {
             shimmerTeams.animate().alpha(1f).setDuration(100).withEndAction {
                 shimmerTeams.startShimmer()

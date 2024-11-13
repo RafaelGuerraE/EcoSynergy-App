@@ -83,6 +83,7 @@ class AppSettingsActivity : AppCompatActivity() {
 
         areaNotifications.setOnClickListener {
             val i = Intent(this, NotificationPreferencesActivity::class.java)
+            i.putExtra("ACCESS_TOKEN", accessToken)
             startActivity(i)
         }
 

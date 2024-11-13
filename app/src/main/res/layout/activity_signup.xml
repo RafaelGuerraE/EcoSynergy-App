@@ -330,6 +330,42 @@
 
                 </com.google.android.material.textfield.TextInputLayout>
 
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp">
+                    <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Termos de Uso e Política de Privacidade: "
+                            android:textColor="?android:attr/textColorPrimary"/>
+                    <TextView
+                            android:id="@+id/txtAccess"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Acesse aqui"
+                            android:textColor="@color/greenDark"
+                            android:textStyle="bold"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:background="?android:attr/selectableItemBackground"/>
+                </LinearLayout>
+
+                <CheckBox
+                        android:id="@+id/checkTerms"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:justificationMode="inter_word"
+                        android:ellipsize="end"
+                        android:checked="true"
+                        android:buttonTint="@color/greenDark"
+                        android:maxLines="2"
+                        android:text="Eu aceito os Termos de Uso e a Política de Privacidade da Plataforma Ecosynergy"
+                        android:layout_marginBottom="5dp"/>
+
+
             </LinearLayout>
 
             <FrameLayout

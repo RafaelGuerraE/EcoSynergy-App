@@ -52,7 +52,7 @@ data class TeamsRequest(
     val members: List<Member>
 )
 
-data class UpdateRequest(
+data class TeamUpdateRequest(
     val handle: String? = null,
     val name: String? = null,
     val description: String? = null,

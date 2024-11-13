@@ -19,6 +19,7 @@ import androidx.lifecycle.ViewModelProvider
 import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.home.HomeActivity
+import br.ecosynergy_app.home.TermsActivity
 import br.ecosynergy_app.readings.ReadingsViewModel
 import br.ecosynergy_app.readings.ReadingsViewModelFactory
 import br.ecosynergy_app.room.AppDatabase
@@ -46,6 +47,8 @@ class LoginActivity : AppCompatActivity() {
     private var hasErrorShown = false
     private lateinit var loadingProgressBar: ProgressBar
     private lateinit var overlayView: View
+
+    private lateinit var txtTerms: TextView
 
     private lateinit var userViewModel: UserViewModel
     private lateinit var teamsViewModel: TeamsViewModel
@@ -104,6 +107,7 @@ class LoginActivity : AppCompatActivity() {
 
         txtEntry = findViewById(R.id.txtEntry)
         txtPassword = findViewById(R.id.txtPassword)
+        txtTerms = findViewById(R.id.txtTerms)
         val passwordLayout: TextInputLayout = findViewById(R.id.passwordLayout)
         val btnLogin: MaterialButton = findViewById(R.id.btnLogin)
         val btnRegister: MaterialButton = findViewById(R.id.btnRegister)
@@ -158,6 +162,11 @@ class LoginActivity : AppCompatActivity() {
 
         lblReset.setOnClickListener {
             val i = Intent(this, RecoverPasswordActivity::class.java)
+            startActivity(i)
+        }
+
+        txtTerms.setOnClickListener{
+            val i = Intent(this, TermsActivity::class.java)
             startActivity(i)
         }
     }

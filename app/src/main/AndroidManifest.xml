@@ -1,63 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+        xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
-        android:maxSdkVersion="32" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="29" />
+    <uses-permission
+            android:name="android.permission.READ_EXTERNAL_STORAGE"
+            android:maxSdkVersion="32" />
+    <uses-permission
+            android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+            android:maxSdkVersion="29" />
 
     <application
-        android:name=".App"
-        android:allowBackup="true"
-        android:requestLegacyExternalStorage="true"
-        android:dataExtractionRules="@xml/data_extraction_rules"
-        android:enableOnBackInvokedCallback="true"
-        android:fullBackupContent="@xml/backup_rules"
-        android:icon="@drawable/logo_transparent_globe"
-        android:label="@string/app_name"
-        android:networkSecurityConfig="@xml/network_security_config"
-        android:roundIcon="@drawable/logo_transparent_globe"
-        android:supportsRtl="true"
-        android:theme="@style/Base.Theme.EcoSynergyApp"
-        tools:targetApi="31">
+            android:name=".App"
+            android:allowBackup="true"
+            android:dataExtractionRules="@xml/data_extraction_rules"
+            android:enableOnBackInvokedCallback="true"
+            android:fullBackupContent="@xml/backup_rules"
+            android:icon="@drawable/logo_transparent_globe"
+            android:label="@string/app_name"
+            android:networkSecurityConfig="@xml/network_security_config"
+            android:requestLegacyExternalStorage="true"
+            android:roundIcon="@drawable/logo_transparent_globe"
+            android:supportsRtl="true"
+            android:theme="@style/Base.Theme.EcoSynergyApp"
+            tools:targetApi="31">
         <activity
-            android:name=".home.fragments.NotificationActivity"
-            android:exported="false" />
+                android:name=".home.AboutActivity"
+                android:exported="false" />
         <activity
-            android:name=".teams.TeamGoalsActivity"
-            android:exported="false" />
+                android:name=".home.fragments.NotificationActivity"
+                android:exported="false" />
         <activity
-            android:name=".teams.TeamInvitesActivity"
-            android:exported="false" />
+                android:name=".teams.TeamGoalsActivity"
+                android:exported="false" />
         <activity
-            android:name=".teams.AddMembersActivity"
-            android:exported="false" />
+                android:name=".teams.TeamInvitesActivity"
+                android:exported="false" />
         <activity
-            android:name=".teams.EditTeamGoalsBottomSheet"
-            android:exported="false" />
+                android:name=".teams.AddMembersActivity"
+                android:exported="false" />
         <activity
-            android:name=".teams.EditTeamActivity"
-            android:exported="false" />
+                android:name=".teams.EditTeamActivity"
+                android:exported="false" />
         <activity
-            android:name=".home.HelpActivity"
-            android:exported="false" />
+                android:name=".home.HelpActivity"
+                android:exported="false" />
         <activity
-            android:name=".home.PermissionsActivity"
-            android:exported="false" />
+                android:name=".home.PermissionsActivity"
+                android:exported="false" />
         <activity
-            android:name=".user.UserInfoActivity"
-            android:exported="true" />
+                android:name=".user.UserInfoActivity"
+                android:exported="true" />
         <activity
-            android:name=".teams.DashboardActivity"
-            android:exported="true"
-            android:windowSoftInputMode="adjustResize" />
+                android:name=".teams.DashboardActivity"
+                android:exported="true"
+                android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".login.LoginActivity"
-            android:exported="true"
-            android:windowSoftInputMode="adjustResize">
+                android:name=".login.LoginActivity"
+                android:exported="true"
+                android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -65,65 +67,65 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".login.RecoverPasswordActivity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
+                android:name=".login.RecoverPasswordActivity"
+                android:exported="false"
+                android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".home.HomeActivity"
-            android:exported="true"
-            android:windowSoftInputMode="adjustResize" />
+                android:name=".home.HomeActivity"
+                android:exported="true"
+                android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".user.UserSettingsActivity"
-            android:exported="true"
-            android:windowSoftInputMode="adjustResize" />
+                android:name=".user.UserSettingsActivity"
+                android:exported="true"
+                android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".home.AppSettingsActivity"
-            android:exported="true"
-            android:windowSoftInputMode="adjustResize" />
+                android:name=".home.AppSettingsActivity"
+                android:exported="true"
+                android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".home.NotificationPreferencesActivity"
-            android:exported="true"
-            android:windowSoftInputMode="adjustResize" />
+                android:name=".home.NotificationPreferencesActivity"
+                android:exported="true"
+                android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".home.TermsActivity"
-            android:exported="true"
-            android:windowSoftInputMode="adjustResize" />
+                android:name=".home.TermsActivity"
+                android:exported="true"
+                android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".signup.EmailConfirmationActivity"
-            android:exported="true"
-            android:windowSoftInputMode="adjustResize" />
+                android:name=".signup.EmailConfirmationActivity"
+                android:exported="true"
+                android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".signup.SignUpActivity"
-            android:exported="true"
-            android:windowSoftInputMode="adjustResize" />
+                android:name=".signup.SignUpActivity"
+                android:exported="true"
+                android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".teams.TeamInfoActivity"
-            android:exported="true"
-            android:windowSoftInputMode="adjustResize" />
+                android:name=".teams.TeamInfoActivity"
+                android:exported="true"
+                android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".teams.CreateTeamActivity"
-            android:exported="true"
-            android:windowSoftInputMode="adjustResize" />
+                android:name=".teams.CreateTeamActivity"
+                android:exported="true"
+                android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".teams.TeamOverviewActivity"
-            android:exported="true"
-            android:windowSoftInputMode="adjustResize" />
+                android:name=".teams.TeamOverviewActivity"
+                android:exported="true"
+                android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".teams.TeamMembersActivity"
-            android:exported="true"
-            android:windowSoftInputMode="adjustResize" />
+                android:name=".teams.TeamMembersActivity"
+                android:exported="true"
+                android:windowSoftInputMode="adjustResize" />
 
         <service
-            android:name=".room.notifications.MyFirebaseMessagingService"
-            android:exported="true">
+                android:name=".room.notifications.MyFirebaseMessagingService"
+                android:exported="true">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
 
         <meta-data
-            android:name="preloaded_fonts"
-            android:resource="@array/preloaded_fonts" />
+                android:name="preloaded_fonts"
+                android:resource="@array/preloaded_fonts" />
     </application>
 
 </manifest>

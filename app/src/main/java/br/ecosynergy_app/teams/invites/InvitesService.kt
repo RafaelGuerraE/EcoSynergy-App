@@ -30,11 +30,11 @@ interface InvitesService {
 
     @PUT("api/invite/v1/accept/{inviteId}")
     suspend fun acceptInvite(@Path("inviteId") inviteId:Int,
-                             @Header("Authorization") accessToken: String): InviteResponse
+                             @Header("Authorization") accessToken: String): Response<InviteResponse>
 
     @PUT("api/invite/v1/decline/{inviteId}")
     suspend fun declineInvite(@Path("inviteId") inviteId:Int,
-                             @Header("Authorization") accessToken: String): InviteResponse
+                             @Header("Authorization") accessToken: String): Response<InviteResponse>
 
     @GET("api/invite/v1")
     suspend fun getAllInvites(@Header("Authorization") accessToken: String): InviteApiResponse
