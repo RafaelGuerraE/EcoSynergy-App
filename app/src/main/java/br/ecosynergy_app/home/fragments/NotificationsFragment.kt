@@ -36,6 +36,7 @@ class NotificationsFragment : Fragment() {
 
     private val userViewModel: UserViewModel  by activityViewModels()
 
+    private var userId: Int = 0
     private var accessToken: String =""
 
     private lateinit var swipeRefresh: SwipeRefreshLayout
@@ -79,6 +80,7 @@ class NotificationsFragment : Fragment() {
         userViewModel.getUserInfoFromDB {
             val userInfo = userViewModel.userInfo.value
             accessToken = userInfo!!.accessToken
+            userId = userInfo.id
             setupRecyclerView()
             setupSwipeRefresh()
             loadNotifications()
@@ -86,7 +88,7 @@ class NotificationsFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        notificationAdapter = NotificationAdapter(notificationsList, accessToken) { notificationId ->
+        notificationAdapter = NotificationAdapter(notificationsList, accessToken, userId) { notificationId ->
             lifecycleScope.launch {
                 notificationsRepository.markAsRead(notificationId)
                 val updatedNotifications = notificationsRepository.getAllNotifications()

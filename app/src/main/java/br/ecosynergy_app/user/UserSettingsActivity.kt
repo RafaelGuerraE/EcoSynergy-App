@@ -509,7 +509,7 @@ class UserSettingsActivity : AppCompatActivity() {
         }
     }
 
-    private fun deleteUserData() {
+    private fun deleteUserData(){
         userViewModel.deleteUserData(userId, accessToken)
     }
 

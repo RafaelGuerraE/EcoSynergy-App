@@ -18,6 +18,7 @@ import java.util.concurrent.TimeUnit
 class NotificationAdapter(
     private var notifications: MutableList<Notifications>,
     private var accessToken: String,
+    private var userId:Int,
     private val onNotificationAccessed: (Int) -> Unit
 ) : RecyclerView.Adapter<NotificationAdapter.NotificationViewHolder>() {
 
@@ -61,7 +62,9 @@ class NotificationAdapter(
                 val context = itemView.context
                 val i = Intent(context, NotificationActivity::class.java)
                 i.apply {
+                    putExtra("TIME", notification.timestamp)
                     putExtra("ACCESS_TOKEN", accessToken)
+                    putExtra("USER_ID", userId)
                     putExtra("TYPE", notification.type)
                     putExtra("TEAM_ID", notification.teamId)
                     putExtra("INVITE_ID", notification.inviteId)

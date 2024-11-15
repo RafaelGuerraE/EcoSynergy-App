@@ -130,6 +130,7 @@
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:src="@drawable/ic_no_team"
+                        app:tint="?android:attr/iconTint"
                     android:layout_gravity="center"
                     android:layout_marginBottom="10dp"/>
 

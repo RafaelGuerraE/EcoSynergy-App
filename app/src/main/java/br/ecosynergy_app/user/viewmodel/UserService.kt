@@ -80,7 +80,7 @@ interface UserService {
         @Query("platform") platform: String = "ANDROID"
     ): Response<Void>
 
-    @POST("api/token/v1/remove")
+    @DELETE("api/token/v1/remove")
     suspend fun removeFCMToken(
         @Header("Authorization") accessToken: String,
         @Query("platform") platform: String = "ANDROID"

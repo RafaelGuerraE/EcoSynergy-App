@@ -60,7 +60,7 @@ class UserViewModel(
 
                 if (request.isSuccessful) {
                     _loginResult.value = Result.success(loginResponse)
-                    getUserByUsername(loginRequest.identifier, loginResponse.accessToken, loginResponse.refreshToken)
+                    request.body()?.let { getUserByUsername(it.username, loginResponse.accessToken, loginResponse.refreshToken) }
                 } else {
                     _loginResult.value = Result.failure(Exception("Login failed with status: ${request.code()}"))
                 }

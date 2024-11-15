@@ -62,44 +62,7 @@
 
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/linearFireAlert"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:layout_marginEnd="15dp"
-            android:layout_marginStart="15dp"
-            android:visibility="gone">
 
-            <ImageView
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:src="@drawable/ic_fire"
-                android:layout_marginBottom="30dp"
-                app:tint="?android:attr/iconTint"/>
-
-            <TextView
-                android:id="@+id/txtFireAlert"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Houve uma detecção de emissão de fogo na equipe @ecosynergyofc às 09:30 de 31/10"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:textAlignment="center"
-                android:layout_marginBottom="30dp"/>
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnFireTeamAccess"
-                android:layout_width="wrap_content"
-                android:layout_height="60dp"
-                android:text="Acessar Equipe"
-                android:backgroundTint="@color/green"
-                android:textSize="16sp"
-                app:rippleColor="?attr/colorControlHighlight"/>
-
-        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/linearInviteStatus"
@@ -160,10 +123,11 @@
                 android:layout_marginEnd="15dp">
 
                 <ImageView
+                        android:id="@+id/imgInvite"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
                     android:layout_gravity="center"
-                    tools:src="@drawable/ic_invite"
+                        android:src="@drawable/ic_invite"
                     app:tint="?android:attr/iconTint"/>
 
                 <ImageView
@@ -193,9 +157,10 @@
             android:gravity="center">
 
             <TextView
+                    android:id="@+id/txtStatusStatus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Ecosynergy"
+                android:text="Seu convite foi negado."
                 android:textStyle="bold"
                 android:textSize="18sp"
                 android:textColor="?android:attr/textColorPrimary"
@@ -203,9 +168,10 @@
                 />
 
             <TextView
+                    android:id="@+id/txtDescriptionStatus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Sistema de Monitoramento Ambiental Sustentável para Indústrias de Pequeno e Médio Porte"
+                android:text="Seu convite enviado para @rafaelguerra foi negado pelo destinatário."
                 android:textSize="14sp"
                 android:textAlignment="center"
                 android:textColor="?android:attr/textColorPrimary"
@@ -223,28 +189,29 @@
                 >
 
                 <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/imgTeamStatus"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    android:src="@drawable/r"/>
+                    android:src="@drawable/e"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Rafael Guerra"
+                    android:text="Convite para a equipe "
                     android:layout_marginStart="5dp"
                     android:textSize="12sp"
                     android:textStyle="bold"
                     android:maxLines="1"
-                    android:ellipsize="end"
+                    android:ellipsize="middle"
                     />
                 <TextView
+                        android:id="@+id/txtTeamHandle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text=" te convidou para a equipe"
+                    android:text="\@ecosynergyofc"
                     android:textSize="12sp"
                     android:textStyle="bold"
                     android:maxLines="1"
-                    android:ellipsize="end"
                     />
 
             </LinearLayout>
@@ -259,7 +226,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:visibility="visible">
+            android:visibility="gone">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -526,6 +493,66 @@
             </LinearLayout>
 
         </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+            android:id="@+id/linearFireAlert"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_centerInParent="true"
+            android:layout_marginEnd="15dp"
+            android:layout_marginStart="15dp"
+            android:visibility="visible">
+
+        <ImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@drawable/ic_fire"
+                android:layout_marginBottom="30dp"
+                app:tint="?android:attr/iconTint"/>
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CUIDADO!"
+                android:textSize="22sp"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textStyle="bold"
+                android:textAlignment="center"
+                android:layout_marginBottom="10dp"/>
+
+        <TextView
+                android:id="@+id/txtFireAlert"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Houve uma detecção de emissão de fogo na equipe @ecosynergyofc às 09:30 de 31/10"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textAlignment="center"
+                android:layout_marginBottom="10dp"/>
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="*Para ter acesso a mais informações, acesse a dashboard da equipe*"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:textSize="12sp"
+                android:textAlignment="center"/>
+
+        <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnFireTeamAccess"
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="60dp"
+                android:text="Acessar Equipe"
+                android:backgroundTint="@color/green"
+                android:textSize="16sp"
+                app:rippleColor="?attr/colorControlHighlight"/>
 
     </LinearLayout>
 

@@ -100,14 +100,19 @@ class HomeActivity : AppCompatActivity() {
         setContentView(R.layout.activity_home)
 
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)== PackageManager.PERMISSION_DENIED) {
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_DENIED
+        ) {
             requestNotificationPermission()
         }
 
         val notificationClicked = intent.getBooleanExtra("NOTIFICATION_CLICKED", false)
 
         val userRepository = UserRepository(AppDatabase.getDatabase(applicationContext).userDao())
-        notificationsRepository = NotificationsRepository(AppDatabase.getDatabase(this).notificationsDao())
+        notificationsRepository =
+            NotificationsRepository(AppDatabase.getDatabase(this).notificationsDao())
 
         val teamsRepository =
             TeamsRepository(AppDatabase.getDatabase(applicationContext).teamsDao())
@@ -301,14 +306,9 @@ class HomeActivity : AppCompatActivity() {
             Log.i("HomeActivity", "OBSERVER")
             getTeamHandles {
                 fetchReadingsData(listTeamHandles, accessToken)
+                retrieveAndSendFcmToken()
             }
         }
-    }
-
-    override fun onStart(){
-        super.onStart()
-
-        retrieveAndSendFcmToken()
     }
 
     override fun onResume() {
@@ -463,17 +463,18 @@ class HomeActivity : AppCompatActivity() {
             userViewModel.removeFCMToken(userId, accessToken)
         }
 
-        userViewModel.deleteUserInfoFromDB{
-            CoroutineScope(Dispatchers.Main).launch{
+        userViewModel.deleteUserInfoFromDB {
+            CoroutineScope(Dispatchers.Main).launch {
                 notificationsRepository.deleteAllNotifications()
             }
 
-            teamsViewModel.deleteTeamsFromDB()
-            val i = Intent(this, LoginActivity::class.java)
-            i.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            i.putExtra("LOGOUT_MESSAGE", "You have been logged out successfully.")
-            startActivity(i)
-            finish()
+            teamsViewModel.deleteTeamsFromDB{
+                val i = Intent(this, LoginActivity::class.java)
+                i.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                i.putExtra("LOGOUT_MESSAGE", "You have been logged out successfully.")
+                startActivity(i)
+                finish()
+            }
         }
     }
 
@@ -585,9 +586,9 @@ class HomeActivity : AppCompatActivity() {
                     val fcmRequest = userViewModel.fcmRequest.value
                     if (fcmRequest != null) {
                         if (fcmRequest.isSuccessful) {
-                            Log.d("HomeActivity","UserID: $userId, FCMToken: $fcmToken")
+                            Log.d("HomeActivity", "UserID: $userId, FCMToken: $fcmToken")
                         } else {
-                            showToast("Erro ao Enviar ao Back")
+                            Log.e("HomeActivity","Erro ao Enviar ao Back")
                         }
                     }
                 }

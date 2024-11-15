@@ -501,12 +501,14 @@ class TeamsViewModel(
         }
     }
 
-    fun deleteTeamsFromDB() {
+    fun deleteTeamsFromDB(onComplete: () -> Unit) {
         viewModelScope.launch {
             try {
                 val deleteTeams = teamsRepository.deleteAllTeams()
 
                 val deleteTeamsState = if (deleteTeams == Unit) "OK" else "ERROR"
+
+                onComplete()
 
                 Log.d("TeamsViewModel", "Delete Teams from DB: $deleteTeamsState")
             } catch (e: Exception) {
