@@ -23,7 +23,6 @@
         android:layout_marginEnd="15dp">
 
         <ImageView
-            android:id="@+id/imgAlert"
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:src="@drawable/logo_transparent_globe"
@@ -426,11 +425,12 @@
 
         <TextView
                 android:id="@+id/txtEmail"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="contato@ecosynergybr.com"
-                android:layout_gravity="center"
                 android:textSize="15sp"
+                android:textStyle="bold"
+                android:layout_gravity="start"
                 android:layout_marginStart="5dp"
                 android:textColor="?android:attr/textColorPrimary"
                 android:layout_marginBottom="5dp"
@@ -440,11 +440,12 @@
 
         <TextView
                 android:id="@+id/txtNumber"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="+55 11 99023-8074"
-                android:layout_gravity="center"
                 android:textSize="15sp"
+                android:textStyle="bold"
+                android:layout_gravity="start"
                 android:layout_marginStart="5dp"
                 android:textColor="?android:attr/textColorPrimary"
                 android:layout_marginBottom="25dp"
@@ -473,7 +474,7 @@
                 android:layout_height="25dp"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:contentDescription="BackButton"
-                android:src="@drawable/ic_arrowback"
+                android:src="@drawable/ic_arrow_left"
                 android:scaleType="fitXY"
                 app:tint="?android:attr/iconTint"
                 android:layout_margin="15dp"

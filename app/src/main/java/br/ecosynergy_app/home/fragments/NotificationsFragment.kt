@@ -125,7 +125,7 @@ class NotificationsFragment : Fragment() {
                     notificationAdapter.updateData(updatedNotifications)
                 }
 
-                showToast("Notificação excluída")
+                showToast("Notificação Excluída")
             }
 
             override fun onChildDraw(

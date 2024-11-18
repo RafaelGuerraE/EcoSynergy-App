@@ -95,7 +95,7 @@ class UserSettingsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_usersettings)
+        setContentView(R.layout.activity_user_settings)
 
         val userRepository = UserRepository(AppDatabase.getDatabase(this).userDao())
 

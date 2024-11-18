@@ -394,7 +394,7 @@ class UserViewModel(
                         val androidPreference = preferencesList.find { it.platform == "ANDROID" }
 
                         if (androidPreference != null) {
-                            Log.d("UserViewModel", "ANDROID Preference: $androidPreference")
+                            //Log.d("UserViewModel", "Preferences: $androidPreference")
                             _preferences.value = androidPreference
                         } else {
                             Log.d("UserViewModel", "No ANDROID platform preference found.")
@@ -416,6 +416,7 @@ class UserViewModel(
                 val response = service.updateNotificationPreferences(updatePreferencesRequest,"Bearer $accessToken")
                 if (response.isSuccessful) {
                     onComplete()
+                    Log.d("UserViewModel", "Successfully Updated Preferences")
                 } else {
                     Log.e("UserViewModel", "Failed to get preferences: ${response.errorBody()?.string()}")
                 }

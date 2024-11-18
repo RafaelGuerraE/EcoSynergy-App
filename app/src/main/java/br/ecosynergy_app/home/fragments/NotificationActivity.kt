@@ -66,7 +66,6 @@ class NotificationActivity : AppCompatActivity() {
     private lateinit var imgUser: CircleImageView
     private lateinit var imgTeam: CircleImageView
 
-
     private lateinit var imgTeamStatus: CircleImageView
 
     private lateinit var txtStatus: TextView
@@ -395,7 +394,6 @@ class NotificationActivity : AppCompatActivity() {
         }
     }
 
-
     private fun handleFire() {
             teamsViewModel.getTeamById(teamId, accessToken) {
                 val teamResponse = teamsViewModel.teamResponse.value!!.body() ?: TeamsResponse(
@@ -454,6 +452,4 @@ class NotificationActivity : AppCompatActivity() {
             getColor(defaultColorRes)
         }
     }
-
-
 }

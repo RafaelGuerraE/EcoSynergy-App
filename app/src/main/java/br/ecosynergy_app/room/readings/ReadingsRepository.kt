@@ -20,12 +20,6 @@ class ReadingsRepository(
 
     suspend fun insertFireReadings(readings: List<FireReading>) = fireReadingsDao.insertAll(readings)
 
-    suspend fun getAllMQ7Readings() = mq7ReadingsDao.getAllReadings()
-
-    suspend fun getAllMQ135Readings() = mq135ReadingsDao.getAllReadings()
-
-    suspend fun getAllFireReadings() = fireReadingsDao.getAllReadings()
-
     suspend fun getMQ7ReadingsByTeamHandle(teamHandle: String): List<MQ7Reading> {
         return withContext(Dispatchers.IO) { mq7ReadingsDao.getReadingsByTeamHandle(teamHandle)}
     }
@@ -44,15 +38,47 @@ class ReadingsRepository(
         fireReadingsDao.deleteTeamReadings(teamHandle)
     }
 
-    suspend fun getLatestTimestamp(sensor: String, teamHandle: String): String {
-        return when(sensor) {
-            "MQ7" -> mq7ReadingsDao.getLatestTimestamp(teamHandle) ?: "1970-01-01T00:00:00Z"
-            "MQ135" -> mq135ReadingsDao.getLatestTimestamp(teamHandle) ?: "1970-01-01T00:00:00Z"
-            "FIRE" -> fireReadingsDao.getLatestTimestamp(teamHandle) ?: "1970-01-01T00:00:00Z"
-            else -> "1970-01-01T00:00:00Z"
+    suspend fun getAggregatedReadingsForDate(teamHandle: String, date: Date): Map<String, Float> {
+        return withContext(Dispatchers.IO) {
+            val emissionsPerDay = mutableMapOf<String, Float>()
+
+            val dayStart = Calendar.getInstance().apply {
+                time = date
+                set(Calendar.HOUR_OF_DAY, 0)
+                set(Calendar.MINUTE, 0)
+                set(Calendar.SECOND, 0)
+                set(Calendar.MILLISECOND, 0)
+            }.time
+
+            val formattedDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(dayStart)
+
+            emissionsPerDay[formattedDate] = 0f
+
+            val mq7Readings = mq7ReadingsDao.getReadingsByTeamHandle(teamHandle)
+            val mq135Readings = mq135ReadingsDao.getReadingsByTeamHandle(teamHandle)
+
+            mq7Readings.forEach { reading ->
+                val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault())
+                val readingDate = dateFormat.parse(reading.timestamp)
+
+                if (readingDate != null && isSameDay(readingDate, dayStart)) {
+                    emissionsPerDay[formattedDate] = (emissionsPerDay[formattedDate] ?: 0f) + reading.value
+                }
+            }
+
+            mq135Readings.forEach { reading ->
+                val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault())
+                val readingDate = dateFormat.parse(reading.timestamp)
+
+                if (readingDate != null && isSameDay(readingDate, dayStart)) {
+                    emissionsPerDay[formattedDate] = (emissionsPerDay[formattedDate] ?: 0f) + reading.value
+                }
+            }
+
+            Log.d("ReadingsRepository", "$emissionsPerDay")
+            emissionsPerDay
         }
     }
-
 
     suspend fun getAggregatedReadingsForLastWeek(teamHandle: String): Map<String, Float> {
         return withContext(Dispatchers.IO) {
@@ -103,51 +129,146 @@ class ReadingsRepository(
                 orderedEmissions[key] = emissionsPerDay[key] ?: 0f
             }
 
-            Log.d("ReadingsRepository", "DATA $orderedEmissions")
+            Log.d("ReadingsRepository","$orderedEmissions")
             orderedEmissions
         }
     }
 
-    suspend fun getAggregatedReadingsForToday(teamHandle: String): Map<String, Float> {
+    suspend fun getAggregatedReadingsForLastMonth(teamHandle: String): Map<String, Float> {
         return withContext(Dispatchers.IO) {
             val emissionsPerDay = mutableMapOf<String, Float>()
 
+            val calendar = Calendar.getInstance()
             val today = Date()
+            calendar.time = today
+
+            calendar.set(Calendar.DAY_OF_MONTH, 1)
+            val startOfMonth = calendar.time
+
+            while (calendar.time <= today) {
+                val date = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendar.time)
+                emissionsPerDay[date] = 0f
+                calendar.add(Calendar.DAY_OF_MONTH, 1)
+            }
+
+            val mq7Readings = mq7ReadingsDao.getReadingsByTeamHandle(teamHandle)
+            val mq135Readings = mq135ReadingsDao.getReadingsByTeamHandle(teamHandle)
+
+            mq7Readings.forEach { reading ->
+                aggregateReading(emissionsPerDay, reading.timestamp, reading.value, startOfMonth)
+            }
+
+            mq135Readings.forEach { reading ->
+                aggregateReading(emissionsPerDay, reading.timestamp, reading.value, startOfMonth)
+            }
+
+            Log.d("ReadingsRepository","$emissionsPerDay")
+            emissionsPerDay
+        }
+    }
+
+    suspend fun getAggregatedReadingsForLastYear(teamHandle: String): Map<String, Float> {
+        return withContext(Dispatchers.IO) {
+            val emissionsPerMonth = mutableMapOf<String, Float>()
+
+            val calendar = Calendar.getInstance()
+            val today = Date()
+            calendar.time = today
+
+            calendar.set(Calendar.DAY_OF_YEAR, 1)
+            val startOfYear = calendar.time
+
+            while (calendar.time <= today) {
+                val date = SimpleDateFormat("yyyy-MM", Locale.getDefault()).format(calendar.time)
+                emissionsPerMonth[date] = 0f
+                calendar.add(Calendar.MONTH, 1)
+            }
+
+            val mq7Readings = mq7ReadingsDao.getReadingsByTeamHandle(teamHandle)
+            val mq135Readings = mq135ReadingsDao.getReadingsByTeamHandle(teamHandle)
+
+            mq7Readings.forEach { reading ->
+                aggregateReading(emissionsPerMonth, reading.timestamp, reading.value, startOfYear, format = "yyyy-MM")
+            }
+
+            mq135Readings.forEach { reading ->
+                aggregateReading(emissionsPerMonth, reading.timestamp, reading.value, startOfYear, format = "yyyy-MM")
+            }
+
+            Log.d("ReadingsRepository","$emissionsPerMonth")
+            emissionsPerMonth
+        }
+    }
+
+    private fun aggregateReading(map: MutableMap<String, Float>, timestamp: String, value: Float, startDate: Date, format: String = "yyyy-MM-dd") {
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault())
+        val readingDate = dateFormat.parse(timestamp)
+
+        if (readingDate != null && readingDate.after(startDate)) {
+            val formattedDate = SimpleDateFormat(format, Locale.getDefault()).format(readingDate)
+            map[formattedDate] = (map[formattedDate] ?: 0f) + value
+        }
+    }
+
+    suspend fun getFireReadingsByHour(teamHandle: String): Map<Int, Int> {
+        return withContext(Dispatchers.IO) {
+            val fireReadings = fireReadingsDao.getReadingsByTeamHandle(teamHandle)
+            val readingsByHour = mutableMapOf<Int, Int>()
+
             val todayStart = Calendar.getInstance().apply {
-                time = today
                 set(Calendar.HOUR_OF_DAY, 0)
                 set(Calendar.MINUTE, 0)
                 set(Calendar.SECOND, 0)
                 set(Calendar.MILLISECOND, 0)
             }.time
 
-            val formattedDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(todayStart)
-
-            emissionsPerDay[formattedDate] = 0f
-
-            val mq7Readings = mq7ReadingsDao.getReadingsByTeamHandle(teamHandle)
-            val mq135Readings = mq135ReadingsDao.getReadingsByTeamHandle(teamHandle)
-
-            mq7Readings.forEach { reading ->
+            fireReadings.forEach { reading ->
                 val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault())
                 val readingDate = dateFormat.parse(reading.timestamp)
 
                 if (readingDate != null && isSameDay(readingDate, todayStart)) {
-                    emissionsPerDay[formattedDate] = (emissionsPerDay[formattedDate] ?: 0f) + reading.value
+                    val calendar = Calendar.getInstance().apply { time = readingDate }
+                    val hour = calendar.get(Calendar.HOUR_OF_DAY)
+                    readingsByHour[hour] = readingsByHour.getOrDefault(hour, 0) + 1
                 }
             }
+
+            for (hour in 0..23) {
+                readingsByHour.putIfAbsent(hour, 0)
+            }
+
+            readingsByHour
+        }
+    }
+
+    suspend fun getMQ135ReadingsByHour(teamHandle: String): Map<Int, Int> {
+        return withContext(Dispatchers.IO) {
+            val mq135Readings = mq135ReadingsDao.getReadingsByTeamHandle(teamHandle)
+            val readingsByHour = mutableMapOf<Int, Int>()
+
+            val todayStart = Calendar.getInstance().apply {
+                set(Calendar.HOUR_OF_DAY, 0)
+                set(Calendar.MINUTE, 0)
+                set(Calendar.SECOND, 0)
+                set(Calendar.MILLISECOND, 0)
+            }.time
 
             mq135Readings.forEach { reading ->
                 val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault())
                 val readingDate = dateFormat.parse(reading.timestamp)
 
                 if (readingDate != null && isSameDay(readingDate, todayStart)) {
-                    emissionsPerDay[formattedDate] = (emissionsPerDay[formattedDate] ?: 0f) + reading.value
+                    val calendar = Calendar.getInstance().apply { time = readingDate }
+                    val hour = calendar.get(Calendar.HOUR_OF_DAY)
+                    readingsByHour[hour] = readingsByHour.getOrDefault(hour, 0) + 1
                 }
             }
 
-            Log.d("ReadingsRepository", "Today's DATA $emissionsPerDay")
-            emissionsPerDay
+            for (hour in 0..23) {
+                readingsByHour.putIfAbsent(hour, 0)
+            }
+
+            readingsByHour
         }
     }
 
@@ -158,4 +279,12 @@ class ReadingsRepository(
                 calendar1.get(Calendar.DAY_OF_YEAR) == calendar2.get(Calendar.DAY_OF_YEAR)
     }
 
+    suspend fun getLatestTimestamp(sensor: String, teamHandle: String): String {
+        return when(sensor) {
+            "MQ7" -> mq7ReadingsDao.getLatestTimestamp(teamHandle) ?: "1970-01-01T00:00:00Z"
+            "MQ135" -> mq135ReadingsDao.getLatestTimestamp(teamHandle) ?: "1970-01-01T00:00:00Z"
+            "FIRE" -> fireReadingsDao.getLatestTimestamp(teamHandle) ?: "1970-01-01T00:00:00Z"
+            else -> "1970-01-01T00:00:00Z"
+        }
+    }
 }

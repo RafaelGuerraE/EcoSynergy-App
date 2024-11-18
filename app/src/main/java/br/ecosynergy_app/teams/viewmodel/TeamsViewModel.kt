@@ -416,7 +416,25 @@ class TeamsViewModel(
                 Log.d("TeamsViewModel", "Team from DB: $team")
 
             } catch (e: Exception) {
-                Log.e("TeamsViewModel", "Error while getAllTeamsFromDB", e)
+                Log.e("TeamsViewModel", "Error while getTeamByIdFromDB", e)
+                _teamsResult.value = Result.failure(e)
+            }
+        }
+    }
+
+    fun getTeamByHandleFromDB(handle: String,onComplete: () -> Unit) {
+        viewModelScope.launch {
+            try {
+                val team = teamsRepository.getTeamByHandle(handle)
+
+                _teamDB.value = team
+
+                Log.d("TeamsViewModel", "Team from DB: $team")
+
+                onComplete()
+
+            } catch (e: Exception) {
+                Log.e("TeamsViewModel", "Error while getTeamByHandleFromDB", e)
                 _teamsResult.value = Result.failure(e)
             }
         }

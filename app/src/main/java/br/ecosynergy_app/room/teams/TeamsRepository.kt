@@ -20,6 +20,10 @@ class TeamsRepository(private val teamsDao: TeamsDao) {
         return teamsDao.getTeamById(id)
     }
 
+    suspend fun getTeamByHandle(handle: String): Teams {
+        return teamsDao.getTeamByHandle(handle)
+    }
+
     suspend fun insertOrUpdateTeam(team: Teams) {
         if (getTeamById(team.id) == null) {
             insertTeam(team)

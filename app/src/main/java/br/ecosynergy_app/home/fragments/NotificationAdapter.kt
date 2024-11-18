@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import br.ecosynergy_app.R
 import br.ecosynergy_app.room.notifications.Notifications
@@ -50,7 +51,6 @@ class NotificationAdapter(
             when (notification.type) {
                 "fire" -> imgIcon.setImageResource(R.drawable.ic_fire)
                 "invite" -> imgIcon.setImageResource(R.drawable.ic_invite)
-                "greeting" -> imgIcon.setImageResource(R.drawable.ic_greetings)
                 else -> imgIcon.setImageResource(R.drawable.ic_notification)
             }
 
@@ -58,18 +58,22 @@ class NotificationAdapter(
                 if (!notification.read) {
                     onNotificationAccessed(notification.id)
                 }
-
-                val context = itemView.context
-                val i = Intent(context, NotificationActivity::class.java)
-                i.apply {
-                    putExtra("TIME", notification.timestamp)
-                    putExtra("ACCESS_TOKEN", accessToken)
-                    putExtra("USER_ID", userId)
-                    putExtra("TYPE", notification.type)
-                    putExtra("TEAM_ID", notification.teamId)
-                    putExtra("INVITE_ID", notification.inviteId)
+                if(notification.type == "fire" || notification.type == "invite"){
+                    val context = itemView.context
+                    val i = Intent(context, NotificationActivity::class.java)
+                    i.apply {
+                        putExtra("TIME", notification.timestamp)
+                        putExtra("ACCESS_TOKEN", accessToken)
+                        putExtra("USER_ID", userId)
+                        putExtra("TYPE", notification.type)
+                        putExtra("TEAM_ID", notification.teamId)
+                        putExtra("INVITE_ID", notification.inviteId)
+                    }
+                    context.startActivity(i)
                 }
-                context.startActivity(i)
+                else{
+                    showToast("Notificação Indisponível")
+                }
             }
         }
 
@@ -125,6 +129,11 @@ class NotificationAdapter(
                 }
             }
             return notificationTime
+        }
+
+
+        private fun showToast(message: String) {
+            Toast.makeText(itemView.context, message, Toast.LENGTH_SHORT).show()
         }
     }
 

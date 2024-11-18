@@ -41,20 +41,13 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         Log.d("MyFirebaseService", "${remoteMessage.data}")
 
-        val targetActivity = when (type) {
-            "invite" -> NotificationActivity::class.java
-            "fire" -> DashboardActivity::class.java
-            "team" -> TeamInfoActivity::class.java
-            else -> HomeActivity::class.java
-        }
-
-        sendNotification(title, body, targetActivity)
+        sendNotification(title, body)
 
         saveNotificationToDatabase(type, title, body, teamId, inviteId)
     }
 
-    private fun sendNotification(title: String, messageBody: String, targetActivity: Class<*>) {
-        val intent = Intent(this, targetActivity)
+    private fun sendNotification(title: String, messageBody: String) {
+        val intent = Intent(this, HomeActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         val pendingIntent = PendingIntent.getActivity(
             this, 0, intent, PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
@@ -67,9 +60,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             .setContentText(messageBody)
             .setAutoCancel(true)
             .setContentIntent(pendingIntent)
-            .addAction(
-                R.drawable.ic_notification, "Ver detalhes", pendingIntent
-            )
             .setStyle(NotificationCompat.BigTextStyle().bigText(messageBody))
 
         val notificationManager =

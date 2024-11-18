@@ -22,6 +22,7 @@ data class ForgotRequest(
 data class UpdatePreferencesRequest(
     val userId: Int,
     val fireDetection: Boolean,
+    val fireIntervalMinutes: Int,
     val inviteStatus: Boolean,
     val inviteReceived: Boolean,
     val teamGoalReached: Boolean,
@@ -33,6 +34,7 @@ data class PreferencesResponse(
     val userId:Int,
     val platform: String,
     val fireDetection: Boolean,
+    val fireIntervalMinutes: Int,
     val inviteStatus: Boolean,
     val inviteReceived: Boolean,
     val teamGoalReached: Boolean,

@@ -11,9 +11,11 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.readings.ReadingsViewModel
@@ -30,11 +32,15 @@ import br.ecosynergy_app.teams.viewmodel.TeamsViewModel
 import br.ecosynergy_app.teams.viewmodel.TeamsViewModelFactory
 import br.ecosynergy_app.user.viewmodel.UserViewModel
 import br.ecosynergy_app.user.viewmodel.UserViewModelFactory
+import com.facebook.shimmer.Shimmer
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.components.XAxis
+import com.github.mikephil.charting.data.BarData
+import com.github.mikephil.charting.data.BarDataSet
+import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
@@ -45,12 +51,14 @@ import com.github.mikephil.charting.formatter.DefaultValueFormatter
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.formatter.ValueFormatter
 import de.hdodenhof.circleimageview.CircleImageView
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
 import java.util.Locale
 
 class DashboardActivity : AppCompatActivity() {
-
 
     private lateinit var userViewModel: UserViewModel
     private lateinit var readingsViewModel: ReadingsViewModel
@@ -71,6 +79,8 @@ class DashboardActivity : AppCompatActivity() {
     private var teamName: String = ""
     private var accessToken: String = ""
 
+    private var listTeamHandles: List<String> = listOf()
+
     private var refresh = false
 
     private lateinit var dailyProgressBar: ProgressBar
@@ -81,18 +91,21 @@ class DashboardActivity : AppCompatActivity() {
     private lateinit var txtGoal: TextView
     private lateinit var txtMeasure: TextView
 
+    private lateinit var linearDailyGoal: LinearLayout
+
     private lateinit var txtDate: TextView
+    private lateinit var shimmerDaily: ShimmerFrameLayout
 
     private lateinit var shimmerTypes: ShimmerFrameLayout
     private lateinit var typesChart: PieChart
 
-    private lateinit var shimmerBars: ShimmerFrameLayout
-    private lateinit var barChart: BarChart
+    private lateinit var shimmerReadings: ShimmerFrameLayout
+    private lateinit var readingsChart: BarChart
 
     private lateinit var mq7Chart: LineChart
     private lateinit var shimmerMQ7: ShimmerFrameLayout
 
-    private lateinit var fireChart: LineChart
+    private lateinit var fireChart: BarChart
     private lateinit var shimmerFire: ShimmerFrameLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -125,6 +138,11 @@ class DashboardActivity : AppCompatActivity() {
             TeamsViewModelFactory(RetrofitClient.teamsService, teamsRepository, RetrofitClient.invitesService, membersRepository, invitesRepository)
         )[TeamsViewModel::class.java]
 
+        teamId = intent.getIntExtra("TEAM_ID", 0)
+        teamInitial = intent.getIntExtra("TEAM_INITIAL", 0)
+        teamHandle = intent.getStringExtra("TEAM_HANDLE").toString()
+        accessToken = intent.getStringExtra("ACCESS_TOKEN").toString()
+        teamName = intent.getStringExtra("TEAM_NAME").toString()
 
         btnClose = findViewById(R.id.btnClose)
         lblTeamName = findViewById(R.id.lblTeamName)
@@ -144,8 +162,8 @@ class DashboardActivity : AppCompatActivity() {
         txtValue = findViewById(R.id.txtValue)
         txtMeasure = findViewById(R.id.txtMeasure)
 
-        shimmerBars = findViewById(R.id.shimmerBars)
-        barChart = findViewById(R.id.barChart)
+        shimmerReadings = findViewById(R.id.shimmerReadings)
+        readingsChart = findViewById(R.id.readingsChart)
 
         shimmerTypes = findViewById(R.id.shimmerTypes)
         typesChart = findViewById(R.id.typesChart)
@@ -156,14 +174,11 @@ class DashboardActivity : AppCompatActivity() {
         shimmerMQ7 = findViewById(R.id.shimmerMQ7)
         mq7Chart = findViewById(R.id.mq7Chart)
 
+        linearDailyGoal = findViewById(R.id.linearDailyGoal)
+        shimmerDaily = findViewById(R.id.shimmerDaily)
+
         shimmerFire = findViewById(R.id.shimmerFire)
         fireChart = findViewById(R.id.fireChart)
-
-        teamId = intent.getIntExtra("TEAM_ID", 0)
-        teamInitial = intent.getIntExtra("TEAM_INITIAL", 0)
-        teamHandle = intent.getStringExtra("TEAM_HANDLE").toString()
-        accessToken = intent.getStringExtra("ACCESS_TOKEN").toString()
-        teamName = intent.getStringExtra("TEAM_NAME").toString()
 
         val calendar = Calendar.getInstance()
         val year = calendar.get(Calendar.YEAR)
@@ -176,43 +191,85 @@ class DashboardActivity : AppCompatActivity() {
         lblTeamName.text = teamName
         lblTeamHandle.text = teamHandle
 
-        btnClose.setOnClickListener { finish() }
+        lifecycleScope.launch {
+            teamsViewModel.getAllTeamsFromDB().collectLatest { teamData ->
+                listTeamHandles = teamData.map { it.handle }
+                Log.d("DashboardActivity", "$listTeamHandles")
+            }
+        }
 
+        btnClose.setOnClickListener { finish() }
 
         btnRefresh.setOnClickListener {
             if (!refresh) {
                 imgRefresh.visibility = View.GONE
                 progressRefresh.visibility = View.VISIBLE
+                btnRefresh.isFocusable = false
                 refresh = true
+
+                readingsViewModel.fetchAllReadings(listTeamHandles, accessToken){
+                    refresh = false
+                    progressRefresh.visibility = View.GONE
+                    imgRefresh.visibility = View.VISIBLE
+                    btnRefresh.isFocusable = true
+
+                    readingsViewModel.getReadingsFromDB(teamHandle)
+                    readingsViewModel.getFireReadingsByHour(teamHandle)
+                    readingsViewModel.getMQ135ReadingsByHour(teamHandle)
+                }
             } else {
-                imgRefresh.visibility = View.VISIBLE
-                progressRefresh.visibility = View.GONE
-                refresh = false
+                showToast("Atualizando...")
             }
         }
 
         txtDate.setOnClickListener {
             val datePickerDialog = DatePickerDialog(this, { _, selectedYear, selectedMonth, selectedDay ->
-                val selectedDate = "$selectedDay/${selectedMonth + 1}/$selectedYear"
-                txtDate.text = selectedDate
+                shimmerDaily.animate().alpha(1f).setDuration(300).withEndAction {
+                    shimmerDaily.visibility = View.VISIBLE
+                    linearDailyGoal.visibility = View.GONE
+                    linearDailyGoal.animate().alpha(0f).setDuration(300)
+                }
+
+                val calendar = Calendar.getInstance()
+                calendar.set(selectedYear, selectedMonth, selectedDay)
+                val selectedDate = calendar.time
+
+                txtDate.text = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(selectedDate)
+
+                readingsViewModel.getAggregatedReadingsForDate(teamHandle, selectedDate) {
+                    observeGoalInfo(selectedDate){
+                        shimmerDaily.animate().alpha(0f).setDuration(300).withEndAction {
+                            shimmerDaily.visibility = View.GONE
+                            linearDailyGoal.visibility = View.VISIBLE
+                            linearDailyGoal.animate().alpha(1f).setDuration(300)
+                        }
+                    }
+                }
             }, year, month, day)
 
             datePickerDialog.show()
         }
 
-        //fetchMQ7ReadingsByTeamHandle()
-        //fetchFireReadingsByTeamHandle()
-
-
-        observeTeamInfo()
+        val selectedDate = calendar.time
+        observeGoalInfo(selectedDate){
+            shimmerDaily.animate().alpha(0f).setDuration(300).withEndAction {
+                shimmerDaily.visibility = View.GONE
+                linearDailyGoal.visibility = View.VISIBLE
+                linearDailyGoal.animate().alpha(1f).setDuration(300)
+            }
+        }
         observeMQ7ReadingsByTeamHandle()
+        observeFireReadingsByHour()
+        observeReadingsByHour()
         setupTypesChart()
     }
 
     override fun onResume() {
         super.onResume()
-        readingsViewModel.getReadingsFromDB(teamHandle)
         teamsViewModel.getTeamByIdFromDB(teamId)
+        readingsViewModel.getReadingsFromDB(teamHandle)
+        readingsViewModel.getFireReadingsByHour(teamHandle)
+        readingsViewModel.getMQ135ReadingsByHour(teamHandle)
     }
 
     private fun setupTypesChart() {
@@ -272,7 +329,6 @@ class DashboardActivity : AppCompatActivity() {
         }
     }
 
-
     private fun observeMQ7ReadingsByTeamHandle() {
         readingsViewModel.mq7ReadingsByTeamHandle.observe(this) { response ->
             setupMQ7Chart(response)
@@ -280,18 +336,9 @@ class DashboardActivity : AppCompatActivity() {
         }
     }
 
-    private fun observeFireReadingsByTeamHandle() {
-        readingsViewModel.fireReadingsByTeamHandle.observe(this) { response ->
-            setupFireChart(response)
-            Log.d("DashboardActivity", "FireSensors OK")
-        }
-    }
-
     private fun setupMQ7Chart(mq7Readings: List<MQ7Reading>) {
         mq7Chart.visibility = View.GONE
         shimmerMQ7.visibility = View.VISIBLE
-
-        //Log.d("DashboardActivity", "Readings: $mq7Readings")
 
         val dateFormatIn = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault())
         val dateFormatOut = SimpleDateFormat("MM/dd", Locale.getDefault())
@@ -363,85 +410,147 @@ class DashboardActivity : AppCompatActivity() {
         }
     }
 
-
-    private fun setupFireChart(fireReadings: List<FireReading>) {
-        fireChart.visibility = View.GONE
-
-        shimmerFire.visibility = View.VISIBLE
-
-        Log.d("DashboardActivity", "Readings: $fireReadings")
-
-        val dateFormatIn = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault())
-        val dateFormatOut = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        val aggregatedData = mutableMapOf<String, Int>()
-
-        fireReadings.forEach { reading ->
-            val parsedDate = dateFormatIn.parse(reading.timestamp)
-            val date = if (parsedDate != null) dateFormatOut.format(parsedDate) else "Invalid Date"
-            aggregatedData[date] = aggregatedData.getOrDefault(date, 0) + 1
+    private fun setupFireBarChart(hourlyData: Map<Int, Int>) {
+        shimmerFire.animate().alpha(1f).setDuration(300).withEndAction {
+            shimmerFire.visibility = View.VISIBLE
+            fireChart.visibility = View.GONE
+            fireChart.animate().alpha(0f).setDuration(300)
         }
 
-        Log.d("DashboardActivity", "Aggregated Data: $aggregatedData")
-
-        val sortedData = aggregatedData.entries.sortedBy { it.key }
-
-        val entries = ArrayList<Entry>()
-        sortedData.forEachIndexed { index, entry ->
-            entries.add(Entry(index.toFloat(), entry.value.toFloat()))
+        val entries = ArrayList<BarEntry>()
+        for (hour in 0..23) {
+            val count = hourlyData[hour] ?: 0
+            entries.add(BarEntry(hour.toFloat(), count.toFloat()))
         }
 
-        Log.d("DashboardActivity", "Entries: $entries")
-
-        val dataSet = LineDataSet(entries, "Nº de alertas por dia").apply {
+        val dataSet = BarDataSet(entries, "Alertas por Hora").apply {
             color = ContextCompat.getColor(this@DashboardActivity, R.color.red)
             valueTextColor = getThemeColor(android.R.attr.textColorPrimary)
             valueTextSize = 10f
-            setDrawValues(true)
-            lineWidth = 3f
-            setDrawCircles(true)
-            setCircleColor(ContextCompat.getColor(this@DashboardActivity, R.color.red))
-            circleRadius = 5f
-            setDrawFilled(true)
-            fillColor = ContextCompat.getColor(this@DashboardActivity, R.color.red)
-            valueFormatter = DefaultValueFormatter(0)
+            valueFormatter = object : ValueFormatter() {
+                override fun getFormattedValue(value: Float): String {
+                    return value.toInt().toString()
+                }
+            }
         }
 
         fireChart.xAxis.apply {
             position = XAxis.XAxisPosition.BOTTOM
-            valueFormatter = IndexAxisValueFormatter(sortedData.map { it.key })
+            valueFormatter = IndexAxisValueFormatter((0..23).map { it.toString() })
             setDrawGridLines(false)
             textColor = getThemeColor(android.R.attr.textColorPrimary)
-            setLabelCount(sortedData.size, true)
-            labelRotationAngle = 90f
+            granularity = 1f
         }
 
         fireChart.axisLeft.apply {
             setDrawGridLines(false)
             textColor = getThemeColor(android.R.attr.textColorPrimary)
+            axisMinimum = 0f
+            valueFormatter = object : ValueFormatter() {
+                override fun getFormattedValue(value: Float): String {
+                    return value.toInt().toString()
+                }
+            }
         }
 
         fireChart.axisRight.isEnabled = false
-        fireChart.description.isEnabled = false
-        fireChart.legend.textColor = getThemeColor(android.R.attr.textColorPrimary)
 
         fireChart.apply {
+            description.isEnabled = false
+            legend.textColor = getThemeColor(android.R.attr.textColorPrimary)
             isDragEnabled = true
             isScaleXEnabled = true
-            setExtraOffsets(10f, 10f, 10f, 10f)
         }
 
-        val lineData = LineData(dataSet)
-        fireChart.data = lineData
+        val barData = BarData(dataSet)
+        barData.barWidth = 0.9f
+        fireChart.data = barData
         fireChart.invalidate()
 
         shimmerFire.animate().alpha(0f).setDuration(300).withEndAction {
-            shimmerFire.stopShimmer()
             shimmerFire.visibility = View.GONE
             fireChart.visibility = View.VISIBLE
             fireChart.animate().alpha(1f).setDuration(300)
         }
     }
 
+    private fun observeFireReadingsByHour() {
+        readingsViewModel.fireReadingsByHour.observe(this) { hourlyData ->
+            setupFireBarChart(hourlyData)
+            Log.d("DashboardActivity", "Fire readings by hour observed")
+        }
+    }
+
+    private fun setupReadingsBarChart(hourlyData: Map<Int, Int>) {
+        shimmerReadings.animate().alpha(1f).setDuration(300).withEndAction {
+            shimmerReadings.visibility = View.VISIBLE
+            readingsChart.visibility = View.GONE
+            readingsChart.animate().alpha(0f).setDuration(300)
+        }
+
+        val entries = ArrayList<BarEntry>()
+        for (hour in 0..23) {
+            val count = hourlyData[hour] ?: 0
+            entries.add(BarEntry(hour.toFloat(), count.toFloat()))
+        }
+
+        val dataSet = BarDataSet(entries, "Leituras por Hora").apply {
+            color = ContextCompat.getColor(this@DashboardActivity, R.color.blue)
+            valueTextColor = getThemeColor(android.R.attr.textColorPrimary)
+            valueTextSize = 10f
+            valueFormatter = object : ValueFormatter() {
+                override fun getFormattedValue(value: Float): String {
+                    return value.toInt().toString()
+                }
+            }
+        }
+
+        readingsChart.xAxis.apply {
+            position = XAxis.XAxisPosition.BOTTOM
+            valueFormatter = IndexAxisValueFormatter((0..23).map { it.toString() })
+            setDrawGridLines(false)
+            textColor = getThemeColor(android.R.attr.textColorPrimary)
+            granularity = 1f
+        }
+
+        readingsChart.axisLeft.apply {
+            setDrawGridLines(false)
+            textColor = getThemeColor(android.R.attr.textColorPrimary)
+            axisMinimum = 0f
+            valueFormatter = object : ValueFormatter() {
+                override fun getFormattedValue(value: Float): String {
+                    return value.toInt().toString()
+                }
+            }
+        }
+
+        readingsChart.axisRight.isEnabled = false
+
+        readingsChart.apply {
+            description.isEnabled = false
+            legend.textColor = getThemeColor(android.R.attr.textColorPrimary)
+            isDragEnabled = true
+            isScaleXEnabled = true
+        }
+
+        val barData = BarData(dataSet)
+        barData.barWidth = 0.8f
+        readingsChart.data = barData
+        readingsChart.invalidate()
+
+        shimmerReadings.animate().alpha(0f).setDuration(300).withEndAction {
+            shimmerReadings.visibility = View.GONE
+            readingsChart.visibility = View.VISIBLE
+            readingsChart.animate().alpha(1f).setDuration(300)
+        }
+    }
+
+    private fun observeReadingsByHour() {
+        readingsViewModel.mq135ReadingsByHour.observe(this) { hourlyData ->
+            setupReadingsBarChart(hourlyData)
+            Log.d("DashboardActivity", "MQ135 readings by hour observed")
+        }
+    }
 
     private fun getThemeColor(attrResId: Int): Int {
         val typedValue = TypedValue()
@@ -450,28 +559,23 @@ class DashboardActivity : AppCompatActivity() {
         return typedValue.data
     }
 
-    private fun observeTeamInfo() {
+    private fun observeGoalInfo(date: Date, onComplete: () -> Unit) {
         teamsViewModel.teamDB.observe(this) { teamInfo ->
-            // Fetch today's aggregated readings
-            readingsViewModel.getAggregatedReadingsForToday(teamHandle) {
-                // This block will be executed once the data is fetched
-                readingsViewModel.aggregatedReadingsForToday.observe(this) { readings ->
-                    // Calculate the sum of mq7 and mq135 values
+
+            readingsViewModel.getAggregatedReadingsForDate(teamHandle, date) {
+                readingsViewModel.aggregatedReadingsForDate.observe(this) { readings ->
                     val totalEmissions = readings.values.sum()
 
-                    // Update the UI with total emissions
-                    txtValue.text = String.format("%.0f", totalEmissions) + " /"
+                    txtValue.text = formatGoal(totalEmissions.toDouble()) + " /"
                     txtMeasure.text = " toneladas"
-                    txtGoal.text = teamInfo.dailyGoal.toInt().toString()
+                    txtGoal.text = formatGoal(teamInfo.dailyGoal)
 
-                    // Remaining code to calculate and set the progress
                     if (teamInfo.dailyGoal != 0.0) {
                         val percentage = (totalEmissions / teamInfo.dailyGoal) * 100
                         txtPercentage.text = String.format("%.2f%%", percentage)
                         dailyProgressBar.progress = percentage.toInt()
                         imgPercentage.visibility = View.VISIBLE
 
-                        // Set color based on percentage
                         when {
                             percentage < 60.00 -> {
                                 imgPercentage.setImageResource(R.drawable.ic_decrease)
@@ -494,12 +598,12 @@ class DashboardActivity : AppCompatActivity() {
                         dailyProgressBar.progress = 0
                         imgPercentage.visibility = View.GONE
                     }
+
+                    onComplete()
                 }
             }
         }
     }
-
-
 
     private fun formatGoal(goal: Double): String {
         return when {
@@ -508,5 +612,9 @@ class DashboardActivity : AppCompatActivity() {
             goal < 1_000_000_000 -> "${(goal / 1_000_000).toInt()} milhões"
             else -> "${(goal / 1_000_000_000).toInt()} bilhões"
         }
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 }

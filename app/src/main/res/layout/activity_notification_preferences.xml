@@ -30,53 +30,6 @@
                     android:layout_marginHorizontal="10dp"
                     android:orientation="vertical">
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Detecção de Fogo"
-                    android:maxLines="1"
-                    android:ellipsize="middle"
-                        android:textStyle="bold"
-                    android:textSize="16sp"
-                        android:textColor="?android:attr/textColorPrimary"/>
-
-                <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Receba notificações de emissões de fogo próximas dos sensores que podem auxiliar na prevenção de incêndios."
-                        android:maxLines="2"
-                        android:layout_marginStart="3dp"
-                        android:ellipsize="end"
-                        android:textSize="12sp"
-                        android:justificationMode="inter_word"
-                        android:textColor="?android:attr/textColorPrimary"/>
-            </LinearLayout>
-
-
-            <androidx.appcompat.widget.SwitchCompat
-                    android:id="@+id/switchFire"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_gravity="center"
-                    android:layout_marginHorizontal="5dp"
-                    android:checked="false"
-                    app:thumbTint="@color/grayDark"
-                    app:trackTint="@color/gray"/>
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:orientation="horizontal"
-                android:layout_marginVertical="10dp">
-
-            <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginHorizontal="10dp"
-                    android:orientation="vertical">
-                <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Status de Convites Enviados"
@@ -199,7 +152,102 @@
                     app:trackTint="@color/gray"/>
         </LinearLayout>
 
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp">
 
+            <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginHorizontal="10dp"
+                    android:orientation="vertical">
+                <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Detecção de Fogo"
+                        android:maxLines="1"
+                        android:ellipsize="middle"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:textColor="?android:attr/textColorPrimary"/>
+
+                <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Receba notificações de emissões de fogo próximas dos sensores que podem auxiliar na prevenção de incêndios."
+                        android:maxLines="2"
+                        android:layout_marginStart="3dp"
+                        android:ellipsize="end"
+                        android:textSize="12sp"
+                        android:justificationMode="inter_word"
+                        android:textColor="?android:attr/textColorPrimary"/>
+            </LinearLayout>
+
+
+            <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switchFire"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center"
+                    android:layout_marginHorizontal="5dp"
+                    android:checked="false"
+                    app:thumbTint="@color/grayDark"
+                    app:trackTint="@color/gray"/>
+        </LinearLayout>
+
+        <LinearLayout
+                android:id="@+id/linearFireInterval"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+            android:orientation="horizontal"
+                android:layout_marginHorizontal="10dp">
+
+            <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Intervalo entre alertas de detecção de fogo:"
+                    android:maxLines="1"
+                    android:ellipsize="middle"
+                    android:layout_marginStart="5dp"
+                    android:layout_gravity="center"
+                    android:textSize="12sp"
+                    android:justificationMode="inter_word"
+                    android:textColor="?android:attr/textColorPrimary"/>
+
+
+            <LinearLayout
+                    android:id="@+id/btnInterval"
+                    android:layout_width="95dp"
+                    android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                    android:background="@drawable/ripple_bg"
+                    android:padding="5dp"
+                    android:focusable="true"
+                    android:clickable="true">
+
+                <ImageView
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:layout_gravity="center"
+                    android:src="@drawable/ic_arrow_down"
+                        android:scaleType="fitXY"/>
+            <TextView
+                    android:id="@+id/txtInterval"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="20 minutos"
+                    android:maxLines="1"
+                    android:textAlignment="center"
+                    android:textSize="12sp"
+                    android:justificationMode="inter_word"
+                    android:textColor="?android:attr/textColorPrimary"/>
+            </LinearLayout>
+
+        </LinearLayout>
 
     </LinearLayout>
 
@@ -224,7 +272,7 @@
                 android:layout_height="25dp"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:contentDescription="BackButton"
-                android:src="@drawable/ic_arrowback"
+                android:src="@drawable/ic_arrow_left"
                 android:scaleType="fitXY"
                 app:tint="?android:attr/iconTint"
                 android:layout_margin="15dp"

@@ -217,7 +217,7 @@ class HomeActivity : AppCompatActivity() {
             replaceFragment(NotificationsFragment())
             bottomNavView.menu.findItem(R.id.notifications)?.isChecked = true
             bottomNavView.selectedItemId = R.id.notifications
-            bottomNavView.menu.findItem(R.id.notifications)?.setIcon(R.drawable.ic_notificationfull)
+            bottomNavView.menu.findItem(R.id.notifications)?.setIcon(R.drawable.ic_notification_filled)
         } else {
             replaceFragment(HomeFragment())
             bottomNavView.menu.findItem(R.id.home)?.isChecked = true
@@ -245,7 +245,7 @@ class HomeActivity : AppCompatActivity() {
 
                 R.id.notifications -> {
                     replaceFragment(NotificationsFragment())
-                    item.setIcon(R.drawable.ic_notificationfull)
+                    item.setIcon(R.drawable.ic_notification_filled)
                     bottomNavView.menu.findItem(R.id.home)?.setIcon(R.drawable.ic_home)
                     bottomNavView.menu.findItem(R.id.teams)?.setIcon(R.drawable.ic_teams)
                 }
@@ -284,7 +284,7 @@ class HomeActivity : AppCompatActivity() {
                 }
 
                 R.id.about -> {
-                    val i = Intent(this, HelpActivity::class.java)
+                    val i = Intent(this, AboutActivity::class.java)
                     startActivity(i)
                     true
                 }
@@ -303,10 +303,8 @@ class HomeActivity : AppCompatActivity() {
         }
 
         observeUserInfoFromDB {
-            Log.i("HomeActivity", "OBSERVER")
             getTeamHandles {
                 fetchReadingsData(listTeamHandles, accessToken)
-                retrieveAndSendFcmToken()
             }
         }
     }
@@ -376,7 +374,6 @@ class HomeActivity : AppCompatActivity() {
         onComplete()
     }
 
-
     private fun updateUserInfo(onComplete: () -> Unit) {
         userViewModel.getUserInfoFromDB {
 
@@ -416,7 +413,6 @@ class HomeActivity : AppCompatActivity() {
         onComplete()
     }
 
-
     private fun updateTeamInfo(userId: Int, accessToken: String) {
         teamsViewModel.getTeamsByUserId(userId, accessToken) {}
     }
@@ -443,10 +439,8 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun fetchReadingsData(listTeamHandles: List<String>, accessToken: String) {
-        for (teamHandle in listTeamHandles) {
-            readingsViewModel.updateMQ7Readings(teamHandle, accessToken)
-            readingsViewModel.updateMQ135Readings(teamHandle, accessToken)
-            readingsViewModel.updateFireReadings(teamHandle, accessToken)
+        readingsViewModel.fetchAllReadings(listTeamHandles,accessToken){
+            retrieveAndSendFcmToken()
         }
     }
 
@@ -608,11 +602,7 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == NOTIFICATION_PERMISSION_REQUEST_CODE) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -625,6 +615,5 @@ class HomeActivity : AppCompatActivity() {
 
     companion object {
         private const val NOTIFICATION_PERMISSION_REQUEST_CODE = 1001
-        private const val STORAGE_PERMISSION_REQUEST_CODE = 101
     }
 }

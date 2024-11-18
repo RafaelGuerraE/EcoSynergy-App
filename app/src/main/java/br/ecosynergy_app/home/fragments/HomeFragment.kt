@@ -1,13 +1,16 @@
 package br.ecosynergy_app.home.fragments
 
 import android.content.Intent
+import android.graphics.PorterDuff
 import android.os.Bundle
+import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Spinner
 import android.widget.TextView
@@ -54,6 +57,13 @@ class HomeFragment : Fragment() {
     private lateinit var spinnerTeam: Spinner
     private lateinit var spinnerPeriod: Spinner
 
+    private lateinit var shimmerTotal: ShimmerFrameLayout
+
+    private lateinit var txtValue: TextView
+    private lateinit var txtGoal: TextView
+    private lateinit var txtPercentage: TextView
+    private lateinit var imgPercentage: ImageView
+
     private lateinit var linearTeamChart: LinearLayout
     private lateinit var teamsChart: LineChart
     private lateinit var shimmerTeams: ShimmerFrameLayout
@@ -65,6 +75,8 @@ class HomeFragment : Fragment() {
     private lateinit var recyclerDashboards: RecyclerView
     private lateinit var dashboardsAdapter: DashboardsAdapter
 
+    private var selectedPeriod: String = "Diário"
+
     private var accessToken: String = ""
     private var identifier: String = ""
     private var userId: Int = 0
@@ -73,12 +85,6 @@ class HomeFragment : Fragment() {
 
     private var teamHandles: List<String> = emptyList()
     private var isHandles: Boolean = false
-
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -126,8 +132,15 @@ class HomeFragment : Fragment() {
 
         recyclerDashboards.adapter = dashboardsAdapter
 
+        shimmerTotal = view.findViewById(R.id.shimmerTotal)
+
         spinnerTeam = view.findViewById(R.id.spinnerTeam)
         spinnerPeriod = view.findViewById(R.id.spinnerPeriod)
+
+        txtValue = view.findViewById(R.id.txtValue)
+        txtGoal = view.findViewById(R.id.txtGoal)
+        txtPercentage = view.findViewById(R.id.txtPercentage)
+        imgPercentage = view.findViewById(R.id.imgPercentage)
 
         return view
     }
@@ -138,21 +151,187 @@ class HomeFragment : Fragment() {
         observeUserData()
         observeTeamsData()
 
+
         spinnerTeam.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+                selectedTeamHandle = parent.getItemAtPosition(position) as String
+
+                linearTotal.visibility = View.GONE
+                readingsViewModel.isFetchComplete.observe(viewLifecycleOwner) { isComplete ->
+                    if (isComplete) {
+                        setupTeamsChart(selectedTeamHandle, isHandles)
+                        teamsViewModel.getTeamByHandleFromDB(selectedTeamHandle) { setGoalReminder() }
+                    }
+                }
+            }
+            override fun onNothingSelected(parent: AdapterView<*>) {}
+        }
+    }
+
+    private fun setGoalReminder() {
+        spinnerPeriod.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
                 parent: AdapterView<*>,
                 view: View,
                 position: Int,
                 id: Long
             ) {
-                selectedTeamHandle = parent.getItemAtPosition(position) as String
-                setupTeamsChart(selectedTeamHandle, isHandles)
+                val selected = parent.getItemAtPosition(position).toString()
+                selectedPeriod = selected
+                when (selected) {
+                    "Diário" -> updateDailyGoal()
+                    "Semanal" -> updateWeeklyGoal()
+                    "Mensal" -> updateMonthlyGoal()
+                    "Anual" -> updateAnnualGoal()
+                }
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {}
         }
+
+
+        updateDailyGoal()
+
+        shimmerTotal.animate().alpha(1f).setDuration(100).withEndAction {
+            shimmerTotal.visibility = View.VISIBLE
+            linearTotal.visibility = View.GONE
+            linearTotal.animate().alpha(0f).setDuration(100)
+        }
     }
 
+    private fun updateDailyGoal() {
+        shimmerTotal.animate().alpha(1f).setDuration(100).withEndAction {
+            shimmerTotal.visibility = View.VISIBLE
+            linearTotal.visibility = View.GONE
+            linearTotal.animate().alpha(0f).setDuration(100)
+        }
+        val teamInfo = teamsViewModel.teamDB.value
+        readingsViewModel.getAggregatedReadingsForDate(selectedTeamHandle, Date()) {
+            readingsViewModel.aggregatedReadingsForDate.observe(viewLifecycleOwner) { readings ->
+                if (teamInfo != null) {
+                    handleGoalUpdate(readings.values.sum(), teamInfo.dailyGoal)
+                }
+                Log.d("HomeFragment", "$readings")
+            }
+        }
+    }
+
+    private fun updateWeeklyGoal() {
+        shimmerTotal.animate().alpha(1f).setDuration(100).withEndAction {
+            shimmerTotal.visibility = View.VISIBLE
+            linearTotal.visibility = View.GONE
+            linearTotal.animate().alpha(0f).setDuration(100)
+        }
+        val teamInfo = teamsViewModel.teamDB.value
+        readingsViewModel.getAggregatedReadingsForLastWeek(selectedTeamHandle) {
+            readingsViewModel.aggregatedReadingsForLastWeek.observe(viewLifecycleOwner) { readings ->
+                if (teamInfo != null) {
+                    handleGoalUpdate(readings.values.sum(), teamInfo.weeklyGoal)
+                }
+                Log.d("HomeFragment", "$readings")
+            }
+        }
+    }
+
+    private fun updateMonthlyGoal() {
+        shimmerTotal.animate().alpha(1f).setDuration(100).withEndAction {
+            shimmerTotal.visibility = View.VISIBLE
+            linearTotal.visibility = View.GONE
+            linearTotal.animate().alpha(0f).setDuration(100)
+        }
+        val teamInfo = teamsViewModel.teamDB.value
+        readingsViewModel.getAggregatedReadingsForMonth(selectedTeamHandle) {
+            readingsViewModel.aggregatedReadingsForMonth.observe(viewLifecycleOwner) { readings ->
+                if (teamInfo != null) {
+                    handleGoalUpdate(readings.values.sum(), teamInfo.monthlyGoal)
+                }
+                Log.d("HomeFragment", "$readings")
+            }
+        }
+    }
+
+    private fun updateAnnualGoal() {
+        shimmerTotal.animate().alpha(1f).setDuration(100).withEndAction {
+            shimmerTotal.visibility = View.VISIBLE
+            linearTotal.visibility = View.GONE
+            linearTotal.animate().alpha(0f).setDuration(100)
+        }
+        val teamInfo = teamsViewModel.teamDB.value
+        readingsViewModel.getAggregatedReadingsForYear(selectedTeamHandle) {
+            readingsViewModel.aggregatedReadingsForYear.observe(viewLifecycleOwner) { readings ->
+                if (teamInfo != null) {
+                    handleGoalUpdate(readings.values.sum(), teamInfo.annualGoal)
+                }
+
+                Log.d("HomeFragment", "$readings")
+            }
+        }
+    }
+
+    private fun handleGoalUpdate(totalEmissions: Float, goal: Double) {
+        Log.d("HomeFragment", "$totalEmissions $goal")
+
+        txtValue.text = formatGoal(totalEmissions.toDouble()) + " /"
+        txtGoal.text = formatGoal(goal)
+
+        if (goal != 0.0) {
+            val percentage = (totalEmissions / goal) * 100
+            updatePercentage(percentage)
+        } else {
+            resetPercentage()
+        }
+
+        shimmerTotal.animate().alpha(0f).setDuration(300).withEndAction {
+            shimmerTotal.visibility = View.GONE
+            linearTotal.visibility = View.VISIBLE
+            linearTotal.animate().alpha(1f).setDuration(300)
+        }
+    }
+
+    private fun formatGoal(value: Double): String {
+        return when {
+            value < 1000 -> value.toInt().toString()
+            value < 1_000_000 -> "${(value / 1000).toInt()} mil"
+            value < 1_000_000_000 -> "${(value / 1_000_000).toInt()} mi."
+            else -> "${(value / 1_000_000_000).toInt()} bi."
+        }
+    }
+
+    private fun updatePercentage(percentage: Double) {
+        txtPercentage.text = String.format("%.2f%%", percentage)
+        imgPercentage.visibility = View.VISIBLE
+
+        when {
+            percentage < 60.00 -> {
+                imgPercentage.setImageResource(R.drawable.ic_decrease)
+                imgPercentage.setColorFilter(
+                    ContextCompat.getColor(requireContext(), R.color.green),
+                    PorterDuff.Mode.SRC_IN
+                )
+            }
+
+            percentage < 100.00 -> {
+                imgPercentage.setImageResource(R.drawable.ic_decrease)
+                imgPercentage.setColorFilter(
+                    ContextCompat.getColor(requireContext(), R.color.orange),
+                    PorterDuff.Mode.SRC_IN
+                )
+            }
+
+            percentage >= 100.00 -> {
+                imgPercentage.setImageResource(R.drawable.ic_rise)
+                imgPercentage.setColorFilter(
+                    ContextCompat.getColor(requireContext(), R.color.red),
+                    PorterDuff.Mode.SRC_IN
+                )
+            }
+        }
+    }
+
+    private fun resetPercentage() {
+        txtPercentage.text = "N/A"
+        imgPercentage.visibility = View.GONE
+    }
 
     private fun observeUserData() {
         userViewModel.userInfo.observe(viewLifecycleOwner) { user ->
@@ -170,7 +349,6 @@ class HomeFragment : Fragment() {
             userId = user.id
         }
     }
-
 
     private fun observeTeamsData() {
         lifecycleScope.launch {
@@ -231,6 +409,7 @@ class HomeFragment : Fragment() {
 
     private fun setupSwipeRefresh() {
         swipeRefresh.setOnRefreshListener {
+            teamsViewModel.getTeamByHandleFromDB(selectedTeamHandle) {}
             teamsViewModel.getTeamsByUserId(userId, accessToken) {
                 lifecycleScope.launch {
                     teamsViewModel.getAllTeamsFromDB().collect { teamData ->
@@ -242,27 +421,28 @@ class HomeFragment : Fragment() {
                         val teamHandles = teamData.map { it.handle }
                         fetchReadingsData(teamHandles, accessToken) {
                             setupTeamsChart(selectedTeamHandle, isHandles)
+
+                            swipeRefresh.isRefreshing = false
+
+                            when(selectedPeriod){
+                                "Diário" -> updateDailyGoal()
+                                "Semanal" -> updateWeeklyGoal()
+                                "Mensal" -> updateMonthlyGoal()
+                                "Anual" -> updateAnnualGoal()
+                                else -> {}
+                            }
                         }
 
                     }
                 }
-                swipeRefresh.isRefreshing = false
             }
         }
     }
 
-    private fun fetchReadingsData(
-        listTeamHandles: List<String>,
-        accessToken: String,
-        onComplete: () -> Unit
-    ) {
-        for (teamHandle in listTeamHandles) {
-            readingsViewModel.updateMQ7Readings(teamHandle, accessToken)
-            readingsViewModel.updateMQ135Readings(teamHandle, accessToken)
-            readingsViewModel.updateFireReadings(teamHandle, accessToken)
+    private fun fetchReadingsData(listTeamHandles: List<String>, accessToken: String, onComplete: () -> Unit) {
+        readingsViewModel.fetchAllReadings(listTeamHandles, accessToken) {
+            onComplete()
         }
-
-        onComplete()
     }
 
     private fun getThemeColor(attrResId: Int): Int {
@@ -272,13 +452,11 @@ class HomeFragment : Fragment() {
         return typedValue.data
     }
 
-
     private fun setupTeamsChart(teamHandle: String, isHandles: Boolean) {
         if (!isHandles) {
             //showToast("Não existem equipes")
         } else {
             shimmerTeams.animate().alpha(1f).setDuration(100).withEndAction {
-                shimmerTeams.startShimmer()
                 shimmerTeams.visibility = View.VISIBLE
                 teamsChart.visibility = View.GONE
                 teamsChart.animate().alpha(0f).setDuration(100)
@@ -338,6 +516,7 @@ class HomeFragment : Fragment() {
 
                 teamsChart.axisLeft.apply {
                     setDrawGridLines(false)
+                    axisMinimum = 0f
                     textColor = getThemeColor(android.R.attr.textColorPrimary)
                 }
                 teamsChart.axisRight.isEnabled = false
@@ -349,7 +528,6 @@ class HomeFragment : Fragment() {
                 teamsChart.invalidate()
 
                 shimmerTeams.animate().alpha(0f).setDuration(300).withEndAction {
-                    shimmerTeams.stopShimmer()
                     shimmerTeams.visibility = View.GONE
                     teamsChart.visibility = View.VISIBLE
                     teamsChart.animate().alpha(1f).setDuration(300)

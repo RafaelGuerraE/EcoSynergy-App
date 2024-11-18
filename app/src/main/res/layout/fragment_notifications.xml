@@ -42,7 +42,7 @@
                     android:id="@+id/imgAlert"
                     android:layout_width="60dp"
                     android:layout_height="60dp"
-                    android:src="@drawable/ic_notificationoff"
+                    android:src="@drawable/ic_notification_off"
                     android:layout_marginBottom="20dp"
                     app:tint="?android:attr/iconTint"/>
 

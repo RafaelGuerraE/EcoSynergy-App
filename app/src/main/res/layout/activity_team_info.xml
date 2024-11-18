@@ -92,7 +92,7 @@
             android:layout_height="25dp"
             android:layout_marginStart="22dp"
             android:contentDescription="Appearance"
-            android:src="@drawable/goals"
+            android:src="@drawable/ic_goals"
             app:tint="?android:attr/iconTint"/>
 
         <TextView

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/main"
@@ -7,4 +8,147 @@
         android:layout_height="match_parent"
         tools:context=".home.AboutActivity">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+        android:fillViewport="true"
+            android:layout_marginTop="52dp">
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+
+
+            <ImageView
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/logo_white"
+                    android:scaleType="fitXY"
+                    android:layout_marginVertical="10dp"/>
+
+
+
+            <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                android:text="	Prazer, somos a Ecosynergy, um projeto inovador que utiliza tecnologias emergentes para integrar sustentabilidade ao setor industrial."
+                android:justificationMode="inter_word"
+                android:layout_marginHorizontal="10dp"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="14sp"
+                    android:layout_marginVertical="5dp"/>
+
+            <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="  Nascemos em 2023, nosso projeto foi criado a partir da necessidade urgente de abordar um dos temas mais relevantes da atualidade: a preservação ambiental. Com uma abordagem estratégica e visão inovadora, nos dedicamos a transformar desafios ambientais em soluções práticas e acessíveis."
+                    android:justificationMode="inter_word"
+                    android:layout_marginHorizontal="10dp"
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:textSize="14sp"
+                    android:layout_marginVertical="5dp"/>
+
+            <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="  Somos um time de cinco estudantes, Anderson, o cabeça e o líder do nosso time, Gabriel Ben, programador front-end nato, Lucas, a mente organizada, um verdadeiro livro em forma de gente, Luigi, nosso designer comunicador, que deu vida ao projeto e Rafael, o pai do nosso protótipo e criador do nosso aplicativo. A ETEC Lauro Gomes não foi apenas o ponto de partida do Ecosynergy, mas também o cenário onde nossa ideia ganhou forma. Entre reuniões, debates e muito trabalho, encontramos ali o espaço ideal para desenvolver um projeto que reflete nosso comprometimento com o futuro."
+                    android:justificationMode="inter_word"
+                    android:layout_marginHorizontal="10dp"
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:textSize="14sp"
+                    android:layout_marginVertical="5dp"/>
+
+            <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="  O que começou como um simples Trabalho de Conclusão de Curso se transformou em algo muito maior do que imaginávamos. E quando percebemos, estávamos com parcerias estratégicas em São Bernardo do Campo, em processo de obtenção da patente do projeto e tivemos a oportunidade de participar de uma das maiores feiras de tecnologia da América Latina. Esses passos moldaram nossa jornada, trazendo maturidade para o Ecosynergy."
+                    android:justificationMode="inter_word"
+                    android:layout_marginHorizontal="10dp"
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:textSize="14sp"
+                    android:layout_marginVertical="5dp"/>
+
+            <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="  Nosso objetivo é claro,  oferecer soluções inteligentes para a redução de emissões de gases industriais, aproveitando o potencial da tecnologia IoT para tornar a sustentabilidade mais acessível e viável para o setor industrial."
+                    android:justificationMode="inter_word"
+                    android:layout_marginHorizontal="10dp"
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:textSize="14sp"
+                    android:layout_marginVertical="5dp"/>
+
+
+            <ImageView
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/logo_transparent_globe"
+                    android:layout_marginVertical="10dp"/>
+
+            <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="  Estamos aqui para construir um futuro em que inovação e responsabilidade ambiental andem lado a lado. Seja bem-vindo ao Ecosynergy, onde tecnologia e sustentabilidade se encontram."
+                    android:justificationMode="inter_word"
+                    android:layout_marginHorizontal="10dp"
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:textSize="14sp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="20dp"/>
+
+
+
+        </LinearLayout>
+    </ScrollView>
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="top">
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:orientation="horizontal"
+                android:layout_gravity="top"
+                android:background="?android:attr/colorBackground">
+
+            <ImageButton
+                    android:id="@+id/btnBack"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="BackButton"
+                    android:src="@drawable/ic_arrow_left"
+                    android:scaleType="fitXY"
+                    app:tint="?android:attr/iconTint"
+                    android:layout_margin="15dp"
+                    android:layout_gravity="center_vertical"
+                    android:clickable="true"
+                    />
+            <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_gravity="center"
+                    android:text="Sobre"
+                    android:textAlignment="center"
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:layout_marginEnd="55dp"/>
+
+        </LinearLayout>
+
+        <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="?android:attr/colorForeground"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

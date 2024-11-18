@@ -104,14 +104,32 @@
 
         </LinearLayout>
 
+        <com.facebook.shimmer.ShimmerFrameLayout
+                android:id="@+id/shimmerDaily"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_gravity="start"
+                app:shimmer_auto_start="true"
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginBottom="20dp"
+                android:visibility="visible">
+            <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/chart_shape"
+                    android:visibility="visible"
+                    android:backgroundTint="?attr/shimmerColor"/>
+        </com.facebook.shimmer.ShimmerFrameLayout>
+
         <LinearLayout
-            android:id="@+id/dailyGoal"
+            android:id="@+id/linearDailyGoal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="150dp"
             android:orientation="vertical"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
             android:padding="10dp"
+                android:visibility="gone"
             android:background="@drawable/no_ripple_bg"
             android:layout_marginBottom="20dp">
 
@@ -259,7 +277,9 @@
                     android:id="@+id/mq7Chart"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:visibility="gone"/>
+                    android:visibility="gone"
+                        android:clickable="false"
+                        android:focusable="false"/>
 
                 <com.facebook.shimmer.ShimmerFrameLayout
                     android:id="@+id/shimmerMQ7"
@@ -305,7 +325,7 @@
                     android:orientation="vertical"
                     android:layout_gravity="center">
 
-                    <com.github.mikephil.charting.charts.LineChart
+                    <com.github.mikephil.charting.charts.BarChart
                         android:id="@+id/fireChart"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -400,13 +420,13 @@
                 android:layout_gravity="center">
 
                 <com.github.mikephil.charting.charts.BarChart
-                    android:id="@+id/barChart"
+                    android:id="@+id/readingsChart"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:visibility="gone"/>
 
                 <com.facebook.shimmer.ShimmerFrameLayout
-                    android:id="@+id/shimmerBars"
+                    android:id="@+id/shimmerReadings"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="start"

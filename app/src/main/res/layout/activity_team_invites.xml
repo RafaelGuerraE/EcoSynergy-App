@@ -52,7 +52,7 @@
                 android:layout_height="25dp"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:contentDescription="BackButton"
-                android:src="@drawable/ic_arrowback"
+                android:src="@drawable/ic_arrow_left"
                 android:scaleType="fitXY"
                 app:tint="?android:attr/iconTint"
                 android:layout_margin="15dp"

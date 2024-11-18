@@ -130,11 +130,7 @@ class TeamsFragment : Fragment() {
     }
 
     private fun fetchReadingsData(listTeamHandles: List<String>, accessToken: String) {
-        for (teamHandle in listTeamHandles) {
-            readingsViewModel.updateMQ7Readings(teamHandle, accessToken)
-            readingsViewModel.updateMQ135Readings(teamHandle, accessToken)
-            readingsViewModel.updateFireReadings(teamHandle, accessToken)
-        }
+        readingsViewModel.fetchAllReadings(listTeamHandles,accessToken){}
     }
 
 }
