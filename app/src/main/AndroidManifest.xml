@@ -24,7 +24,11 @@
                 android:exported="false" />
         <activity
                 android:name=".home.fragments.NotificationActivity"
-                android:exported="false" />
+                android:exported="false">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value=".home.HomeActivity" />
+        </activity>
         <activity
                 android:name=".teams.TeamGoalsActivity"
                 android:exported="false" />
@@ -67,7 +71,17 @@
         <activity
                 android:name=".home.HomeActivity"
                 android:exported="true"
-                android:windowSoftInputMode="adjustResize" />
+                android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                        android:scheme="ecosynergy"
+                        android:host="home" />
+            </intent-filter>
+        </activity>
         <activity
                 android:name=".user.UserSettingsActivity"
                 android:exported="true"

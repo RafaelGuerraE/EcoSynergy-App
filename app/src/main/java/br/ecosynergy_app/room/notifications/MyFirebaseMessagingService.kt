@@ -3,6 +3,7 @@ package br.ecosynergy_app.room.notifications
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.app.TaskStackBuilder
 import android.content.Context
 import android.content.Intent
 import android.util.Log
@@ -40,18 +41,35 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val teamId = remoteMessage.data["teamId"]?.toInt()
 
         Log.d("MyFirebaseService", "${remoteMessage.data}")
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+        val timestamp = dateFormat.format(Date(System.currentTimeMillis()))
 
-        sendNotification(title, body)
+        val targetActivity = when(type){
+            "fire"-> NotificationActivity::class.java
+            "invite" -> NotificationActivity::class.java
+            else -> HomeActivity::class.java
+        }
 
-        saveNotificationToDatabase(type, title, body, teamId, inviteId)
+        sendNotification(title, body, targetActivity, type, teamId, inviteId, timestamp)
+
+        saveNotificationToDatabase(type, title, body, teamId, inviteId, timestamp)
     }
 
-    private fun sendNotification(title: String, messageBody: String) {
-        val intent = Intent(this, HomeActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        val pendingIntent = PendingIntent.getActivity(
-            this, 0, intent, PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
-        )
+    private fun sendNotification(title: String, messageBody: String, targetActivity: Class<*>, type: String?, teamId: Int?, inviteId: Int?, timestamp: String) {
+        val notificationIntent = Intent(this, targetActivity).apply {
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            if (type == "invite") {
+                putExtra("TYPE", type)
+                putExtra("TEAM_ID", teamId)
+                putExtra("INVITE_ID", inviteId)
+                putExtra("TIMESTAMP", timestamp)
+            }
+        }
+
+        val pendingIntent = TaskStackBuilder.create(this).apply {
+            addNextIntentWithParentStack(Intent(this@MyFirebaseMessagingService, HomeActivity::class.java))
+            addNextIntent(notificationIntent)
+        }.getPendingIntent(0, PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE)
 
         val channelId = "default_channel"
         val notificationBuilder = NotificationCompat.Builder(this, channelId)
@@ -62,36 +80,28 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             .setContentIntent(pendingIntent)
             .setStyle(NotificationCompat.BigTextStyle().bigText(messageBody))
 
-        val notificationManager =
-            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        val channel = NotificationChannel(
-            channelId,
-            "Default Channel",
-            NotificationManager.IMPORTANCE_HIGH
-        )
-        notificationManager.createNotificationChannel(channel)
+            val channel = NotificationChannel(
+                channelId,
+                "Default Channel",
+                NotificationManager.IMPORTANCE_HIGH
+            )
+            notificationManager.createNotificationChannel(channel)
+
 
         val notificationId = System.currentTimeMillis().toInt()
         notificationManager.notify(notificationId, notificationBuilder.build())
     }
 
-    private fun saveNotificationToDatabase(
-        type: String?,
-        title: String,
-        body: String,
-        teamId: Int?,
-        inviteId: Int?
-    ) {
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
-        val formattedTimestamp = dateFormat.format(Date(System.currentTimeMillis()))
 
+    private fun saveNotificationToDatabase(type: String?, title: String, body: String, teamId: Int?, inviteId: Int?, timestamp: String) {
         val notification = Notifications(
             id = 0,
             type = type,
             title = title,
             subtitle = body,
-            timestamp = formattedTimestamp,
+            timestamp = timestamp,
             teamId = teamId,
             inviteId = inviteId,
             read = false

@@ -195,10 +195,10 @@ class ReadingsViewModel(
         }
     }
 
-    fun getFireReadingsByHour(teamHandle: String) {
+    fun getFireReadingsByHour(teamHandle: String, date: Date) {
         viewModelScope.launch {
             try {
-                val readings = readingsRepository.getFireReadingsByHour(teamHandle)
+                val readings = readingsRepository.getFireReadingsByHour(teamHandle, date)
                 _fireReadingsByHour.value = readings
                 Log.d("ReadingsViewModel", "Fire Readings by Hour: $readings")
             } catch (e: Exception) {
@@ -207,10 +207,10 @@ class ReadingsViewModel(
         }
     }
 
-    fun getMQ135ReadingsByHour(teamHandle: String) {
+    fun getMQ135ReadingsByHour(teamHandle: String, date: Date) {
         viewModelScope.launch {
             try {
-                val readings = readingsRepository.getMQ135ReadingsByHour(teamHandle)
+                val readings = readingsRepository.getMQ135ReadingsByHour(teamHandle, date)
                 _mq135ReadingsByHour.value = readings
                 Log.d("ReadingsViewModel", "MQ135 Readings by Hour: $readings")
             } catch (e: Exception) {

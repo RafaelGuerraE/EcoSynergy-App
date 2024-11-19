@@ -360,7 +360,7 @@ class UserViewModel(
             try {
                 val response = service.removeFCMToken("Bearer $accessToken")
                 if (response.isSuccessful) {
-                    Log.d("UserViewModel", "FCM Token removed successfully for userId: $userId")
+                    Log.d("UserViewModel", "FCM Token removed successfully for userId: $userId $response")
                 } else {
                     Log.e("UserViewModel", "Failed to remove FCM Token: ${response.errorBody()?.string()}")
                 }

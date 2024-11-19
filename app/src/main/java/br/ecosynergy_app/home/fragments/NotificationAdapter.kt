@@ -62,7 +62,7 @@ class NotificationAdapter(
                     val context = itemView.context
                     val i = Intent(context, NotificationActivity::class.java)
                     i.apply {
-                        putExtra("TIME", notification.timestamp)
+                        putExtra("TIMESTAMP", notification.timestamp)
                         putExtra("ACCESS_TOKEN", accessToken)
                         putExtra("USER_ID", userId)
                         putExtra("TYPE", notification.type)

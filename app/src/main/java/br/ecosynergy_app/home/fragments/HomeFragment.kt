@@ -59,6 +59,8 @@ class HomeFragment : Fragment() {
 
     private lateinit var shimmerTotal: ShimmerFrameLayout
 
+    private lateinit var linearGoal: LinearLayout
+
     private lateinit var txtValue: TextView
     private lateinit var txtGoal: TextView
     private lateinit var txtPercentage: TextView
@@ -100,6 +102,8 @@ class HomeFragment : Fragment() {
         teamsChart = view.findViewById(R.id.teamsChart)
         shimmerTeams = view.findViewById(R.id.shimmerTeams)
 
+        linearGoal = view.findViewById(R.id.linearGoal)
+
         txtAlert = view.findViewById(R.id.txtAlert)
         linearTotal = view.findViewById(R.id.linearTotal)
 
@@ -126,7 +130,12 @@ class HomeFragment : Fragment() {
                 startActivity(i)
             },
             onAllTeamsRedirectClick = {
+                val fragmentManager = parentFragmentManager
+                val transaction = fragmentManager.beginTransaction()
 
+                transaction.replace(R.id.frame_layout, TeamsFragment())
+                    .addToBackStack(null)
+                    .commit()
             }
         )
 
@@ -156,7 +165,7 @@ class HomeFragment : Fragment() {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
                 selectedTeamHandle = parent.getItemAtPosition(position) as String
 
-                linearTotal.visibility = View.GONE
+                linearGoal.visibility = View.GONE
                 readingsViewModel.isFetchComplete.observe(viewLifecycleOwner) { isComplete ->
                     if (isComplete) {
                         setupTeamsChart(selectedTeamHandle, isHandles)
@@ -169,6 +178,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun setGoalReminder() {
+
         spinnerPeriod.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
                 parent: AdapterView<*>,
@@ -189,21 +199,14 @@ class HomeFragment : Fragment() {
             override fun onNothingSelected(parent: AdapterView<*>) {}
         }
 
-
-        updateDailyGoal()
-
-        shimmerTotal.animate().alpha(1f).setDuration(100).withEndAction {
-            shimmerTotal.visibility = View.VISIBLE
-            linearTotal.visibility = View.GONE
-            linearTotal.animate().alpha(0f).setDuration(100)
-        }
+            updateDailyGoal()
     }
 
     private fun updateDailyGoal() {
         shimmerTotal.animate().alpha(1f).setDuration(100).withEndAction {
             shimmerTotal.visibility = View.VISIBLE
-            linearTotal.visibility = View.GONE
-            linearTotal.animate().alpha(0f).setDuration(100)
+            linearGoal.visibility = View.GONE
+            linearGoal.animate().alpha(0f).setDuration(100)
         }
         val teamInfo = teamsViewModel.teamDB.value
         readingsViewModel.getAggregatedReadingsForDate(selectedTeamHandle, Date()) {
@@ -219,8 +222,8 @@ class HomeFragment : Fragment() {
     private fun updateWeeklyGoal() {
         shimmerTotal.animate().alpha(1f).setDuration(100).withEndAction {
             shimmerTotal.visibility = View.VISIBLE
-            linearTotal.visibility = View.GONE
-            linearTotal.animate().alpha(0f).setDuration(100)
+            linearGoal.visibility = View.GONE
+            linearGoal.animate().alpha(0f).setDuration(100)
         }
         val teamInfo = teamsViewModel.teamDB.value
         readingsViewModel.getAggregatedReadingsForLastWeek(selectedTeamHandle) {
@@ -236,8 +239,8 @@ class HomeFragment : Fragment() {
     private fun updateMonthlyGoal() {
         shimmerTotal.animate().alpha(1f).setDuration(100).withEndAction {
             shimmerTotal.visibility = View.VISIBLE
-            linearTotal.visibility = View.GONE
-            linearTotal.animate().alpha(0f).setDuration(100)
+            linearGoal.visibility = View.GONE
+            linearGoal.animate().alpha(0f).setDuration(100)
         }
         val teamInfo = teamsViewModel.teamDB.value
         readingsViewModel.getAggregatedReadingsForMonth(selectedTeamHandle) {
@@ -253,8 +256,8 @@ class HomeFragment : Fragment() {
     private fun updateAnnualGoal() {
         shimmerTotal.animate().alpha(1f).setDuration(100).withEndAction {
             shimmerTotal.visibility = View.VISIBLE
-            linearTotal.visibility = View.GONE
-            linearTotal.animate().alpha(0f).setDuration(100)
+            linearGoal.visibility = View.GONE
+            linearGoal.animate().alpha(0f).setDuration(100)
         }
         val teamInfo = teamsViewModel.teamDB.value
         readingsViewModel.getAggregatedReadingsForYear(selectedTeamHandle) {
@@ -283,8 +286,8 @@ class HomeFragment : Fragment() {
 
         shimmerTotal.animate().alpha(0f).setDuration(300).withEndAction {
             shimmerTotal.visibility = View.GONE
-            linearTotal.visibility = View.VISIBLE
-            linearTotal.animate().alpha(1f).setDuration(300)
+            linearGoal.visibility = View.VISIBLE
+            linearGoal.animate().alpha(1f).setDuration(300)
         }
     }
 
@@ -377,6 +380,7 @@ class HomeFragment : Fragment() {
 
                     txtAlert.visibility = View.VISIBLE
                     linearTotal.visibility = View.GONE
+                    shimmerTotal.visibility = View.GONE
                     linearTeamChart.visibility = View.GONE
 
                 } else {
@@ -387,6 +391,7 @@ class HomeFragment : Fragment() {
 
                     txtAlert.visibility = View.GONE
                     linearTotal.visibility = View.VISIBLE
+                    shimmerTotal.visibility = View.VISIBLE
                     linearTeamChart.visibility = View.VISIBLE
                 }
 

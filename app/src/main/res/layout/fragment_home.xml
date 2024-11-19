@@ -146,14 +146,21 @@
             </LinearLayout>
 
 
+<LinearLayout
+        android:id="@+id/linearTotal"
+        android:layout_width="match_parent"
+        android:layout_height="110dp"
+    android:orientation="vertical"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginBottom="20dp"
+        android:visibility="visible">
+
             <com.facebook.shimmer.ShimmerFrameLayout
                     android:id="@+id/shimmerTotal"
                     android:layout_width="match_parent"
                     android:layout_height="110dp"
                     android:layout_gravity="start"
                     app:shimmer_auto_start="true"
-                    android:layout_marginHorizontal="10dp"
-                    android:layout_marginBottom="20dp"
                     android:visibility="visible">
                 <View
                         android:layout_width="match_parent"
@@ -164,16 +171,13 @@
             </com.facebook.shimmer.ShimmerFrameLayout>
 
             <LinearLayout
-                android:id="@+id/linearTotal"
+                    android:id="@+id/linearGoal"
                 android:layout_width="match_parent"
                 android:layout_height="110dp"
                 android:orientation="vertical"
-                    android:layout_marginHorizontal="10dp"
-                android:layout_marginBottom="20dp"
                 android:padding="10dp"
                 android:background="@drawable/no_ripple_bg"
                 android:visibility="gone">
-
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -190,8 +194,6 @@
                         android:textColor="?android:attr/textColorPrimary"
                         android:textSize="16sp"
                         android:textStyle="bold"/>
-
-
 
                     <Spinner
                         android:entries="@array/period_array"
@@ -265,6 +267,7 @@
                             android:textColor="?android:attr/textColorPrimary"/>
                 </LinearLayout>
 
+            </LinearLayout>
             </LinearLayout>
 
             </LinearLayout>

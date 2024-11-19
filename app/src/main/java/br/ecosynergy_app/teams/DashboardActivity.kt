@@ -79,6 +79,8 @@ class DashboardActivity : AppCompatActivity() {
     private var teamName: String = ""
     private var accessToken: String = ""
 
+    private var selectedDate: Date = Date()
+
     private var listTeamHandles: List<String> = listOf()
 
     private var refresh = false
@@ -187,6 +189,8 @@ class DashboardActivity : AppCompatActivity() {
         val todayDate = "$day/${month + 1}/$year"
         txtDate.text = todayDate
 
+        selectedDate = calendar.time
+
         imgTeam.setImageResource(teamInitial)
         lblTeamName.text = teamName
         lblTeamHandle.text = teamHandle
@@ -214,8 +218,9 @@ class DashboardActivity : AppCompatActivity() {
                     btnRefresh.isFocusable = true
 
                     readingsViewModel.getReadingsFromDB(teamHandle)
-                    readingsViewModel.getFireReadingsByHour(teamHandle)
-                    readingsViewModel.getMQ135ReadingsByHour(teamHandle)
+                    readingsViewModel.getFireReadingsByHour(teamHandle,selectedDate)
+                    readingsViewModel.getMQ135ReadingsByHour(teamHandle,selectedDate)
+                    readingsViewModel.getAggregatedReadingsForDate(teamHandle, selectedDate){}
                 }
             } else {
                 showToast("Atualizando...")
@@ -224,40 +229,29 @@ class DashboardActivity : AppCompatActivity() {
 
         txtDate.setOnClickListener {
             val datePickerDialog = DatePickerDialog(this, { _, selectedYear, selectedMonth, selectedDay ->
+
+                calendar.set(selectedYear, selectedMonth, selectedDay)
+                selectedDate = calendar.time
+
+                txtDate.text = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(selectedDate)
+
+
+                readingsViewModel.getMQ135ReadingsByHour(teamHandle, selectedDate)
+                readingsViewModel.getFireReadingsByHour(teamHandle, selectedDate)
+
                 shimmerDaily.animate().alpha(1f).setDuration(300).withEndAction {
                     shimmerDaily.visibility = View.VISIBLE
                     linearDailyGoal.visibility = View.GONE
                     linearDailyGoal.animate().alpha(0f).setDuration(300)
                 }
-
-                val calendar = Calendar.getInstance()
-                calendar.set(selectedYear, selectedMonth, selectedDay)
-                val selectedDate = calendar.time
-
-                txtDate.text = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(selectedDate)
-
-                readingsViewModel.getAggregatedReadingsForDate(teamHandle, selectedDate) {
-                    observeGoalInfo(selectedDate){
-                        shimmerDaily.animate().alpha(0f).setDuration(300).withEndAction {
-                            shimmerDaily.visibility = View.GONE
-                            linearDailyGoal.visibility = View.VISIBLE
-                            linearDailyGoal.animate().alpha(1f).setDuration(300)
-                        }
-                    }
-                }
+                readingsViewModel.getAggregatedReadingsForDate(teamHandle, selectedDate) {}
             }, year, month, day)
 
             datePickerDialog.show()
         }
 
-        val selectedDate = calendar.time
-        observeGoalInfo(selectedDate){
-            shimmerDaily.animate().alpha(0f).setDuration(300).withEndAction {
-                shimmerDaily.visibility = View.GONE
-                linearDailyGoal.visibility = View.VISIBLE
-                linearDailyGoal.animate().alpha(1f).setDuration(300)
-            }
-        }
+
+        observeGoalInfo(selectedDate)
         observeMQ7ReadingsByTeamHandle()
         observeFireReadingsByHour()
         observeReadingsByHour()
@@ -268,8 +262,8 @@ class DashboardActivity : AppCompatActivity() {
         super.onResume()
         teamsViewModel.getTeamByIdFromDB(teamId)
         readingsViewModel.getReadingsFromDB(teamHandle)
-        readingsViewModel.getFireReadingsByHour(teamHandle)
-        readingsViewModel.getMQ135ReadingsByHour(teamHandle)
+        readingsViewModel.getMQ135ReadingsByHour(teamHandle, selectedDate)
+        readingsViewModel.getFireReadingsByHour(teamHandle, selectedDate)
     }
 
     private fun setupTypesChart() {
@@ -474,13 +468,6 @@ class DashboardActivity : AppCompatActivity() {
         }
     }
 
-    private fun observeFireReadingsByHour() {
-        readingsViewModel.fireReadingsByHour.observe(this) { hourlyData ->
-            setupFireBarChart(hourlyData)
-            Log.d("DashboardActivity", "Fire readings by hour observed")
-        }
-    }
-
     private fun setupReadingsBarChart(hourlyData: Map<Int, Int>) {
         shimmerReadings.animate().alpha(1f).setDuration(300).withEndAction {
             shimmerReadings.visibility = View.VISIBLE
@@ -545,12 +532,20 @@ class DashboardActivity : AppCompatActivity() {
         }
     }
 
+    private fun observeFireReadingsByHour() {
+        readingsViewModel.fireReadingsByHour.observe(this) { hourlyData ->
+            setupFireBarChart(hourlyData)
+            Log.d("DashboardActivity", "Fire readings by hour observed")
+        }
+    }
+
     private fun observeReadingsByHour() {
         readingsViewModel.mq135ReadingsByHour.observe(this) { hourlyData ->
             setupReadingsBarChart(hourlyData)
             Log.d("DashboardActivity", "MQ135 readings by hour observed")
         }
     }
+
 
     private fun getThemeColor(attrResId: Int): Int {
         val typedValue = TypedValue()
@@ -559,11 +554,15 @@ class DashboardActivity : AppCompatActivity() {
         return typedValue.data
     }
 
-    private fun observeGoalInfo(date: Date, onComplete: () -> Unit) {
+    private fun observeGoalInfo(date: Date) {
         teamsViewModel.teamDB.observe(this) { teamInfo ->
-
             readingsViewModel.getAggregatedReadingsForDate(teamHandle, date) {
                 readingsViewModel.aggregatedReadingsForDate.observe(this) { readings ->
+                    shimmerDaily.animate().alpha(1f).setDuration(300).withEndAction {
+                        shimmerDaily.visibility = View.VISIBLE
+                        linearDailyGoal.visibility = View.GONE
+                        linearDailyGoal.animate().alpha(0f).setDuration(300)
+                    }
                     val totalEmissions = readings.values.sum()
 
                     txtValue.text = formatGoal(totalEmissions.toDouble()) + " /"
@@ -599,7 +598,12 @@ class DashboardActivity : AppCompatActivity() {
                         imgPercentage.visibility = View.GONE
                     }
 
-                    onComplete()
+
+                    shimmerDaily.animate().alpha(0f).setDuration(300).withEndAction {
+                        shimmerDaily.visibility = View.GONE
+                        linearDailyGoal.visibility = View.VISIBLE
+                        linearDailyGoal.animate().alpha(1f).setDuration(300)
+                    }
                 }
             }
         }

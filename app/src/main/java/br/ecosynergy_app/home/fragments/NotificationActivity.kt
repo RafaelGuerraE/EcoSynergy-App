@@ -14,8 +14,6 @@ import androidx.lifecycle.ViewModelProvider
 import br.ecosynergy_app.R
 import br.ecosynergy_app.RetrofitClient
 import br.ecosynergy_app.home.HomeActivity
-import br.ecosynergy_app.readings.ReadingsViewModel
-import br.ecosynergy_app.readings.ReadingsViewModelFactory
 import br.ecosynergy_app.room.AppDatabase
 import br.ecosynergy_app.room.invites.InvitesRepository
 import br.ecosynergy_app.room.teams.MembersRepository
@@ -32,7 +30,6 @@ import br.ecosynergy_app.user.viewmodel.UserViewModel
 import br.ecosynergy_app.user.viewmodel.UserViewModelFactory
 import com.google.android.material.button.MaterialButton
 import de.hdodenhof.circleimageview.CircleImageView
-import org.w3c.dom.Text
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -46,7 +43,7 @@ class NotificationActivity : AppCompatActivity() {
     private var teamId: Int = 0
     private var inviteId: Int = 0
 
-    private var time: String = ""
+    private var timestamp: String = ""
 
     private var inviteStatus: String = ""
 
@@ -117,13 +114,12 @@ class NotificationActivity : AppCompatActivity() {
             )
         )[TeamsViewModel::class.java]
 
-        time = intent.getStringExtra("TIME") ?: ""
-
-        accessToken = intent.getStringExtra("ACCESS_TOKEN") ?: ""
         type = intent.getStringExtra("TYPE") ?: ""
-        userId = intent.getIntExtra("USER_ID", 0)
         teamId = intent.getIntExtra("TEAM_ID", 0)
         inviteId = intent.getIntExtra("INVITE_ID", 0)
+        timestamp = intent.getStringExtra("TIMESTAMP") ?: ""
+
+        Log.d("NotificationActivity", "$type $teamId $inviteId $timestamp")
 
         btnClose = findViewById(R.id.btnClose)
 
@@ -172,16 +168,20 @@ class NotificationActivity : AppCompatActivity() {
         linearGreetings.visibility = View.GONE
 
         progressBar.visibility = View.VISIBLE
+    }
 
-        when (type) {
-            "fire" -> {
-                handleFire()
+    override fun onResume() {
+        super.onResume()
+        getUserInfo{
+            when (type) {
+                "fire" -> {
+                    handleFire()
+                }
+                "invite" -> {
+                    handleInvite()
+                }
+                else -> {}
             }
-            "invite" -> {
-                handleInvite()
-            }
-
-            else -> {}
         }
     }
 
@@ -413,7 +413,7 @@ class NotificationActivity : AppCompatActivity() {
                     LinksResponse(Link(""))
                 )
 
-                val date = formatDate(time)
+                val date = formatDate(timestamp)
                 txtFireAlert.text = "Houve uma detecção de emissão de fogo na equipe @${teamResponse.handle} às $date"
                 linearFireAlert.visibility = View.VISIBLE
                 progressBar.visibility = View.GONE
@@ -450,6 +450,17 @@ class NotificationActivity : AppCompatActivity() {
             typedValue.data
         } else {
             getColor(defaultColorRes)
+        }
+    }
+
+    private fun getUserInfo(onComplete: () -> Unit){
+        userViewModel.getUserInfoFromDB {
+            val userInfo = userViewModel.userInfo.value
+            if (userInfo != null) {
+                userId = userInfo.id
+                accessToken = userInfo.accessToken
+                onComplete()
+            }
         }
     }
 }

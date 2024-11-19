@@ -165,13 +165,20 @@ class HomeActivity : AppCompatActivity() {
         val justLoggedIn = loginSp.getBoolean("just_logged_in", false)
         val open = loginSp.getBoolean("open", false)
 
-        Log.d("HomeActivity", "Open: $open")
-
         if (isLoggedIn && !open) {
             updateUserInfo {
+                userViewModel.getUserInfoFromDB {
+                    accessToken = userViewModel.userInfo.value?.accessToken ?: ""
+                    retrieveAndSendFcmToken(accessToken)
+                }
             }
         } else {
             loginSp.edit().putBoolean("open", false).apply()
+
+            userViewModel.getUserInfoFromDB {
+                accessToken = userViewModel.userInfo.value?.accessToken ?: ""
+                retrieveAndSendFcmToken(accessToken)
+            }
         }
 
         bottomNavView = findViewById(R.id.bottomNavView)
@@ -199,9 +206,6 @@ class HomeActivity : AppCompatActivity() {
             }
         }
 
-        userViewModel.getUserInfoFromDB {
-            accessToken = userViewModel.userInfo.value?.accessToken ?: ""
-        }
 
         val headerView = navView.getHeaderView(0)
         if (headerView == null) {
@@ -439,9 +443,7 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun fetchReadingsData(listTeamHandles: List<String>, accessToken: String) {
-        readingsViewModel.fetchAllReadings(listTeamHandles,accessToken){
-            retrieveAndSendFcmToken()
-        }
+        readingsViewModel.fetchAllReadings(listTeamHandles,accessToken){}
     }
 
     private fun logout(wasDeleted: Boolean) {
@@ -558,13 +560,13 @@ class HomeActivity : AppCompatActivity() {
         snackBar.show()
     }
 
-    private fun retrieveAndSendFcmToken() {
+    private fun retrieveAndSendFcmToken(accessToken: String) {
         FirebaseMessaging.getInstance().token
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     val fcmToken = task.result
                     if (fcmToken != null) {
-                        sendFcmTokenToServer(fcmToken)
+                        sendFcmTokenToServer(fcmToken,accessToken)
                     }
                 } else {
                     Log.e("HomeActivity", "Erro ao obter o token FCM: ${task.exception}")
@@ -572,7 +574,7 @@ class HomeActivity : AppCompatActivity() {
             }
     }
 
-    private fun sendFcmTokenToServer(fcmToken: String) {
+    private fun sendFcmTokenToServer(fcmToken: String, accessToken: String) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 userId = userViewModel.userRepository.getUserId()

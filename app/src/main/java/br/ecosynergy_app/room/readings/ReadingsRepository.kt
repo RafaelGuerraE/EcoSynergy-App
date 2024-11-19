@@ -210,23 +210,16 @@ class ReadingsRepository(
         }
     }
 
-    suspend fun getFireReadingsByHour(teamHandle: String): Map<Int, Int> {
+    suspend fun getFireReadingsByHour(teamHandle: String, date: Date): Map<Int, Int> {
         return withContext(Dispatchers.IO) {
             val fireReadings = fireReadingsDao.getReadingsByTeamHandle(teamHandle)
             val readingsByHour = mutableMapOf<Int, Int>()
-
-            val todayStart = Calendar.getInstance().apply {
-                set(Calendar.HOUR_OF_DAY, 0)
-                set(Calendar.MINUTE, 0)
-                set(Calendar.SECOND, 0)
-                set(Calendar.MILLISECOND, 0)
-            }.time
 
             fireReadings.forEach { reading ->
                 val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault())
                 val readingDate = dateFormat.parse(reading.timestamp)
 
-                if (readingDate != null && isSameDay(readingDate, todayStart)) {
+                if (readingDate != null && isSameDay(readingDate, date)) {
                     val calendar = Calendar.getInstance().apply { time = readingDate }
                     val hour = calendar.get(Calendar.HOUR_OF_DAY)
                     readingsByHour[hour] = readingsByHour.getOrDefault(hour, 0) + 1
@@ -241,23 +234,16 @@ class ReadingsRepository(
         }
     }
 
-    suspend fun getMQ135ReadingsByHour(teamHandle: String): Map<Int, Int> {
+    suspend fun getMQ135ReadingsByHour(teamHandle: String, date: Date): Map<Int, Int> {
         return withContext(Dispatchers.IO) {
             val mq135Readings = mq135ReadingsDao.getReadingsByTeamHandle(teamHandle)
             val readingsByHour = mutableMapOf<Int, Int>()
-
-            val todayStart = Calendar.getInstance().apply {
-                set(Calendar.HOUR_OF_DAY, 0)
-                set(Calendar.MINUTE, 0)
-                set(Calendar.SECOND, 0)
-                set(Calendar.MILLISECOND, 0)
-            }.time
 
             mq135Readings.forEach { reading ->
                 val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault())
                 val readingDate = dateFormat.parse(reading.timestamp)
 
-                if (readingDate != null && isSameDay(readingDate, todayStart)) {
+                if (readingDate != null && isSameDay(readingDate, date)) {
                     val calendar = Calendar.getInstance().apply { time = readingDate }
                     val hour = calendar.get(Calendar.HOUR_OF_DAY)
                     readingsByHour[hour] = readingsByHour.getOrDefault(hour, 0) + 1
@@ -271,6 +257,7 @@ class ReadingsRepository(
             readingsByHour
         }
     }
+
 
     private fun isSameDay(date1: Date, date2: Date): Boolean {
         val calendar1 = Calendar.getInstance().apply { time = date1 }
